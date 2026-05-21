@@ -167,35 +167,15 @@ export function prepareChartDataForExport(
   });
 }
 
-function buildSpreadsheetHeaders(
-  requestedFields: string[],
-  fieldMeta: FieldMeta
-): Record<string, string> {
-  // Fall back to the system field name when duplicate display names exist,
-  // so each exported column remains unique and no data is overwritten.
-  const fieldToHeader: Record<string, string> = {};
-  const usedHeaders = new Set<string>();
-  for (const field of requestedFields) {
-    const rename = fieldMeta.dataWithDefaults?.[field]?.rename ?? field;
-    const header = usedHeaders.has(rename) ? field : rename;
-    fieldToHeader[field] = header;
-    usedHeaders.add(header);
-  }
-  return fieldToHeader;
-}
-
 export async function dataObjectToSpreadsheetData(
   dataObjects: TDataObjectListOrNull,
-  requestedFields: string[],
   fieldMeta: FieldMeta
 ) {
-  const fieldToHeader = buildSpreadsheetHeaders(requestedFields, fieldMeta);
-
   const spreadsheetData: any[] = [];
   dataObjects?.forEach((obj) => {
     const flatData = {};
-    requestedFields.forEach((field) => {
-      flatData[fieldToHeader[field]] =
+    fieldMeta.order.active.forEach((field) => {
+      flatData[`${fieldMeta.dataWithDefaults?.[field]?.rename} (${field})`] =
         Array.isArray(getFieldByName(obj, field))
           ? getFieldByName(obj, field).toString()
           : getFieldByName(obj, field);
