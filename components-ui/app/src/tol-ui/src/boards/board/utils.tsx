@@ -14,7 +14,6 @@ import {
   PopUpMessage,
   BOARD_MESSAGE_TEXT,
   IView,
-  API_UTILITY_OPERATIONS,
   saveTitle,
   generateId,
   getEntityPrefix,
@@ -82,7 +81,7 @@ export async function copyBoard(
   return await copyBoardEntity<IBoard>(
     boardDataSource,
     entityId,
-    API_UTILITY_OPERATIONS.COPY,
+    BOARDS.OPERATIONS.COPY,
     parentEntityType,
     title,
     copyEntityType,
@@ -107,7 +106,7 @@ export async function copyView(
   return await copyBoardEntity<IView>(
     boardDataSource,
     entityId,
-    API_UTILITY_OPERATIONS.COPY,
+    BOARDS.OPERATIONS.COPY,
     parentEntityType,
     title,
     copyEntityType,

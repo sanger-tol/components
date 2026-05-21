@@ -14,14 +14,15 @@ import {
   deepCopy,
   boardParams,
   normaliseCaps,
-  BOARD_DIFF_API_PATH,
-  API_UTILITY_OPERATIONS,
+  // BOARD_DIFF_API_PATH, TODO: DELETE WHEN DELETE SUPPORTED ON BACKEND
   API_METHODS,
   PopUpMessage,
   ERROR_FETCHING_BOARD_ENTITY,
   ERROR_UPDATING_TITLE,
   ERROR_ADDING_BOARD_ENTITY,
   ERROR_REORDERING_BOARD_ENTITY,
+  TBoardEntityType,
+  IBoardEntity,
 } from "..";
 
 /**
@@ -81,7 +82,7 @@ export async function getBoardEntityAndChildren(
   return await boardDataSource
     .custom({
       method: API_METHODS.GET,
-      resource: `${API_UTILITY_OPERATIONS.GET_BOARD_ENTITY}/${parentId}`,
+      resource: `${BOARDS.OPERATIONS.GET}/${parentId}`,
     })
     .then((res) => {
       return res.data;
@@ -102,6 +103,7 @@ export async function getBoardEntityAndChildren(
  * @param entity The board entity to be defined (view, zone, or component).
  * @param objectType The type of the board entity (e.g. 'view', 'zone', 'component').
  */
+// TODO: DELETE IS NOW AT /delete-entity ENDPOINT
 export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
   entity: Partial<TEntity>,
   objectType: string,
@@ -177,7 +179,7 @@ export function getNextTitle<
   TParent extends IBoard | IView | IZone,
 >(
   parentEntity: TParent,
-  parentObjectType: string,
+  parentObjectType: IBoardEntityType<Omit<IBoardEntity, "children" | "order">>,
   childObjectType: string
 ): string {
   const titlePrefix = normaliseCaps(childObjectType);
@@ -203,6 +205,8 @@ export function getNextTitle<
  * @param boardDataSource The data source used to query the board diff.
  * @param userId The identifier of the user who owns the diff. If not provided, the function returns early.
  */
+// TODO: STANDARD DELETE ENDPOINT NOW WORKS, CAN USE BOARD_DS DELETE METHOD INSTEAD OF THIS FUNCTION
+// TODO: WE DON'T NEED TO GET THE ID OF THE DIFF NOW, IT IS PROVIDED IN THE COMPONENT JSON AS config_diff.id
 export async function deleteComponentDiff(
   componentId: string,
   boardDataSource: TsDataSource,
@@ -266,7 +270,7 @@ export async function patchReorderBoardEntity(
   return await boardDataSource
     .custom({
       method: API_METHODS.PATCH,
-      resource: `${API_UTILITY_OPERATIONS.BOARD_ENTITY_REORDER}/${parentId}`,
+      resource: `${BOARDS.OPERATIONS.REORDER}/${parentId}`,
       body: { order: childIds },
     })
     .catch(() => {
@@ -292,7 +296,7 @@ export async function postAddBoardEntity(
   return await boardDataSource
     .custom({
       method: API_METHODS.POST,
-      resource: `${API_UTILITY_OPERATIONS.ADD_BOARD_ENTITY}/${parentId}`,
+      resource: `${BOARDS.OPERATIONS.ADD_NEW}/${parentId}`,
       body: { attributes: attributes },
     })
     .catch(() => {
@@ -315,7 +319,7 @@ export function upsertTitle(
   title: string,
   id: string,
   boardDataSource: TsDataSource,
-  boardObjectType: string,
+  boardObjectType: TBoardEntityType,
 ) {
   boardDataSource.upsert({
     objectType: boardObjectType,

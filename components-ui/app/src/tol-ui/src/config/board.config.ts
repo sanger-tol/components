@@ -8,7 +8,7 @@ import { TBoardParams } from "..";
 import { BOARDS } from "../constants/api.constants";
 import { BOARD_CHILDREN_KEYS } from "../constants/boards.constants";
 
-
+// TODO: DETERMINE IF parentIdField and childIdField are constants and if joiningObjectRequestedFields are still required
 export const boardParams: TBoardParams = {
   [BOARDS.BOARD]: {
     parentIdField: "board_id",

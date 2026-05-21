@@ -41,6 +41,7 @@ import type {
   TDataObjectOrNull,
   IDiffState,
   IConfigDifferences,
+  IComponentConfig,
 } from "..";
 
 interface Rgb {
@@ -565,14 +566,14 @@ export async function getInitialDiffState(
   componentId: string,
   isLoggedIn: boolean,
   objectType: string,
-  baseConfig: ITableConfigSave,
+  baseConfig: Partial<IComponentConfig> | null,
   editMode?: boolean,
-  remoteDiff?: ITableConfigSave | null,
+  remoteDiff?: Partial<IComponentConfig> | null,
 ): Promise<IDiffState> {
   // Check for a diff in local storage for anonymous users
   const localDiff = getTableConfigLocalStorage(
     `${BOARDS.BOARD_DIFF}_${componentId}`,
-  ) as ITableConfigSave | null;
+  ) as Partial<IComponentConfig> | null;
 
   const switchConfigState = () => {
     if (editMode) {

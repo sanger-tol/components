@@ -9,15 +9,17 @@ import {
   IFilter,
   PUtilityBar,
   BOARD_CHILDREN_KEYS,
-} from '..';
+  BOARD_TYPES,
+} from "..";
+import type { FieldMeta } from "..";
 
 export interface IBoardEntity {
   id?: string;
-  type?: string;
+  type?: TBoardAllEntityTypes;
   title?: string;
 }
 
-export type IBoardChildren<TChild> = Record<string, TChild>;
+export type IBoardChildren<TChild> = Record<string, TChild>; // TODO: CHANGE
 
 export interface IBoardParentEntity<TChild> extends IBoardEntity {
   children: IBoardChildren<TChild>;
@@ -27,6 +29,10 @@ export interface IBoardParentEntity<TChild> extends IBoardEntity {
 export interface IBoardFilter {
   filter?: IFilter;
   defaultFilter?: IFilter;
+}
+
+export interface IComponentConfig {
+  fieldMeta: Partial<FieldMeta>;
 }
 
 export interface IComponent extends IBoardEntity, IBoardFilter {
@@ -40,7 +46,8 @@ export interface IComponent extends IBoardEntity, IBoardFilter {
    */
   object_type?: string;
   dataspace?: TsDataSource;
-  config?: any;
+  config?: Partial<IComponentConfig>;
+  config_diff?: {id: string, config:Partial<IComponentConfig>};
   data_source_instance_id?: string;
   ui_api_details: IDBDataSourceInstanceApiDetails;
 }
@@ -59,7 +66,7 @@ export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
   dataspace?: TsDataSource;
 }
 
-export interface IView extends IBoardParentEntity<IZone> { }
+export interface IView extends IBoardParentEntity<IZone> {}
 
 export interface IBoard extends IBoardParentEntity<IView> {
   /**
@@ -69,11 +76,25 @@ export interface IBoard extends IBoardParentEntity<IView> {
   write_privilege?: boolean;
 }
 
+export type TBoardEntityType = keyof typeof BOARD_TYPES.ENTITIES;
+export type TBoardParentEntityType = Exclude<
+  TBoardEntityType,
+  typeof BOARD_TYPES.ENTITIES.COMPONENT
+>;
+export type TBoardChildEntityType = Exclude<
+  TBoardEntityType,
+  typeof BOARD_TYPES.ENTITIES.BOARD
+>;
+export type TBoardJoiningEntityType = keyof typeof BOARD_TYPES.JOINING_ENTITIES;
+export type TBoardAllEntityTypes =
+  | TBoardEntityType
+  | TBoardJoiningEntityType;
+
 /**
  * Example of the board interface
- * 
+ *
  * IBoard → IView → IZone → IComponent
- * 
+ *
  * {
  *   id: "b_1",
  *   type: "board",
@@ -138,19 +159,20 @@ export interface IZoneControl {
    */
   zone: IZone;
   /**
-   * Setter used to update the zone when configuration changes reset downstream filters 
+   * Setter used to update the zone when configuration changes reset downstream filters
    */
   setZone: (zone: IZone) => void;
 }
 
-export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl { }
+export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl {}
 
 export interface IBoardTarget {
   boardObjectType: string;
   boardDataSource: TsDataSource;
 }
 
-export interface IBoardTargetAndZone extends IRemoteTargetAndZone, IBoardTarget { }
+export interface IBoardTargetAndZone
+  extends IRemoteTargetAndZone, IBoardTarget {}
 
 export type TUtilityBarOrNull = PUtilityBar | null;
 
@@ -161,7 +183,8 @@ export interface IUseZoneMeta {
   setZone: (zone: IZone) => void;
 }
 
-export type TChildrenKey = (typeof BOARD_CHILDREN_KEYS)[keyof typeof BOARD_CHILDREN_KEYS];
+// export type TChildrenKey =
+//   (typeof BOARD_CHILDREN_KEYS)[keyof typeof BOARD_CHILDREN_KEYS];
 
 export interface IDBDataSourceInstanceApiDetails {
   url: string;
@@ -192,8 +215,8 @@ export interface IBoardParam {
    */
   childIdField: string;
   /**
-  * The object type of the child entity (e.g. 'zone').
-  */
+   * The object type of the child entity (e.g. 'zone').
+   */
   childObjectType: string;
   /**
    * The relationship name to fetch the child entity from the joining table entries (e.g. 'zone' in zone_view).

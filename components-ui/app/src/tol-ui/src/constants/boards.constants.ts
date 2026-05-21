@@ -23,6 +23,20 @@ export const BOARD_CHILDREN_KEYS = {
   COMPONENTS: "components",
 } as const;
 
+export const BOARD_TYPES = {
+  ENTITIES: {
+    BOARD: "board",
+    VIEW: "view",
+    ZONE: "zone",
+    COMPONENT: "component",
+  },
+  JOINING_ENTITIES: {
+    VIEW_BOARD: "view_board",
+    ZONE_VIEW: "zone_view",
+    COMPONENT_ZONE: "component_zone",
+  }
+} as const;
+
 export const MY_BOARDS_TITLE = "My Boards";
 
 export const MY_BOARDS_SUB_TITLE = (

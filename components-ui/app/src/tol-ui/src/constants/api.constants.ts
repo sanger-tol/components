@@ -27,15 +27,6 @@ export const API_OPERATIONS = {
   TO_MANY: ":to-many",
 } as const;
 
-// TODO: PUT INTO BOARDS AND RENAME
-export const API_UTILITY_OPERATIONS = {
-  COPY: "copy",
-  BOARD_ENTITY_REORDER: "reorder",
-  GET_BOARD_ENTITY: "get-entity",
-  CREATE_BOARD: "create-board",
-  ADD_BOARD_ENTITY: "add-entity",
-} as const;
-
 export const HTTP_STATUS_CODES = {
   OK: 200,
   CREATED: 201,
@@ -47,24 +38,12 @@ export const HTTP_STATUS_CODES = {
 } as const;
 
 export const AUTH_API_DATA_PATH = "/auth";
-export const BOARDS_API_DATA_PATH = "/boards";
 export const LOCAL_API_DATA_PATH = "/local";
 export const ACTION_API_DATA_PATH = LOCAL_API_DATA_PATH;
 export const PREFECT_API_DATA_PATH = "/prefect";
+export const DATA_UPLOAD_API_DATA_PATH = "/data-upload";
+export const PIPELINE_API_DATA_PATH = "/run-pipeline";
 export const API_PATH = env.API_PATH;
-export const BOARD_DIFF_API_PATH = API_PATH + LOCAL_API_DATA_PATH;
-
-export const BOARDS = {
-  BOARD: "board",
-  VIEW: "view",
-  ZONE: "zone",
-  COMPONENT: "component",
-  VIEW_BOARD: "view_board",
-  ZONE_VIEW: "zone_view",
-  COMPONENT_ZONE: "component_zone",
-  BOARD_DIFF: "board_diff",
-  DATA_SOURCE_INSTANCE: "data_source_instance",
-} as const;
 
 export const WEB_APP = "web_app";
 

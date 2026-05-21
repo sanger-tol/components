@@ -12,7 +12,6 @@ import {
   MY_BOARDS_TITLE,
   MY_BOARDS_SUB_TITLE,
   API_METHODS,
-  API_UTILITY_OPERATIONS,
   PopUpMessage,
   ERROR_CREATING_BOARD,
 } from "../..";
@@ -29,7 +28,7 @@ export function MyBoardsHeader(props: PBoard) {
     boardDataSource
       .custom({
         method: API_METHODS.POST,
-        resource: API_UTILITY_OPERATIONS.CREATE_BOARD,
+        resource: BOARDS.OPERATIONS.CREATE_BOARD,
         body: {}
       })
       .then((res) => {

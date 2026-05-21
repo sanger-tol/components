@@ -54,14 +54,14 @@ export * from "./variables";
 export * from "./images";
 export * from "./json-editor";
 
-import { TsDataSource, env, BOARDS_API_DATA_PATH } from ".";
+import { TsDataSource, env, BOARDS } from ".";
 import { LOCAL_API_DATA_PATH } from "./constants";
 
 export const TOL_DS = new TsDataSource(env.TOL_DATA);
 export const PIPELINE_DS = new TsDataSource();
 export const CORE_CONFIG_DS = new TsDataSource({
   ...env.TOL_DATA,
-  apiDataPath: BOARDS_API_DATA_PATH,
+  apiDataPath: BOARDS.API_DATA_PATH,
   dataspace: '',
 });
 export const ACTIONS_DS = new TsDataSource({
