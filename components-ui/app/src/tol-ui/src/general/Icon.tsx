@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { MouseEvent } from "react";
 
 export interface PIcon {
   /**
