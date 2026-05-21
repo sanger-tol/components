@@ -25,15 +25,15 @@ export function Priority(props: PPriority) {
   } = props;
 
   const [priorityName, PriorityIcon] = highest ? [
-    "Highest", <Icon icon="angles-up" colour="red" />
+    "Highest Priority", <Icon icon="angles-up" colour="red" />
   ] : high ? [
-    "High", <Icon icon="angle-up" colour="red" />
+    "High Priority", <Icon icon="angle-up" colour="red" />
   ] : medium ? [
-    "Medium", <Icon icon="equals" colour="orange" />
+    "Medium Priority", <Icon icon="equals" colour="orange" />
   ] : low ? [
-    "Low", <Icon icon="angle-down" colour="blue" />
+    "Low Priority", <Icon icon="angle-down" colour="blue" />
   ] : lowest ? [
-    "Lowest", <Icon icon="angles-down" colour="blue" />
+    "Lowest Priority", <Icon icon="angles-down" colour="blue" />
   ] : [
     null, null
   ];
