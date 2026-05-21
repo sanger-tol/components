@@ -24,26 +24,26 @@ export function Priority(props: PPriority) {
     lowest = false,
   } = props;
 
-  const [priorityName, PriorityIcon] = highest ? [
-    "Highest Priority", <Icon icon="angles-up" colour="red" />
+  const [name, icon, colour] = highest ? [
+    "Highest Priority", "angles-up", "red"
   ] : high ? [
-    "High Priority", <Icon icon="angle-up" colour="red" />
+    "High Priority", "angle-up", "red"
   ] : medium ? [
-    "Medium Priority", <Icon icon="equals" colour="orange" />
+    "Medium Priority", "equals", "orange"
   ] : low ? [
-    "Low Priority", <Icon icon="angle-down" colour="blue" />
+    "Low Priority", "angle-down", "blue"
   ] : lowest ? [
-    "Lowest Priority", <Icon icon="angles-down" colour="blue" />
+    "Lowest Priority", "angles-down", "blue"
   ] : [
-    null, null
+    null, null, null
   ];
 
   return (
-    PriorityIcon ? (
+    icon ? (
       <CellTooltip
         followCursor
-        value={PriorityIcon}
-        contents={priorityName}
+        value={<Icon icon={icon} colour={colour} />}
+        contents={name}
       />
     ) : (
       <>{value}</>
