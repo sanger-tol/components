@@ -31,7 +31,7 @@ export interface PIcon {
   /**
    * Handler for if this icon is clicked
    */
-  onClick?: MouseEvent<HTMLSpanElement>;
+  onClick?: () => void;
 }
 
 /**
