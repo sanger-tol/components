@@ -63,6 +63,7 @@ function Navigation(props: PNavigation) {
     const navbar = document.getElementById("tol-navbar");
     if (navbar) {
       setNavbarOffset(navbar.offsetHeight);
+      document.documentElement.style.setProperty("--tol-navbar-height", navbar.offsetHeight + "px");
     }
   }, []);
 
