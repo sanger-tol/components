@@ -15,7 +15,7 @@ import {
   PUtilityBar,
   useBoard,
   upsertTitle,
-  BOARDS,
+  BOARD_ENTITIES,
   PButton,
   TitleTooltip,
   mergeUtilityBarConfigs,
@@ -164,7 +164,7 @@ export function Visualisation(props: PVisualisation) {
         setOpen={setConfirmationModalOpen}
         open={confirmationModalOpen}
         onConfirmClick={() => onDeleteComponent(id)}
-        itemType={BOARDS.COMPONENT}
+        itemType={BOARD_ENTITIES.COMPONENT}
       />
     </>
   );

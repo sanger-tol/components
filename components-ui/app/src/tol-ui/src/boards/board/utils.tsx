@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  BOARDS,
+  BOARD_ENTITIES,
+  BOARDS_API,
   TsDataSource,
   IBoard,
   API_METHODS,
@@ -67,7 +68,7 @@ export function replaceURLState(boardId: string, viewId: string) {
   window.history.replaceState(
     null,
     "",
-    `/${BOARDS.BOARD}/${boardId}?${BOARDS.VIEW}=${viewId}`,
+    `/${BOARD_ENTITIES.BOARD}/${boardId}?${BOARD_ENTITIES.VIEW}=${viewId}`,
   );
 }
 
@@ -81,7 +82,7 @@ export async function copyBoard(
   return await copyBoardEntity<IBoard>(
     boardDataSource,
     entityId,
-    BOARDS.OPERATIONS.COPY,
+    BOARDS_API.OPERATIONS.COPY,
     parentEntityType,
     title,
     copyEntityType,
@@ -106,7 +107,7 @@ export async function copyView(
   return await copyBoardEntity<IView>(
     boardDataSource,
     entityId,
-    BOARDS.OPERATIONS.COPY,
+    BOARDS_API.OPERATIONS.COPY,
     parentEntityType,
     title,
     copyEntityType,
@@ -165,7 +166,7 @@ export async function onAddView(
       const view = res.data;
       updateViewInUrl(view.id);
       return addBoardEntityInParentState<IView, IBoard>(
-        BOARDS.VIEW,
+        BOARD_ENTITIES.VIEW,
         view,
         board
       )

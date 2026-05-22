@@ -20,7 +20,7 @@ import {
   IView,
   IZone,
   addBoardEntityInParentState,
-  BOARDS,
+  BOARD_ENTITIES,
   postAddBoardEntity,
 } from "../..";
 
@@ -142,7 +142,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
       .then((res) => {
         const zone = res.data;
         const v = addBoardEntityInParentState<IZone, IView>(
-          BOARDS.ZONE,
+          BOARD_ENTITIES.ZONE,
           zone,
           view
         )

@@ -11,7 +11,7 @@ import {
   Visualisations,
   ConfirmationModal,
   upsertTitle,
-  BOARDS,
+  BOARD_ENTITIES,
   UtilityBar,
   useBoard,
   TitleTooltip,
@@ -179,11 +179,11 @@ export function Zone(props: PZone) {
         setOpen={setConfirmationModalOpen}
         open={confirmationModalOpen}
         onConfirmClick={() => onDeleteZone(id)}
-        itemType={BOARDS.ZONE}
+        itemType={BOARD_ENTITIES.ZONE}
       />
       <FilterConfigDrawer
         id={id}
-        boardObjectType={BOARDS.ZONE}
+        boardObjectType={BOARD_ENTITIES.ZONE}
         boardDataSource={boardDataSource}
         dataSource={zone.dataspace!}
         objectType={zone.object_type!}

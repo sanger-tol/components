@@ -22,7 +22,7 @@ import {
   PopUpMessage,
   IUser,
   ACTIONS,
-  BOARDS,
+  BOARD_ENTITIES,
   TOL_DS,
   AttributeTitle,
 } from "..";
@@ -498,7 +498,7 @@ export async function resetTableConfigToDefault(
 ) {
   await boardDataSource
     .getListPage({
-      objectType: BOARDS.BOARD_DIFF,
+      objectType: BOARD_ENTITIES.ENTITY_DIFF,
       filter: {
         and_: {
           component_id: { eq: { value: componentId } },
@@ -511,7 +511,7 @@ export async function resetTableConfigToDefault(
       const id: string = res?.["id"];
       if (id) {
         await boardDataSource.deleteByID({
-          objectType: BOARDS.BOARD_DIFF,
+          objectType: BOARD_ENTITIES.ENTITY_DIFF,
           id: id,
         });
       }
@@ -531,7 +531,7 @@ export async function resetTableConfigToDefault(
 // ): Promise<ITableConfigSave | null> => {
 //   return await dataSource
 //     .getOne({
-//       objectType: BOARDS.COMPONENT,
+//       objectType: BOARD_ENTITIES.COMPONENT,
 //       id: componentId,
 //       requestedFields: ["config"],
 //     })
@@ -571,7 +571,7 @@ export async function getInitialDiffState(
 ): Promise<IDiffState> {
   // Check for a diff in local storage for anonymous users
   const localDiff = getTableConfigLocalStorage(
-    `${BOARDS.BOARD_DIFF}_${componentId}`,
+    `${BOARD_ENTITIES.ENTITY_DIFF}_${componentId}`,
   ) as Partial<IComponentConfig> | null;
 
   const switchConfigState = () => {

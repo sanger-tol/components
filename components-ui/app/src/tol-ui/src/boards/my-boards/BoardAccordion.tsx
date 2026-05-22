@@ -16,7 +16,7 @@ import {
   AccordionHeader,
   DropdownButtons,
   ConfirmationModal,
-  BOARDS,
+  BOARD_ENTITIES,
   useItemData,
   fetchSubItemId,
   returnComponentInfo,
@@ -64,12 +64,12 @@ export function BoardAccordion(props: BoardsAccordionProps) {
   const [boardIdToDelete, setBoardIdToDelete] = useState<string | null>(null);
 
   const goToBoard = (boardId: string) => {
-    history.push(`/${BOARDS.BOARD}/${boardId}`);
+    history.push(`/${BOARD_ENTITIES.BOARD}/${boardId}`);
   };
 
   // @ts-ignore
   const goToView = (boardId: string, viewId: string) => {
-    history.push(`/${BOARDS.BOARD}/${boardId}`);
+    history.push(`/${BOARD_ENTITIES.BOARD}/${boardId}`);
   };
 
   // @ts-ignore
@@ -80,7 +80,7 @@ export function BoardAccordion(props: BoardsAccordionProps) {
           setOpen={setOpenDelete}
           open={openDelete}
           onConfirmClick={deleteBoard}
-          itemType={BOARDS.BOARD}
+          itemType={BOARD_ENTITIES.BOARD}
         />
       );
     }
@@ -96,7 +96,7 @@ export function BoardAccordion(props: BoardsAccordionProps) {
     await boardDataSource
       .custom({
         method: API_METHODS.DELETE,
-        resource: `${BOARDS.BOARD}/${boardIdToDelete}`,
+        resource: `${BOARD_ENTITIES.BOARD}/${boardIdToDelete}`,
       })
       .then((res: any) => {
         if (res.status === 200) {
@@ -279,9 +279,9 @@ export function BoardAccordion(props: BoardsAccordionProps) {
             <div key={zoneId} style={{ marginTop: "15px" }}>
               <AccordionBase
                 id={zoneId}
-                objectType={BOARDS.COMPONENT_ZONE}
+                objectType={BOARD_ENTITIES.JOINING_ENTITIES.COMPONENT_ZONE}
                 filterKey="zone.id"
-                itemType={BOARDS.COMPONENT as string}
+                itemType={BOARD_ENTITIES.COMPONENT as string}
                 title={zoneData[zoneId]?.[0].title || "Untitled Zone"}
                 subHeader={zoneData[zoneId]?.[0].objectType}
                 clickable={false}
@@ -315,9 +315,9 @@ export function BoardAccordion(props: BoardsAccordionProps) {
                 <AccordionBase
                   id={viewId}
                   title={viewData[viewId] || "Untitled View (Coming Soon)"}
-                  objectType={BOARDS.ZONE_VIEW}
+                  objectType={BOARD_ENTITIES.JOINING_ENTITIES.ZONE_VIEW}
                   filterKey="view.id"
-                  itemType={BOARDS.ZONE}
+                  itemType={BOARD_ENTITIES.ZONE}
                   clickable={false}
                   renderChildren={(zoneIds) => (
                     <ZonesAccordion zoneIds={zoneIds} />
@@ -353,9 +353,9 @@ export function BoardAccordion(props: BoardsAccordionProps) {
             <AccordionBase
               id={board.id}
               title={board.title}
-              objectType={BOARDS.VIEW_BOARD}
+              objectType={BOARD_ENTITIES.JOINING_ENTITIES.VIEW_BOARD}
               filterKey="board.id"
-              itemType={BOARDS.VIEW}
+              itemType={BOARD_ENTITIES.VIEW}
               clickable={true}
               renderChildren={(viewIds) => (
                 <ViewsAccordion boardId={board.id} viewIds={viewIds} />

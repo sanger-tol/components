@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  BOARDS,
+  BOARD_ENTITIES,
   defineBoardEntity,
   IComponent,
   IFilter,
@@ -37,7 +37,7 @@ export async function updateComponentConfigAndUpsert(
   if (editMode) {
     component.config = { ...config };
     // return await upsertCoreBoardEntity(
-    //   BOARDS.COMPONENT,
+    //   BOARD_ENTITIES.COMPONENT,
     //   { config: config },
     //   boardDataSource,
     //   undefined,
@@ -48,10 +48,10 @@ export async function updateComponentConfigAndUpsert(
   component.config_diff = { ...component.config_diff, config: config };
   return await boardDataSource
     .upsert({
-      objectType: BOARDS.BOARD_DIFF,
+      objectType: BOARD_ENTITIES.ENTITY_DIFF,
       payload: [
         {
-          type: BOARDS.BOARD_DIFF,
+          type: BOARD_ENTITIES.ENTITY_DIFF,
           ...(component.config_diff.id && { id: component.config_diff.id }),
           attributes: {
             user_id: userId,
@@ -94,7 +94,7 @@ export function defineZoneWithComponentList(
       ),
       order: components.map((component) => component.id!),
     },
-    BOARDS.ZONE,
+    BOARD_ENTITIES.ZONE,
   );
 }
 

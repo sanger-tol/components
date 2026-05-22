@@ -13,7 +13,7 @@ import {
   optimiseFieldMetaForSave,
   updateFieldMetaAttribute,
   useAuth,
-  BOARDS,
+  BOARD_ENTITIES,
   setTableConfigLocalStorage,
   clearTableConfigLocalStorage,
   useQueryData,
@@ -65,7 +65,7 @@ export function BoardTable(props: PBoardTable) {
   const { data: remoteDiffState } = useQueryData<IDiffState>(
     [
       // Call the query again, if any of these parameters change
-      BOARDS.BOARD_DIFF,
+      BOARD_ENTITIES.ENTITY_DIFF,
       id,
       user?.id ?? ANONYMOUS_USER_QUERY_KEY,
       String(editMode),
@@ -134,7 +134,7 @@ export function BoardTable(props: PBoardTable) {
       return;
     }
     setTableConfigLocalStorage(
-      `${BOARDS.BOARD_DIFF}_${id}`,
+      `${BOARD_ENTITIES.ENTITY_DIFF}_${id}`,
       ["fieldMeta", "defaultSortByAttribute", "defaultSortByType"],
       [newFieldMeta, defaultSortByAttribute, defaultSortByType],
     );
@@ -194,7 +194,7 @@ export function BoardTable(props: PBoardTable) {
       return;
     }
     setTableConfigLocalStorage(
-      `${BOARDS.BOARD_DIFF}_${id}`,
+      `${BOARD_ENTITIES.ENTITY_DIFF}_${id}`,
       "pageSize",
       pageSize,
     );
@@ -223,7 +223,7 @@ export function BoardTable(props: PBoardTable) {
           },
         )
       : diffState.hasDiff
-        ? (clearTableConfigLocalStorage(`${BOARDS.BOARD_DIFF}_${id}`),
+        ? (clearTableConfigLocalStorage(`${BOARD_ENTITIES.ENTITY_DIFF}_${id}`),
           resetDiffState())
         : null;
   };

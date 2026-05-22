@@ -269,7 +269,7 @@ export function Board(props: PBoard) {
         open={deleteViewConfirmModal}
         setOpen={setDeleteViewConfirmModal}
         onConfirmClick={() => onDeleteView(activeViewId!)}
-        itemType={BOARDS.VIEW}
+        itemType={BOARD_ENTITIES.VIEW}
       />
     </div>
   );
