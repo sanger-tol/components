@@ -45,12 +45,18 @@ export function CellRendererModal(props: PCellRendererModal) {
   const [filterConditions, setFilterConditions] = useState<IFilter>();
   const [attributes, setAttributes] = useState<string[]>(Object.keys(filterConditions?.and_ || {}));
   const [conditionHasPendingChanges, setConditionHasPendingChanges] = useState<boolean>(false);
-  const zoneFilterId = "cell-renderer-zone"
+  const zoneFilterId = "cell-renderer-zone";
   const [filterZone, setFilterZone] = useState<IZone>(
     defineZone("dummy-object-for-remote-filters", [
       { id: zoneFilterId, filter: renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} } },
     ]),
   );
+
+  // On adding a cell renderer parameter, or going back, the filter making
+  // up the parameter should be cleared
+  const resetFilterZone = () => setFilterZone(defineZone("dummy-object-for-remote-filters", [
+    { id: zoneFilterId, filter: { and_: {} } },
+  ]));
 
   const requiredParamKeys = renderer && cellRendererParams[renderer.type]
     ? Object.entries(cellRendererParams[renderer.type].params || {})
@@ -145,6 +151,7 @@ export function CellRendererModal(props: PCellRendererModal) {
     setRenderer({ ...renderer! });
     setSelectedConditionParam(undefined);
     setConditionHasPendingChanges(false);
+    resetFilterZone();
   }
 
   const TooltipHelp = (
@@ -194,7 +201,10 @@ export function CellRendererModal(props: PCellRendererModal) {
       />
       <Button
         {...BUTTONS.RETURN}
-        onClick={() => setSelectedConditionParam(undefined)}
+        onClick={() => {
+          setSelectedConditionParam(undefined);
+          resetFilterZone();
+        }}
       />
     </>
   );
