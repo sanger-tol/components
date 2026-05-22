@@ -18,4 +18,3 @@ export * from "./plates.constants";
 export * from "./regex.constants";
 export * from "./statistics.constants";
 export * from "./table.constants";
-export * from "./user.constants";
