@@ -7,24 +7,18 @@ SPDX-License-Identifier: MIT
 import {
   TsDataSource,
   BOARD_ENTITIES,
-  IZone,
-  IBoard,
-  IView,
-  IComponent,
   deepCopy,
   API_METHODS,
   PopUpMessage,
-  ERROR_FETCHING_BOARD_ENTITY,
-  ERROR_UPDATING_TITLE,
-  ERROR_ADDING_BOARD_ENTITY,
-  ERROR_REORDERING_BOARD_ENTITY,
+  BOARD_MESSAGE_TEXT,
   BOARDS_API,
+  MESSAGE_TYPE,
 } from "..";
-
+import type { IZone, IBoard, IView, IComponent, TBoardEntityType } from "..";
 
 /**
  * Returns the prefix for a given board entity type.
- * 
+ *
  * @param objectType The type of the board entity (e.g. 'board').
  * @returns The prefix for the board entity type (e.g. 'b' for 'board').
  */
@@ -39,17 +33,17 @@ export function getEntityPrefix(objectType: string): string {
  * @returns The board object type string (e.g. 'board').
  * @throws If the prefix is not recognised.
  */
-export function deriveBoardObjectType(id: string): string {
+export function deriveBoardObjectType(id: string): TBoardEntityType {
   const prefix = id.split("_")[0];
   switch (prefix) {
     case "b":
-      return BOARD_ENTITIES.BOARD;
+      return BOARD_ENTITIES.ENTITIES.BOARD;
     case "v":
-      return BOARD_ENTITIES.VIEW;
+      return BOARD_ENTITIES.ENTITIES.VIEW;
     case "z":
-      return BOARD_ENTITIES.ZONE;
+      return BOARD_ENTITIES.ENTITIES.ZONE;
     case "c":
-      return BOARD_ENTITIES.COMPONENT;
+      return BOARD_ENTITIES.ENTITIES.COMPONENT;
     default:
       throw new Error(`Unknown board entity prefix: ${prefix}`);
   }
@@ -70,18 +64,25 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
 ): Partial<TEntity> {
   // Add default values for filter and title if the entity is a zone or component
   let defaults = {};
-  if (objectType === BOARD_ENTITIES.COMPONENT || objectType === BOARD_ENTITIES.ZONE) {
-    const e = entity as Partial<IZone> | Partial<IComponent>;
+  if (
+    objectType === BOARD_ENTITIES.ENTITIES.COMPONENT ||
+    objectType === BOARD_ENTITIES.ENTITIES.ZONE
+  ) {
+    const definedEntity = entity as Partial<IZone> | Partial<IComponent>;
     defaults = {
-      filter: e.filter ? deepCopy(e.filter) : { and_: {} },
-      defaultFilter: e.filter ? deepCopy(e.filter) : { and_: {} },
-      title: e.title || "",
+      filter: definedEntity.filter
+        ? deepCopy(definedEntity.filter)
+        : { and_: {} },
+      defaultFilter: definedEntity.filter
+        ? deepCopy(definedEntity.filter)
+        : { and_: {} },
+      title: definedEntity.title || "",
     };
   }
 
   // If the objectType is not component, we need to set up an empty object for the child board level
   // and an empty order array in the parent board entity
-  if (objectType !== BOARD_ENTITIES.COMPONENT) {
+  if (objectType !== BOARD_ENTITIES.ENTITIES.COMPONENT) {
     defaults = {
       children: {},
       order: [],
@@ -107,13 +108,11 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
 export function addBoardEntityInParentState<
   TEntity extends IView | IZone | IComponent,
   TParent extends IBoard | IView | IZone,
->(
-  objectType: string,
-  entity: Partial<TEntity>,
-  parentEntity: TParent,
-) {
+>(objectType: string, entity: Partial<TEntity>, parentEntity: TParent) {
   const definedEntity = defineBoardEntity(entity, objectType);
-  parentEntity.children[entity.id!] = { ...definedEntity } as unknown as TEntity;
+  parentEntity.children[entity.id!] = {
+    ...definedEntity,
+  } as TEntity;
   parentEntity.order.push(entity.id!);
   return parentEntity;
 }
@@ -126,10 +125,7 @@ export function addBoardEntityInParentState<
  */
 export function deleteBoardEntityInParentState<
   TParent extends IBoard | IView | IZone,
->(
-  id: string,
-  parentEntity: TParent
-) {
+>(id: string, parentEntity: TParent) {
   delete parentEntity.children[id];
   parentEntity.order = parentEntity?.order?.filter(
     (currentId) => currentId !== id,
@@ -147,19 +143,19 @@ export async function fetchBoardEntityAndChildren(
   boardDataSource: TsDataSource,
   parentId: string,
 ) {
+  const entityType = deriveBoardObjectType(parentId);
   return await boardDataSource
     .custom({
       method: API_METHODS.GET,
       resource: `${BOARDS_API.OPERATIONS.GET}/${parentId}`,
     })
-    .then((res) => {
+    .then((res: { data: IBoard }) => {
       return res.data;
     })
     .catch(() => {
       PopUpMessage({
-        type: "error",
-        // TODO: USE NEW MESSAGE SYSTEM
-        message: ERROR_FETCHING_BOARD_ENTITY,
+        type: MESSAGE_TYPE.ERROR,
+        message: BOARD_MESSAGE_TEXT(entityType).FETCH.ERROR,
       });
     });
 }
@@ -174,8 +170,9 @@ export async function fetchBoardEntityAndChildren(
 export async function patchReorderBoardEntity(
   boardDataSource: TsDataSource,
   parentId: string,
-  childIds: string[]
+  childIds: string[],
 ) {
+  const entityType = deriveBoardObjectType(parentId);
   return await boardDataSource
     .custom({
       method: API_METHODS.PATCH,
@@ -184,8 +181,8 @@ export async function patchReorderBoardEntity(
     })
     .catch(() => {
       PopUpMessage({
-        type: "error",
-        message: ERROR_REORDERING_BOARD_ENTITY,
+        type: MESSAGE_TYPE.ERROR,
+        message: BOARD_MESSAGE_TEXT(entityType).REORDER.ERROR,
       });
     });
 }
@@ -202,6 +199,7 @@ export async function postAddBoardEntity(
   parentId: string,
   attributes: Record<string, any> = {},
 ) {
+  const entityType = deriveBoardObjectType(parentId);
   return await boardDataSource
     .custom({
       method: API_METHODS.POST,
@@ -210,9 +208,8 @@ export async function postAddBoardEntity(
     })
     .catch(() => {
       PopUpMessage({
-        type: "error",
-        // TODO: USE NEW MESSAGE SYSTEM
-        message: ERROR_ADDING_BOARD_ENTITY,
+        type: MESSAGE_TYPE.ERROR,
+        message: BOARD_MESSAGE_TEXT(entityType).ADD.ERROR,
       });
     });
 }
@@ -223,28 +220,29 @@ export async function postAddBoardEntity(
  * @param id The identifier of the board entity.
  * @param boardDataSource The data source used for the upsert operation.
  */
-export function upsertTitle(
+export async function upsertTitle(
   title: string,
   id: string,
   boardDataSource: TsDataSource,
 ) {
   const objectType = deriveBoardObjectType(id);
-  boardDataSource.upsert({
-    objectType: objectType,
-    payload: [
-      {
-        type: objectType,
-        id: id,
-        attributes: {
-          title: title,
+  await boardDataSource
+    .upsert({
+      objectType: objectType,
+      payload: [
+        {
+          type: objectType,
+          id: id,
+          attributes: {
+            title: title,
+          },
         },
-      },
-    ],
-  })
+      ],
+    })
     .catch(() => {
       PopUpMessage({
-        type: "error",
-        message: ERROR_UPDATING_TITLE,
+        type: MESSAGE_TYPE.ERROR,
+        message: BOARD_MESSAGE_TEXT(objectType).UPDATE.ERROR,
       });
     });
 }
@@ -259,21 +257,22 @@ export async function deleteBoardEntity(
   boardDataSource: TsDataSource,
   id: string,
 ) {
+  const entityType = deriveBoardObjectType(id);
   return await boardDataSource
     .custom({
-      resource: id, // TODO: Delete entity
       method: API_METHODS.DELETE,
+      resource: `${BOARDS_API.OPERATIONS.DELETE}/${id}`,
     })
     .then(() => {
       PopUpMessage({
-        type: "success",
-        message: "", // TODO: USE NEW MESSAGE SYSTEM
+        type: MESSAGE_TYPE.SUCCESS,
+        message: BOARD_MESSAGE_TEXT(entityType).DELETE.SUCCESS,
       });
     })
     .catch(() => {
       PopUpMessage({
-        type: "error",
-        message: "", // TODO: USE NEW MESSAGE SYSTEM
+        type: MESSAGE_TYPE.ERROR,
+        message: BOARD_MESSAGE_TEXT(entityType).DELETE.ERROR,
       });
     });
 }
@@ -285,33 +284,25 @@ export async function deleteBoardEntity(
  *
  * @param componentId The identifier of the component whose diff should be deleted.
  * @param boardDataSource The data source used to query the board diff.
+ * @param diffId The identifier of the board diff to be deleted.
  * @param userId The identifier of the user who owns the diff. If not provided, the function returns early.
  */
 export async function deleteComponentDiff(
-  componentId: string,
   boardDataSource: TsDataSource,
+  diffId: string,
   userId?: string,
 ) {
   if (!userId) return;
-
-  // The board_diff endpoint does not support DELETE, so we upsert with config: null.
-  // getComponentData skips the proxy when diff.config is null, restoring the original config.
-  const res = await boardDataSource.getListPage({
-    objectType: BOARD_ENTITIES.ENTITY_DIFF,
-    filter: {
-      and_: {
-        component_id: { eq: { value: componentId } },
-        user_id: { eq: { value: userId } },
-      },
-    },
-    requestedFields: ["id"],
-  });
-  const diffId = res?.[0]?.id;
-  // const localDataSource = new TsDataSource({ apiPath: BOARD_DIFF_API_PATH });
-  if (diffId) {
-    await localDataSource.deleteByID({
-      objectType: BOARD_ENTITIES.ENTITY_DIFF,
-      id: diffId,
+  await boardDataSource
+    .custom({
+      method: API_METHODS.DELETE,
+      resource: `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}/${diffId}`,
+    })
+    .catch(() => {
+      PopUpMessage({
+        type: MESSAGE_TYPE.ERROR,
+        message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.COMPONENT).UPDATE
+          .ERROR,
+      });
     });
-  }
 }

@@ -4,10 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import {
-  TsDataSource,
-  BOARD_ENTITIES,
-} from "..";
+import { TsDataSource, BOARD_ENTITIES } from "..";
 import type { FieldMeta, PUtilityBar, IFilter } from "..";
 
 export interface TBoardEntity {
@@ -44,7 +41,7 @@ export interface IComponent extends TBoardEntity, IBoardFilter {
   object_type?: string;
   dataspace?: TsDataSource;
   config?: Partial<IComponentConfig>;
-  config_diff?: {id: string, config:Partial<IComponentConfig>};
+  config_diff?: { id: string; config: Partial<IComponentConfig> };
   data_source_instance_id?: string;
   ui_api_details: IDBDataSourceInstanceApiDetails;
 }
@@ -73,19 +70,19 @@ export interface IBoard extends IBoardParentEntity<IView> {
   write_privilege?: boolean;
 }
 
-export type TBoardEntityType = (typeof BOARD_ENTITIES)[keyof typeof BOARD_ENTITIES];
+export type TBoardEntityType =
+  (typeof BOARD_ENTITIES.ENTITIES)[keyof typeof BOARD_ENTITIES.ENTITIES];
 export type TBoardParentEntityType = Exclude<
   TBoardEntityType,
-  typeof BOARD_ENTITIES.COMPONENT
+  typeof BOARD_ENTITIES.ENTITIES.COMPONENT
 >;
 export type TBoardChildEntityType = Exclude<
   TBoardEntityType,
-  typeof BOARD_ENTITIES.BOARD
+  typeof BOARD_ENTITIES.ENTITIES.BOARD
 >;
-export type TBoardJoiningEntityType = keyof typeof BOARD_ENTITIES.JOINING_ENTITIES;
-export type TBoardAllEntityTypes =
-  | TBoardEntityType
-  | TBoardJoiningEntityType;
+export type TBoardJoiningEntityType =
+  keyof typeof BOARD_ENTITIES.JOINING_ENTITIES;
+export type TBoardAllEntityTypes = TBoardEntityType | TBoardJoiningEntityType;
 
 /**
  * Example of the board interface

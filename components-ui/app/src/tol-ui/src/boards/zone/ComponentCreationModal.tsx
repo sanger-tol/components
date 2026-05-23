@@ -18,7 +18,7 @@ import {
   PBoard,
   RequiredAsterisk,
   BUTTONS,
-  BOARDS,
+  BOARD_ENTITIES,
   IComponent,
   addBoardEntityInParentState,
   postAddBoardEntity,
@@ -67,7 +67,7 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
       .then((res) => {
         const component = res.data;
         const z = addBoardEntityInParentState<IComponent, IZone>(
-          BOARDS.COMPONENT,
+          BOARD_ENTITIES.ENTITIES.COMPONENT,
           component,
           zone
         )

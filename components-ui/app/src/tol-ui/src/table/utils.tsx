@@ -22,9 +22,9 @@ import {
   PopUpMessage,
   IUser,
   ACTIONS,
-  BOARDS,
   TOL_DS,
   AttributeTitle,
+  BOARD_ENTITIES,
 } from "..";
 
 import type {
@@ -498,7 +498,7 @@ export async function resetTableConfigToDefault(
 ) {
   await boardDataSource
     .getListPage({
-      objectType: BOARDS.BOARD_DIFF,
+      objectType: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
       filter: {
         and_: {
           component_id: { eq: { value: componentId } },
@@ -511,34 +511,12 @@ export async function resetTableConfigToDefault(
       const id: string = res?.["id"];
       if (id) {
         await boardDataSource.deleteByID({
-          objectType: BOARDS.BOARD_DIFF,
+          objectType: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
           id: id,
         });
       }
     });
 }
-
-/**
- * Fetches the saved table configuration for a given component.
- *
- * @param dataSource - The data source used to query the component record
- * @param componentId - The ID of the component whose config should be retrieved
- * @returns The component's table config, or `null` if none exists
- */
-// export const getComponentConfig = async (
-//   dataSource: TsDataSource,
-//   componentId: string,
-// ): Promise<ITableConfigSave | null> => {
-//   return await dataSource
-//     .getOne({
-//       objectType: BOARDS.COMPONENT,
-//       id: componentId,
-//       requestedFields: ["config"],
-//     })
-//     .then((res: TDataObjectOrNull) => {
-//       return res?.config || null;
-//     });
-// };
 
 /**
  * Computes the initial diff state for a component's table configuration.
@@ -571,7 +549,7 @@ export async function getInitialDiffState(
 ): Promise<IDiffState> {
   // Check for a diff in local storage for anonymous users
   const localDiff = getTableConfigLocalStorage(
-    `${BOARDS.BOARD_DIFF}_${componentId}`,
+    `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${componentId}`,
   ) as Partial<IComponentConfig> | null;
 
   const switchConfigState = () => {

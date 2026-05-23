@@ -200,7 +200,6 @@ export function Board(props: PBoard) {
           const copiedBoard = await copyBoard(
             boardDataSource,
             id!,
-            BOARD_ENTITIES.BOARD,
             newBoardCopyTitle,
             BOARD_ENTITIES.BOARD,
           );
@@ -257,7 +256,7 @@ export function Board(props: PBoard) {
         open={deleteViewConfirmModal}
         setOpen={setDeleteViewConfirmModal}
         onConfirmClick={() => onDeleteView(activeViewId!)}
-        itemType={BOARDS.VIEW}
+        itemType={BOARD_ENTITIES.VIEW}
       />
     </div>
   );

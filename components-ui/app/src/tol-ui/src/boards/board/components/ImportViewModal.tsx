@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Input } from "rsuite";
 import {
-  BOARDS,
+  BOARD_ENTITIES,
   Button,
   BUTTONS,
   copyView,
@@ -43,9 +43,8 @@ export function ImportViewModal(props: IImportViewModalProps) {
     const result = await copyView(
       boardDataSource,
       viewImportId,
-      BOARDS.BOARD,
       newViewTitle,
-      BOARDS.VIEW,
+      BOARD_ENTITIES.ENTITIES.VIEW,
       board,
       board?.id,
     );

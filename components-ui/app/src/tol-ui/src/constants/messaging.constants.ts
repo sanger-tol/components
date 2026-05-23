@@ -22,12 +22,12 @@ export const MESSAGE_TYPE: { [key: string]: TMessageType } = {
   ERROR: "error",
 } as const;
 
-
 export const BOARD_MESSAGE_TEXT = (
   boardEntity: TBoardEntityType,
 ): { [key: string]: { [key: string]: string } } => {
-  const entityCapitalised =
-    boardEntity.charAt(0).toUpperCase() + boardEntity.slice(1);
+  const entityCapitalised: string =
+    (boardEntity as string).charAt(0).toUpperCase() +
+    (boardEntity as string).slice(1);
 
   return {
     BOARD_COPY: {
@@ -41,6 +41,21 @@ export const BOARD_MESSAGE_TEXT = (
       ID_COPY: `${entityCapitalised} ID copied to clipboard.`,
       URL_COPY: `${entityCapitalised} URL copied to clipboard.`,
     },
-
+    UPDATE: {
+      ERROR: `Error updating ${entityCapitalised}. Please try again.`,
+    },
+    FETCH: {
+      ERROR: `Error fetching ${entityCapitalised} data. Please try again.`,
+    },
+    DELETE: {
+      SUCCESS: `${entityCapitalised} deleted successfully.`,
+      ERROR: `Error deleting ${entityCapitalised}. Please try again.`,
+    },
+    ADD: {
+      ERROR: `Error adding ${entityCapitalised}. Please try again.`,
+    },
+    REORDER: {
+      ERROR: `Error reordering ${entityCapitalised}. Please refresh the page and try again.`,
+    },
   } as const;
 };

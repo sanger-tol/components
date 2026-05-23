@@ -6,7 +6,8 @@
 
 import { useHistory } from "react-router-dom";
 import {
-  BOARDS,
+  BOARD_ENTITIES,
+  BOARDS_API,
   Button,
   PBoard,
   MY_BOARDS_TITLE,
@@ -28,13 +29,13 @@ export function MyBoardsHeader(props: PBoard) {
     boardDataSource
       .custom({
         method: API_METHODS.POST,
-        resource: BOARDS.OPERATIONS.CREATE_BOARD,
+        resource: BOARDS_API.OPERATIONS.CREATE_BOARD,
         body: {}
       })
       .then((res) => {
         const { id } = res.data;
         setTimeout(() => {
-          history.push(`/${BOARDS.BOARD}/${id}`);
+          history.push(`/${BOARD_ENTITIES.ENTITIES.BOARD}/${id}`);
         }, 500);
       })
       .catch(() => {

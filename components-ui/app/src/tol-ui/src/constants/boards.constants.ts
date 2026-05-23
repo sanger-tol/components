@@ -17,12 +17,14 @@ export const BOARD_CHILDREN_KEYS = {
 } as const;
 
 export const BOARD_ENTITIES = {
-  BOARD: "board",
-  VIEW: "view",
-  ZONE: "zone",
-  COMPONENT: "component",
-  ENTITY_DIFF: "entity_diff",
-  DATA_SOURCE_INSTANCE: "data_source_instance",
+  ENTITIES: {
+    BOARD: "board",
+    VIEW: "view",
+    ZONE: "zone",
+    COMPONENT: "component",
+    ENTITY_DIFF: "entity_diff",
+    DATA_SOURCE_INSTANCE: "data_source_instance",
+  },
   JOINING_ENTITIES: {
     VIEW_BOARD: "view_board",
     ZONE_VIEW: "zone_view",

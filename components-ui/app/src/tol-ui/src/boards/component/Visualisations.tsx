@@ -13,7 +13,7 @@ import {
   useBoard,
   useEffectUpdate,
   Visualisation,
-  BOARDS,
+  BOARD_ENTITIES,
   ACTIONS_DS,
   patchReorderBoardEntity,
   getWidgetOrder,
@@ -122,7 +122,7 @@ export function Visualisations(props: PVisualisations) {
                   })
                 }
                 boardDataSource={boardDataSource}
-                boardObjectType={BOARDS.COMPONENT}
+                boardObjectType={BOARD_ENTITIES.ENTITIES.COMPONENT}
                 title={component.title!}
                 actionsDataSource={actionsDataSource}
                 onDeleteComponent={onDeleteComponent}
