@@ -72,7 +72,9 @@ export const addZoneButton = (
   icon: "object-group",
 });
 
-export const copyBoardButton = (onClick: () => void): PButton => ({
+export const copyBoardButton = (
+  onClick: () => void,
+): PButton => ({
   ...BUTTONS.COPY,
   onClick: onClick,
   tooltip: "Copy Board",

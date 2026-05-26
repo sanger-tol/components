@@ -9,3 +9,4 @@ export * from "./Titles";
 export * from "./ImportViewModal";
 export * from "./BoardUtilityButtons";
 export * from "./BoardButtonsUtilityBar";
+export * from "./ViewTabs";

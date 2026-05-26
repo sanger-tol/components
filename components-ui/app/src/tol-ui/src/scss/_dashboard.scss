@@ -181,22 +181,12 @@
   }
 
   .tol-tabs-nav {
-
-    &:has(.tol-view-tab) {
-      margin-right: 6px;
-      padding: 6px 0;
-    }
-
     &.tol-views-nav {
       scrollbar-width: none;
 
       &::-webkit-scrollbar {
         display: none;
       }
-    }
-
-    .tol-view-tab.rs-btn {
-      padding: 6px 0px !important;
     }
   }
 

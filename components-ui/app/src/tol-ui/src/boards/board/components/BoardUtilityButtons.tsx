@@ -4,31 +4,22 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode } from "react";
 import {
   IBoard,
   ITab,
-  MAX_VIEWS_ALLOWED,
-  onViewTitleSave,
-  PButton,
   PRIVILEGE,
-  SortableTabs,
-  TsDataSource,
 } from "../../..";
 import {
-  addViewButton,
   copyBoardButton,
   copyViewIdToClipboard,
   deleteViewButton,
   editOrExitButton,
-  importViewButton,
   layoutOrExitButton,
   shareButton,
   viewSelectorTab,
-  ViewTitle,
 } from ".";
 
-export function buildUtilityBarButtons(
+export function buildBoardUtilityBarButtons(
   editMode: boolean,
   layoutMode: boolean,
   privilege: string | undefined,
@@ -67,32 +58,16 @@ export function buildUtilityBarButtons(
   ];
 }
 
-export function buildViewCreationButtons(
-  editMode: boolean,
-  onAddView: () => void,
-  onOpenViewImportModal: () => void,
-  board?: IBoard,
-) {
-  const isMaxViews = (board?.order?.length ?? 0) >= MAX_VIEWS_ALLOWED;
-  return [
-    addViewButton(editMode, onAddView, isMaxViews),
-    importViewButton(editMode, onOpenViewImportModal, isMaxViews),
-  ];
-}
-
-export function buildSingleViewTabButton(
+export function buildViewTab(
   viewId: string,
   viewTitle: string,
   activeViewId: string | null,
   editMode: boolean,
-  boardDataSource: TsDataSource,
   onOpenDeleteViewModal: () => void,
-  setBoard: (board: IBoard) => void,
   onClickView: (viewId: string) => () => void,
   board?: IBoard,
-): { buttons: PButton[]; label: ReactNode } {
-  if (!board) return { buttons: [], label: undefined };
-  const isEditingTitle = editMode && activeViewId === viewId;
+): ITab {
+  const isMoreThanOneView = (board?.order?.length ?? 0) > 1;
 
   return {
     buttons: [
@@ -100,77 +75,13 @@ export function buildSingleViewTabButton(
         viewId,
         viewTitle,
         onClickView(viewId),
-        !isEditingTitle && (board?.order?.length ?? 0) > 1,
+        isMoreThanOneView,
       ),
       deleteViewButton(
         onOpenDeleteViewModal,
-        editMode && activeViewId === viewId && (board?.order?.length ?? 0) > 1,
+        editMode && activeViewId === viewId && isMoreThanOneView,
       ),
       copyViewIdToClipboard(viewId, activeViewId === viewId && !editMode),
     ],
-    label: isEditingTitle
-      ? ViewTitle(true, viewTitle, async (value) => {
-        const updatedBoard = await onViewTitleSave(value, viewId, board, boardDataSource);
-        if (updatedBoard) setBoard(updatedBoard);
-      })
-      : undefined,
   };
-}
-
-export function buildViewTabButtonArray(
-  activeViewId: string | null,
-  editMode: boolean,
-  boardDataSource: TsDataSource,
-  onOpenDeleteViewModal: () => void,
-  onOpenViewImportModal: () => void,
-  onClickView: (viewId: string) => () => void,
-  onAddView: () => void,
-  onReorderView: (reorderedIds: string[]) => void,
-  board: IBoard,
-  setBoard: (board: IBoard) => void,
-
-): ReactNode[] {
-  if (!board) return [];
-
-  const viewTabButtons = (viewId: string, viewTitle: string) =>
-    buildSingleViewTabButton(
-      viewId,
-      viewTitle,
-      activeViewId,
-      editMode,
-      boardDataSource,
-      onOpenDeleteViewModal,
-      setBoard,
-      onClickView,
-      board,
-    );
-
-  const viewCreationButtons = buildViewCreationButtons(
-    editMode,
-    onAddView,
-    onOpenViewImportModal,
-    board,
-  );
-
-  return [
-    ...viewCreationButtons,
-    <SortableTabs
-      key="views-sortable-tabs"
-      activeId={activeViewId!}
-      className="tol-views-nav"
-      onReorder={onReorderView}
-      tabs={[
-        ...(board?.order
-          ?.map((viewId) => {
-            const view = board?.children?.[viewId];
-            if (view) {
-              const { buttons, label } = viewTabButtons(viewId, view.title || "Untitled");
-              return { buttons, label } as ITab;
-            }
-            return null;
-          })
-          .filter((btn): btn is ITab => btn !== null) ?? []),
-      ]}
-    />,
-  ];
 }

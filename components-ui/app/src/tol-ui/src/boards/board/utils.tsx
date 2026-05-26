@@ -126,7 +126,7 @@ export async function copyView(
 }
 
 export async function onViewTitleSave(
-  value: string,
+  newTitle: string,
   viewId: string,
   board: IBoard,
   boardDataSource: TsDataSource,
@@ -134,9 +134,9 @@ export async function onViewTitleSave(
   const viewsMap = board?.children ?? {};
 
   const currentTitle = viewsMap[viewId]?.title;
-  if (currentTitle === value) return;
+  if (currentTitle === newTitle) return;
 
-  await upsertTitle(value, viewId, boardDataSource);
+  await upsertTitle(newTitle, viewId, boardDataSource);
 
   return {
     ...board,
@@ -144,7 +144,7 @@ export async function onViewTitleSave(
       ...viewsMap,
       [viewId]: {
         ...viewsMap[viewId],
-        title: value,
+        title: newTitle,
       },
     } as TBoardChildren<IView>,
   } as IBoard;

@@ -41,5 +41,9 @@ export const ViewTitle = (
   );
 };
 
-export const ViewModeBoardTitle = (editable: boolean, title: string) =>
-  !editable ? [<h3 key="board-title">{title}</h3>] : undefined;
+export const ViewModeBoardTitle = (
+  editable: boolean,
+  text: string
+) => {
+  return editable ? undefined : [<h3 key="board-title">{text}</h3>];
+};

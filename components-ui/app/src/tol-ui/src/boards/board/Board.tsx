@@ -31,7 +31,7 @@ import {
   addBoardEntityInParentState,
 } from "../..";
 import type { IBoard, IView, TNavBrand, TsDataSource } from "../..";
-import { BoardButtonsUtilityBar, ImportViewModal } from "./components";
+import { BoardUtilityBar, ImportViewModal } from "./components";
 
 // TODO: onAddView is very similar to view copy logic, make them the same.
 // TODO: FIX ALL THE STYLING FOR TAB BUTTONS... THEY ARE A MESS RIGHT NOW
@@ -241,12 +241,12 @@ export function Board(props: PBoard) {
           </>
         }
       />
-      <BoardButtonsUtilityBar
+      <BoardUtilityBar
         onOpenBoardCopyModal={() => setBoardCopyModalOpen(true)}
         setNewBoardCopyTitle={setNewBoardCopyTitle}
         onOpenAddZone={() => setOpenAddZoneModal(true)}
         newBoardCopyTitle={newBoardCopyTitle}
-        activeViewId={activeViewId || ""}
+        activeViewId={activeViewId}
         boardDataSource={boardDataSource}
         onOpenDeleteViewModal={() => setDeleteViewConfirmModal(true)}
         onOpenViewImportModal={() => setViewImportModalOpen(true)}
