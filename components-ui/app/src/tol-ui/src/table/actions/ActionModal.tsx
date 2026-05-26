@@ -10,8 +10,7 @@ import {
   RemoteTable,
   TsDataSource,
   useZone,
-  env,
-  LOCAL_API_DATA_PATH
+  API_PATHS
 } from "../..";
 
 
@@ -26,8 +25,8 @@ export function ActionModal(props: Props) {
   const {
     objectType,
     actionDataSource = new TsDataSource({
-      apiPath: env.API_PATH,
-      apiDataPath: LOCAL_API_DATA_PATH,
+      apiPath: API_PATHS.API_PATH,
+      apiDataPath: API_PATHS.ACTION,
     })
   } = props
 

@@ -65,10 +65,11 @@ export function View(props: PView) {
 
   const onDeleteZone = (zoneId: string) => {
     deleteBoardEntity(boardDataSource, zoneId)
-      .then(() => {
+      .then((status: string | void) => {
+        if (status !== "success") return;
         deleteBoardEntityInParentState<IView>(zoneId, view);
         setView({ ...view });
-      })
+      });
   };
 
   return (

@@ -13,6 +13,7 @@ import {
   BOARD_MESSAGE_TEXT,
   BOARDS_API,
   MESSAGE_TYPE,
+  HTTP_STATUS_CODES,
 } from "..";
 import type { IZone, IBoard, IView, IComponent, TBoardEntityType } from "..";
 
@@ -57,7 +58,6 @@ export function deriveBoardObjectType(id: string): TBoardEntityType {
  * @param objectType The type of the board entity (e.g. 'view', 'zone', 'component').
  * @returns The defined board entity with default values applied.
  */
-// TODO: DELETE IS NOW AT /delete-entity ENDPOINT
 export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
   entity: Partial<TEntity>,
   objectType: string,
@@ -142,7 +142,7 @@ export function deleteBoardEntityInParentState<
 export async function fetchBoardEntityAndChildren(
   boardDataSource: TsDataSource,
   parentId: string,
-) {
+): Promise<IBoard> {
   const entityType = deriveBoardObjectType(parentId);
   return await boardDataSource
     .custom({
@@ -157,6 +157,7 @@ export async function fetchBoardEntityAndChildren(
         type: MESSAGE_TYPE.ERROR,
         message: BOARD_MESSAGE_TEXT(entityType).FETCH.ERROR,
       });
+      return {} as IBoard;
     });
 }
 
@@ -179,7 +180,14 @@ export async function patchReorderBoardEntity(
       resource: `${BOARDS_API.OPERATIONS.REORDER}/${parentId}`,
       body: { order: childIds },
     })
-    .catch(() => {
+    .catch(({ response }) => {
+      if (response.status === HTTP_STATUS_CODES.FORBIDDEN) {
+        PopUpMessage({
+          type: MESSAGE_TYPE.ERROR,
+          message: BOARD_MESSAGE_TEXT(entityType).REORDER.FORBIDDEN,
+        });
+        return;
+      }
       PopUpMessage({
         type: MESSAGE_TYPE.ERROR,
         message: BOARD_MESSAGE_TEXT(entityType).REORDER.ERROR,
@@ -206,7 +214,14 @@ export async function postAddBoardEntity(
       resource: `${BOARDS_API.OPERATIONS.ADD_NEW}/${parentId}`,
       body: { attributes: attributes },
     })
-    .catch(() => {
+    .catch(({ response }) => {
+      if (response.status === HTTP_STATUS_CODES.FORBIDDEN) {
+        PopUpMessage({
+          type: MESSAGE_TYPE.ERROR,
+          message: BOARD_MESSAGE_TEXT(entityType).ADD.FORBIDDEN,
+        });
+        return;
+      }
       PopUpMessage({
         type: MESSAGE_TYPE.ERROR,
         message: BOARD_MESSAGE_TEXT(entityType).ADD.ERROR,
@@ -256,7 +271,7 @@ export async function upsertTitle(
 export async function deleteBoardEntity(
   boardDataSource: TsDataSource,
   id: string,
-) {
+): Promise<string | void> {
   const entityType = deriveBoardObjectType(id);
   return await boardDataSource
     .custom({
@@ -268,8 +283,16 @@ export async function deleteBoardEntity(
         type: MESSAGE_TYPE.SUCCESS,
         message: BOARD_MESSAGE_TEXT(entityType).DELETE.SUCCESS,
       });
+      return "success";
     })
-    .catch(() => {
+    .catch(({ response }) => {
+      if (response.status === HTTP_STATUS_CODES.FORBIDDEN) {
+        PopUpMessage({
+          type: MESSAGE_TYPE.ERROR,
+          message: BOARD_MESSAGE_TEXT(entityType).DELETE.FORBIDDEN,
+        });
+        return;
+      }
       PopUpMessage({
         type: MESSAGE_TYPE.ERROR,
         message: BOARD_MESSAGE_TEXT(entityType).DELETE.ERROR,
@@ -279,7 +302,7 @@ export async function deleteBoardEntity(
 
 /**
  * Deletes the board diff entry for a given component and user.
- * Since the board_diff endpoint does not support DELETE, this upserts with config: null,
+ * Since the entity_diff endpoint does not support DELETE, this upserts with config: null,
  * which causes getComponentData to skip the proxy and restore the original config.
  *
  * @param componentId The identifier of the component whose diff should be deleted.

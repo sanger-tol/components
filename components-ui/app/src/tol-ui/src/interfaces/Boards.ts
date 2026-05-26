@@ -43,7 +43,7 @@ export interface IComponent extends TBoardEntity, IBoardFilter {
   config?: Partial<IComponentConfig>;
   config_diff?: { id: string; config: Partial<IComponentConfig> };
   data_source_instance_id?: string;
-  ui_api_details: IDBDataSourceInstanceApiDetails;
+  ui_api_details?: IDBDataSourceInstanceApiDetails;
 }
 
 export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {

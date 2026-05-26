@@ -33,7 +33,6 @@ import {
 import type { IBoard, IView, TNavBrand, TsDataSource } from "../..";
 import { BoardButtonsUtilityBar, ImportViewModal } from "./components";
 
-// TODO: onAddView is very similar to view copy logic, make them the same.
 // TODO: FIX ALL THE STYLING FOR TAB BUTTONS... THEY ARE A MESS RIGHT NOW
 
 export interface PBoard {
@@ -93,7 +92,7 @@ export function Board(props: PBoard) {
     isSuccess,
     isError,
   } = useQueryData<IBoard>(
-    [BOARD_ENTITIES.BOARD, id],
+    [BOARD_ENTITIES.ENTITIES.BOARD, id],
     () => fetchBoardEntityAndChildren(boardDataSource, id!),
     { enabled: !!id },
   );
@@ -128,36 +127,38 @@ export function Board(props: PBoard) {
   };
 
   const onAddView = async () => {
-    postAddBoardEntity(boardDataSource, board?.id!,)
-      .then((res) => {
-        const view = res.data;
-        const b = addBoardEntityInParentState<IView, IBoard>(
-          BOARD_ENTITIES.VIEW,
-          view,
-          board
-        )
-        setBoard({ ...b });
-        setActiveViewId(view.id);
-        updateViewInUrl(view.id);
-      })
+    postAddBoardEntity(boardDataSource, board?.id!).then((res) => {
+      const view = res.data;
+      const b = addBoardEntityInParentState<IView, IBoard>(
+        BOARD_ENTITIES.ENTITIES.VIEW,
+        view,
+        board,
+      );
+      setBoard({ ...b });
+      setActiveViewId(view.id);
+      updateViewInUrl(view.id);
+    });
   };
 
   const onReorderViews = (reorderedIds: string[]) => {
-    patchReorderBoardEntity(boardDataSource, board?.id!, reorderedIds)
-      .then(() => {
+    patchReorderBoardEntity(boardDataSource, board?.id!, reorderedIds).then(
+      () => {
         board.order = reorderedIds;
         setBoard({ ...board });
-      });
+      },
+    );
   };
 
-  const onDeleteView = (viewId: string) => {
-    deleteBoardEntity(boardDataSource, viewId)
-      .then(() => {
+  const onDeleteView = async (viewId: string) => {
+    await deleteBoardEntity(boardDataSource, viewId).then(
+      (status: string | void) => {
+        if (status !== "success") return;
         deleteBoardEntityInParentState<IBoard>(viewId, board);
         setBoard({ ...board });
         setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
         setActiveViewId(board.order[0]);
-      })
+      },
+    );
   };
 
   if (isError) {
@@ -187,12 +188,12 @@ export function Board(props: PBoard) {
         setOpen={setBoardCopyModalOpen}
         title={newBoardCopyTitle}
         setTitle={setNewBoardCopyTitle}
-        itemType={BOARD_ENTITIES.BOARD}
+        itemType={BOARD_ENTITIES.ENTITIES.BOARD}
         confirmationAction={async () => {
           if (!newBoardCopyTitle.trim()) {
             PopUpMessage({
               type: MESSAGE_TYPE.WARNING,
-              message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.BOARD).BOARD_COPY
+              message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).BOARD_COPY
                 .NO_TITLE_ERROR,
             });
             return;
@@ -201,7 +202,7 @@ export function Board(props: PBoard) {
             boardDataSource,
             id!,
             newBoardCopyTitle,
-            BOARD_ENTITIES.BOARD,
+            BOARD_ENTITIES.ENTITIES.BOARD,
           );
           if (copiedBoard) {
             setBoard(copiedBoard);
@@ -256,7 +257,7 @@ export function Board(props: PBoard) {
         open={deleteViewConfirmModal}
         setOpen={setDeleteViewConfirmModal}
         onConfirmClick={() => onDeleteView(activeViewId!)}
-        itemType={BOARD_ENTITIES.VIEW}
+        itemType={BOARD_ENTITIES.ENTITIES.VIEW}
       />
     </div>
   );

@@ -125,7 +125,7 @@ export function generateLayout(zone: IZone) {
     ["lg", "md", "sm"].forEach((breakpoint) => {
       let w, h;
       // filterBlock components have lg width but sm height
-      if (component.type === "filterBlock") {
+      if (component.component_type === "filterBlock") { // TODO: Add types for component_type
         w = types.lg[breakpoint].w;
         h = breakpoint === "lg" ? 9 : breakpoint === "md" ? 15 : 26;
       } else {

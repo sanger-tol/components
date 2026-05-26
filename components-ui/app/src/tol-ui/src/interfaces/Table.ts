@@ -46,7 +46,7 @@ export interface IDiffState {
    * The current table configuration, used to determine what the differences are with the default configuration.
    * This is required in order to show the user what changes will be made if they choose to reset their configuration.
    */
-  currentConfig: Partial<IComponentConfig> | null;
+  currentConfig: Partial<ITableConfigSave> | null;
 }
 
 export interface ITableConfigSave extends ITableDrawerSave, ITableOtherSave {}

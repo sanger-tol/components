@@ -37,24 +37,14 @@ export const HTTP_STATUS_CODES: Record<string, number> = {
   INTERNAL_SERVER_ERROR: 500,
 } as const;
 
-export const AUTH_API_DATA_PATH = "/auth";
-export const LOCAL_API_DATA_PATH = "/local";
-export const ACTION_API_DATA_PATH = "/local";
-export const PREFECT_API_DATA_PATH = "/prefect";
-export const DATA_UPLOAD_API_DATA_PATH = "/data-upload";
-export const PIPELINE_API_DATA_PATH = "/run-pipeline";
-export const BOARDS_API_DATA_PATH = "/boards";
-export const API_PATH = env.API_PATH;
-
-// TODO: Add to env variables and remove hardcoding of API paths in the above constants.
 export const API_PATHS: Record<string, string> = {
+  API_DATA_PATH: env.API_DATA_PATH,
   API_PATH: env.API_PATH,
   AUTH: env.AUTH_API_DATA_PATH,
   LOCAL: env.LOCAL_API_DATA_PATH,
   ACTION: env.ACTION_API_DATA_PATH,
   PREFECT: env.PREFECT_API_DATA_PATH,
-  DATA_UPLOAD: env.DATA_UPLOAD_API_DATA_PATH,
-  PIPELINE: env.PIPELINE_API_DATA_PATH,
+  PIPELINE: env.PIPELINE_API_PATH,
   BOARDS: env.BOARDS_API_DATA_PATH,
 } as const;
 

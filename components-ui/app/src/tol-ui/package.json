@@ -3,7 +3,7 @@
   "version": "3.5.1",
   "description": "An npm components package for ToL systems",
   "dependencies": {
-    "sass": "^1.77.8",
+    "sass": "1.77.0",
     "axios": "^0.21.1",
     "bootstrap": "5.3.3",
     "date-fns": "2.29.3",

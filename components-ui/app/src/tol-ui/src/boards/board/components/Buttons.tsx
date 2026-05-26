@@ -10,10 +10,8 @@ import {
   BOARD_ENTITIES,
   Button,
   copyToClipboard,
-  MAX_VIEWS_ALLOWED_MESSAGE,
 } from "../../..";
 import type { PButton } from "../../..";
-
 
 const editOrExitLogic = (editMode: boolean): PButton => {
   return editMode
@@ -162,7 +160,9 @@ export const addViewButton = (
     testid="board-add-view-button"
     position="left"
     disabled={disabled}
-    disabledTooltip={MAX_VIEWS_ALLOWED_MESSAGE}
+    disabledTooltip={
+      BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR
+    }
   />
 );
 
@@ -181,6 +181,8 @@ export const importViewButton = (
     testid="board-import-view-button"
     position="left"
     disabled={disabled}
-    disabledTooltip={MAX_VIEWS_ALLOWED_MESSAGE}
+    disabledTooltip={
+      BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR
+    }
   />
 );

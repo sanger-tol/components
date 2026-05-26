@@ -57,7 +57,7 @@ export function BoardTable(props: PBoardTable) {
   const [diffState, setDiffState] = useState<IDiffState>({
     currentConfig: structuredClone(
       componentData?.config_diff?.config ?? componentData?.config ?? null,
-    ),
+    ) as Partial<ITableConfigSave> ?? null,
     hasDiff: !!componentData?.config_diff?.config,
     configDifferences: { add: [], remove: [] },
   });
@@ -96,7 +96,7 @@ export function BoardTable(props: PBoardTable) {
       : componentData?.config_diff?.config || componentData?.config;
     setDiffState((prev) => ({
       ...prev,
-      currentConfig: structuredClone(nextConfig),
+      currentConfig: structuredClone(nextConfig) as Partial<ITableConfigSave> ?? null,
       hasDiff: !editMode && !!componentData?.config_diff?.config,
     }));
     setResetKey((k) => k + 1);
@@ -203,13 +203,14 @@ export function BoardTable(props: PBoardTable) {
 
   // ── Reset ────────────────────────────────────────────────────────────────
 
+  // TODO: THIS NEEDS LOOKING AT, THERE IS SOME FUNKY BEHAVIOUR
   const onReset = async () => {
     const resetDiffState = () => {
       if (componentData?.config_diff) {
-        componentData.config_diff = null; // TODO: WHY?!
+        componentData.config_diff = undefined;
       }
       setDiffState({
-        currentConfig: { ...componentData.config },
+        currentConfig: { ...componentData.config } as Partial<ITableConfigSave>,
         hasDiff: false,
         configDifferences: { add: [], remove: [] },
       });

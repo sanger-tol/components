@@ -24,7 +24,6 @@ import {
   postAddBoardEntity,
 } from "../..";
 
-
 export interface PZoneCreationModal extends PBoard {
   open: boolean;
   setOpen: any;
@@ -34,20 +33,18 @@ export interface PZoneCreationModal extends PBoard {
 }
 
 export function ZoneCreationModal(props: PZoneCreationModal) {
-  const {
-    open,
-    setOpen,
-    view,
-    setView,
-    boardDataSource,
-  } = props;
+  const { open, setOpen, view, setView, boardDataSource } = props;
 
-  const [dataSourceInstancesLoading, setDataSourceInstancesLoading] = useState(true);
-  const [dataSourceInstanceList, setDataSourceInstanceList] = useState<TLabelAndValueData>([]);
+  const [dataSourceInstancesLoading, setDataSourceInstancesLoading] =
+    useState(true);
+  const [dataSourceInstanceList, setDataSourceInstanceList] =
+    useState<TLabelAndValueData>([]);
   const [dataSourceInstance, setDataSourceInstance] = useState<string>("");
   const [dataspace, setDataspace] = useState<TsDataSource>();
   const [objectTypesLoading, setObjectTypesLoading] = useState(false);
-  const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>([]);
+  const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>(
+    [],
+  );
   const [objectType, setObjectType] = useState(null);
 
   useEffect(() => {
@@ -70,7 +67,8 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
               setDataSourceInstance(dsiList[0].value);
             }
           }
-        }).finally(() => {
+        })
+        .finally(() => {
           setDataSourceInstancesLoading(false);
         });
     } else {
@@ -81,13 +79,14 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
   // update the dataspace meta when the instance id changes
   useEffect(() => {
     if (dataSourceInstance) {
-      const apiDetails = dataSourceInstanceList
-        .find((dsi) => dsi.value === dataSourceInstance)?.ui_api_details;
+      const apiDetails = dataSourceInstanceList.find(
+        (dsi) => dsi.value === dataSourceInstance,
+      )?.ui_api_details;
       setDataspace(
         new TsDataSource({
           ...apiDetails,
           dataSourceInstanceId: dataSourceInstance,
-        })
+        }),
       );
     } else {
       setDataspace(undefined);
@@ -97,13 +96,14 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
   useEffect(() => {
     if (dataspace) {
       setObjectTypesLoading(true);
-      dataspace.attributeMetadata()
+      dataspace
+        .attributeMetadata()
         .then((am) => {
           setObjectTypesList(
             Object.keys(am).map((type) => ({
               label: normaliseCaps(type),
               value: type,
-            }))
+            })),
           );
         })
         .catch((err) => {
@@ -131,25 +131,25 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
   };
 
   const onAddZone = async () => {
-    postAddBoardEntity(
-      boardDataSource,
-      view.id!,
-      {
-        object_type: objectType!,
-        data_source_instance_id: dataSourceInstance!,
-      }
-    )
+    postAddBoardEntity(boardDataSource, view.id!, {
+      object_type: objectType!,
+      data_source_instance_id: dataSourceInstance!,
+    })
       .then((res) => {
+        if (!res.data) return;
         const zone = res.data;
         const v = addBoardEntityInParentState<IZone, IView>(
           BOARD_ENTITIES.ENTITIES.ZONE,
           zone,
-          view
-        )
+          view,
+        );
         setView({ ...v });
         reset();
         setOpen(false);
       })
+      .catch(() => {
+        return;
+      });
   };
 
   const ActionButtons = (
@@ -160,10 +160,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
         disabled={!objectType}
         testid="add-zone-button"
       />
-      <Button
-        {...BUTTONS.CANCEL}
-        onClick={() => setOpen(false)}
-      />
+      <Button {...BUTTONS.CANCEL} onClick={() => setOpen(false)} />
     </div>
   );
 
