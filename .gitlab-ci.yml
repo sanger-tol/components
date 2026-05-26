@@ -14,7 +14,7 @@ variables:
 build-package-dummy:
   # prevents the accumulation of errors on `yarn build`
   stage: deploy
-  image: node:18-alpine
+  image: node:20-alpine
   script:
     - cd components-ui/app/src/tol-ui
     - yarn install
@@ -27,7 +27,7 @@ build-package-dummy:
 
 deploy-package:
   stage: deploy
-  image: node:18-alpine
+  image: node:20-alpine
   script:
     - |
       {
