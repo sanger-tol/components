@@ -21,6 +21,7 @@ import {
   PDataPoint,
   Tag,
   ErrorBoundary,
+  Card,
 } from "../..";
 
 export interface PCellDisplay extends PDataPoint {
@@ -32,6 +33,7 @@ export interface PCellDisplay extends PDataPoint {
 
 const preDefinedElements = {
   boolean: Boolean,
+  card: Card,
   datetime: Datetime,
   float: Float,
   image: OldImage,
