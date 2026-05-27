@@ -21,6 +21,7 @@ export const cellRendererParams: IBoardCellRenderers = {
     allowedDataTypes: ["float", "int"]
   },
   image: {
+    description: "Displays an image inside of a cell, which can be enlarged by clicking on it.",
     params: {
       value: {
         type: "string",
@@ -41,6 +42,7 @@ export const cellRendererParams: IBoardCellRenderers = {
     allowedDataTypes: ["int"]
   },
   link: {
+    description: "Shows a clickable hyperlink in the cell.",
     params: {
       url: {
         type: "string",
@@ -69,6 +71,7 @@ export const cellRendererParams: IBoardCellRenderers = {
   none: {},
   priority: {
     rename: "Priority",
+    description: "Show an icon representing priority.",
     params: {
       highest: {
         type: "condition",
@@ -109,6 +112,7 @@ export const cellRendererParams: IBoardCellRenderers = {
   },
   trafficLightStatus: {
     rename: "Traffic Light Status",
+    description: "Highlight the cell contents with colour to emphasise its status.",
     params: {
       success: {
         type: "condition",
