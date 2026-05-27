@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
-import { IRemoteTarget, TCellRenderer } from "../..";
+import { Button, BUTTONS, FormMarkdown, IRemoteTarget, TCellRenderer } from "../..";
 
 export interface PCellRendererMarkdownParamOptions extends IRemoteTarget {
   paramName: string;
@@ -29,10 +29,27 @@ export function CellRendererMarkdownParamOptions(props: PCellRendererMarkdownPar
     goBack
   } = props;
 
+  const [markdownText, setMarkdownText] = useState("");
+
+  const BottomButtons = (
+    <>
+      <Button
+        {...BUTTONS.ADD}
+      />
+      <Button
+        {...BUTTONS.RETURN}
+        onClick={goBack}
+      />
+    </>
+  );
+
   return (
     <div>
-      <p>Editing {paramName}</p>
-      <button onClick={goBack}>back</button>
+      <FormMarkdown
+        value={markdownText}
+        onChange={(newValue) => setMarkdownText(newValue)}
+      />
+      {BottomButtons}
     </div>
   )
 }
