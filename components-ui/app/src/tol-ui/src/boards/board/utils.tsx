@@ -32,7 +32,6 @@ import type {
  * @param boardDataSource - The data source used to make API calls.
  * @param entityId - The ID of the entity to copy.
  * @param operation - The API operation path (e.g. `/copy`).
- * @param parentEntityType - The type of the parent entity.
  * @param title - The title for the newly created copy.
  * @param copyEntityType - The board entity type being copied, used for message text.
  * @param parentEntityId - Optional ID of the parent entity to copy into.
@@ -42,7 +41,7 @@ export async function copyBoardEntity<T>(
   boardDataSource: TsDataSource,
   entityId: string,
   operation: string,
-  title: string,
+  title: string = undefined!,
   copyEntityType: TBoardEntityType,
   parentEntityId?: string,
 ): Promise<T | undefined> {
@@ -51,7 +50,7 @@ export async function copyBoardEntity<T>(
       method: API_METHODS.POST,
       resource: `${operation}/${entityId}`,
       body: {
-        new_parent_entity_title: title,
+        ...(title ? { new_parent_entity_title: title } : {}),
         ...(parentEntityId ? { parent_entity_id: parentEntityId } : {}),
       },
     })
@@ -64,7 +63,15 @@ export async function copyBoardEntity<T>(
         return res.data;
       }
     })
-    .catch(() => {
+    .catch(({ response }) => {
+      if (response?.status === HTTP_STATUS_CODES.FORBIDDEN) {
+        PopUpMessage({
+          type: MESSAGE_TYPE.ERROR,
+          message:
+            BOARD_MESSAGE_TEXT(copyEntityType).BOARD_COPY.IMPORT_FORBIDDEN,
+        });
+        return undefined;
+      }
       PopUpMessage({
         type: MESSAGE_TYPE.ERROR,
         message: BOARD_MESSAGE_TEXT(copyEntityType).BOARD_COPY.IMPORT_ERROR,
@@ -83,7 +90,7 @@ export function replaceURLState(boardId: string, viewId: string) {
   window.history.replaceState(
     null,
     "",
-    `/${BOARD_ENTITIES.BOARD}/${boardId}?${BOARD_ENTITIES.VIEW}=${viewId}`,
+    `/${BOARD_ENTITIES.ENTITIES.BOARD}/${boardId}?${BOARD_ENTITIES.ENTITIES.VIEW}=${viewId}`,
   );
 }
 
@@ -122,7 +129,6 @@ export async function copyBoard(
  *
  * @param boardDataSource - The data source used to make API calls.
  * @param entityId - The ID of the view to copy.
- * @param title - The title for the newly created view copy.
  * @param copyEntityType - The board entity type, used for message text.
  * @param currentBoard - The current board state to merge the new view into.
  * @param parentEntityId - Optional ID of the parent entity to copy the view into.
@@ -131,7 +137,6 @@ export async function copyBoard(
 export async function copyView(
   boardDataSource: TsDataSource,
   entityId: string,
-  title: string,
   copyEntityType: TBoardEntityType,
   currentBoard?: IBoard,
   parentEntityId?: string,
@@ -140,7 +145,7 @@ export async function copyView(
     boardDataSource,
     entityId,
     BOARDS_API.OPERATIONS.COPY,
-    title,
+    undefined,
     copyEntityType,
     parentEntityId,
   ).then((newView: IView | undefined) => {
@@ -219,7 +224,7 @@ export async function onAddView(boardDataSource: TsDataSource, board: IBoard) {
     const view = res.data;
     updateViewInUrl(view.id);
     return addBoardEntityInParentState<IView, IBoard>(
-      BOARD_ENTITIES.VIEW,
+      BOARD_ENTITIES.ENTITIES.VIEW,
       view,
       board,
     );

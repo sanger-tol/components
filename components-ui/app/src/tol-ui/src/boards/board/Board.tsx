@@ -157,6 +157,7 @@ export function Board(props: PBoard) {
         setBoard({ ...board });
         setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
         setActiveViewId(board.order[0]);
+        updateViewInUrl(board.order[0]);
       },
     );
   };
@@ -181,7 +182,6 @@ export function Board(props: PBoard) {
         viewImportId={viewImportId}
         setViewImportId={setViewImportId}
         setActiveViewId={setActiveViewId}
-        newViewTitle={"view - copy"}
       />
       <NewTitleModal
         open={boardCopyModalOpen}

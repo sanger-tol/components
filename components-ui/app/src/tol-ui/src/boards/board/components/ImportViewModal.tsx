@@ -23,7 +23,6 @@ export interface IImportViewModalProps {
   viewImportId: string;
   setViewImportId: (id: string) => void;
   setActiveViewId: (id: string | null) => void;
-  newViewTitle: string;
 }
 
 export function ImportViewModal(props: IImportViewModalProps) {
@@ -34,7 +33,6 @@ export function ImportViewModal(props: IImportViewModalProps) {
     viewImportId,
     setViewImportId,
     setActiveViewId,
-    newViewTitle,
   } = props;
 
   const { board, setBoard } = useBoard();
@@ -43,7 +41,6 @@ export function ImportViewModal(props: IImportViewModalProps) {
     const result = await copyView(
       boardDataSource,
       viewImportId,
-      newViewTitle,
       BOARD_ENTITIES.ENTITIES.VIEW,
       board,
       board?.id,
