@@ -10,7 +10,6 @@ import {
   TsDataSource,
   PRIVILEGE,
   TBoardPrivilege,
-  env,
   TNavConfig,
   TPageOrDropdown,
   PAGE_ACCESS,
@@ -24,6 +23,7 @@ import {
   INavDestination,
   formatPath,
   TNavBrand,
+  API_PATHS,
 } from "..";
 
 
@@ -33,7 +33,7 @@ export const assumeProduction = (): string => {
 };
 
 export const fetchEnvironment = (): Promise<string> => {
-  return fetch(env.API_PATH + "/system/environment")
+  return fetch(API_PATHS.API_PATH + "/system/environment")
     .then((res) => {
       if (res.ok) {
         return res.json() as Promise<any>;

@@ -186,7 +186,7 @@ describe("updateConfigAndUpsert function", () => {
     await savePromise;
 
     expect(boardDataSource.getListPage).toHaveBeenCalledWith({
-      objectType: "board_diff",
+      objectType: "entity_diff",
       filter: {
         and_: {
           component_id: { eq: { value: "component1" } },
@@ -196,10 +196,10 @@ describe("updateConfigAndUpsert function", () => {
       requestedFields: ["id"],
     });
     expect(boardDataSource.upsert).toHaveBeenCalledWith({
-      objectType: "board_diff",
+      objectType: "entity_diff",
       payload: [
         {
-          type: "board_diff",
+          type: "entity_diff",
           attributes: {
             config: { fieldMeta: { order: { active: ["a"] } } },
             component_id: "component1",

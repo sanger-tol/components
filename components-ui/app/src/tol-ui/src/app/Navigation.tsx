@@ -25,6 +25,7 @@ import {
   collectNavigationItems,
   ProfileDropdown,
   TNavConfig,
+  API_PATHS
 } from "..";
 
 
@@ -68,7 +69,7 @@ function Navigation(props: PNavigation) {
   }, []);
 
   const revokeOicd = (token: string) => {
-    fetch(env.API_PATH + "/auth/logout", {
+    fetch(API_PATHS.API_PATH + "/auth/logout", {
       body: JSON.stringify({ token: token }),
       method: "POST",
       headers: { "Content-Type": "application/json" },

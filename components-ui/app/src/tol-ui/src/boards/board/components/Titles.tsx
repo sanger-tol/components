@@ -4,8 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE } from "../../../constants";
-
+import { BOARD_ENTITIES, BOARD_MESSAGE_TEXT } from "../../..";
 
 export const editModeTitle = (
   editable: boolean,
@@ -19,7 +18,8 @@ export const editModeTitle = (
         onSave: onSave,
         hideButtons: true,
         emptyAllowed: false,
-        onEmptyMessage: BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
+        onEmptyMessage: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).MISC
+          .EMPTY_TITLE_ERROR,
       }
     : undefined;
 };

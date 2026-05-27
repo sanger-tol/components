@@ -5,9 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
+  BOARD_ENTITIES,
+  BOARD_MESSAGE_TEXT,
   EditableTitle,
-  IBoard,
   ITab,
   PRIVILEGE,
 } from "../../..";
@@ -78,7 +78,9 @@ export function buildViewTab(
       editable={editMode && active}
       onSave={(newTitle: string) => onSaveTitle(viewId, newTitle)}
       emptyAllowed={false}
-      onEmptyMessage={BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE}
+      onEmptyMessage={
+        BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.VIEW).MISC.EMPTY_TITLE_ERROR
+      }
     />
   )
 

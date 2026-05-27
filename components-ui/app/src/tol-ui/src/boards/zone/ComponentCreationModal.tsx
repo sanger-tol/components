@@ -67,7 +67,7 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
       .then((res) => {
         const component = res.data;
         const z = addBoardEntityInParentState<IComponent, IZone>(
-          BOARD_ENTITIES.COMPONENT,
+          BOARD_ENTITIES.ENTITIES.COMPONENT,
           component,
           zone
         )

@@ -165,7 +165,7 @@ export function Visualisation(props: PVisualisation) {
         setOpen={setConfirmationModalOpen}
         open={confirmationModalOpen}
         onConfirmClick={() => onDeleteComponent(id)}
-        itemType={BOARD_ENTITIES.COMPONENT}
+        itemType={BOARD_ENTITIES.ENTITIES.COMPONENT}
       />
     </>
   );

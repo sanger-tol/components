@@ -64,12 +64,12 @@ export function BoardAccordion(props: BoardsAccordionProps) {
   const [boardIdToDelete, setBoardIdToDelete] = useState<string | null>(null);
 
   const goToBoard = (boardId: string) => {
-    history.push(`/${BOARD_ENTITIES.BOARD}/${boardId}`);
+    history.push(`/${BOARD_ENTITIES.ENTITIES.BOARD}/${boardId}`);
   };
 
   // @ts-ignore
   const goToView = (boardId: string, viewId: string) => {
-    history.push(`/${BOARD_ENTITIES.BOARD}/${boardId}`);
+    history.push(`/${BOARD_ENTITIES.ENTITIES.BOARD}/${boardId}`);
   };
 
   // @ts-ignore
@@ -80,7 +80,7 @@ export function BoardAccordion(props: BoardsAccordionProps) {
           setOpen={setOpenDelete}
           open={openDelete}
           onConfirmClick={deleteBoard}
-          itemType={BOARD_ENTITIES.BOARD}
+          itemType={BOARD_ENTITIES.ENTITIES.BOARD}
         />
       );
     }
@@ -96,7 +96,7 @@ export function BoardAccordion(props: BoardsAccordionProps) {
     await boardDataSource
       .custom({
         method: API_METHODS.DELETE,
-        resource: `${BOARD_ENTITIES.BOARD}/${boardIdToDelete}`,
+        resource: `${BOARD_ENTITIES.ENTITIES.BOARD}/${boardIdToDelete}`,
       })
       .then((res: any) => {
         if (res.status === 200) {
@@ -281,7 +281,7 @@ export function BoardAccordion(props: BoardsAccordionProps) {
                 id={zoneId}
                 objectType={BOARD_ENTITIES.JOINING_ENTITIES.COMPONENT_ZONE}
                 filterKey="zone.id"
-                itemType={BOARD_ENTITIES.COMPONENT as string}
+                itemType={BOARD_ENTITIES.ENTITIES.COMPONENT as string}
                 title={zoneData[zoneId]?.[0].title || "Untitled Zone"}
                 subHeader={zoneData[zoneId]?.[0].objectType}
                 clickable={false}
@@ -317,7 +317,7 @@ export function BoardAccordion(props: BoardsAccordionProps) {
                   title={viewData[viewId] || "Untitled View (Coming Soon)"}
                   objectType={BOARD_ENTITIES.JOINING_ENTITIES.ZONE_VIEW}
                   filterKey="view.id"
-                  itemType={BOARD_ENTITIES.ZONE}
+                  itemType={BOARD_ENTITIES.ENTITIES.ZONE}
                   clickable={false}
                   renderChildren={(zoneIds) => (
                     <ZonesAccordion zoneIds={zoneIds} />
@@ -355,7 +355,7 @@ export function BoardAccordion(props: BoardsAccordionProps) {
               title={board.title}
               objectType={BOARD_ENTITIES.JOINING_ENTITIES.VIEW_BOARD}
               filterKey="board.id"
-              itemType={BOARD_ENTITIES.VIEW}
+              itemType={BOARD_ENTITIES.ENTITIES.VIEW}
               clickable={true}
               renderChildren={(viewIds) => (
                 <ViewsAccordion boardId={board.id} viewIds={viewIds} />

@@ -179,11 +179,11 @@ export function Zone(props: PZone) {
         setOpen={setConfirmationModalOpen}
         open={confirmationModalOpen}
         onConfirmClick={() => onDeleteZone(id)}
-        itemType={BOARD_ENTITIES.ZONE}
+        itemType={BOARD_ENTITIES.ENTITIES.ZONE}
       />
       <FilterConfigDrawer
         id={id}
-        boardObjectType={BOARD_ENTITIES.ZONE}
+        boardObjectType={BOARD_ENTITIES.ENTITIES.ZONE}
         boardDataSource={boardDataSource}
         dataSource={zone.dataspace!}
         objectType={zone.object_type!}

@@ -10,7 +10,6 @@ import {
   BOARD_MESSAGE_TEXT,
   Button,
   copyToClipboard,
-  MAX_VIEWS_ALLOWED_MESSAGE,
 } from "../../..";
 import type { PButton } from "../../..";
 import { ReactNode } from "react";
@@ -49,7 +48,7 @@ export const copyViewIdToClipboard = (
   onClick: () => {
     copyToClipboard(
       viewId,
-      BOARD_MESSAGE_TEXT(BOARD_ENTITIES.VIEW).CLIPBOARD_COPY.ID_COPY,
+      BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.VIEW).CLIPBOARD_COPY.ID_COPY,
     );
   },
   position: "left",
@@ -88,7 +87,7 @@ export const shareButton: PButton = {
   onClick: () => {
     copyToClipboard(
       window.location.href,
-      BOARD_MESSAGE_TEXT(BOARD_ENTITIES.BOARD).CLIPBOARD_COPY.URL_COPY,
+      BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CLIPBOARD_COPY.URL_COPY,
     );
   },
 };
@@ -167,7 +166,9 @@ export const addViewButton = (
     testid="board-add-view-button"
     position="left"
     disabled={disabled}
-    disabledTooltip={MAX_VIEWS_ALLOWED_MESSAGE}
+    disabledTooltip={
+      BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR
+    }
   />
 );
 
@@ -186,6 +187,8 @@ export const importViewButton = (
     testid="board-import-view-button"
     position="left"
     disabled={disabled}
-    disabledTooltip={MAX_VIEWS_ALLOWED_MESSAGE}
+    disabledTooltip={
+      BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR
+    }
   />
 );

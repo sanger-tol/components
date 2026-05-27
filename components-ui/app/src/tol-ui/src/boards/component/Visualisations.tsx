@@ -66,10 +66,11 @@ export function Visualisations(props: PVisualisations) {
 
   const onDeleteComponent = (componentId: string) => {
     deleteBoardEntity(boardDataSource, componentId)
-      .then(() => {
+      .then((status: string | void) => {
+        if (status !== "success") return;
         deleteBoardEntityInParentState<IZone>(componentId, zone);
         setZone({ ...zone });
-      })
+      });
   };
 
   const onReorderComponents = (reorderedIds: string[]) => {
@@ -122,7 +123,7 @@ export function Visualisations(props: PVisualisations) {
                   })
                 }
                 boardDataSource={boardDataSource}
-                boardObjectType={BOARD_ENTITIES.COMPONENT}
+                boardObjectType={BOARD_ENTITIES.ENTITIES.COMPONENT}
                 title={component.title!}
                 actionsDataSource={actionsDataSource}
                 onDeleteComponent={onDeleteComponent}

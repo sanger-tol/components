@@ -110,7 +110,7 @@ export function CellRendererModal(props: PCellRendererModal) {
 
   const onTypeChange = (type: string) => {
     setRenderer(
-      type ? { ...renderer, type: type, props: {} } : undefined // TODO: props needed?
+      type ? { ...renderer, type: type, props: {} } : undefined
     );
   };
 
