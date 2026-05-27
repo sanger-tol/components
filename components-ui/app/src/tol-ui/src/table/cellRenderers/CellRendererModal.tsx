@@ -1,14 +1,17 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 import {
   AttributeTitle,
   Button,
   BUTTONS,
   CellRendererParamOptions,
+  cellRendererParams,
   FieldMeta,
   IconTooltip,
   IRemoteTarget,
   Modal,
+  normaliseCaps,
+  SingleSelect,
   TCellRenderer
 } from "../..";
 
@@ -23,7 +26,8 @@ export interface PCellRendererModal extends IRemoteTarget {
 export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, objectType, dataSource, attributeId, fieldMeta, setFieldMeta } = props;
 
-  // const [renderer, setRenderer] = useState<TCellRenderer>();
+  // The config of the cell renderer that's being edited
+  const [renderer, setRenderer] = useState<TCellRenderer>();
   const [selectedParameter, setSelectedParameter] = useState<string | undefined>();
 
   // Used in the Header
@@ -58,12 +62,42 @@ export function CellRendererModal(props: PCellRendererModal) {
     </>
   );
 
+  // The cell renderer types that can be picked in CellRendererSelector
+  const typeChoices = useMemo(
+    () => Object.keys(cellRendererParams)
+      .filter(cellRendererType => {
+        const allowed = cellRendererParams[cellRendererType]?.allowedDataTypes;
+        const attrType = fieldMeta?.dataWithDefaults?.[attributeId]?.type;
+        // if allowedDataTypes is not defined, allow all
+        if (!allowed) return true;
+        return allowed.includes(attrType!);
+      })
+      .map(cellRendererType => ({
+        label: cellRendererParams[cellRendererType]?.rename || normaliseCaps(cellRendererType),
+        value: cellRendererType
+      })),
+    []
+  );
+
   // The dropdown where the cell renderer type is chosen. This determines which parameters
   // need to be shown in ParameterList
-  const CellRendererSelector = <></>;
+  const CellRendererSelector = (
+    <SingleSelect
+      className="tol-data-point-renderer-modal-selector"
+      block
+      placeholder="Default Cell Renderer"
+      value={
+        renderer?.type || ""
+      }
+      onChange={(type: string) => setRenderer(
+        type ? { ...renderer, type, props: {} } : undefined // TODO: props needed?
+      )}
+      data={typeChoices}
+    />
+  );
 
   // Each parameter associated with the selected cell renderer type
-  const ParameterList = (
+  const ParameterList = renderer && (
     <>
       <p>Parameter list here</p>
     </>

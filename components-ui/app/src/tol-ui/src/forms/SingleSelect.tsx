@@ -17,6 +17,7 @@ export interface PSingleSelect {
   block?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  className?: string;
   testid?: string;
   defaultValue?: string;
 }
