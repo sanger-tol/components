@@ -38,6 +38,8 @@ export function CellRendererModal(props: PCellRendererModal) {
 
   // The config of the cell renderer that's being edited
   const [renderer, setRenderer] = useState<TCellRenderer>();
+  // Used to know whether changes have been made to the cell renderer (by checking it against `renderer`)
+  const [previousRenderer, setPreviousRenderer] = useState<TCellRenderer>();
   const [selectedParameter, setSelectedParameter] = useState<string | undefined>();
 
   useEffect(() => {
@@ -46,11 +48,20 @@ export function CellRendererModal(props: PCellRendererModal) {
       setRenderer(deepCopy(
         fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer
       ));
+      setPreviousRenderer(deepCopy(
+        fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer
+      ));
     }
 
     // Reset state
     setSelectedParameter(undefined);
   }, [open]);
+
+  // Used in the modal config and for disabling buttons
+  const doesRendererHavePendingChanges = useMemo(
+    () => JSON.stringify(renderer) !== JSON.stringify(previousRenderer),
+    [renderer, previousRenderer]
+  );
 
   // Used in the Header
   const TooltipHelp = (
@@ -186,7 +197,7 @@ export function CellRendererModal(props: PCellRendererModal) {
   const AddCellRendererButton = (
     <Button
       {...BUTTONS.ADD}
-      // disabled={!rendererHasPendingChanges || requiredParamsCount > filledParamsCount}
+      disabled={!doesRendererHavePendingChanges} // || requiredParamsCount > filledParamsCount
       onClick={handleAddRenderer}
     />
   );
@@ -215,6 +226,7 @@ export function CellRendererModal(props: PCellRendererModal) {
       size={selectedParameter ? "sm" : "xs"}
       closeButton={!selectedParameter}
       actionButton={selectedParameter ? undefined : AddCellRendererButton}
+      hasPendingChanges={doesRendererHavePendingChanges}
     >
       {selectedParameter ? SecondPage : FirstPage}
     </Modal>
