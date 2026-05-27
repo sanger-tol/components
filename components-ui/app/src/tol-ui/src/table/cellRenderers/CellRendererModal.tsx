@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 
 import {
   AttributeTitle,
@@ -12,6 +12,7 @@ import {
   BUTTONS,
   CellRendererParamOptions,
   cellRendererParams,
+  deepCopy,
   FieldMeta,
   IconTooltip,
   IRemoteTarget,
@@ -36,6 +37,18 @@ export function CellRendererModal(props: PCellRendererModal) {
   // The config of the cell renderer that's being edited
   const [renderer, setRenderer] = useState<TCellRenderer>();
   const [selectedParameter, setSelectedParameter] = useState<string | undefined>();
+
+  useEffect(() => {
+    if (open) {
+      // Fetch any pre-existing cell renderer on this table column
+      setRenderer(deepCopy(
+        fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer
+      ));
+    }
+
+    // Reset state
+    setSelectedParameter(undefined);
+  }, [open]);
 
   // Used in the Header
   const TooltipHelp = (
