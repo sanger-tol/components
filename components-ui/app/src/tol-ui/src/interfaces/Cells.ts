@@ -4,8 +4,12 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { CELL_RENDERER_PARAMS } from "..";
+
+export type TCellRendererParamType = (typeof CELL_RENDERER_PARAMS)[keyof typeof CELL_RENDERER_PARAMS];
+
 export interface IBoardCellRendererParam {
-  type: string,
+  type: TCellRendererParamType,
   rename: string,
   description: string,
   required?: boolean,

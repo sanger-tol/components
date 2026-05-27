@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 export * from "./api.constants";
 export * from "./boards.constants";
+export * from "./cell-renderers.constants";
 export * from "./data-point.constants";
 export * from "./file-validation.constants";
 export * from "./form.constants";
