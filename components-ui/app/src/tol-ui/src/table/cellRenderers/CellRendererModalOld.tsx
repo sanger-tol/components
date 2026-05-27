@@ -296,8 +296,8 @@ export function CellRendererModal(props: PCellRendererModal) {
                       meta={meta}
                       renderer={renderer}
                       setRenderer={setRenderer}
-                      selectedConditionParam={selectedConditionParam}
-                      setSelectedConditionParam={setSelectedConditionParam}
+                      selectedParam={selectedConditionParam}
+                      setSelectedParam={setSelectedConditionParam}
                     />
                   )
                 })}

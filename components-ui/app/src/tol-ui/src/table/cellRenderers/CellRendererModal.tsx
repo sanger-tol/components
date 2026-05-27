@@ -14,6 +14,7 @@ import {
   SingleSelect,
   TCellRenderer
 } from "../..";
+import { CellRendererParam } from "./CellRendererParam";
 
 export interface PCellRendererModal extends IRemoteTarget {
   open: boolean,
@@ -99,7 +100,24 @@ export function CellRendererModal(props: PCellRendererModal) {
   // Each parameter associated with the selected cell renderer type
   const ParameterList = renderer && (
     <>
-      <p>Parameter list here</p>
+      {Object.keys(cellRendererParams[renderer?.type]?.params || {}).length > 0 && (
+        <div className="tol-data-point-renderer-modal-params">
+          {Object.entries(cellRendererParams[renderer.type].params || {}).map(([param, meta]) => {
+            return (
+              <CellRendererParam
+                {...props}
+                key={param}
+                param={param}
+                meta={meta}
+                renderer={renderer}
+                setRenderer={setRenderer}
+                selectedParam={selectedParameter}
+                setSelectedParam={setSelectedParameter}
+              />
+            )
+          })}
+        </div>
+      )}
     </>
   );
 

@@ -21,8 +21,8 @@ export interface PCellRendererParam extends IRemoteTarget {
   meta: IBoardCellRendererParam,
   renderer: TCellRenderer
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
-  selectedConditionParam: string | undefined;
-  setSelectedConditionParam: Dispatch<SetStateAction<string | undefined>>;
+  selectedParam: string | undefined;
+  setSelectedParam: Dispatch<SetStateAction<string | undefined>>;
 }
 
 export function CellRendererParam(props: PCellRendererParam) {
@@ -31,8 +31,8 @@ export function CellRendererParam(props: PCellRendererParam) {
     meta,
     renderer,
     setRenderer,
-    selectedConditionParam,
-    setSelectedConditionParam
+    selectedParam,
+    setSelectedParam
   } = props;
 
   const paramValue = renderer?.props![param];
@@ -68,8 +68,8 @@ export function CellRendererParam(props: PCellRendererParam) {
             icon="puzzle-piece"
             type={conditionPresent ? "warning" : "success"}
             onClick={() => {
-              setSelectedConditionParam(
-                param === selectedConditionParam ? undefined : param
+              setSelectedParam(
+                param === selectedParam ? undefined : param
               );
             }}
           />
