@@ -102,6 +102,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   const handleBack = () => {
     resetFilterZone();
     setRenderer(rendererBeforeChanges);
+    setHasPendingChanges(false);
     goBack();
   };
 
