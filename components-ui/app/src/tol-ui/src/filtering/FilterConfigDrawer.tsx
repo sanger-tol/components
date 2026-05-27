@@ -137,7 +137,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
     // upsertCoreBoardEntity(
-    //   boardObjectType === BOARDS.ZONE ? BOARDS.ZONE : BOARDS.COMPONENT,
+    //   boardObjectType === BOARD_ENTITIES.ZONE ? BOARD_ENTITIES.ZONE : BOARD_ENTITIES.COMPONENT,
     //   attributes,
     //   boardDataSource,
     //   undefined,

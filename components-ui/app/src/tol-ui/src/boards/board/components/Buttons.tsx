@@ -6,36 +6,38 @@ SPDX-License-Identifier: MIT
 
 import { BUTTONS } from "../../../config/buttons.config";
 import {
-  BOARD_MESSAGE_TEXT,
   BOARD_ENTITIES,
+  BOARD_MESSAGE_TEXT,
   Button,
   copyToClipboard,
 } from "../../..";
 import type { PButton } from "../../..";
+import { ReactNode } from "react";
+
 
 const editOrExitLogic = (editMode: boolean): PButton => {
   return editMode
     ? {
-        ...BUTTONS.CONFIRM,
-        type: "primary",
-        text: "Exit Edit Mode",
-      }
+      ...BUTTONS.CONFIRM,
+      type: "primary",
+      text: "Exit Edit Mode",
+    }
     : {
-        ...BUTTONS.EDIT,
-        text: "Edit",
-      };
+      ...BUTTONS.EDIT,
+      text: "Edit",
+    };
 };
 
 const layoutOrExitLogic = (layoutMode: boolean): PButton => {
   return layoutMode
     ? {
-        ...BUTTONS.SAVE,
-        text: "Save Layouts",
-      }
+      ...BUTTONS.SAVE,
+      text: "Save Layouts",
+    }
     : {
-        ...BUTTONS.EDIT,
-        text: "Change Layout",
-      };
+      ...BUTTONS.EDIT,
+      text: "Change Layout",
+    };
 };
 
 export const copyViewIdToClipboard = (
@@ -70,7 +72,9 @@ export const addZoneButton = (
   icon: "object-group",
 });
 
-export const copyBoardButton = (onClick: () => void): PButton => ({
+export const copyBoardButton = (
+  onClick: () => void,
+): PButton => ({
   ...BUTTONS.COPY,
   onClick: onClick,
   tooltip: "Copy Board",
@@ -103,9 +107,10 @@ export const deleteViewButton = (
 
 export const viewSelectorTab = (
   viewId: string,
-  viewTitle: string,
+  viewTitle: ReactNode,
   onClick: () => void,
   visible: boolean,
+  editMode: boolean
 ): PButton => ({
   id: viewId,
   text: viewTitle,
@@ -114,6 +119,7 @@ export const viewSelectorTab = (
   position: "left",
   visible: visible,
   testid: "tab-view-selector-button",
+  as: editMode ? "div" : "button",
 });
 
 export const layoutOrExitButton = (

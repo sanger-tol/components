@@ -45,14 +45,14 @@ export async function updateComponentConfigAndUpsert(
     // );
   }
 
-  component.config_diff = { ...component.config_diff, config: config };
+  component.entity_diff = { ...component.entity_diff, config: config };
   return await boardDataSource
     .upsert({
       objectType: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
       payload: [
         {
           type: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
-          ...(component?.config_diff?.id && { id: component.config_diff.id }),
+          ...(component?.entity_diff?.id && { id: component.entity_diff.id }),
           attributes: {
             user_id: userId,
             component_id: componentId,

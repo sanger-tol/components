@@ -96,7 +96,8 @@ export function Visualisation(props: PVisualisation) {
         onSave: (value: string) => {
           upsertTitle(value, id, boardDataSource);
           setTitle(value);
-        }
+        },
+        hideButtons: true,
       } : undefined,
       description: Description,
       buttons: [

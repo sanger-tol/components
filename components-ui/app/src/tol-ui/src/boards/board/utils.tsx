@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  BOARDS_API,
   BOARD_ENTITIES,
+  BOARDS_API,
   API_METHODS,
   HTTP_STATUS_CODES,
   MESSAGE_TYPE,
@@ -175,7 +175,7 @@ export async function copyView(
  * @returns An updated `IBoard` with the new view title, or `undefined` if the title was unchanged.
  */
 export async function onViewTitleSave(
-  value: string,
+  newTitle: string,
   viewId: string,
   board: IBoard,
   boardDataSource: TsDataSource,
@@ -183,9 +183,9 @@ export async function onViewTitleSave(
   const viewsMap = board?.children ?? {};
 
   const currentTitle = viewsMap[viewId]?.title;
-  if (currentTitle === value) return;
+  if (currentTitle === newTitle) return;
 
-  await upsertTitle(value, viewId, boardDataSource);
+  await upsertTitle(newTitle, viewId, boardDataSource);
 
   return {
     ...board,
@@ -193,7 +193,7 @@ export async function onViewTitleSave(
       ...viewsMap,
       [viewId]: {
         ...viewsMap[viewId],
-        title: value,
+        title: newTitle,
       },
     } as TBoardChildren<IView>,
   } as IBoard;

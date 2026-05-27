@@ -49,7 +49,7 @@ export function ObjectDetail(props: PObjectDetail) {
         />
       }
       <div
-        className={utilityBarConfig ? "tol-component-contents-with-offset" : "tol-component-contents"}
+        className={`tol-component-contents${utilityBarConfig ? " with-offset" : ""}`}
         style={{ overflow: 'auto' }}
       >
         {contents ? contents : KeyValuePairs}

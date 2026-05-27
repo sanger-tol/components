@@ -21,9 +21,10 @@ export interface PSortableTab {
    */
   tab: ITab;
   /**
-   * The ID of the currently active tab.
+   * Whether the tab is currently active.
+   * This will determine the styling of the tab and its buttons.
    */
-  activeId?: string;
+  active?: boolean;
   /**
    * If provided, indicates that reordering is enabled and a grip icon should be shown.
    */
@@ -34,19 +35,17 @@ export interface PSortableTab {
  * A sortable tab item that can be dragged to reorder within the tab navigation.
  */
 export function SortableTab(props: PSortableTab) {
-  const { id, index, tab, activeId, onReorder } = props;
+  const { id, index, tab, active = false, onReorder } = props;
 
   const { ref } = useSortable({ id, index });
 
   return (
-    <div ref={ref} className="tol-tabs-nav-tab tol-editable-title">
-      {tab.label && <span>{tab.label}</span>}
+    <div ref={ref} className="tol-tabs-nav-tab">
       {tab.buttons.map((button, i) => (
         <Button
           {...button}
-          className={`${button.className || ""} tol-tabs-nav-button ${button.id === activeId ? "active" : ""}`}
-          key={`tol-tabs-nav-button-${button.testid ?? button.id ?? i}`}
-          outline={!tab.buttons.some((b) => b.id === activeId)}
+          key={`tol-tabs-nav-button-${button.id ?? i}`}
+          outline={!active}
         />
       ))}
       {onReorder || (tab.icons && tab.icons.length > 0) ? (

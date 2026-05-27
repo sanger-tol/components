@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { MAX_VIEWS_ALLOWED } from "..";
+import { MAX_VIEWS_ALLOWED, normaliseCaps } from "..";
 import type { TBoardEntityType, TMessageType } from "..";
+
 
 export const MESSAGE_DURATION: { [key: string]: number } = {
   SUCCESS: 4000,
@@ -26,9 +27,7 @@ export const MESSAGE_TYPE: { [key: string]: TMessageType } = {
 export const BOARD_MESSAGE_TEXT = (
   boardEntity: TBoardEntityType,
 ): { [key: string]: { [key: string]: string } } => {
-  const entityCapitalised: string =
-    (boardEntity as string).charAt(0).toUpperCase() +
-    (boardEntity as string).slice(1);
+  const entityCapitalised: string = normaliseCaps(boardEntity);
 
   return {
     BOARD_COPY: {

@@ -27,6 +27,7 @@ export interface PButton {
   limit?: number;
   timeout?: number;
   testid?: string;
+  as?: React.ElementType;
 }
 
 export function Button(props: PButton) {
@@ -47,6 +48,7 @@ export function Button(props: PButton) {
     id,
     visible = true,
     testid,
+    as: Component = "button",
     limit = 0,
     timeout = 0,
   } = props;
@@ -101,6 +103,7 @@ export function Button(props: PButton) {
 
   const buttonContent = (
     <RsButton
+      as={Component}
       id={id}
       onClick={handleClick}
       disabled={isDisabled}

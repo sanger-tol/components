@@ -33,7 +33,6 @@ import {
 import type { IBoard, IView, TNavBrand, TsDataSource } from "../..";
 import { BoardButtonsUtilityBar, ImportViewModal } from "./components";
 
-// TODO: FIX ALL THE STYLING FOR TAB BUTTONS... THEY ARE A MESS RIGHT NOW
 
 export interface PBoard {
   /**
@@ -121,6 +120,18 @@ export function Board(props: PBoard) {
     );
   }, [activeViewId]);
 
+  // Scroll listener for sticky board bar shadow effect
+  useEffect(() => {
+    const bar = document.querySelector<HTMLElement>(".tol-board-bar");
+    if (!bar) return;
+    const onScroll = () => {
+      const progress = Math.min(window.scrollY / 20, 1);
+      bar.style.setProperty("--tol-bar-scroll", progress.toString());
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const onClickView = (viewId: string) => () => {
     setActiveViewId(viewId);
     updateViewInUrl(viewId);
@@ -171,7 +182,7 @@ export function Board(props: PBoard) {
   }
 
   return (
-    <div className={`tol-board ${editMode ? "tol-edit-mode" : ""}`}>
+    <div className={`tol-board${editMode ? " tol-edit-mode" : ""}`}>
       <ImportViewModal
         open={viewImportModalOpen}
         onClose={() => {
@@ -234,7 +245,7 @@ export function Board(props: PBoard) {
         setNewBoardCopyTitle={setNewBoardCopyTitle}
         onOpenAddZone={() => setOpenAddZoneModal(true)}
         newBoardCopyTitle={newBoardCopyTitle}
-        activeViewId={activeViewId || ""}
+        activeViewId={activeViewId}
         boardDataSource={boardDataSource}
         onOpenDeleteViewModal={() => setDeleteViewConfirmModal(true)}
         onOpenViewImportModal={() => setViewImportModalOpen(true)}

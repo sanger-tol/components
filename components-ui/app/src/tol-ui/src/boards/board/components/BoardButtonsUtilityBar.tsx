@@ -12,39 +12,33 @@ import {
 } from "../../..";
 import {
   addZoneButton,
-  buildUtilityBarButtons,
-  buildViewTabButtonArray,
+  buildBoardUtilityBarButtons,
   editModeTitle,
   ViewModeBoardTitle,
+  ViewTabs,
 } from ".";
 
 export interface IBoardButtonsUtilityBar {
+  activeViewId: string | null;
+  boardDataSource: TsDataSource;
+  newBoardCopyTitle: string;
   onOpenBoardCopyModal: () => void;
   setNewBoardCopyTitle: (title: string) => void;
   onOpenAddZone: () => void;
-  newBoardCopyTitle: string;
-  activeViewId: string | null;
-  boardDataSource: TsDataSource;
-  onOpenDeleteViewModal: () => void;
-  onOpenViewImportModal: () => void;
   onClickView: (viewId: string) => () => void;
   onAddView: () => void;
   onReorderView: (reorderedIds: string[]) => void;
+  onOpenDeleteViewModal: () => void;
+  onOpenViewImportModal: () => void;
 }
 
 export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
   const {
+    boardDataSource,
+    newBoardCopyTitle,
     onOpenBoardCopyModal,
     setNewBoardCopyTitle,
     onOpenAddZone,
-    newBoardCopyTitle,
-    activeViewId,
-    boardDataSource,
-    onOpenDeleteViewModal,
-    onOpenViewImportModal,
-    onClickView,
-    onAddView,
-    onReorderView,
   } = props;
 
   const {
@@ -58,9 +52,7 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
     setBoard,
   } = useBoard();
 
-  const boardTitle = board?.title ?? "";
-
-  const utilityBarButtons = buildUtilityBarButtons(
+  const boardUtilityBarButtons = buildBoardUtilityBarButtons(
     editMode,
     layoutMode,
     privilege,
@@ -70,40 +62,49 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
     onOpenBoardCopyModal,
     newBoardCopyTitle,
     setNewBoardCopyTitle,
-    boardTitle,
+    board?.title!,
   );
 
-  const viewTabButtonArray = buildViewTabButtonArray(
-    activeViewId,
-    editMode,
-    boardDataSource,
-    onOpenDeleteViewModal,
-    onOpenViewImportModal,
-    onClickView,
-    onAddView,
-    onReorderView,
-    board,
-    setBoard,
-  );
+  const onSaveBoardTitle = (newTitle: string) => {
+    upsertTitle(newTitle, board.id!, boardDataSource);
+    setBoard({ ...board, title: newTitle });
+  }
+
+  const onSaveViewTitle = (viewId: string, newTitle: string) => {
+    upsertTitle(newTitle, viewId, boardDataSource);
+    setBoard({
+      ...board,
+      children: {
+        ...board?.children,
+        [viewId]: {
+          ...board?.children?.[viewId],
+          title: newTitle
+        },
+      },
+    });
+  }
 
   return (
     <div className="tol-board-bar">
       <UtilityBar
         id="tol-board-utility-bar"
-        buttons={utilityBarButtons}
-        title={editModeTitle(editMode, boardTitle, (newTitle: string) => {
-          if (board?.id) {
-            upsertTitle(newTitle, board.id, boardDataSource);
-            setBoard({ ...board, title: newTitle });
-          }
-        })}
-        elements={ViewModeBoardTitle(editMode, boardTitle)}
+        buttons={boardUtilityBarButtons}
+        title={
+          editModeTitle(
+            editMode,
+            board?.title!,
+            onSaveBoardTitle
+          )
+        }
+        elements={ViewModeBoardTitle(editMode, board?.title!)}
       />
-      {editMode || board?.order?.length > 1 ? (
+      {(board?.order?.length > 1 || editMode) && (
         <UtilityBar
           id="tol-board-views-utility-bar"
           className="tol-views-bar"
-          elements={viewTabButtonArray}
+          elements={[
+            <ViewTabs onSaveTitle={onSaveViewTitle} {...props} />
+          ]}
           buttons={[
             addZoneButton(
               onOpenAddZone,
@@ -111,7 +112,7 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
             ),
           ]}
         />
-      ) : null}
+      )}
     </div>
   );
 }
