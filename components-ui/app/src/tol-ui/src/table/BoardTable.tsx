@@ -98,7 +98,7 @@ export function BoardTable(props: PBoardTable) {
       boardDataSource
     );
   }
-  console.log(actionsDataSource)
+
   return (
     <RemoteTable
       {...props}
