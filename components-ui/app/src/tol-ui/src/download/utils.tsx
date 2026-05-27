@@ -169,12 +169,13 @@ export function prepareChartDataForExport(
 
 export async function dataObjectToSpreadsheetData(
   dataObjects: TDataObjectListOrNull,
+  requestedFields: string[],
   fieldMeta: FieldMeta
 ) {
   const spreadsheetData: any[] = [];
   dataObjects?.forEach((obj) => {
     const flatData = {};
-    fieldMeta.order.active.forEach((field) => {
+    requestedFields.forEach((field) => {
       flatData[`${fieldMeta.dataWithDefaults?.[field]?.rename} (${field})`] =
         Array.isArray(getFieldByName(obj, field))
           ? getFieldByName(obj, field).toString()
