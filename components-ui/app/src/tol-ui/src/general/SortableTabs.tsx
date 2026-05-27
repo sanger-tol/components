@@ -14,7 +14,7 @@ export interface PSortableTabs {
   /**
    * The tabs to be displayed in the navigation, including their buttons and optional icons.
    */
-  tabs: TTabs;
+  tabs?: TTabs;
   /**
   * The ID of the active tab.
   * IDs must be provided to the buttons in order for this to work.
@@ -38,7 +38,7 @@ export function SortableTabs(props: PSortableTabs) {
   const { tabs, activeId, onReorder, className } = props;
 
   // Use the first button's id as the tab identifier for sorting
-  const tabIds = tabs.map((tab) => tab.buttons[0]?.id || "");
+  const tabIds = tabs?.map((tab) => tab.buttons[0]?.id || "") || [];
 
   return (
     <DragDropProvider onDragEnd={(event) => {
@@ -47,13 +47,13 @@ export function SortableTabs(props: PSortableTabs) {
       onReorder(reordered);
     }}>
       <div className={`tol-tabs-nav ${className}`}>
-        {tabs.map((tab, index) => (
+        {tabs?.map((tab, index) => (
           <SortableTab
             key={tabIds[index]}
             id={tabIds[index]}
             index={index}
             tab={tab}
-            activeId={activeId}
+            active={activeId ? tab.buttons.some((b) => b.id === activeId) : false}
             onReorder={onReorder}
           />
         ))}

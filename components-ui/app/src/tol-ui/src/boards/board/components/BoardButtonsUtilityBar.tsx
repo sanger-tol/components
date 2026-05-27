@@ -18,7 +18,7 @@ import {
   ViewTabs,
 } from ".";
 
-export interface IBoardUtilityBar {
+export interface IBoardButtonsUtilityBar {
   activeViewId: string | null;
   boardDataSource: TsDataSource;
   newBoardCopyTitle: string;
@@ -32,7 +32,7 @@ export interface IBoardUtilityBar {
   onOpenViewImportModal: () => void;
 }
 
-export function BoardUtilityBar(props: IBoardUtilityBar) {
+export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
   const {
     boardDataSource,
     newBoardCopyTitle,
@@ -65,9 +65,23 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     board?.title!,
   );
 
-  const onSaveTitle = (newTitle: string) => {
+  const onSaveBoardTitle = (newTitle: string) => {
     upsertTitle(newTitle, board.id!, boardDataSource);
     setBoard({ ...board, title: newTitle });
+  }
+
+  const onSaveViewTitle = (viewId: string, newTitle: string) => {
+    upsertTitle(newTitle, viewId, boardDataSource);
+    setBoard({
+      ...board,
+      children: {
+        ...board?.children,
+        [viewId]: {
+          ...board?.children?.[viewId],
+          title: newTitle
+        },
+      },
+    });
   }
 
   return (
@@ -79,17 +93,17 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
           editModeTitle(
             editMode,
             board?.title!,
-            onSaveTitle
+            onSaveBoardTitle
           )
         }
         elements={ViewModeBoardTitle(editMode, board?.title!)}
       />
-      {board?.order?.length > 1 && (
+      {(board?.order?.length > 1 || editMode) && (
         <UtilityBar
           id="tol-board-views-utility-bar"
           className="tol-views-bar"
           elements={[
-            <ViewTabs {...props} />
+            <ViewTabs onSaveTitle={onSaveViewTitle} {...props} />
           ]}
           buttons={[
             addZoneButton(

@@ -23,6 +23,7 @@ export interface PViewTabs {
   onClickView: (viewId: string) => () => void;
   onAddView: () => void;
   onReorderView: (reorderedIds: string[]) => void;
+  onSaveTitle: (viewId: string, newTitle: string) => void;
 }
 
 export function ViewTabs(props: PViewTabs) {
@@ -33,11 +34,13 @@ export function ViewTabs(props: PViewTabs) {
     onClickView,
     onAddView,
     onReorderView,
+    onSaveTitle,
   } = props;
 
   const { board, editMode } = useBoard();
 
   const isMaxViews = (board?.order?.length ?? 0) >= MAX_VIEWS_ALLOWED;
+  const isMoreThanOneView = (board?.order?.length ?? 0) > 1;
 
   return (
     <>
@@ -48,18 +51,21 @@ export function ViewTabs(props: PViewTabs) {
         className="tol-views-nav"
         onReorder={editMode ? onReorderView : undefined}
         tabs={
-          board?.order?.map((viewId) => {
-            const view = board?.children?.[viewId];
-            return buildViewTab(
-              viewId,
-              view.title!,
-              activeViewId,
-              editMode,
-              onOpenDeleteViewModal,
-              onClickView,
-              board,
-            );
-          })
+          isMoreThanOneView
+            ? board?.order?.map((viewId) => {
+                const view = board?.children?.[viewId];
+                return buildViewTab(
+                  viewId,
+                  view?.title!,
+                  activeViewId === viewId,
+                  editMode,
+                  isMoreThanOneView,
+                  onOpenDeleteViewModal,
+                  onClickView,
+                  onSaveTitle,
+                );
+              })
+            : undefined
         }
       />
     </>

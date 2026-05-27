@@ -5,6 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import {
+  BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
+  EditableTitle,
   IBoard,
   ITab,
   PRIVILEGE,
@@ -61,27 +63,39 @@ export function buildBoardUtilityBarButtons(
 export function buildViewTab(
   viewId: string,
   viewTitle: string,
-  activeViewId: string | null,
+  active: boolean,
   editMode: boolean,
+  isMoreThanOneView: boolean,
   onOpenDeleteViewModal: () => void,
   onClickView: (viewId: string) => () => void,
-  board?: IBoard,
+  onSaveTitle: (viewId: string, newTitle: string) => void,
 ): ITab {
-  const isMoreThanOneView = (board?.order?.length ?? 0) > 1;
+
+  const title = (
+    <EditableTitle
+      hideButtons
+      text={viewTitle}
+      editable={editMode && active}
+      onSave={(newTitle: string) => onSaveTitle(viewId, newTitle)}
+      emptyAllowed={false}
+      onEmptyMessage={BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE}
+    />
+  )
 
   return {
     buttons: [
       viewSelectorTab(
         viewId,
-        viewTitle,
+        title,
         onClickView(viewId),
         isMoreThanOneView,
+        editMode,
       ),
+      copyViewIdToClipboard(viewId, active),
       deleteViewButton(
         onOpenDeleteViewModal,
-        editMode && activeViewId === viewId && isMoreThanOneView,
+        editMode && active && isMoreThanOneView,
       ),
-      copyViewIdToClipboard(viewId, activeViewId === viewId && !editMode),
     ],
   };
 }
