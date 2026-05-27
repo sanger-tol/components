@@ -19,6 +19,7 @@ export interface IBoardCellRenderer {
   params?: TBoardCellRendererParams
   allowedDataTypes?: string[]
   rename?: string
+  description?: string
 };
 
 export interface IBoardCellRenderers {

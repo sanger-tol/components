@@ -157,6 +157,9 @@ export function CellRendererModal(props: PCellRendererModal) {
   const FirstPage = (
     <>
       {CellRendererSelector}
+      <p>
+        {renderer && cellRendererParams[renderer.type]?.description}
+      </p>
       <hr />
       {ParameterList}
     </>
