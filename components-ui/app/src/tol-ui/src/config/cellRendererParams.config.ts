@@ -16,6 +16,11 @@ export const cellRendererParams: IBoardCellRenderers = {
   card: {
     rename: "Card",
     params: {
+      content: {
+        type: "markdown",
+        rename: "Content",
+        description: "Markdown-formatted content"
+      },
       successBackground: {
         type: "condition",
         rename: "Success Background",
@@ -30,11 +35,6 @@ export const cellRendererParams: IBoardCellRenderers = {
         type: "condition",
         rename: "Error Background",
         description: "Condition for making the background the success colour"
-      },
-      content: {
-        type: "markdown",
-        rename: "Content",
-        description: "Markdown-formatted content"
       }
     }
   },

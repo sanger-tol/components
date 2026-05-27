@@ -7,18 +7,18 @@ SPDX-License-Identifier: MIT
 import { Markdown } from "../..";
 
 export interface PCard extends PCellDisplay {
+  content: string;
   successBackground: boolean;
   warningBackground: boolean;
   errorBackground: boolean;
-  content: string;
 }
 
 export function Card(props: PCard) {
   const {
+    content,
     successBackground,
     warningBackground,
-    errorBackground,
-    content
+    errorBackground
   } = props;
 
   return (
