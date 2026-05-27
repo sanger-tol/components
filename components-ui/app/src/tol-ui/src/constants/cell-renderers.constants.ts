@@ -7,4 +7,5 @@ SPDX-License-Identifier: MIT
 export const CELL_RENDERER_PARAMS = {
   STRING: "string",
   CONDITION: "condition",
+  MARKDOWN: "markdown"
 } as const;

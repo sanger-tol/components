@@ -73,6 +73,18 @@ export function CellRendererParam(props: PCellRendererParam) {
               );
             }}
           />
+        ) : meta.type === "markdown" ? (
+          <Button
+            outline
+            text={paramValue ? "Edit Markdown" : "Add Markdown"}
+            icon="puzzle-piece"
+            type={paramValue ? "warning" : "success"}
+            onClick={() => {
+              setSelectedParam(
+                param === selectedParam ? undefined : param
+              );
+            }}
+          />
         ) : null}
       </div>
     </div>
