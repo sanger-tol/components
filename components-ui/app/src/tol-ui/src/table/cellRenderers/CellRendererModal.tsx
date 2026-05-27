@@ -10,7 +10,7 @@ import {
   AttributeTitle,
   Button,
   BUTTONS,
-  CellRendererParamOptions,
+  CellRendererConditionParamOptions,
   cellRendererParams,
   deepCopy,
   FieldMeta,
@@ -40,7 +40,17 @@ export function CellRendererModal(props: PCellRendererModal) {
   const [renderer, setRenderer] = useState<TCellRenderer>();
   // Used to know whether changes have been made to the cell renderer (by checking it against `renderer`)
   const [previousRenderer, setPreviousRenderer] = useState<TCellRenderer>();
+  // A parameter may need to be highlighted to be edited in more detail (via switching to the second page)
   const [selectedParameter, setSelectedParameter] = useState<string | undefined>();
+  // Whether changes have been made in page 2
+  const [doesSelectedParamHavePendingChanges, setDoesSelectedParamHavePendingChanges] = useState(false);
+
+  // Used in the modal config and for disabling buttons.
+  // Whether changes have been made in page 1
+  const doesRendererHavePendingChanges = useMemo(
+    () => JSON.stringify(renderer) !== JSON.stringify(previousRenderer),
+    [renderer, previousRenderer]
+  );
 
   useEffect(() => {
     if (open) {
@@ -56,12 +66,6 @@ export function CellRendererModal(props: PCellRendererModal) {
     // Reset state
     setSelectedParameter(undefined);
   }, [open]);
-
-  // Used in the modal config and for disabling buttons
-  const doesRendererHavePendingChanges = useMemo(
-    () => JSON.stringify(renderer) !== JSON.stringify(previousRenderer),
-    [renderer, previousRenderer]
-  );
 
   // Used in the Header
   const TooltipHelp = (
@@ -215,8 +219,30 @@ export function CellRendererModal(props: PCellRendererModal) {
       {ParameterList}
     </>
   );
+
   // The second page of the modal: a dedicated space to edit a specific parameter
-  const SecondPage = <CellRendererParamOptions param={selectedParameter || ""} />;
+  const selectedParameterType: string | undefined = useMemo(() => {
+    if (renderer && selectedParameter) {
+      return cellRendererParams[renderer.type].params?.[selectedParameter].type;
+    } else {
+      return undefined;
+    }
+  }, [selectedParameter]);
+  const SecondPage = selectedParameterType == "condition" ? (
+    <CellRendererConditionParamOptions
+      selectedConditionParam={selectedParameter || ""}
+      renderer={renderer}
+      setRenderer={setRenderer}
+      previousRenderer={previousRenderer}
+      hasPendingChanges={doesSelectedParamHavePendingChanges}
+      setHasPendingChanges={setDoesSelectedParamHavePendingChanges}
+      goBack={() => setSelectedParameter(undefined)}
+      objectType={objectType}
+      dataSource={dataSource}
+    />
+  ) : (
+    <></>
+  );
 
   return (
     <Modal
@@ -226,7 +252,7 @@ export function CellRendererModal(props: PCellRendererModal) {
       size={selectedParameter ? "sm" : "xs"}
       closeButton={!selectedParameter}
       actionButton={selectedParameter ? undefined : AddCellRendererButton}
-      hasPendingChanges={doesRendererHavePendingChanges}
+      hasPendingChanges={doesRendererHavePendingChanges || doesSelectedParamHavePendingChanges}
     >
       {selectedParameter ? SecondPage : FirstPage}
     </Modal>

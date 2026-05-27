@@ -1,0 +1,164 @@
+/*
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  AttributeSelector,
+  Button,
+  BUTTONS,
+  cellRendererParams,
+  defineZone,
+  generateFilter,
+  IFilter,
+  IRemoteTarget,
+  isEmptyObject,
+  IZone,
+  RemoteFilters,
+  TCellRenderer
+} from "../..";
+
+export interface PCellRendererConditionParamOptions extends IRemoteTarget {
+  selectedConditionParam: string;
+  renderer: TCellRenderer;
+  setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
+  previousRenderer: TCellRenderer;
+  hasPendingChanges: boolean;
+  setHasPendingChanges: Dispatch<SetStateAction<boolean>>;
+  goBack: () => void;
+}
+
+export function CellRendererConditionParamOptions(props: PCellRendererConditionParamOptions) {
+  const {
+    selectedConditionParam,
+    renderer,
+    setRenderer,
+    hasPendingChanges,
+    previousRenderer,
+    setHasPendingChanges,
+    goBack,
+    objectType,
+    dataSource
+  } = props;
+
+  // Filters must be associated with a zone,
+  // so here's a zone to assign the filters to while we're defining them
+  const zoneFilterId = "cell-renderer-zone";
+  const [filterZone, setFilterZone] = useState<IZone>(
+    defineZone("dummy-object-for-remote-filters", [
+      { id: zoneFilterId, filter: renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} } },
+    ]),
+  );
+  // The filters used for this condition
+  const [filterConditions, setFilterConditions] = useState<IFilter>();
+  // The attributes displayed in AttributeSelector
+  const [attributes, setAttributes] = useState<string[]>(Object.keys(filterConditions?.and_ || {}));
+
+  // Checks that the condition exists and has a value, stops the condition filters spreading across all conditions
+  useEffect(() => {
+    if (renderer?.props?.[selectedConditionParam!] && selectedConditionParam) {
+      const paramValue = renderer.props[selectedConditionParam];
+      const filterValue = typeof paramValue === 'object' ? paramValue as IFilter : { and_: {} };
+      setAttributes(Object.keys(filterValue.and_ || {}) || []);
+      setFilterConditions(filterValue);
+      setFilterZone(defineZone("dummy-object-for-remote-filters", [
+        { id: zoneFilterId, filter: filterValue },
+      ]));
+    } else {
+      setAttributes([]);
+      setFilterConditions({ and_: {} });
+    }
+  }, [selectedConditionParam]);
+
+  useEffect(() => {
+    const newFilter = generateFilter(filterZone, zoneFilterId);
+    setFilterConditions(newFilter);
+    setHasPendingChanges(() => {
+      if (!renderer || !selectedConditionParam) return false;
+      renderer!.props![selectedConditionParam!] = newFilter ?? {};
+      setRenderer({ ...renderer });
+      return JSON.stringify(previousRenderer?.props?.[selectedConditionParam]) !== JSON.stringify(renderer.props?.[selectedConditionParam])
+    });
+  }, [filterZone]);
+
+  // Needed for the BottomButtons. Either adding the parameter or going back means that the filter
+  // making up the parameter should be cleared (it gets tied to the renderer somehow!)
+  const resetFilterZone = () => setFilterZone(defineZone("dummy-object-for-remote-filters", [
+    { id: zoneFilterId, filter: { and_: {} } },
+  ]));
+
+  const handleBack = () => {
+    resetFilterZone();
+    goBack();
+  };
+
+  const handleSave = () => {
+    // delete empty params if no condition present
+    if (isEmptyObject(filterConditions?.and_ || {})) {
+      delete renderer!.props![selectedConditionParam!];
+    } else {
+      renderer!.props![selectedConditionParam!] = filterConditions ?? {};
+    }
+    setRenderer({ ...renderer! });
+    setHasPendingChanges(false);
+    resetFilterZone();
+    goBack();
+  };
+
+  const BottomButtons = (
+    <>
+      <Button
+        {...BUTTONS.ADD}
+        disabled={!hasPendingChanges}
+        onClick={handleSave}
+      />
+      <Button
+        {...BUTTONS.RETURN}
+        onClick={handleBack}
+      />
+    </>
+  );
+
+  return (
+    <div className="tol-data-point-renderer-modal-param-options">
+      <div className="tol-param-header">
+        <h6 className="tol-param-title">
+          Configure Condition for
+          '{cellRendererParams[renderer?.type!].params?.[selectedConditionParam]?.rename}'
+          Parameter
+        </h6>
+      </div>
+      <AttributeSelector
+        objectType={objectType}
+        dataSource={dataSource}
+        displaySource
+        recommendedFilterAvailable
+        renderSearchBySource
+        attribute={attributes}
+        setAttributes={setAttributes}
+        populatedFieldType="filter"
+        onClean={() => {
+          // We know that the component exists because it is set by default (filterZone state)
+          const component = filterZone.components[zoneFilterId];
+
+          // When the multi-select is cleared, the filter should be reset
+          component.data.filter!.and_ = {};
+          component.data.defaultFilter!.and_ = {};
+          setFilterZone({ ...filterZone });
+        }}
+      />
+      <RemoteFilters
+        objectType={objectType}
+        dataSource={dataSource}
+        utilityBarConfig={undefined}
+        zone={filterZone}
+        setZone={setFilterZone}
+        componentId={zoneFilterId}
+        attributes={attributes}
+      />
+      {BottomButtons}
+    </div>
+  )
+}
