@@ -16,6 +16,7 @@ import {
   FieldMeta,
   IconTooltip,
   IRemoteTarget,
+  isEmptyObject,
   Modal,
   normaliseCaps,
   SingleSelect,
@@ -27,6 +28,7 @@ export interface PCellRendererModal extends IRemoteTarget {
   open: boolean,
   setOpen: Dispatch<SetStateAction<boolean>>,
   attributeId: string,
+  /** Accessed (and sometimes written to) by reference. Feeds back to the Zone */
   fieldMeta: FieldMeta,
   setFieldMeta: (fieldMeta: FieldMeta) => void,
 }
@@ -140,6 +142,44 @@ export function CellRendererModal(props: PCellRendererModal) {
     </>
   );
 
+  // Called when the AddCellRendererButton is clicked.
+  // The end goal of this modal; applies the changes made throughout
+  const handleAddRenderer = () => {
+    // Prepare fieldMeta to be set on the zone.
+    // If there's a renderer (either made in this modal or carried over from what the attribute already had)
+    // then we apply this new renderer onto fieldMeta.
+    // If there's not a renderer (either we made no changes or the renderer on the attribute was removed)
+    // then we clear the cell renderer off of fieldMeta.
+    if (renderer) {
+      // Make sure the data is a valid object
+      fieldMeta.data![attributeId] = fieldMeta.data![attributeId] || {};
+      fieldMeta.dataWithDefaults![attributeId] = fieldMeta.dataWithDefaults![attributeId] || {};
+      
+      // Set the new cell renderer we made in this modal to the attribute
+      fieldMeta.data![attributeId].cellRenderer = renderer;
+      fieldMeta.dataWithDefaults![attributeId].cellRenderer = renderer;
+    } else {
+      // Remove any existing cell renderer
+      delete fieldMeta.data![attributeId].cellRenderer;
+      // Remove other metadata
+      if (isEmptyObject(fieldMeta.data![attributeId])) {
+        delete fieldMeta.data![attributeId];
+      }
+
+      // Do the same for dataWithDefaults
+      delete fieldMeta.dataWithDefaults![attributeId].cellRenderer;
+      if (isEmptyObject(fieldMeta.dataWithDefaults![attributeId])) {
+        delete fieldMeta.dataWithDefaults![attributeId];
+      }
+    }
+
+    // Formally apply the changes to fieldMeta so that they update on the Zone
+    setFieldMeta({ ...fieldMeta! });
+
+    // Close the modal
+    setOpen(false);
+  };
+
   // Shown only on the first page. Needs to be added as the action button instead of at the
   // bottom of the page so that it sits alongside the close button.
   // (In contrast to the second page, which has custom buttons at the bottom)
@@ -147,7 +187,7 @@ export function CellRendererModal(props: PCellRendererModal) {
     <Button
       {...BUTTONS.ADD}
       // disabled={!rendererHasPendingChanges || requiredParamsCount > filledParamsCount}
-      // onClick={onAddNewRenderer}
+      onClick={handleAddRenderer}
     />
   );
 
