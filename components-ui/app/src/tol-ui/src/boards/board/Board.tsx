@@ -33,7 +33,6 @@ import {
 import type { IBoard, IView, TNavBrand, TsDataSource } from "../..";
 import { BoardButtonsUtilityBar, ImportViewModal } from "./components";
 
-
 export interface PBoard {
   /**
    * The ID of the board to be displayed.
@@ -204,8 +203,8 @@ export function Board(props: PBoard) {
           if (!newBoardCopyTitle.trim()) {
             PopUpMessage({
               type: MESSAGE_TYPE.WARNING,
-              message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).BOARD_COPY
-                .NO_TITLE_ERROR,
+              message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD)
+                .BOARD_COPY.NO_TITLE_ERROR,
             });
             return;
           }
@@ -223,6 +222,11 @@ export function Board(props: PBoard) {
               setMountedViewIds([firstViewId]);
             }
           }
+          setPrivilege(
+            copiedBoard?.write_privilege
+              ? PRIVILEGE.BOARD.WRITABLE
+              : PRIVILEGE.BOARD.VIEWABLE,
+          );
           setBoardCopyModalOpen(false);
         }}
         onExited={() => {
