@@ -11,6 +11,7 @@ SPDX-License-Identifier: MIT
 21-04-2026
 
 - Added Priority cell renderer
+- Fixed bug: Table download - columns with duplicate display names are silently overwritten
 
 ## tol-ui `3.5.4`
 
