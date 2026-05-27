@@ -247,7 +247,6 @@ export function CellRendererModal(props: PCellRendererModal) {
       paramName={selectedParameter || ""}
       renderer={renderer}
       setRenderer={setRenderer}
-      previousRenderer={previousRenderer}
       hasPendingChanges={doesSelectedParamHavePendingChanges}
       setHasPendingChanges={setDoesSelectedParamHavePendingChanges}
       goBack={() => setSelectedParameter(undefined)}

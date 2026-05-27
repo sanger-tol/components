@@ -12,7 +12,6 @@ export interface PCellRendererMarkdownParamOptions extends IRemoteTarget {
   paramName: string;
   renderer: TCellRenderer;
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
-  previousRenderer: TCellRenderer;
   hasPendingChanges: boolean;
   setHasPendingChanges: Dispatch<SetStateAction<boolean>>;
   goBack: () => void;
@@ -23,7 +22,6 @@ export function CellRendererMarkdownParamOptions(props: PCellRendererMarkdownPar
     paramName,
     renderer,
     setRenderer,
-    previousRenderer,
     hasPendingChanges,
     setHasPendingChanges,
     goBack
