@@ -232,7 +232,7 @@ export function CellRendererModal(props: PCellRendererModal) {
   }, [selectedParameter]);
   const SecondPage = selectedParameterType == "condition" ? (
     <CellRendererConditionParamOptions
-      selectedConditionParam={selectedParameter || ""}
+      paramName={selectedParameter || ""}
       renderer={renderer}
       setRenderer={setRenderer}
       previousRenderer={previousRenderer}
@@ -243,7 +243,17 @@ export function CellRendererModal(props: PCellRendererModal) {
       dataSource={dataSource}
     />
   ) : selectedParameterType == "markdown" ? (
-    <CellRendererMarkdownParamOptions />
+    <CellRendererMarkdownParamOptions
+      paramName={selectedParameter || ""}
+      renderer={renderer}
+      setRenderer={setRenderer}
+      previousRenderer={previousRenderer}
+      hasPendingChanges={doesSelectedParamHavePendingChanges}
+      setHasPendingChanges={setDoesSelectedParamHavePendingChanges}
+      goBack={() => setSelectedParameter(undefined)}
+      objectType={objectType}
+      dataSource={dataSource}
+    />
   ) : (
     <></>
   );
@@ -258,7 +268,14 @@ export function CellRendererModal(props: PCellRendererModal) {
       actionButton={selectedParameter ? undefined : AddCellRendererButton}
       hasPendingChanges={doesRendererHavePendingChanges || doesSelectedParamHavePendingChanges}
     >
-      {selectedParameter ? SecondPage : FirstPage}
+      {selectedParameter ? (
+        <>
+          <hr/>
+          {SecondPage}
+        </>
+      ) : (
+        FirstPage
+      )}
     </Modal>
   )
 }

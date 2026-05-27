@@ -22,7 +22,7 @@ import {
 } from "../..";
 
 export interface PCellRendererConditionParamOptions extends IRemoteTarget {
-  selectedConditionParam: string;
+  paramName: string;
   renderer: TCellRenderer;
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
   previousRenderer: TCellRenderer;
@@ -33,7 +33,7 @@ export interface PCellRendererConditionParamOptions extends IRemoteTarget {
 
 export function CellRendererConditionParamOptions(props: PCellRendererConditionParamOptions) {
   const {
-    selectedConditionParam,
+    paramName,
     renderer,
     setRenderer,
     hasPendingChanges,
@@ -49,7 +49,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   const zoneFilterId = "cell-renderer-component";
   const [filterZone, setFilterZone] = useState<IZone>(
     defineZone("dummy-object-for-remote-filters", [
-      { id: zoneFilterId, filter: renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} } },
+      { id: zoneFilterId, filter: renderer?.props?.[paramName!] as IFilter || { and_: {} } },
     ]),
   );
   // The filters used for this condition
@@ -65,12 +65,12 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
 
   // Checks that the condition exists and has a value, stops the condition filters spreading across all conditions
   useEffect(() => {
-    if (renderer?.props?.[selectedConditionParam!] && selectedConditionParam) {
-      const paramValue = renderer.props[selectedConditionParam];
+    if (renderer?.props?.[paramName!] && paramName) {
+      const paramValue = renderer.props[paramName];
       const filterValue = typeof paramValue === 'object' ? paramValue as IFilter : { and_: {} };
       setAttributes(Object.keys(filterValue.and_ || {}) || []);
       setFilterConditions(filterValue);
-      setPreviousFilterConditions(previousRenderer?.props?.[selectedConditionParam] as IFilter | undefined);
+      setPreviousFilterConditions(previousRenderer?.props?.[paramName] as IFilter | undefined);
       setFilterZone(defineZone("dummy-object-for-remote-filters", [
         { id: zoneFilterId, filter: filterValue },
       ]));
@@ -79,14 +79,14 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       setFilterConditions({ and_: {} });
       setPreviousFilterConditions({ and_: {} });
     }
-  }, [selectedConditionParam]);
+  }, [paramName]);
 
   useEffect(() => {
     const newFilter = generateFilter(filterZone, zoneFilterId);
     setFilterConditions(newFilter);
     setHasPendingChanges(() => {
-      if (!renderer || !selectedConditionParam) return false;
-      renderer!.props![selectedConditionParam!] = newFilter ?? {};
+      if (!renderer || !paramName) return false;
+      renderer!.props![paramName!] = newFilter ?? {};
       setRenderer({ ...renderer });
       // return JSON.stringify(previousRenderer?.props?.[selectedConditionParam]) !== JSON.stringify(renderer.props?.[selectedConditionParam])
       return JSON.stringify(previousFilterConditions) !== JSON.stringify(newFilter);
@@ -108,9 +108,9 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   const handleSave = () => {
     // delete empty params if no condition present
     if (isEmptyObject(filterConditions?.and_ || {})) {
-      delete renderer!.props![selectedConditionParam!];
+      delete renderer!.props![paramName!];
     } else {
-      renderer!.props![selectedConditionParam!] = filterConditions ?? {};
+      renderer!.props![paramName!] = filterConditions ?? {};
     }
     setRenderer({ ...renderer! });
     setHasPendingChanges(false);
@@ -134,11 +134,10 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
 
   return (
     <div className="tol-data-point-renderer-modal-condition-param-options">
-      <hr />
       <div className="tol-param-header">
         <h6 className="tol-param-title">
           Configure Condition for
-          '{cellRendererParams[renderer?.type!].params?.[selectedConditionParam]?.rename}'
+          '{cellRendererParams[renderer?.type!].params?.[paramName]?.rename}'
           Parameter
         </h6>
       </div>
