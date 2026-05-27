@@ -37,8 +37,8 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
     renderer,
     setRenderer,
     hasPendingChanges,
-    previousRenderer,
     setHasPendingChanges,
+    previousRenderer,
     goBack,
     objectType,
     dataSource
@@ -54,6 +54,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   );
   // The filters used for this condition
   const [filterConditions, setFilterConditions] = useState<IFilter>();
+  const [previousFilterConditions, setPreviousFilterConditions] = useState<IFilter>();
   // The attributes displayed in AttributeSelector
   const [attributes, setAttributes] = useState<string[]>(Object.keys(filterConditions?.and_ || {}));
   // Save a copy of the renderer before the filters are applied.
@@ -69,12 +70,14 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       const filterValue = typeof paramValue === 'object' ? paramValue as IFilter : { and_: {} };
       setAttributes(Object.keys(filterValue.and_ || {}) || []);
       setFilterConditions(filterValue);
+      setPreviousFilterConditions(previousRenderer?.props?.[selectedConditionParam] as IFilter | undefined);
       setFilterZone(defineZone("dummy-object-for-remote-filters", [
         { id: zoneFilterId, filter: filterValue },
       ]));
     } else {
       setAttributes([]);
       setFilterConditions({ and_: {} });
+      setPreviousFilterConditions({ and_: {} });
     }
   }, [selectedConditionParam]);
 
@@ -85,7 +88,8 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       if (!renderer || !selectedConditionParam) return false;
       renderer!.props![selectedConditionParam!] = newFilter ?? {};
       setRenderer({ ...renderer });
-      return JSON.stringify(previousRenderer?.props?.[selectedConditionParam]) !== JSON.stringify(renderer.props?.[selectedConditionParam])
+      // return JSON.stringify(previousRenderer?.props?.[selectedConditionParam]) !== JSON.stringify(renderer.props?.[selectedConditionParam])
+      return JSON.stringify(previousFilterConditions) !== JSON.stringify(newFilter);
     });
   }, [filterZone]);
 
