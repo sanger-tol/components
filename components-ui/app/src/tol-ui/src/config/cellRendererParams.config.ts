@@ -13,6 +13,31 @@ export const cellRendererParams: IBoardCellRenderers = {
   boolean: {
     allowedDataTypes: ["bool"]
   },
+  card: {
+    rename: "Card",
+    params: {
+      successBackground: {
+        type: "condition",
+        rename: "Success Background",
+        description: "Condition for making the background the success colour"
+      },
+      warningBackground: {
+        type: "condition",
+        rename: "Warning Background",
+        description: "Condition for making the background the success colour"
+      },
+      errorBackground: {
+        type: "condition",
+        rename: "Error Background",
+        description: "Condition for making the background the success colour"
+      },
+      content: {
+        type: "markdown",
+        rename: "Content",
+        description: "Markdown-formatted content"
+      }
+    }
+  },
   datetime: {
     rename: "DateTime",
     allowedDataTypes: ["datetime"]
