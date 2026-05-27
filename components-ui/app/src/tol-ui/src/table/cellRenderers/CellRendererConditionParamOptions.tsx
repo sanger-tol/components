@@ -10,6 +10,7 @@ import {
   Button,
   BUTTONS,
   cellRendererParams,
+  deepCopy,
   defineZone,
   generateFilter,
   IFilter,
@@ -45,7 +46,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
 
   // Filters must be associated with a zone,
   // so here's a zone to assign the filters to while we're defining them
-  const zoneFilterId = "cell-renderer-zone";
+  const zoneFilterId = "cell-renderer-component";
   const [filterZone, setFilterZone] = useState<IZone>(
     defineZone("dummy-object-for-remote-filters", [
       { id: zoneFilterId, filter: renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} } },
@@ -55,6 +56,11 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   const [filterConditions, setFilterConditions] = useState<IFilter>();
   // The attributes displayed in AttributeSelector
   const [attributes, setAttributes] = useState<string[]>(Object.keys(filterConditions?.and_ || {}));
+  // Save a copy of the renderer before the filters are applied.
+  // Because filter settings are changed by reference, if we go back to the first page, even without
+  // setting any state, the changes will still apply. Then, the renderer is set to the value
+  // stored here.
+  const [rendererBeforeChanges, _setRendererBeforeChanges] = useState(deepCopy(renderer));
 
   // Checks that the condition exists and has a value, stops the condition filters spreading across all conditions
   useEffect(() => {
@@ -91,6 +97,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
 
   const handleBack = () => {
     resetFilterZone();
+    setRenderer(rendererBeforeChanges);
     goBack();
   };
 
