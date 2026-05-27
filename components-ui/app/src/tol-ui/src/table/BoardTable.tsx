@@ -13,7 +13,7 @@ import {
   optimiseFieldMetaForSave,
   updateFieldMetaAttribute,
   useAuth,
-  BOARDS,
+  BOARD_ENTITIES,
   setTableConfigLocalStorage,
   clearTableConfigLocalStorage,
   useQueryData,
@@ -52,12 +52,12 @@ export function BoardTable(props: PBoardTable) {
 
   const [resetKey, setResetKey] = useState<number>(0);
 
-  // Set initial state on mount, prioritising remote diff, 
+  // Set initial state on mount, prioritising remote diff,
   // then local storage diff for anonymous users, then the base config
   const [diffState, setDiffState] = useState<IDiffState>({
     currentConfig: structuredClone(
       componentData?.config_diff?.config ?? componentData?.config ?? null,
-    ),
+    ) as Partial<ITableConfigSave> ?? null,
     hasDiff: !!componentData?.config_diff?.config,
     configDifferences: { add: [], remove: [] },
   });
@@ -65,7 +65,7 @@ export function BoardTable(props: PBoardTable) {
   const { data: remoteDiffState } = useQueryData<IDiffState>(
     [
       // Call the query again, if any of these parameters change
-      BOARDS.BOARD_DIFF,
+      BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
       id,
       user?.id ?? ANONYMOUS_USER_QUERY_KEY,
       String(editMode),
@@ -77,7 +77,7 @@ export function BoardTable(props: PBoardTable) {
         id,
         isLoggedIn,
         objectType,
-        componentData?.config,
+        componentData?.config ?? null,
         editMode,
         componentData?.config_diff?.config || null,
       ),
@@ -92,11 +92,11 @@ export function BoardTable(props: PBoardTable) {
 
   useEffect(() => {
     const nextConfig = editMode
-      ? componentData?.config
+      ? (componentData?.config ?? null)
       : componentData?.config_diff?.config || componentData?.config;
     setDiffState((prev) => ({
       ...prev,
-      currentConfig: structuredClone(nextConfig),
+      currentConfig: structuredClone(nextConfig) as Partial<ITableConfigSave> ?? null,
       hasDiff: !editMode && !!componentData?.config_diff?.config,
     }));
     setResetKey((k) => k + 1);
@@ -134,7 +134,7 @@ export function BoardTable(props: PBoardTable) {
       return;
     }
     setTableConfigLocalStorage(
-      `${BOARDS.BOARD_DIFF}_${id}`,
+      `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${id}`,
       ["fieldMeta", "defaultSortByAttribute", "defaultSortByType"],
       [newFieldMeta, defaultSortByAttribute, defaultSortByType],
     );
@@ -194,7 +194,7 @@ export function BoardTable(props: PBoardTable) {
       return;
     }
     setTableConfigLocalStorage(
-      `${BOARDS.BOARD_DIFF}_${id}`,
+      `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${id}`,
       "pageSize",
       pageSize,
     );
@@ -203,27 +203,33 @@ export function BoardTable(props: PBoardTable) {
 
   // ── Reset ────────────────────────────────────────────────────────────────
 
+  // TODO: THIS NEEDS LOOKING AT, THERE IS SOME FUNKY BEHAVIOUR
   const onReset = async () => {
     const resetDiffState = () => {
       if (componentData?.config_diff) {
-        componentData.config_diff = null;
+        componentData.config_diff = undefined;
       }
       setDiffState({
-        currentConfig: { ...componentData.config },
+        currentConfig: { ...componentData.config } as Partial<ITableConfigSave>,
         hasDiff: false,
         configDifferences: { add: [], remove: [] },
       });
       setResetKey((k: number) => k + 1);
     };
 
+    const diffId = componentData?.config_diff?.id;
+    if (!diffId) return;
+
     isLoggedIn && diffState.hasDiff
-      ? await deleteComponentDiff(id, boardDataSource, user?.id ?? "").then(
+      ? await deleteComponentDiff(boardDataSource, diffId, user?.id ?? "").then(
           () => {
             resetDiffState();
           },
         )
       : diffState.hasDiff
-        ? (clearTableConfigLocalStorage(`${BOARDS.BOARD_DIFF}_${id}`),
+        ? (clearTableConfigLocalStorage(
+            `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${id}`,
+          ),
           resetDiffState())
         : null;
   };

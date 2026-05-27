@@ -22,7 +22,7 @@ export interface IAndAttributes {
   [attribute: string]: IFilterOperators;
 }
 
-export interface IFilter { // TODO: check usages
+export interface IFilter {
   and_?: IAndAttributes;
 }
 

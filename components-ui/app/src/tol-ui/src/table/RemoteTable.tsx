@@ -15,7 +15,7 @@ import {
   PUtilityBar,
   IZone,
   IDropdownButtonConfig,
-  ACTION_API_DATA_PATH,
+  API_PATHS,
   Placeholder,
   Table,
   PopUpMessage,
@@ -38,7 +38,6 @@ import {
   ITableDrawerSave,
   ITableConfigSave,
   optimiseFieldMetaForSave,
-  env,
   amalgamateRequestedFields,
   TFieldDropdownChoices,
   updateFieldMetaAttribute,
@@ -261,8 +260,8 @@ export function RemoteTable(props: PRemoteTable) {
   } = props;
 
   const runActionDatasource = new TsDataSource({
-    apiPath: env.API_PATH,
-    apiDataPath: ACTION_API_DATA_PATH,
+    apiPath: API_PATHS.API_PATH,
+    apiDataPath: API_PATHS.ACTION,
   })
 
   // data and field information

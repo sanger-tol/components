@@ -24,7 +24,7 @@ import {
   TABLE_CONFIG_DIFF_AUTH_VS_NO_AUTH_NOTICE_DISMISSED_KEY,
   EDIT_MODE_TABLE_CONFIG_MESSAGE,
   PERSONAL_TABLE_CONFIG_MESSAGE,
-  BOARD_DIFF_LOGGED_IN_OUT_DIFFERENCE_WARNING_MESSAGE,
+  ENTITY_DIFF_LOGGED_IN_OUT_DIFFERENCE_WARNING_MESSAGE,
 } from "..";
 
 
@@ -195,7 +195,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
               setWarningDismissed(true);
             }}
           >
-            {BOARD_DIFF_LOGGED_IN_OUT_DIFFERENCE_WARNING_MESSAGE}
+            {ENTITY_DIFF_LOGGED_IN_OUT_DIFFERENCE_WARNING_MESSAGE}
           </Message>
         </div>
       )}

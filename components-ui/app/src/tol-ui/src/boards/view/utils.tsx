@@ -20,7 +20,7 @@ export async function getPublishedDataspaces(
 ): Promise<TDataObjectListOrNull> {
   return await boardDataSource
     .getListPage({
-      objectType: BOARD_ENTITIES.DATA_SOURCE_INSTANCE,
+      objectType: BOARD_ENTITIES.ENTITIES.DATA_SOURCE_INSTANCE,
       pageSize: 100,
       filter: {
         and_: {

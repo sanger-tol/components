@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { MAX_VIEWS_ALLOWED } from "..";
 import type { TBoardEntityType, TMessageType } from "..";
 
 export const MESSAGE_DURATION: { [key: string]: number } = {
@@ -22,12 +23,12 @@ export const MESSAGE_TYPE: { [key: string]: TMessageType } = {
   ERROR: "error",
 } as const;
 
-
 export const BOARD_MESSAGE_TEXT = (
   boardEntity: TBoardEntityType,
 ): { [key: string]: { [key: string]: string } } => {
-  const entityCapitalised =
-    boardEntity.charAt(0).toUpperCase() + boardEntity.slice(1);
+  const entityCapitalised: string =
+    (boardEntity as string).charAt(0).toUpperCase() +
+    (boardEntity as string).slice(1);
 
   return {
     BOARD_COPY: {
@@ -36,11 +37,40 @@ export const BOARD_MESSAGE_TEXT = (
       IMPORT_SUCCESS: `${entityCapitalised} imported successfully.`,
       IMPORT_ERROR: `Error importing ${entityCapitalised}. Please try again.`,
       NO_TITLE_ERROR: `Please provide a title for the new ${entityCapitalised}.`,
+      COPY_FORBIDDEN: `You are not authorised to copy this ${entityCapitalised}.`,
+      IMPORT_FORBIDDEN: `You are not authorised to import a ${entityCapitalised} on this board.`,
     },
     CLIPBOARD_COPY: {
       ID_COPY: `${entityCapitalised} ID copied to clipboard.`,
       URL_COPY: `${entityCapitalised} URL copied to clipboard.`,
     },
-
+    UPDATE: {
+      ERROR: `Error updating ${entityCapitalised}. Please try again.`,
+      FORBIDDEN: `You are not authorised to update this ${entityCapitalised}.`,
+    },
+    FETCH: {
+      ERROR: `Error fetching ${entityCapitalised} data. Please try again.`,
+    },
+    DELETE: {
+      SUCCESS: `${entityCapitalised} deleted successfully.`,
+      ERROR: `Error deleting ${entityCapitalised}. Please try again.`,
+      FORBIDDEN: `You are not authorised to delete this ${entityCapitalised}.`,
+    },
+    ADD: {
+      ERROR: `Error adding ${entityCapitalised}. Please try again.`,
+      FORBIDDEN: `You are not authorised to add a ${entityCapitalised} to this board.`,
+    },
+    REORDER: {
+      ERROR: `Error reordering ${entityCapitalised}. Please refresh the page and try again.`,
+      FORBIDDEN: `You are not authorised to reorder this ${entityCapitalised}s.`,
+    },
+    CREATE: {
+      ERROR: `Error creating ${entityCapitalised}. Please try again.`,
+      FORBIDDEN: `You are not authorised to create a ${entityCapitalised}.`,
+      MAX_LIMIT_ERROR: `A maximum of ${MAX_VIEWS_ALLOWED} Views are allowed per board.`,
+    },
+    MISC: {
+      EMPTY_TITLE_ERROR: `${entityCapitalised} titles cannot be empty.`,
+    }
   } as const;
 };

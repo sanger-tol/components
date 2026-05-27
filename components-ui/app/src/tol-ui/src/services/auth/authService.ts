@@ -8,14 +8,14 @@ SPDX-License-Identifier: MIT
 import {
   TsDataSource,
   API_METHODS,
-  AUTH_API_DATA_PATH,
+  API_PATHS,
   TDataObjectListOrNull,
   USER
 } from "../..";
 
 const authDataSource = new TsDataSource({
   apiPath: "/api/v1",
-  apiDataPath: AUTH_API_DATA_PATH
+  apiDataPath: API_PATHS.AUTH,
 });
 
 export function getUrlLogin() {

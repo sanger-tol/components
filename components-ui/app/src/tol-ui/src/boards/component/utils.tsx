@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  BOARDS,
+  BOARD_ENTITIES,
   defineBoardEntity,
   IComponent,
   IFilter,
@@ -37,7 +37,7 @@ export async function updateComponentConfigAndUpsert(
   if (editMode) {
     component.config = { ...config };
     // return await upsertCoreBoardEntity(
-    //   BOARDS.COMPONENT,
+    //   BOARD_ENTITIES.ENTITIES.COMPONENT,
     //   { config: config },
     //   boardDataSource,
     //   undefined,
@@ -48,11 +48,11 @@ export async function updateComponentConfigAndUpsert(
   component.config_diff = { ...component.config_diff, config: config };
   return await boardDataSource
     .upsert({
-      objectType: BOARDS.BOARD_DIFF,
+      objectType: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
       payload: [
         {
-          type: BOARDS.BOARD_DIFF,
-          ...(component.config_diff.id && { id: component.config_diff.id }),
+          type: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
+          ...(component?.config_diff?.id && { id: component.config_diff.id }),
           attributes: {
             user_id: userId,
             component_id: componentId,
@@ -94,7 +94,7 @@ export function defineZoneWithComponentList(
       ),
       order: components.map((component) => component.id!),
     },
-    BOARDS.ZONE,
+    BOARD_ENTITIES.ENTITIES.ZONE,
   );
 }
 
@@ -125,7 +125,7 @@ export function generateLayout(zone: IZone) {
     ["lg", "md", "sm"].forEach((breakpoint) => {
       let w, h;
       // filterBlock components have lg width but sm height
-      if (component.type === "filterBlock") {
+      if (component.component_type === "filterBlock") { // TODO: Add types for component_type
         w = types.lg[breakpoint].w;
         h = breakpoint === "lg" ? 9 : breakpoint === "md" ? 15 : 26;
       } else {

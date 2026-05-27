@@ -6,14 +6,15 @@
 
 import { useHistory } from "react-router-dom";
 import {
-  BOARDS,
+  BOARD_ENTITIES,
+  BOARDS_API,
   Button,
   PBoard,
   MY_BOARDS_TITLE,
   MY_BOARDS_SUB_TITLE,
   API_METHODS,
   PopUpMessage,
-  ERROR_CREATING_BOARD,
+  BOARD_MESSAGE_TEXT,
 } from "../..";
 import { useState } from "react";
 
@@ -28,20 +29,20 @@ export function MyBoardsHeader(props: PBoard) {
     boardDataSource
       .custom({
         method: API_METHODS.POST,
-        resource: BOARDS.OPERATIONS.CREATE_BOARD,
+        resource: BOARDS_API.OPERATIONS.CREATE_BOARD,
         body: {}
       })
       .then((res) => {
         const { id } = res.data;
         setTimeout(() => {
-          history.push(`/${BOARDS.BOARD}/${id}`);
+          history.push(`/${BOARD_ENTITIES.ENTITIES.BOARD}/${id}`);
         }, 500);
       })
       .catch(() => {
         setLoading(false);
         PopUpMessage({
           type: "error",
-          message: ERROR_CREATING_BOARD,
+          message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.ERROR,
         });
       });
     setLoading(true);
