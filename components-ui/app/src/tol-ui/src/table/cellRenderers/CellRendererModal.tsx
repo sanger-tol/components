@@ -11,6 +11,7 @@ import {
   Button,
   BUTTONS,
   CellRendererConditionParamOptions,
+  CellRendererMarkdownParamOptions,
   cellRendererParams,
   deepCopy,
   FieldMeta,
@@ -20,7 +21,8 @@ import {
   Modal,
   normaliseCaps,
   SingleSelect,
-  TCellRenderer
+  TCellRenderer,
+  TCellRendererParamType
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
 
@@ -221,7 +223,7 @@ export function CellRendererModal(props: PCellRendererModal) {
   );
 
   // The second page of the modal: a dedicated space to edit a specific parameter
-  const selectedParameterType: string | undefined = useMemo(() => {
+  const selectedParameterType: TCellRendererParamType | undefined = useMemo(() => {
     if (renderer && selectedParameter) {
       return cellRendererParams[renderer.type].params?.[selectedParameter].type;
     } else {
@@ -240,6 +242,8 @@ export function CellRendererModal(props: PCellRendererModal) {
       objectType={objectType}
       dataSource={dataSource}
     />
+  ) : selectedParameterType == "markdown" ? (
+    <CellRendererMarkdownParamOptions />
   ) : (
     <></>
   );
