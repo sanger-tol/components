@@ -129,7 +129,8 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   );
 
   return (
-    <div className="tol-data-point-renderer-modal-param-options">
+    <div className="tol-data-point-renderer-modal-condition-param-options">
+      <hr />
       <div className="tol-param-header">
         <h6 className="tol-param-title">
           Configure Condition for
