@@ -8,5 +8,6 @@ export enum EColour {
 	PRIMARY = "primary",
   SUCCESS = "success",
 	WARNING = "warning",
-	ERROR = "error"
+	ERROR = "error",
+	BACKGROUND = "bg"
 }

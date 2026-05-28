@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Markdown } from "../..";
+import { EColour, Markdown, PCellDisplay, Tag } from "../..";
 
 export interface PCard extends PCellDisplay {
   content: string;
@@ -16,14 +16,27 @@ export interface PCard extends PCellDisplay {
 export function Card(props: PCard) {
   const {
     content,
-    successBackground,
-    warningBackground,
-    errorBackground
+    successBackground = false,
+    warningBackground = false,
+    errorBackground = false
   } = props;
 
+  const tagType = successBackground ? (
+    EColour.SUCCESS
+  ) : warningBackground ? (
+    EColour.WARNING
+  ) : errorBackground ? (
+    EColour.ERROR
+  ) : (
+    EColour.BACKGROUND
+  );
+
   return (
-    <Markdown
-      contents={content}
-    />
+    <Tag type={tagType}>
+      {tagType}
+      <Markdown
+        contents={content}
+      />
+    </Tag>
   )
 }
