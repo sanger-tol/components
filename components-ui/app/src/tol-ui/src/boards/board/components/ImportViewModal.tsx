@@ -11,7 +11,6 @@ import {
   BUTTONS,
   copyView,
   Modal,
-  PASTE_BUTTON,
   useBoard,
 } from "../../..";
 import type { TsDataSource } from "../../..";
@@ -60,7 +59,7 @@ export function ImportViewModal(props: IImportViewModalProps) {
     <Modal
       open={open}
       setOpen={(isOpen) => { if (!isOpen) onClose(); }}
-      size={"sm"}
+      size="sm"
       actionButtonInline
       children={
         <div className="tol-board-view-import-modal">
@@ -74,7 +73,13 @@ export function ImportViewModal(props: IImportViewModalProps) {
               value={viewImportId}
               onChange={(value: string) => setViewImportId(value)}
             />
-            <Button {...PASTE_BUTTON((text) => setViewImportId(text))} />
+            <Button
+              {...BUTTONS.PASTE}
+              onClick={async () => {
+                const text = await navigator.clipboard.readText();
+                setViewImportId(text);
+              }}
+            />
           </div>
         </div>
       }

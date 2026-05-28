@@ -90,16 +90,11 @@ export const BUTTONS: Record<string, PButton> = {
     tooltip: "Copy",
     position: "right",
   },
-};
-
-export const PASTE_BUTTON = (onPaste: (text: string) => void): PButton => ({
+  PASTE: {
     outline: true,
     type: "primary",
     icon: "paste",
-    tooltip: "Paste from clipboard",
+    tooltip: "Paste",
     position: "right",
-    onClick: async () => {
-      const text = await navigator.clipboard.readText();
-      onPaste(text);
-    },
-});
+  }
+};

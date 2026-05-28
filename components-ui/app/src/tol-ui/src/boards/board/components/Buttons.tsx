@@ -4,15 +4,15 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BUTTONS } from "../../../config/buttons.config";
+import { ReactNode } from "react";
 import {
+  BUTTONS,
   BOARD_ENTITIES,
   BOARD_MESSAGE_TEXT,
   Button,
   copyToClipboard,
 } from "../../..";
 import type { PButton } from "../../..";
-import { ReactNode } from "react";
 
 
 const editOrExitLogic = (editMode: boolean): PButton => {
@@ -24,6 +24,7 @@ const editOrExitLogic = (editMode: boolean): PButton => {
     }
     : {
       ...BUTTONS.EDIT,
+      type: "warning",
       text: "Edit",
     };
 };
@@ -36,6 +37,7 @@ const layoutOrExitLogic = (layoutMode: boolean): PButton => {
     }
     : {
       ...BUTTONS.EDIT,
+      type: "warning",
       text: "Change Layout",
     };
 };
