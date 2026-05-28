@@ -75,7 +75,7 @@ test("Automatically triggered addZone tour", async ({ page }) => {
   await performAddZoneTour(page);
 });
 
-test("Manyally triggered addZone tour", async ({ page }) => {
+test("Manually triggered addZone tour", async ({ page }) => {
   const testID = crypto.randomUUID();
 
   await createBoard({ page, testID });
