@@ -16,11 +16,11 @@ test.beforeEach(async ({ page }) => {
 test('create dashboard', async ({ page }) => {
   const testID = crypto.randomUUID();
 
-  await createBoard({ page, testID });
+  await createBoard( page, testID );
 
   // create a view
   // await createView({page, testID});
 
   // create a zone
-  await createZone({ page, testID });
-})
+  await createZone( page, testID );
+});

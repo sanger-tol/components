@@ -4,27 +4,27 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Page } from "@playwright/test";
+
 import { enterEditMode, exitEditMode } from ".";
 
-export const createBoard = async ({ page, testID }) => {
-  await page.goto('/my-boards');
-
+export const createBoard = async (page: Page, boardName: string) => {
   // click the create new board button
-  await page.click('#create-new-board-button');
+  await page.getByTestId("create-new-board-button").click();
 
   // click the modal
   await page.getByText('Create New Board').click();
 
   // name the board
-  await page.getByRole('textbox').fill(testID);
+  await page.getByRole('textbox').fill(boardName);
 
   // save the board
   await page.getByRole('button', { name: 'Create' }).click();
 };
 
-export const createZone = async ({ page, testID }) => {
+export const createZone = async (page: Page, zoneName: string) => {
   // enter edit mode
-  await enterEditMode({ page });
+  await enterEditMode(page);
 
   // click add zone button
   const addZoneButton = await page.getByTestId('open-add-zone-modal-button');
@@ -43,7 +43,7 @@ export const createZone = async ({ page, testID }) => {
   await page.getByText('Curation').click();
 
   // name the zone
-  await page.getByRole('textbox').fill(testID);
+  await page.getByRole('textbox').fill(zoneName);
 
   // click confirm add zone button
   const confirmZoneButton = await page.getByTestId('add-zone-button');
@@ -51,7 +51,7 @@ export const createZone = async ({ page, testID }) => {
   await confirmZoneButton.click();
 
   // exit edit mode
-  await exitEditMode({ page });
+  await exitEditMode( page );
 };
 
 export const deleteBoard = async ({ page, boardID }) => {

@@ -61,8 +61,8 @@ const performAddZoneTour = async (page: Page): Promise<void> => {
 test("Automatically triggered addZone tour", async ({ page }) => {
   const testID = crypto.randomUUID();
 
-  await createBoard({ page, testID });
-  await enterEditMode({ page });
+  await createBoard( page, testID );
+  await enterEditMode( page );
 
   // click add zone button
   const addZoneButton = await page.getByTestId("open-add-zone-modal-button");
@@ -78,8 +78,8 @@ test("Automatically triggered addZone tour", async ({ page }) => {
 test("Manually triggered addZone tour", async ({ page }) => {
   const testID = crypto.randomUUID();
 
-  await createBoard({ page, testID });
-  await enterEditMode({ page });
+  await createBoard( page, testID );
+  await enterEditMode( page );
 
   // click add zone button
   const addZoneButton = await page.getByTestId("open-add-zone-modal-button");
