@@ -63,6 +63,36 @@ export const cellRendererParams: IBoardCellRenderers = {
     allowedDataTypes: ["str", "float", "int"]
   },
   none: {},
+  priority: {
+    rename: "Priority",
+    params: {
+      highest: {
+        type: "condition",
+        rename: "Highest",
+        description: "Condition for showing highest priority"
+      },
+      high: {
+        type: "condition",
+        rename: "High",
+        description: "Condition for showing high priority"
+      },
+      medium: {
+        type: "condition",
+        rename: "Medium",
+        description: "Condition for showing medium priority"
+      },
+      low: {
+        type: "condition",
+        rename: "Low",
+        description: "Condition for showing low priority"
+      },
+      lowest: {
+        type: "condition",
+        rename: "Lowest",
+        description: "Condition for showing lowest priority"
+      }
+    }
+  },
   relationship: {
     params: {
       relationshipId: {

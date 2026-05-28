@@ -6,11 +6,18 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `3.5.5`
+## tol-ui `3.5.6`
 
-14-05-2026
+28-05-2026
 
 - Added configurable tours commenced by `processTour` (including the first tour for adding a zone)
+
+## tol-ui `3.5.5`
+
+21-04-2026
+
+- Added Priority cell renderer
+- Fixed bug: Table download - columns with duplicate display names are silently overwritten
 
 ## tol-ui `3.5.4`
 
