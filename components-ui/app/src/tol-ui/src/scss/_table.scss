@@ -143,7 +143,7 @@
     // header color
     .rs-table-cell-header .rs-table-cell-content,
     .rs-table-header-row-wrapper .rs-table-row.rs-table-row-header {
-      background-color: var(--tol-grey-subtle) !important;
+      //background-color: var(--tol-grey-subtle) !important;
 
       .rs-table-cell {
         background-color: transparent !important;
@@ -246,6 +246,41 @@
       .tol-row-expand-btn {
         position: relative;
         top: 1.5px;
+      }
+    }
+
+    &.tol-bubble {
+      .rs-table {
+        border-radius: 6px;
+        border: unset;
+
+        .rs-table-body-wheel-area {
+          margin-top: 12px;
+        }
+
+        .rs-table-row-header {
+          border-radius: 6px;
+          background-color: var(--tol-grey-subtle) !important;
+          border-bottom: unset !important;
+        }
+
+        .rs-table-cell {
+          border-bottom: unset !important;
+        }
+
+        .rs-table-row:not(.rs-table-row-header) {
+          clip-path: inset(0 0 12px 0 round 6px);
+
+          &::after {
+            content: '';
+            position: absolute;
+            inset: 0 0 12px 0;
+            border: 1px solid var(--tol-grey);
+            border-radius: 6px;
+            pointer-events: none;
+            z-index: 10;
+          }
+        }
       }
     }
   }
@@ -389,6 +424,10 @@
   top: 7px;
   right: 6px;
   cursor: pointer;
+
+  .rs-btn {
+    background-color: unset;
+  }
 }
 
 .rs-dropdown-toggle.rs-dropdown-toggle-no-caret {

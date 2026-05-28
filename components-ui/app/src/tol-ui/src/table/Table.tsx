@@ -34,6 +34,7 @@ import {
   NoAttributesPlaceholder,
 } from "..";
 
+
 export interface PTable extends IRemoteTargetAndZone {
   id: string;
   data: any;
@@ -42,6 +43,7 @@ export interface PTable extends IRemoteTargetAndZone {
   loading: boolean;
   resizeableColumns?: boolean;
   source?: string;
+  bubble?: boolean;
 
   page: number;
   setPage: any;
@@ -99,6 +101,7 @@ export function Table(props: PTable) {
     loading,
     resizeableColumns = false,
     source,
+    bubble = false,
 
     page,
     setPage,
@@ -184,8 +187,8 @@ export function Table(props: PTable) {
   const handleCheckAll = (value: any, checkedVal: boolean) => {
     const vals = checkedVal
       ? data.map((item: any) => {
-          return { [item.key]: item };
-        })
+        return { [item.key]: item };
+      })
       : [];
     setSelectedRows && setSelectedRows(vals);
   };
@@ -194,8 +197,8 @@ export function Table(props: PTable) {
     const vals = checkedVal
       ? [...selectedRows, value]
       : selectedRows.filter(
-          (item) => Object.keys(item)[0] !== Object.keys(value)[0],
-        );
+        (item) => Object.keys(item)[0] !== Object.keys(value)[0],
+      );
     setSelectedRows(vals);
   };
 
@@ -277,8 +280,8 @@ export function Table(props: PTable) {
       disabled: loading,
     }
     : {
-        visible: false,
-      };
+      visible: false,
+    };
 
   const filterButton: PButton =
     (!noFilter && fieldMeta.order.active.length !== 0 && editMode) ? {
@@ -297,39 +300,39 @@ export function Table(props: PTable) {
 
   const downloadButton: PButton = !noDownload
     ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        tooltip: "Download the tables current state in various formats",
-        onClick: () => {
-          setDownloadOpen(!downloadOpen);
-        },
-        disabled: totalSize <= 0 || noFieldsSelected || loading,
-        icon: "download",
-        disabledTooltip:
-          totalSize >= 1
-            ? "Must have at least one row to download."
-            : undefined,
-        outline: true,
-      }
+      visible: true,
+      position: "right",
+      type: "primary",
+      tooltip: "Download the tables current state in various formats",
+      onClick: () => {
+        setDownloadOpen(!downloadOpen);
+      },
+      disabled: totalSize <= 0 || noFieldsSelected || loading,
+      icon: "download",
+      disabledTooltip:
+        totalSize >= 1
+          ? "Must have at least one row to download."
+          : undefined,
+      outline: true,
+    }
     : {
-        visible: false,
-      };
+      visible: false,
+    };
 
   const actionDropdown: PDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
-          mainButtonIcon: {
-            id: "actions",
-            icon: "paper-plane",
-            type: "primary",
-            position: "right",
-            outline: selectedRows.length === 0,
-          },
-          dropdownButtons: actionDropDownButtons,
-          footer: actionsFooter,
-          placement: "leftStart",
-        }
+        mainButtonIcon: {
+          id: "actions",
+          icon: "paper-plane",
+          type: "primary",
+          position: "right",
+          outline: selectedRows.length === 0,
+        },
+        dropdownButtons: actionDropDownButtons,
+        footer: actionsFooter,
+        placement: "leftStart",
+      }
       : undefined;
 
   const allRowsExpanded =
@@ -395,7 +398,11 @@ export function Table(props: PTable) {
   )
 
   return (
-    <div style={{ height: height }} className="tol-table" id={wrapperId}>
+    <div
+      id={wrapperId}
+      style={{ height: height }}
+      className={`tol-table ${bubble ? "tol-bubble" : ""}`}
+    >
       <DownloadModal
         {...props}
         disabledTabs={['Image']}
@@ -441,7 +448,7 @@ export function Table(props: PTable) {
                   wordWrap
                   rowKey={"key"}
                   data={data}
-                  headerHeight={!noFilter && filterVisibility ? 85 : 42}
+                  headerHeight={!noFilter && filterVisibility ? 85 : 0}
                   loading={loading}
                   sortColumn={sortByAttribute}
                   sortType={sortByType}
@@ -468,9 +475,9 @@ export function Table(props: PTable) {
                     const row = cellHeights[rowId];
                     const fullHeight = row
                       ? Math.max(
-                          DEFAULT_ROW_HEIGHT,
-                          ...Object.values(row),
-                        )
+                        DEFAULT_ROW_HEIGHT,
+                        ...Object.values(row),
+                      )
                       : DEFAULT_ROW_HEIGHT;
 
                     if (heightExpandedRows[rowId]) {

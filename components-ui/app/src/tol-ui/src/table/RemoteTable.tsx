@@ -55,7 +55,10 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Optional label or description of the data source, shown where supported by `Table`
    */
   source?: string;
-
+  /**
+   * Change the styling of the table to 'bubble' for all the rows etc
+   */
+  bubble?: boolean;
   /**
    * Initial field metadata for columns; overridden by any saved configuration for this table `id`
    */
@@ -88,7 +91,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * When changed, forces the table to re-fetch its data from the server
    */
   forceUpdate?: boolean;
-
   /**
    * Called with updated table configuration instead of storing it in local storage
    */
@@ -105,7 +107,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Called when the user resizes the width of a column
    */
   onResizeColumn?: (columnWidth: number, dataKey: string) => void;
-
   /**
    * Initial page size if none is stored already for this table `id`
    */
@@ -143,7 +144,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * If true, hides the footer button that opens the actions modal
    */
   noActionsFooter?: boolean;
-
   /**
    * If true, enables row selection checkboxes and selection state
    */
@@ -172,7 +172,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Fields allowed to be selected in the choice dropdown
    */
   fieldDropdownChoices?: TFieldDropdownChoices;
-
   /**
    * Data source used to run remote actions, separate from the main `dataSource`
    */
@@ -537,6 +536,7 @@ export function RemoteTable(props: PRemoteTable) {
       />
       <Table
         {...props}
+        bubble
         contents={contents ? contents : Contents()}
         data={data}
         fieldMeta={fieldMeta!}
