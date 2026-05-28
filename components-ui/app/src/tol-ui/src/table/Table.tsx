@@ -32,6 +32,7 @@ import {
   DataColumn,
   mergeUtilityBarConfigs,
   NoAttributesPlaceholder,
+  createSort,
 } from "..";
 
 export interface PTable extends IRemoteTargetAndZone {
@@ -404,6 +405,7 @@ export function Table(props: PTable) {
         open={downloadOpen}
         setOpen={setDownloadOpen}
         source={source}
+        sortBy={createSort(sortByAttribute, sortByType)}
         requestedFields={fieldMeta?.order?.active}
         title={ubc.title}
         fieldMeta={fieldMeta}

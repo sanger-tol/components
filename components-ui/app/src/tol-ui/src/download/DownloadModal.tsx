@@ -89,6 +89,7 @@ export interface PDownloadModal {
    * Field meta for the data being downloaded (Table Only)
    */
   fieldMeta?: FieldMeta;
+  sortBy?: string;
 
   // Chart specific props
   /**

@@ -31,6 +31,7 @@ export interface PSpreadsheetTab {
   title?: PEditableTitle
   fieldMeta?: FieldMeta
   dataSource?: TsDataSource
+  sortBy?: string
   // These must live in DownloadModal as SpreadhseetTab is unmounted
   // whenever the Modal is closed, which resets the states
   fetchCount: number
@@ -67,6 +68,7 @@ export function SpreadsheetTab(props: PSpreadsheetTab) {
     fieldMeta,
     title,
     dataSource,
+    sortBy,
     fetchCount,
     setFetchCount,
     percentageComplete,
@@ -118,6 +120,7 @@ export function SpreadsheetTab(props: PSpreadsheetTab) {
         dataSource,
         frozenObjectType,
         frozenFilter,
+        sortBy,
         frozenRequestedFields,
         fieldMeta,
         title,

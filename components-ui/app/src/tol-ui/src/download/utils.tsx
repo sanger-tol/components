@@ -77,23 +77,52 @@ function updateDownloadCountProgress(
 }
 
 const fetchSpreadSheetDataObjects = async (
-  gen: AsyncGenerator,
+  dataSource: TsDataSource,
+  frozenObjectType: string,
+  frozenFilter: IFilter,
+  frozenSortBy: string | undefined,
+  frozenRequestedFields: string[],
   setFetchCount: (count: any) => void,
   setPercentageComplete: (percent: any) => void,
   stopDownloadRef: any,
   frozenTotalSize: number
 ) => {
   const results: any[] = []; // TODO: add type - kh16
-  for await (const item of gen) {
-    updateDownloadCountProgress(
-      setFetchCount,
-      setPercentageComplete,
-      frozenTotalSize,
-      item,
-      results
-    )
-    if (stopDownloadRef.current) throw Error();
+  const pageSize = 100;
+  let page = 1;
+
+  while (true) {
+    const pageResults = await dataSource.getListPage({
+      objectType: frozenObjectType,
+      page,
+      pageSize,
+      filter: frozenFilter,
+      sortBy: frozenSortBy,
+      requestedFields: frozenRequestedFields,
+    });
+
+    if (!pageResults || pageResults.length === 0) {
+      break;
+    }
+
+    for (const item of pageResults) {
+      updateDownloadCountProgress(
+        setFetchCount,
+        setPercentageComplete,
+        frozenTotalSize,
+        item,
+        results
+      )
+      if (stopDownloadRef.current) throw Error();
+    }
+
+    if (pageResults.length < pageSize) {
+      break;
+    }
+
+    page += 1;
   }
+
   return results;
 };
 
@@ -101,6 +130,7 @@ export function downloadForTable(
   dataSource: TsDataSource,
   frozenObjectType: string,
   frozenFilter: IFilter,
+  frozenSortBy: string | undefined,
   frozenRequestedFields: string[],
   fieldMeta: FieldMeta,
   title: PEditableTitle | undefined,
@@ -112,15 +142,12 @@ export function downloadForTable(
   onDownloadFail: () => void,
   onDownloadComplete: () => void
 ) {
-
-  const gen = dataSource.getListByCursor({
-    objectType: frozenObjectType,
-    filter: frozenFilter,
-    requestedFields: frozenRequestedFields,
-  });
-
   fetchSpreadSheetDataObjects(
-    gen,
+    dataSource,
+    frozenObjectType,
+    frozenFilter,
+    frozenSortBy,
+    frozenRequestedFields,
     setFetchCount,
     setPercentageComplete,
     stopDownloadRef,
