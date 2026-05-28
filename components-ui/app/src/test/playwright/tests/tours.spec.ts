@@ -4,10 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { expect, test } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 import { createBoard } from "./board/createBoard.spec";
 import { enterEditMode, setAuth } from "./helpers";
-import { addZoneTour, ITourStep } from "../../../tol-ui/src";
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 
@@ -17,8 +16,32 @@ test.beforeEach(async ({ page }) => {
   await setAuth({ page });
 });
 
-const testTour = async ({ page }, tourConfig: ITourStep[]): Promise<void> => {
+const performAddZoneTour = async (page: Page): Promise<void> => {
   // Assume the tour has already started
+  const tourConfig = [
+    {
+      testid: "zoneModal",
+      title: "Zones",
+      description: (
+        "Zones are containers for board components (such as tables and charts) " + 
+        "that work with the same type of data (object type)."
+      )
+    },
+    {
+      testid: "dataspace-picker",
+      title: "Dataspace",
+      description: (
+        "The set of data this zone will pull from. " + 
+        "If in doubt, use ToL Production"
+      ),
+    },
+    {
+      testid: "object-type-picker",
+      title: "Object Type",
+      description: "The kind of data contained in this zone"
+    }
+  ];
+
   for (const tourStep of tourConfig) {
     const popover = await page.locator("#driver-popover-content");
     expect(popover).toBeVisible();
@@ -36,7 +59,7 @@ const testTour = async ({ page }, tourConfig: ITourStep[]): Promise<void> => {
   }
 };
 
-test("addZone tour", async ({ page }) => {
+test("Automatically triggered addZone tour", async ({ page }) => {
   const testID = crypto.randomUUID();
 
   await createBoard({ page, testID });
@@ -46,10 +69,30 @@ test("addZone tour", async ({ page }) => {
   const addZoneButton = await page.getByTestId("open-add-zone-modal-button");
   await addZoneButton.click();
 
-  // click tour start button
+  // Make sure the tour hasn't been seen so the tour automatically triggers
+  await page.evaluate(() => localStorage.setItem("toursSeen", "{}"));
+
+  // expect the tour to commence as defined in the config
+  await performAddZoneTour(page);
+});
+
+test("Manyally triggered addZone tour", async ({ page }) => {
+  const testID = crypto.randomUUID();
+
+  await createBoard({ page, testID });
+  await enterEditMode({ page });
+
+  // click add zone button
+  const addZoneButton = await page.getByTestId("open-add-zone-modal-button");
+  await addZoneButton.click();
+
+  // Make sure the tour has been seen so it doesn't trigger automatically
+  await page.evaluate(() => localStorage.setItem("toursSeen", "{ \"addZone\": true }"));
+
+  // Manually trigger the tour by clicking the tour start button
   const startTourButton = await page.getByTestId("start-add-zone-tour-button");
   await startTourButton.click();
 
   // expect the tour to commence as defined in the config
-  await testTour({ page }, addZoneTour);
+  await performAddZoneTour(page);
 });
