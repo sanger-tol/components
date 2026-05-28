@@ -5,8 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { expect, Page, test } from "@playwright/test";
-import { createBoard } from "./board/createBoard.spec";
-import { enterEditMode, setAuth } from "./helpers";
+import { createBoard, enterEditMode, setAuth } from "./helpers";
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 
