@@ -18,6 +18,10 @@ export interface PDropdownButton {
    * An array of buttons to display in the dropdown menu.
    */
   buttons: PButton[];
+  /**
+   * Placement of the dropdown menu relative to the toggle button.
+   */
+  placement?: string;
 }
 
 /**
@@ -25,15 +29,18 @@ export interface PDropdownButton {
  * and the PButton interface.
  */
 export function DropdownButton(props: PDropdownButton) {
-  const { toggle, buttons } = props;
+  const { toggle, buttons, placement } = props;
+
   const renderButton = (propsToggle: any, ref: React.Ref<HTMLButtonElement>) => {
     const { disabled, ...restToggle } = propsToggle;
     return <Button ref={ref} {...toggle} {...restToggle} />;
   };
+
   return (
     <Dropdown
       className="tol-button-dropdown"
-      trigger={toggle.disabled ? [] : ["hover"]}
+      trigger={toggle.disabled ? [] : ["click"]}
+      placement={placement}
       renderToggle={renderButton}
     >
       {buttons.map((button: PButton, index) =>

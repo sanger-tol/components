@@ -63,6 +63,13 @@ export const BOARD_BUTTONS: Record<string, PButton> = {
     position: "left",
     testid: "tab-view-selector-button",
   },
+  NEW_VIEW: {
+    ...BUTTONS.ADD,
+    text: "New View",
+    testid: "board-new-view-button",
+    position: "left",
+    tooltip: "",
+  },
   ADD_VIEW: {
     ...BUTTONS.ADD,
     text: "Add View",

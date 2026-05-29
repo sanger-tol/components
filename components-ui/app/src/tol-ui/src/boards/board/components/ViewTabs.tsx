@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import {
   BOARD_ENTITIES,
   BOARD_MESSAGE_TEXT,
-  Button,
   DropdownButton,
   MAX_VIEWS_ALLOWED,
   PButton,
@@ -70,8 +69,13 @@ export function ViewTabs(props: PViewTabs) {
 
   const addView: PButton = {
     ...BOARD_BUTTONS.ADD_VIEW,
-    onClick: onAddView,
+    visible: editMode,
     disabled: isMaxViews,
+  };
+
+  const newView: PButton = {
+    ...BOARD_BUTTONS.NEW_VIEW,
+    onClick: onAddView,
     disabledTooltip:
       BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR,
     visible: editMode,
@@ -80,7 +84,6 @@ export function ViewTabs(props: PViewTabs) {
   const importView: PButton = {
     ...BOARD_BUTTONS.IMPORT_VIEW,
     onClick: onOpenViewImportModal,
-    disabled: isMaxViews,
     disabledTooltip:
       BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR,
   };
@@ -89,7 +92,7 @@ export function ViewTabs(props: PViewTabs) {
     <>
       <DropdownButton
         toggle={addView}
-        buttons={[importView]}
+        buttons={[newView, importView]}
       />
       <SortableTabs
         activeId={activeViewId!}
