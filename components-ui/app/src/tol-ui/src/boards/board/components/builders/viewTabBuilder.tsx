@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import {
   BOARD_ENTITIES,
   BOARD_MESSAGE_TEXT,
-  copyToClipboard,
   EditableTitle,
   BOARD_BUTTONS,
 } from "../../../..";
@@ -89,17 +88,6 @@ export function viewTabBuilder({
     as: editMode ? "div" : "button",
   };
 
-  const copyViewIdButton: PButton = {
-    ...BOARD_BUTTONS.COPY_VIEW_ID,
-    onClick: () => {
-      copyToClipboard(
-        viewId,
-        BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.VIEW).CLIPBOARD_COPY.ID_COPY
-      );
-    },
-    visible: active,
-  };
-
   const deleteViewButton: PButton = {
     ...BOARD_BUTTONS.DELETE_VIEW,
     onClick: onOpenDeleteViewModal,
@@ -107,6 +95,6 @@ export function viewTabBuilder({
   };
 
   return {
-    buttons: [viewTab, copyViewIdButton, deleteViewButton],
+    buttons: [viewTab, deleteViewButton],
   };
 }

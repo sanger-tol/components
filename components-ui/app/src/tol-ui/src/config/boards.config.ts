@@ -29,9 +29,8 @@ export const BOARD_BUTTONS: Record<string, PButton> = {
   },
   COPY_VIEW_ID: {
     ...BUTTONS.COPY,
-    position: "left",
+    text: "Copy Current View",
     tooltip: "Copy View ID",
-    outline: false,
     testid: "copy-view-id-button",
     className: "tol-copy-view-id-button",
   },
@@ -44,6 +43,7 @@ export const BOARD_BUTTONS: Record<string, PButton> = {
   },
   COPY_BOARD: {
     ...BUTTONS.COPY,
+    text: "Copy Board",
     tooltip: "Copy Board",
     testid: "copy-board-button",
   },
@@ -65,10 +65,11 @@ export const BOARD_BUTTONS: Record<string, PButton> = {
   },
   ADD_VIEW: {
     ...BUTTONS.ADD,
-    text: "New View",
+    text: "Add View",
     icon: "pager",
     testid: "board-add-view-button",
     position: "left",
+    tooltip: "",
   },
   IMPORT_VIEW: {
     ...BUTTONS.ADD,

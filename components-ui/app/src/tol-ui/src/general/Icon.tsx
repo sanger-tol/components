@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+
 export interface PIcon {
   icon?: string;
   size?: string;
@@ -19,7 +20,7 @@ export function Icon(props: PIcon) {
 
   return (
     <span
-      className={className}
+      className={"tol-icon" + (className ? ` ${className}` : "")}
       onClick={onClick}
       style={onClick ? {cursor: "pointer"} : {}}
       >

@@ -14,7 +14,7 @@ import {
   IDropdownMainIconProps,
   TsDataSource,
   AccordionHeader,
-  DropdownButtons,
+  DeprecatedDropdownButtons,
   ConfirmationModal,
   BOARD_ENTITIES,
   useItemData,
@@ -147,7 +147,7 @@ export function BoardAccordion(props: BoardsAccordionProps) {
   ];
 
   const BoardOptionsDropdownButton = (boardId: string, viewId?: string) => (
-    <DropdownButtons
+    <DeprecatedDropdownButtons
       mainButtonIcon={boardOptionsButton}
       placement="leftStart"
       dropdownButtons={dropdownButtons(boardId, viewId)}

@@ -10,11 +10,16 @@ import {
   copyToClipboard,
   PRIVILEGE,
   BOARD_BUTTONS,
+  BUTTONS,
 } from "../../../..";
-import type { PButton, TBoardPrivilegeOrUndefined } from "../../../..";
+import type { PButton, PDropdownButton, TBoardPrivilegeOrUndefined } from "../../../..";
 
 
 export interface IBoardButtonsBuilder {
+  /**
+   * ID of the currently active view.
+   */
+  activeViewId: string | null;
   /**
    * User privilege for the board.
    */
@@ -61,6 +66,7 @@ export interface IBoardButtonsBuilder {
  * Returns the array of action buttons for a board.
  */
 export function boardButtonsBuilder({
+  activeViewId,
   privilege,
   editMode, setEditMode,
   layoutMode, setLayoutMode,
@@ -109,10 +115,25 @@ export function boardButtonsBuilder({
     },
   };
 
+  const copyViewIdButton: PButton = {
+    ...BOARD_BUTTONS.COPY_VIEW_ID,
+    onClick: () => {
+      copyToClipboard(
+        activeViewId!,
+        BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.VIEW).CLIPBOARD_COPY.ID_COPY
+      );
+    },
+  };
+
+  const copyButton: PDropdownButton = {
+    toggle: BUTTONS.COPY,
+    buttons: [copyBoardButton, copyViewIdButton],
+  };
+
   return [
     editOrExitButton,
     layoutOrExitButton,
-    copyBoardButton,
+    copyButton,
     shareButton,
   ];
 }

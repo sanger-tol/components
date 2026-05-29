@@ -8,7 +8,9 @@ import {
   BOARD_ENTITIES,
   BOARD_MESSAGE_TEXT,
   Button,
+  DropdownButton,
   MAX_VIEWS_ALLOWED,
+  PButton,
   SortableTabs,
   useBoard,
 } from "../../..";
@@ -66,25 +68,28 @@ export function ViewTabs(props: PViewTabs) {
   const isMaxViews = (board?.order?.length ?? 0) >= MAX_VIEWS_ALLOWED;
   const isMoreThanOneView = (board?.order?.length ?? 0) > 1;
 
+  const addView: PButton = {
+    ...BOARD_BUTTONS.ADD_VIEW,
+    onClick: onAddView,
+    disabled: isMaxViews,
+    disabledTooltip:
+      BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR,
+    visible: editMode,
+  };
+
+  const importView: PButton = {
+    ...BOARD_BUTTONS.IMPORT_VIEW,
+    onClick: onOpenViewImportModal,
+    disabled: isMaxViews,
+    disabledTooltip:
+      BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR,
+  };
+
   return (
     <>
-      <Button
-        {...BOARD_BUTTONS.ADD_VIEW}
-        visible={editMode}
-        onClick={onAddView}
-        disabled={isMaxViews}
-        disabledTooltip={
-          BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR
-        }
-      />
-      <Button
-        {...BOARD_BUTTONS.IMPORT_VIEW}
-        visible={editMode}
-        onClick={onOpenViewImportModal}
-        disabled={isMaxViews}
-        disabledTooltip={
-          BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR
-        }
+      <DropdownButton
+        toggle={addView}
+        buttons={[importView]}
       />
       <SortableTabs
         activeId={activeViewId!}

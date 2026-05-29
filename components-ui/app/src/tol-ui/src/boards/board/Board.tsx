@@ -30,8 +30,9 @@ import {
   patchReorderBoardEntity,
   addBoardEntityInParentState,
 } from "../..";
-import type { IBoard, IView, TNavBrand, TsDataSource } from "../..";
 import { BoardUtilityBar, ImportViewModal } from "./components";
+import type { IBoard, IView, TNavBrand, TsDataSource } from "../..";
+
 
 export interface PBoard {
   /**

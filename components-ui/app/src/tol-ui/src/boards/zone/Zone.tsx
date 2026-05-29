@@ -111,7 +111,9 @@ export function Zone(props: PZone) {
 
   const translatorsButton: PButton = {
     ...BUTTONS.TRANSLATORS,
-    visible: editMode && !layoutMode,
+    //visible: editMode && !layoutMode,
+    // TODO: Implement translators
+    visible: false,
     onClick: () => { },
   };
 

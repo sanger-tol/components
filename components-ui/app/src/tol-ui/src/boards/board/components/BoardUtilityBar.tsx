@@ -12,6 +12,7 @@ import {
   BOARD_BUTTONS,
   BOARD_MESSAGE_TEXT,
   BOARD_ENTITIES,
+  copyToClipboard,
 } from "../../..";
 import {
   boardButtonsBuilder,
@@ -74,6 +75,7 @@ export interface IBoardUtilityBar {
  */
 export function BoardUtilityBar(props: IBoardUtilityBar) {
   const {
+    activeViewId,
     boardDataSource,
     newBoardCopyTitle,
     onOpenBoardCopyModal,
@@ -91,16 +93,6 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     board,
     setBoard,
   } = useBoard();
-
-  const boardUtilityBarButtons = boardButtonsBuilder({
-    privilege,
-    editMode, setEditMode,
-    layoutMode, setLayoutMode,
-    tableLoading,
-    boardTitle: board?.title!,
-    newBoardCopyTitle, setNewBoardCopyTitle,
-    onOpenBoardCopyModal,
-  });
 
   const onSaveBoardTitle = (newTitle: string) => {
     upsertTitle(newTitle, board.id!, boardDataSource);
@@ -120,6 +112,17 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
       },
     });
   }
+
+  const boardUtilityBarButtons = boardButtonsBuilder({
+    activeViewId,
+    privilege,
+    editMode, setEditMode,
+    layoutMode, setLayoutMode,
+    tableLoading,
+    boardTitle: board?.title!,
+    newBoardCopyTitle, setNewBoardCopyTitle,
+    onOpenBoardCopyModal,
+  });
 
   const addZone: PButton = {
     ...BOARD_BUTTONS.ADD_ZONE,

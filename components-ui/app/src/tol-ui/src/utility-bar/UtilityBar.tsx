@@ -10,11 +10,13 @@ import {
   EditableTitle,
   PEditableTitle,
   PButton,
-  PDropdownButtons,
   Button,
-  DropdownButtons,
+  DeprecatedDropdownButtons,
+  PDeprecatedDropdownButtons,
   resizeListener,
   IconTooltip,
+  PDropdownButton,
+  DropdownButton,
 } from "..";
 
 export interface PUtilityBar {
@@ -35,7 +37,8 @@ export interface PUtilityBar {
    */
   buttons?: (
     PButton |
-    PDropdownButtons |
+    PDropdownButton |
+    PDeprecatedDropdownButtons |
     undefined
   )[];
   /**
@@ -69,8 +72,9 @@ export function UtilityBar(props: PUtilityBar) {
   });
 
   // Separate dropdown buttons from regular buttons
-  const dropdownButtons = buttons?.filter(button => button && "dropdownButtons" in button);
   const regularButtons = buttons?.filter(button => button && !("dropdownButtons" in button));
+  const dropdownButtons = buttons?.filter(button => button && "toggle" in button);
+  const deprecatedDeprecatedDropdownButtons = buttons?.filter(button => button && "dropdownButtons" in button);
 
   const ButtonsComponent = (
     // remove left-most button margin
@@ -89,12 +93,23 @@ export function UtilityBar(props: PUtilityBar) {
     </div>
   );
 
-  const DropdownButtonsComponent = (
+  const DeprecatedDropdownButtonsComponent = (
     <div style={{ marginLeft: "-6px" }}>
       {dropdownButtons &&
         dropdownButtons.map((button, index) => (
           <div style={{ float: "right" }} key={`dropdown-${index}`}>
-            <DropdownButtons {...(button as PDropdownButtons)} />
+            <DropdownButton {...(button as PDropdownButton)} />
+          </div>
+        ))}
+    </div>
+  );
+
+  const DeprecatedDeprecatedDropdownButtonsComponent = (
+    <div style={{ marginLeft: "-6px" }}>
+      {deprecatedDeprecatedDropdownButtons &&
+        deprecatedDeprecatedDropdownButtons.map((button, index) => (
+          <div style={{ float: "right" }} key={`dropdown-${index}`}>
+            <DeprecatedDropdownButtons {...(button as PDeprecatedDropdownButtons)} />
           </div>
         ))}
     </div>
@@ -128,7 +143,8 @@ export function UtilityBar(props: PUtilityBar) {
             ? CondensedButtons
             : ButtonsComponent
           }
-          {DropdownButtonsComponent}
+          {DeprecatedDropdownButtonsComponent}
+          {DeprecatedDeprecatedDropdownButtonsComponent}
         </div>
       </div>
     </div>

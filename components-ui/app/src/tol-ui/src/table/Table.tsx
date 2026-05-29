@@ -19,7 +19,7 @@ import {
   IRemoteTargetAndZone,
   PUtilityBar,
   PButton,
-  PDropdownButtons,
+  PDeprecatedDropdownButtons,
   useBoard,
   ITableConfigSave,
   RowCounter,
@@ -330,7 +330,7 @@ export function Table(props: PTable) {
         visible: false,
       };
 
-  const actionDropdown: PDropdownButtons | undefined =
+  const actionDropdown: PDeprecatedDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
           mainButtonIcon: {

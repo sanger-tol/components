@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useRef, useState, ReactNode } from "react";
+import React, { useEffect, useRef, useState, ReactNode } from "react";
 import { Button as RsButton } from "rsuite";
 import { TolLoader, HoverOverlay, Icon } from "..";
 
@@ -30,7 +30,7 @@ export interface PButton {
   as?: React.ElementType;
 }
 
-export function Button(props: PButton) {
+export const Button = React.forwardRef<HTMLButtonElement, PButton>(function Button(props, ref) {
   const {
     icon,
     onClick,
@@ -110,6 +110,7 @@ export function Button(props: PButton) {
       active={active}
       className={`icon-button-${type}-${size || "md"}${outlineClass} ${className || ""}`}
       data-testid={testid}
+      ref={ref}
     >
       {loading && (
         <span style={{ marginRight: text || icon ? 6 : 0 }}>
@@ -162,4 +163,4 @@ export function Button(props: PButton) {
       )}
     </div>
   );
-}
+});
