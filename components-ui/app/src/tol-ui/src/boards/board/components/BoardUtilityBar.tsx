@@ -9,30 +9,70 @@ import {
   useBoard,
   UtilityBar,
   TsDataSource,
+  BOARD_BUTTONS,
+  BOARD_MESSAGE_TEXT,
+  BOARD_ENTITIES,
 } from "../../..";
 import {
-  addZoneButton,
-  buildBoardUtilityBarButtons,
-  editModeTitle,
+  boardButtonsBuilder,
   ViewModeBoardTitle,
   ViewTabs,
 } from ".";
+import type { PEditableTitle, PButton } from "../../..";
 
-export interface IBoardButtonsUtilityBar {
+
+export interface IBoardUtilityBar {
+  /**
+   * ID of the currently active view.
+   */
   activeViewId: string | null;
+  /**
+   * DataSource for performing board operations.
+   */
   boardDataSource: TsDataSource;
+  /**
+   * Title for the new board copy.
+   */
   newBoardCopyTitle: string;
+  /**
+   * Opens the board copy modal.
+   */
   onOpenBoardCopyModal: () => void;
+  /**
+   * Sets the new board copy title.
+   */
   setNewBoardCopyTitle: (title: string) => void;
+  /**
+   * Opens the add zone modal.
+   */
   onOpenAddZone: () => void;
+  /**
+   * Handles clicking a view tab.
+   */
   onClickView: (viewId: string) => () => void;
+  /**
+   * Adds a new view.
+   */
   onAddView: () => void;
+  /**
+   * Handles reordering views.
+   */
   onReorderView: (reorderedIds: string[]) => void;
+  /**
+   * Opens the delete view modal.
+   */
   onOpenDeleteViewModal: () => void;
+  /**
+   * Opens the view import modal.
+   */
   onOpenViewImportModal: () => void;
 }
 
-export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
+/**
+ * Wrapper of the UtilityBar component that contains board-level
+ * buttons, titles and the view tabs.
+ */
+export function BoardUtilityBar(props: IBoardUtilityBar) {
   const {
     boardDataSource,
     newBoardCopyTitle,
@@ -52,18 +92,15 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
     setBoard,
   } = useBoard();
 
-  const boardUtilityBarButtons = buildBoardUtilityBarButtons(
-    editMode,
-    layoutMode,
+  const boardUtilityBarButtons = boardButtonsBuilder({
     privilege,
+    editMode, setEditMode,
+    layoutMode, setLayoutMode,
     tableLoading,
-    setEditMode,
-    setLayoutMode,
+    boardTitle: board?.title!,
+    newBoardCopyTitle, setNewBoardCopyTitle,
     onOpenBoardCopyModal,
-    newBoardCopyTitle,
-    setNewBoardCopyTitle,
-    board?.title!,
-  );
+  });
 
   const onSaveBoardTitle = (newTitle: string) => {
     upsertTitle(newTitle, board.id!, boardDataSource);
@@ -84,19 +121,39 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
     });
   }
 
+  const addZone: PButton = {
+    ...BOARD_BUTTONS.ADD_ZONE,
+    onClick: onOpenAddZone,
+    visible: editMode && !layoutMode,
+  }
+
+  const editModeBoardTitle: PEditableTitle = {
+    text: board?.title!,
+    editable: true,
+    onSave: onSaveBoardTitle,
+    hideButtons: true,
+    emptyAllowed: false,
+    onEmptyMessage: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).MISC
+      .EMPTY_TITLE_ERROR,
+  }
+
+  const ViewModeTitle = (
+    <ViewModeBoardTitle
+      text={board?.title!}
+      editable={editMode}
+    />
+  );
+
   return (
     <div className="tol-board-bar">
       <UtilityBar
         id="tol-board-utility-bar"
         buttons={boardUtilityBarButtons}
-        title={
-          editModeTitle(
-            editMode,
-            board?.title!,
-            onSaveBoardTitle
-          )
-        }
-        elements={ViewModeBoardTitle(editMode, board?.title!)}
+        /**
+         * Display a larger title in view mode, and an editable title in edit mode.
+         */
+        title={editMode ? editModeBoardTitle : undefined}
+        elements={editMode ? undefined : [ViewModeTitle]}
       />
       {(board?.order?.length > 1 || editMode) && (
         <UtilityBar
@@ -106,10 +163,7 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
             <ViewTabs onSaveTitle={onSaveViewTitle} {...props} />
           ]}
           buttons={[
-            addZoneButton(
-              onOpenAddZone,
-              editMode && !layoutMode,
-            ),
+            addZone,
           ]}
         />
       )}

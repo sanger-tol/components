@@ -1,12 +1,11 @@
 /*
-SPDX-FileCopyrightText: 2024 Genome Research Ltd.
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
-export * from "./Buttons";
-export * from "./Titles";
+export * from "./BoardUtilityBar";
 export * from "./ImportViewModal";
-export * from "./BoardUtilityButtons";
-export * from "./BoardButtonsUtilityBar";
+export * from "./ViewModeBoardTitle";
 export * from "./ViewTabs";
+export * from "./builders";

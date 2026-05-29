@@ -5,27 +5,51 @@ SPDX-License-Identifier: MIT
 */
 
 import {
+  BOARD_ENTITIES,
+  BOARD_MESSAGE_TEXT,
+  Button,
   MAX_VIEWS_ALLOWED,
   SortableTabs,
   useBoard,
 } from "../../..";
-import {
-  addViewButton,
-  buildViewTab,
-  importViewButton,
-} from ".";
+import { BOARD_BUTTONS } from "../../../config/boards.config";
+import { viewTabBuilder } from ".";
 
 
 export interface PViewTabs {
+  /**
+   * ID of the currently active view.
+   */
   activeViewId: string | null;
+  /**
+   * Opens the delete view modal.
+   */
   onOpenDeleteViewModal: () => void;
+  /**
+   * Opens the view import modal.
+   */
   onOpenViewImportModal: () => void;
+  /**
+   * Handles clicking a view tab.
+   */
   onClickView: (viewId: string) => () => void;
+  /**
+   * Adds a new view.
+   */
   onAddView: () => void;
+  /**
+   * Handles reordering views.
+   */
   onReorderView: (reorderedIds: string[]) => void;
+  /**
+   * Handles saving a view title.
+   */
   onSaveTitle: (viewId: string, newTitle: string) => void;
 }
 
+/**
+ * Renders the tabs for board views, including add/import buttons.
+ */
 export function ViewTabs(props: PViewTabs) {
   const {
     activeViewId,
@@ -44,8 +68,24 @@ export function ViewTabs(props: PViewTabs) {
 
   return (
     <>
-      {addViewButton(editMode, onAddView, isMaxViews)}
-      {importViewButton(editMode, onOpenViewImportModal, isMaxViews)}
+      <Button
+        {...BOARD_BUTTONS.ADD_VIEW}
+        visible={editMode}
+        onClick={onAddView}
+        disabled={isMaxViews}
+        disabledTooltip={
+          BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR
+        }
+      />
+      <Button
+        {...BOARD_BUTTONS.IMPORT_VIEW}
+        visible={editMode}
+        onClick={onOpenViewImportModal}
+        disabled={isMaxViews}
+        disabledTooltip={
+          BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CREATE.MAX_LIMIT_ERROR
+        }
+      />
       <SortableTabs
         activeId={activeViewId!}
         className="tol-views-nav"
@@ -53,18 +93,18 @@ export function ViewTabs(props: PViewTabs) {
         tabs={
           isMoreThanOneView
             ? board?.order?.map((viewId) => {
-                const view = board?.children?.[viewId];
-                return buildViewTab(
-                  viewId,
-                  view?.title!,
-                  activeViewId === viewId,
-                  editMode,
-                  isMoreThanOneView,
-                  onOpenDeleteViewModal,
-                  onClickView,
-                  onSaveTitle,
-                );
-              })
+              const view = board?.children?.[viewId];
+              return viewTabBuilder({
+                viewId,
+                viewTitle: view?.title!,
+                active: viewId === activeViewId,
+                editMode,
+                isMoreThanOneView,
+                onOpenDeleteViewModal,
+                onClickView,
+                onSaveTitle,
+              });
+            })
             : undefined
         }
       />

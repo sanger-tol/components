@@ -15,16 +15,38 @@ import {
 } from "../../..";
 import type { TsDataSource } from "../../..";
 
-export interface IImportViewModalProps {
+
+export interface PImportViewModal {
+  /**
+   * Whether the import modal is open.
+   */
   open: boolean;
+  /**
+   * Callback to close the modal.
+   */
   onClose: () => void;
+  /**
+   * DataSource for board operations.
+   */
   boardDataSource: TsDataSource;
+  /**
+   * The view ID to import.
+   */
   viewImportId: string;
+  /**
+   * Sets the view ID to import.
+   */
   setViewImportId: (id: string) => void;
+  /**
+   * Sets the active view after import.
+   */
   setActiveViewId: (id: string | null) => void;
 }
 
-export function ImportViewModal(props: IImportViewModalProps) {
+/**
+ * Modal for importing a view into the current board by View ID.
+ */
+export function ImportViewModal(props: PImportViewModal) {
   const {
     open,
     onClose,
@@ -69,7 +91,7 @@ export function ImportViewModal(props: IImportViewModalProps) {
           </p>
           <div className="tol-import-input-and-paste-button">
             <Input
-              placeholder={"Enter or paste view ID..."}
+              placeholder="Enter or paste view ID..."
               value={viewImportId}
               onChange={(value: string) => setViewImportId(value)}
             />

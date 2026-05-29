@@ -31,7 +31,7 @@ import {
   addBoardEntityInParentState,
 } from "../..";
 import type { IBoard, IView, TNavBrand, TsDataSource } from "../..";
-import { BoardButtonsUtilityBar, ImportViewModal } from "./components";
+import { BoardUtilityBar, ImportViewModal } from "./components";
 
 export interface PBoard {
   /**
@@ -244,7 +244,7 @@ export function Board(props: PBoard) {
           </>
         }
       />
-      <BoardButtonsUtilityBar
+      <BoardUtilityBar
         onOpenBoardCopyModal={() => setBoardCopyModalOpen(true)}
         setNewBoardCopyTitle={setNewBoardCopyTitle}
         onOpenAddZone={() => setOpenAddZoneModal(true)}
