@@ -72,13 +72,12 @@ export function UtilityBar(props: PUtilityBar) {
   });
 
   // Separate dropdown buttons from regular buttons
-  const regularButtons = buttons?.filter(button => button && !("dropdownButtons" in button));
+  const regularButtons = buttons?.filter(button => button && !("dropdownButtons" in button) && !("toggle" in button));
   const dropdownButtons = buttons?.filter(button => button && "toggle" in button);
   const deprecatedDeprecatedDropdownButtons = buttons?.filter(button => button && "dropdownButtons" in button);
 
   const ButtonsComponent = (
-    // remove left-most button margin
-    <div style={{ marginLeft: "-6px" }}>
+    <>
       {regularButtons &&
         regularButtons.map((button, index) => (
           <Button
@@ -90,29 +89,27 @@ export function UtilityBar(props: PUtilityBar) {
             }
           />
         ))}
-    </div>
+    </>
+  );
+
+  const DropdownButtonsComponent = (
+    <>
+      {dropdownButtons &&
+        dropdownButtons.map((button, index) => (
+          <DropdownButton key={`dropdown-${index}`} {...(button as PDropdownButton)} />
+        ))}
+    </>
   );
 
   const DeprecatedDropdownButtonsComponent = (
-    <div style={{ marginLeft: "-6px" }}>
-      {dropdownButtons &&
-        dropdownButtons.map((button, index) => (
-          <div style={{ float: "right" }} key={`dropdown-${index}`}>
-            <DropdownButton {...(button as PDropdownButton)} />
-          </div>
-        ))}
-    </div>
-  );
-
-  const DeprecatedDeprecatedDropdownButtonsComponent = (
-    <div style={{ marginLeft: "-6px" }}>
+    <>
       {deprecatedDeprecatedDropdownButtons &&
         deprecatedDeprecatedDropdownButtons.map((button, index) => (
           <div style={{ float: "right" }} key={`dropdown-${index}`}>
             <DeprecatedDropdownButtons {...(button as PDeprecatedDropdownButtons)} />
           </div>
         ))}
-    </div>
+    </>
   );
 
   const CondensedButtons = (
@@ -143,8 +140,8 @@ export function UtilityBar(props: PUtilityBar) {
             ? CondensedButtons
             : ButtonsComponent
           }
+          {DropdownButtonsComponent}
           {DeprecatedDropdownButtonsComponent}
-          {DeprecatedDeprecatedDropdownButtonsComponent}
         </div>
       </div>
     </div>

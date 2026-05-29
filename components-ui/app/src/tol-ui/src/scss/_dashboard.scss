@@ -216,9 +216,13 @@
     margin-bottom: 4px !important;
   }
 
-  .tol-import-input-and-paste-button {
+  .tol-import-paste-button {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 8px;
+    margin-bottom: 6px;
   }
 }
 

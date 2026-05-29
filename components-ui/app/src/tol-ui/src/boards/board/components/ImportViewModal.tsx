@@ -86,15 +86,10 @@ export function ImportViewModal(props: PImportViewModal) {
       children={
         <div className="tol-board-view-import-modal">
           <h3>Import View</h3>
-          <p className="tol-view-import-paragraph">
-            Import a view from another board using its View ID:
-          </p>
-          <div className="tol-import-input-and-paste-button">
-            <Input
-              placeholder="Enter or paste view ID..."
-              value={viewImportId}
-              onChange={(value: string) => setViewImportId(value)}
-            />
+          <div className="tol-import-paste-button" >
+            <p className="tol-view-import-paragraph">
+              Import a view from another board using its View ID:
+            </p>
             <Button
               {...BUTTONS.PASTE}
               onClick={async () => {
@@ -103,6 +98,11 @@ export function ImportViewModal(props: PImportViewModal) {
               }}
             />
           </div>
+          <Input
+            placeholder="Enter or paste view ID..."
+            value={viewImportId}
+            onChange={(value: string) => setViewImportId(value)}
+          />
         </div>
       }
       actionButton={
