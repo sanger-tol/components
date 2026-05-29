@@ -168,7 +168,7 @@ export async function copyView(
  * Saves a new title for a view, persisting it via the API and returning an updated board state.
  * Returns `undefined` if the title is unchanged.
  *
- * @param value - The new title string.
+ * @param newTitle - The new title string.
  * @param viewId - The ID of the view whose title is being updated.
  * @param board - The current board state containing the view.
  * @param boardDataSource - The data source used to make API calls.

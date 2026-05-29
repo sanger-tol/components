@@ -12,7 +12,6 @@ import {
   BOARD_BUTTONS,
   BOARD_MESSAGE_TEXT,
   BOARD_ENTITIES,
-  copyToClipboard,
 } from "../../..";
 import {
   boardButtonsBuilder,
