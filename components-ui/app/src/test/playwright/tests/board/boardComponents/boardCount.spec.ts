@@ -15,7 +15,7 @@ import {
 } from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
-const BOARD_ID = crypto.randomUUID();
+const BOARD_ID = `b_${crypto.randomUUID()}`;
 
 test.use({ headless: headless });
 

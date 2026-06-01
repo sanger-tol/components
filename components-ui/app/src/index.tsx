@@ -35,6 +35,10 @@ const pageElements = {
   ...autoDocPageElements,
 };
 
+const CONFIG_DS = new TsDataSource({
+  apiPath: API_PATHS.API_PATH,
+  apiDataPath: API_PATHS.BOARDS,
+});
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
@@ -43,7 +47,8 @@ root.render(
     configurableBoards
     brand="Components"
     pageElements={pageElements}
-  />
+    configDataSource={CONFIG_DS}
+/>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -52,6 +52,9 @@
     "react-markdown": "10.1.0",
     "json-edit-react": "1.29.0"
   },
+  "resolutions": {
+    "sass": "1.99.0"
+  },
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
     "build:esm": "tsc",

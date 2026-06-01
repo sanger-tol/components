@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('create dashboard', async ({ page }) => {
-  const testID = crypto.randomUUID();
+  const testID = `b_${crypto.randomUUID()}`;
 
   await createBoard( page, testID );
 
