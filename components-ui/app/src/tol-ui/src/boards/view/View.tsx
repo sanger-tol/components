@@ -22,7 +22,6 @@ import {
   BUTTONS,
 } from "../..";
 
-
 export interface PView extends PBoard {
   id: string;
   defaultFilter?: IFilter;
@@ -59,29 +58,24 @@ export function View(props: PView) {
   }, []);
 
   const deleteZone = (id: string) => {
-    boardDataSource
-      .deleteByID({
-        objectType: BOARDS.ZONE,
-        id
-      })
+    boardDataSource.deleteByID({
+      objectType: BOARDS.ZONE,
+      id,
+    });
     const newZones = zones.filter((zone) => zone.id !== id);
     setZones(newZones);
   };
 
   const onZoneReorder = async (id: string, direction: string) => {
-    reorderZoneAndUpsert(
-      id,
-      direction,
-      zones,
-      zoneOrder,
-      boardDataSource,
-    ).then((data) => {
-      if (data) {
-        const { zones: updatedZones, zoneOrder: updatedZoneOrder } = data;
-        setZones(updatedZones);
-        setZoneOrder(updatedZoneOrder);
+    reorderZoneAndUpsert(id, direction, zones, zoneOrder, boardDataSource).then(
+      (data) => {
+        if (data) {
+          const { zones: updatedZones, zoneOrder: updatedZoneOrder } = data;
+          setZones(updatedZones);
+          setZoneOrder(updatedZoneOrder);
+        }
       }
-    });
+    );
   };
 
   const Bar = (

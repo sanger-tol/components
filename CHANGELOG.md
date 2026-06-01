@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.5.6`
+
+28-05-2026
+
+- Added configurable tours commenced by `processTour` (including the first tour for adding a zone)
+
 ## tol-ui `3.5.5`
 
 21-04-2026

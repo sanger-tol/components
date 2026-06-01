@@ -154,14 +154,14 @@ export function Board(props: PBoard) {
     },
     testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
     tooltip: "",
-  }
+  };
 
   const shareButton: PButton = {
     ...BUTTONS.SHARE,
     onClick: () => {
       copyToClipboard(location.href);
     },
-  }
+  };
 
   // Different format used for the main Board title
   const editModeTitle = editMode ? {

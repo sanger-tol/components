@@ -2,16 +2,14 @@
 //
 // SPDX-License-Identifier: MIT
 
-export const enterEditMode = async (
-  { page },
-) => {
-  // click the add component button
+import { Page } from "@playwright/test";
+
+export const enterEditMode = async (page: Page) => {
+  // click the enter edit mode button
   await page.getByTestId("board-enter-edit-mode-button").click();
 };
 
-export const exitEditMode = async (
-  { page },
-) => {
+export const exitEditMode = async (page: Page) => {
   // click the exit edit mode button
   await page.getByTestId("board-exit-edit-mode-button").click();
 };

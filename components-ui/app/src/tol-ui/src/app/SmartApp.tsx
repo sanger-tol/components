@@ -202,7 +202,7 @@ export function SmartApp(props: PSmartApp) {
       brand={brand}
       className={!globalLoading ? "is-fading-out" : ""}
     />
-  )
+  );
 
   return (
     <div id="tol-smart-app-background">
@@ -254,6 +254,6 @@ export function SmartApp(props: PSmartApp) {
           </GlobalLoadingProvider>
         </AuthProvider>
       </QueryClientProvider>
-    </div>
+    </div >
   );
 }

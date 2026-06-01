@@ -20,5 +20,5 @@ class UserMixin:
         )
 
     @declared_attr
-    def tour_steps_seen(self) -> Mapped[dict]:
+    def tours_seen(self) -> Mapped[dict]:
         return mapped_column(JSONB, nullable=True, default=dict)
