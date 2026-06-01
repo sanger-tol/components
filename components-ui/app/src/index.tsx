@@ -35,10 +35,6 @@ const pageElements = {
   ...autoDocPageElements,
 };
 
-const CONFIG_DS = new TsDataSource({
-  apiPath: API_PATHS.API_PATH,
-  apiDataPath: API_PATHS.BOARDS,
-});
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
@@ -47,8 +43,6 @@ root.render(
     configurableBoards
     brand="Components"
     pageElements={pageElements}
-    navigation={autoDocNavConfig}
-    configDataSource={CONFIG_DS}
   />
 );
 
