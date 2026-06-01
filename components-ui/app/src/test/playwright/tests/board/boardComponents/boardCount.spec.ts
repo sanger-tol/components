@@ -11,11 +11,12 @@ import {
   sleep,
   deleteFirstComponent,
   enterEditMode,
-  exitEditMode
+  exitEditMode,
+  createBoardID
 } from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
-const BOARD_ID = `b_${crypto.randomUUID()}`;
+const BOARD_ID = createBoardID();
 
 test.use({ headless: headless });
 

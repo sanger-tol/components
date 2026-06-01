@@ -8,6 +8,8 @@ import { Page } from "@playwright/test";
 
 import { enterEditMode, exitEditMode } from ".";
 
+export const createBoardID = () => `b_${crypto.randomUUID()}`;
+
 export const createBoard = async (page: Page, boardName: string) => {
   // click the create new board button
   await page.getByTestId("create-new-board-button").click();
