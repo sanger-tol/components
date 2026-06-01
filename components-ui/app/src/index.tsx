@@ -47,9 +47,8 @@ root.render(
     configurableBoards
     brand="Components"
     pageElements={pageElements}
-    navigation={autoDocNavConfig}
     configDataSource={CONFIG_DS}
-  />
+/>
 );
 
 // If you want to start measuring performance in your app, pass a function

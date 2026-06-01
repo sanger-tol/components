@@ -3,7 +3,12 @@
 // SPDX-License-Identifier: MIT
 
 import { test } from '@playwright/test';
-import { createBoard, createZone, setAuth } from '../helpers';
+import {
+  createBoard,
+  createZone,
+  setAuth,
+  createBoardID
+} from '../helpers';
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 
@@ -14,7 +19,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('create dashboard', async ({ page }) => {
-  const testID = crypto.randomUUID();
+  const testID = createBoardID();
 
   await createBoard( page, testID );
 

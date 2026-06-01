@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { URL_PATHS } from '../../../../tol-ui/src';
 import sql from '../../db';
 globalThis.crypto ??= require("node:crypto").webcrypto
 
@@ -40,6 +39,6 @@ export const setBoard = async ({ page, boardID }) => {
   });
   const userID = JSON.parse(user).id;
   const boardId = await insertBoardToDB(userID, boardID);
-  await page.goto(`${URL_PATHS.BOARD}/${boardId}`);
+  await page.goto(`/board/${boardId}`);
   await page.getByTestId("board-enter-edit-mode-button").waitFor({ state: "visible" });
 };

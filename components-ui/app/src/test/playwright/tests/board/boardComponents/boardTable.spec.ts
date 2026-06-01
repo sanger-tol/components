@@ -11,10 +11,11 @@ import {
   exitEditMode,
   enterEditMode,
   clickUtilityBarButton,
+  createBoardID,
 } from "../../helpers";
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
-const BOARD_ID = crypto.randomUUID();
+const BOARD_ID = createBoardID();
 
 test.use({ headless: headless });
 

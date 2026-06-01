@@ -3,10 +3,20 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-import { addComponent, setBoard, setAuth, deleteFirstComponent, clickUtilityBarButton, sleep, enterEditMode, exitEditMode } from '../../helpers'
+import {
+    addComponent,
+    setBoard,
+    setAuth,
+    deleteFirstComponent,
+    clickUtilityBarButton,
+    sleep,
+    enterEditMode,
+    exitEditMode,
+    createBoardID
+} from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
-const BOARD_ID = crypto.randomUUID();
+const BOARD_ID = createBoardID();
 
 test.use({ headless: headless });
 

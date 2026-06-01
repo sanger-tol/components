@@ -11,22 +11,23 @@ import {
   sleep,
   deleteFirstComponent,
   enterEditMode,
-  exitEditMode
+  exitEditMode,
+  createBoardID
 } from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
-const BOARD_ID = crypto.randomUUID();
+const BOARD_ID = createBoardID();
 
 test.use({ headless: headless });
 
 test.beforeEach(async ({ page }) => {
   await setAuth({ page });
   await setBoard({ page, boardID: BOARD_ID });
-  await enterEditMode({ page });
+  await enterEditMode( page );
 });
 
 test.afterEach(async ({ page }) => {
-  await exitEditMode({ page });
+  await exitEditMode( page );
 });
 
 const addCountComponent = async ({ page }) => {
