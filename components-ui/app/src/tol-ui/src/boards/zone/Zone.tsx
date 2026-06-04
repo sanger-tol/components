@@ -17,6 +17,7 @@ import {
   TitleTooltip,
   BUTTONS,
   useBoardState,
+  TsDataSource,
 } from "../..";
 import type { IZone, IView, PButton, PBoard } from "../..";
 
@@ -41,11 +42,7 @@ export function Zone(props: PZone) {
 
   const { editMode, layoutMode } = useBoard();
 
-  const [zone, setZone] = useBoardState<IView, IZone>(
-    id,
-    view,
-    setView,
-  );
+  const [zone, setZone] = useBoardState<IView, IZone>(id, view, setView);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
@@ -114,7 +111,7 @@ export function Zone(props: PZone) {
     //visible: editMode && !layoutMode,
     // TODO: Implement translators
     visible: false,
-    onClick: () => { },
+    onClick: () => {},
   };
 
   const bar = (
@@ -130,7 +127,7 @@ export function Zone(props: PZone) {
               setTitle(value);
             }
           },
-          hideButtons: true
+          hideButtons: true,
         }}
         description={<TitleTooltip {...zone} />}
         buttons={[
@@ -187,7 +184,12 @@ export function Zone(props: PZone) {
         id={id}
         boardObjectType={BOARD_ENTITIES.ENTITIES.ZONE}
         boardDataSource={boardDataSource}
-        dataSource={zone.dataspace!}
+        dataSource={
+          new TsDataSource({
+            ...zone.ui_api_details,
+            dataspace: zone.data_source_instance_id,
+          })
+        }
         objectType={zone.object_type!}
         open={openFilters}
         setOpen={setOpenFilters}

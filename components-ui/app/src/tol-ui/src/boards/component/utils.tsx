@@ -30,8 +30,8 @@ export async function updateComponentConfigAndUpsert(
   zone: IZone,
   boardDataSource: TsDataSource,
   editMode: boolean,
-  setHasDiff: (hasDiff: boolean) => void,
-  userId: string | undefined,
+  setHasDiff?: (hasDiff: boolean) => void,
+  userId?: string | undefined,
 ) {
   const component = zone.children?.[componentId];
   if (!component) return;
@@ -69,7 +69,7 @@ export async function updateComponentConfigAndUpsert(
       if (returnedId && component.config_diff) {
         component.config_diff.id = returnedId;
       }
-      setHasDiff(true);
+      setHasDiff?.(true);
     })
     .catch((error) => {
       console.error("Error upserting board diff:", error);

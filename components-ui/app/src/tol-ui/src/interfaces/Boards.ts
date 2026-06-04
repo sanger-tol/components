@@ -58,6 +58,7 @@ export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
    */
   data_source_instance_id?: string;
   dataspace?: TsDataSource;
+  ui_api_details?: IDBDataSourceInstanceApiDetails;
 }
 
 export interface IView extends IBoardParentEntity<IZone> {}
