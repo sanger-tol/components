@@ -12,6 +12,7 @@ import {
   IFilter,
   IZone,
   postUpdateBoardEntity,
+  TDataObjectListOrNull,
   TsDataSource,
 } from "../..";
 
@@ -62,7 +63,14 @@ export async function updateComponentConfigAndUpsert(
         },
       ],
     })
-    .then(() => setHasDiff(true))
+    .then((res: TDataObjectListOrNull) => {
+      // Store the returned id so subsequent saves update the same record
+      const returnedId = res?.[0]?.id;
+      if (returnedId && component.config_diff) {
+        component.config_diff.id = returnedId;
+      }
+      setHasDiff(true);
+    })
     .catch((error) => {
       console.error("Error upserting board diff:", error);
     });

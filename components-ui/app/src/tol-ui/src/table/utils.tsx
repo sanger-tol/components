@@ -702,8 +702,8 @@ export function createTableConfigHandlers({
       const diffId = componentData?.config_diff?.id;
       if (diffId) {
         deleteComponentDiff(boardDataSource, diffId, userId ?? "").catch(() => {});
-        // Keep the id so a subsequent save can upsert back to the same record
-        componentData.config_diff = { id: diffId, config: {} as Partial<IComponentConfig> };
+        // Clear the id — this record no longer exists in the DB
+        componentData.config_diff = undefined;
       }
       setHasDiff(false);
       return;

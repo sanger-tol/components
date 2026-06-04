@@ -140,11 +140,8 @@ export function BoardTable(props: PBoardTable) {
     // triggering a re-render with the default config.
 
     const resetLoadedDiffState = () => {
-      const diffId = componentData?.config_diff?.id;
-      // Preserve the id so any subsequent save upserts to the same record
-      componentData.config_diff = diffId
-        ? { id: diffId, config: {} as Partial<IComponentConfig> }
-        : undefined;
+      // Clear config_diff entirely — the record has been deleted from DB
+      componentData.config_diff = undefined;
 
       setDiffState({
         currentConfig: { ...componentData.config } as Partial<ITableConfigSave>,
