@@ -195,6 +195,24 @@ export async function patchReorderBoardEntity(
     });
 }
 
+export async function postUpdateBoardEntity(
+  boardDataSource: TsDataSource,
+  entityId: string,
+  attributes: Record<string, any> = {},
+) {
+  const entityType = deriveBoardObjectType(entityId);
+  return await boardDataSource.upsert({
+    objectType: entityType,
+    payload: [
+      {
+        type: entityType,
+        id: entityId,
+        attributes: attributes,
+      },
+    ],
+  });
+}
+
 /**
  * Posts a request to add a new board entity as a child of the given parent.
  *

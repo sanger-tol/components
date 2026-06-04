@@ -8,12 +8,13 @@ import {
   BOARD_ENTITIES,
   defineBoardEntity,
   IComponent,
+  IComponentConfig,
   IFilter,
   IZone,
+  postUpdateBoardEntity,
   TsDataSource,
 } from "../..";
 
-// TODO: SORT!!!
 /**
  * Update the component state and upsert the component with the new config.
  * @param componentId The id of the component to be updated.
@@ -36,23 +37,23 @@ export async function updateComponentConfigAndUpsert(
 
   if (editMode) {
     component.config = { ...config };
-    // return await upsertCoreBoardEntity(
-    //   BOARD_ENTITIES.ENTITIES.COMPONENT,
-    //   { config: config },
-    //   boardDataSource,
-    //   undefined,
-    //   componentId,
-    // );
+    return await postUpdateBoardEntity(boardDataSource, componentId, {
+      config: config,
+    });
   }
 
-  component.entity_diff = { ...component.entity_diff, config: config };
+  component.config_diff = {
+    id: component.config_diff?.id ?? "",
+    config: config as Partial<IComponentConfig>,
+  };
+
   return await boardDataSource
     .upsert({
       objectType: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
       payload: [
         {
           type: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
-          ...(component?.entity_diff?.id && { id: component.entity_diff.id }),
+          ...(component?.config_diff?.id && { id: component.config_diff.id }),
           attributes: {
             user_id: userId,
             component_id: componentId,
@@ -125,7 +126,8 @@ export function generateLayout(zone: IZone) {
     ["lg", "md", "sm"].forEach((breakpoint) => {
       let w, h;
       // filterBlock components have lg width but sm height
-      if (component.component_type === "filterBlock") { // TODO: Add types for component_type
+      if (component.component_type === "filterBlock") {
+        // TODO: Add types for component_type
         w = types.lg[breakpoint].w;
         h = breakpoint === "lg" ? 9 : breakpoint === "md" ? 15 : 26;
       } else {

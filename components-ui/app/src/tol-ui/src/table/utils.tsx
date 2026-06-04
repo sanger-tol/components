@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Dispatch, MutableRefObject, SetStateAction } from "react";
 import {
   FieldMeta,
   normaliseCaps,
@@ -25,6 +26,10 @@ import {
   TOL_DS,
   AttributeTitle,
   BOARD_ENTITIES,
+  deleteComponentDiff,
+  MESSAGE_TYPE,
+  BOARD_MESSAGE_TEXT,
+  updateComponentConfigAndUpsert,
 } from "..";
 
 import type {
@@ -41,6 +46,9 @@ import type {
   IDiffState,
   IConfigDifferences,
   IComponentConfig,
+  IComponent,
+  ITableDrawerSave,
+  IZone,
 } from "..";
 
 interface Rgb {
@@ -484,41 +492,6 @@ export function updateFieldMetaAttribute(
 }
 
 /**
- * Resets a component's table configuration to its default state by deleting
- * the user-specific board diff record from the data source.
- *
- * @param componentId - The ID of the component whose table config should be reset
- * @param boardDataSource - The data source used to query and delete board diff records
- * @param userId - The ID of the user whose table config customisation should be removed
- */
-export async function resetTableConfigToDefault(
-  componentId: string,
-  boardDataSource: TsDataSource,
-  userId: string,
-) {
-  await boardDataSource
-    .getListPage({
-      objectType: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
-      filter: {
-        and_: {
-          component_id: { eq: { value: componentId } },
-          user_id: { eq: { value: userId } },
-        },
-      },
-      requestedFields: ["id"],
-    })
-    .then(async (res: TDataObjectListOrNull) => {
-      const id: string = res?.["id"];
-      if (id) {
-        await boardDataSource.deleteByID({
-          objectType: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
-          id: id,
-        });
-      }
-    });
-}
-
-/**
  * Computes the initial diff state for a component's table configuration.
  *
  * Determines whether a user has a customised config (diff) relative to the published
@@ -531,12 +504,11 @@ export async function resetTableConfigToDefault(
  * 2. The diff config from local storage — if there is a diff and the user is not logged in.
  * 3. The diff config from the database — if there is a diff and the user is logged in (non-edit mode).
  *
- * @param dataSource - The data source used to query component and board diff records
  * @param componentId - The ID of the component whose config state is being resolved
- * @param userId - The ID of the current user
  * @param isLoggedIn - Whether the user is currently authenticated
  * @param objectType - The object type used to resolve attribute titles in config differences
  * @param editMode - Optional flag indicating whether the table is in edit mode
+ * @param remoteDiff - Optional diff config sourced from the database, passed in to avoid redundant queries
  * @returns The resolved diff state, including the current config, diff flag, and column differences
  */
 export async function getInitialDiffState(
@@ -570,6 +542,7 @@ export async function getInitialDiffState(
   const getConfigDifferences = (): IConfigDifferences => {
     const currentColumns = configState?.fieldMeta?.order?.active || [];
     const publishedColumns = baseConfig?.fieldMeta?.order?.active || [];
+
     return {
       remove: currentColumns
         .filter((col: string) => !publishedColumns.includes(col))
@@ -595,8 +568,150 @@ export async function getInitialDiffState(
   return {
     configDifferences: getConfigDifferences(),
     hasDiff: editMode ? false : isLoggedIn ? !!remoteDiff : !!localDiff,
-    currentConfig: configState ?? baseConfig,
+    currentConfig: (configState ??
+      baseConfig) as Partial<ITableConfigSave> | null,
   };
+}
+
+export async function handleSavedDiffReset(
+  boardDataSource: TsDataSource,
+  diffState: IDiffState,
+  componentData: IComponent,
+  isLoggedIn?: boolean,
+  userId?: string,
+): Promise<boolean> {
+  let successDiffReset = false;
+  const diffId = componentData?.config_diff?.id;
+  isLoggedIn && diffState.hasDiff && diffId
+    ? await deleteComponentDiff(boardDataSource, diffId, userId ?? "").then(
+        () => {
+          successDiffReset = true;
+        },
+      )
+    : diffState.hasDiff
+      ? (clearTableConfigLocalStorage(
+          `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${diffId}`,
+        ),
+        (successDiffReset = true))
+      : null;
+
+  if (successDiffReset) {
+    PopUpMessage({
+      type: MESSAGE_TYPE.SUCCESS,
+      message: BOARD_MESSAGE_TEXT(
+        componentData?.component_type || BOARD_ENTITIES.ENTITIES.COMPONENT,
+      ).DIFF.RESET_SUCCESS,
+    });
+    return successDiffReset;
+  }
+
+  PopUpMessage({
+    type: MESSAGE_TYPE.ERROR,
+    message: BOARD_MESSAGE_TEXT(
+      componentData?.component_type || BOARD_ENTITIES.ENTITIES.COMPONENT,
+    ).DIFF.RESET_ERROR,
+  });
+
+  return successDiffReset;
+}
+
+export function handleFirstLoadDiffState(
+  componentData: IComponent,
+): IDiffState {
+  return {
+    currentConfig:
+      (structuredClone(
+        componentData?.config_diff?.config ?? componentData?.config ?? null,
+      ) as Partial<ITableConfigSave>) ?? null,
+    hasDiff: !!componentData?.config_diff?.config,
+    configDifferences: { add: [], remove: [] },
+  };
+}
+
+interface ITableConfigHandlerContext {
+  id: string;
+  zone: IZone;
+  boardDataSource: TsDataSource;
+  editMode: boolean;
+  isLoggedIn: boolean;
+  userId?: string;
+  diffStateRef: MutableRefObject<IDiffState>;
+  setDiffState: Dispatch<SetStateAction<IDiffState>>;
+}
+
+/**
+ * Factory that returns config-change handlers for a board table component.
+ * Centralises the repeated pattern of: build nextConfig → update local state → persist (DB or localStorage).
+ */
+export function createTableConfigHandlers({
+  id,
+  zone,
+  boardDataSource,
+  editMode,
+  isLoggedIn,
+  userId,
+  diffStateRef,
+  setDiffState,
+}: ITableConfigHandlerContext) {
+  const localStorageKey = `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${id}`;
+
+  const setHasDiff = (value: boolean) =>
+    setDiffState((prev) => ({ ...prev, hasDiff: value }));
+
+  const persistToDb = (nextConfig: Partial<ITableConfigSave>) =>
+    updateComponentConfigAndUpsert(id, nextConfig, zone, boardDataSource, editMode, setHasDiff, userId);
+
+  const persistToLocalStorage = (keys: string | string[], values: any) => {
+    setTableConfigLocalStorage(localStorageKey, keys, values);
+    setHasDiff(true);
+  };
+
+  const onConfigSave = ({ fieldMeta, defaultSortByAttribute, defaultSortByType }: ITableDrawerSave) => {
+    const newFieldMeta = optimiseFieldMetaForSave(fieldMeta);
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      defaultSortByAttribute,
+      defaultSortByType,
+      fieldMeta: newFieldMeta,
+    };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    if (isLoggedIn) {
+      persistToDb(nextConfig);
+    } else {
+      persistToLocalStorage(
+        ["fieldMeta", "defaultSortByAttribute", "defaultSortByType"],
+        [newFieldMeta, defaultSortByAttribute, defaultSortByType],
+      );
+    }
+  };
+
+  const onFilterVisibilityChange = (visible: boolean) => {
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      filterVisibility: visible,
+    };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    persistToDb(nextConfig);
+  };
+
+  const onResizeColumn = (columnWidth: number, dataKey: string) => {
+    const nextConfig: Partial<ITableConfigSave> = { ...diffStateRef.current.currentConfig };
+    updateFieldMetaAttribute(nextConfig.fieldMeta!, dataKey, "width", columnWidth);
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    persistToDb(nextConfig);
+  };
+
+  const onPageSizeChange = (pageSize: number) => {
+    const nextConfig: Partial<ITableConfigSave> = { ...diffStateRef.current.currentConfig, pageSize };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    if (isLoggedIn) {
+      persistToDb(nextConfig);
+    } else {
+      persistToLocalStorage("pageSize", pageSize);
+    }
+  };
+
+  return { onConfigSave, onFilterVisibilityChange, onResizeColumn, onPageSizeChange };
 }
 
 export async function fetchActions(

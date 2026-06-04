@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { MAX_VIEWS_ALLOWED, normaliseCaps } from "..";
 import type { TBoardEntityType, TMessageType } from "..";
 
-
 export const MESSAGE_DURATION: { [key: string]: number } = {
   SUCCESS: 4000,
   INFO: 6000,
@@ -25,7 +24,7 @@ export const MESSAGE_TYPE: { [key: string]: TMessageType } = {
 } as const;
 
 export const BOARD_MESSAGE_TEXT = (
-  boardEntity: TBoardEntityType,
+  boardEntity: TBoardEntityType | string,
 ): { [key: string]: { [key: string]: string } } => {
   const entityCapitalised: string = normaliseCaps(boardEntity);
 
@@ -70,6 +69,10 @@ export const BOARD_MESSAGE_TEXT = (
     },
     MISC: {
       EMPTY_TITLE_ERROR: `${entityCapitalised} titles cannot be empty.`,
-    }
+    },
+    DIFF: {
+      RESET_SUCCESS: `${entityCapitalised} configuration successfully reset to default.`,
+      RESET_ERROR: `Error resetting ${entityCapitalised} configuration. Please try again.`,
+    },
   } as const;
 };
