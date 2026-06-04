@@ -17,12 +17,9 @@ import {
   handleSavedDiffReset,
   handleFirstLoadDiffState,
   createTableConfigHandlers,
+  configsAreEqual,
 } from "..";
-import type {
-  ITableConfigSave,
-  PVisualisation,
-  IDiffState,
-} from "..";
+import type { ITableConfigSave, PVisualisation, IDiffState, IComponentConfig } from "..";
 
 export interface PBoardTable extends PVisualisation {
   config: ITableConfigSave;
@@ -42,7 +39,9 @@ export function BoardTable(props: PBoardTable) {
     handleFirstLoadDiffState(componentData),
   );
   const diffStateRef = useRef(diffState);
-  useEffect(() => { diffStateRef.current = diffState; }, [diffState]);
+  useEffect(() => {
+    diffStateRef.current = diffState;
+  }, [diffState]);
 
   const actionList = useQueryData<string[]>(
     ["actionsList", id],
@@ -78,7 +77,23 @@ export function BoardTable(props: PBoardTable) {
   useEffect(() => {
     // Update diff state when remote diff state changes
     if (!remoteDiffState) return;
-    setDiffState(remoteDiffState);
+
+    // If the stored diff is identical to the base config, mark it as cleared but keep the id
+    if (remoteDiffState.isRedundantDiff) {
+      const diffId = componentData?.config_diff?.id;
+      if (diffId) {
+        componentData.config_diff = { id: diffId, config: {} as Partial<IComponentConfig> };
+      } else {
+        componentData.config_diff = undefined;
+      }
+    }
+
+    setDiffState({
+      ...remoteDiffState,
+      hasDiff: remoteDiffState.isRedundantDiff
+        ? false
+        : remoteDiffState.hasDiff,
+    });
   }, [remoteDiffState]);
 
   useEffect(() => {
@@ -101,17 +116,23 @@ export function BoardTable(props: PBoardTable) {
   }, [editMode]);
 
   // Create handlers for changing table config, including column resize, page size, etc.
-  const { onConfigSave, onFilterVisibilityChange, onResizeColumn, onPageSizeChange } =
-    createTableConfigHandlers({
-      id,
-      zone,
-      boardDataSource,
-      editMode,
-      isLoggedIn,
-      userId: user?.id,
-      diffStateRef,
-      setDiffState,
-    });
+  const {
+    onConfigSave,
+    onFilterVisibilityChange,
+    onResizeColumn,
+    onPageSizeChange,
+  } = createTableConfigHandlers({
+    id,
+    zone,
+    boardDataSource,
+    editMode,
+    isLoggedIn,
+    userId: user?.id,
+    baseConfig: componentData?.config as Partial<ITableConfigSave> | null,
+    componentData,
+    diffStateRef,
+    setDiffState,
+  });
 
   const onReset = async () => {
     // On reset, we clear the database or localstorage diff,
@@ -119,9 +140,11 @@ export function BoardTable(props: PBoardTable) {
     // triggering a re-render with the default config.
 
     const resetLoadedDiffState = () => {
-      if (diffState.hasDiff) {
-        componentData.config_diff = { id: "", config: {} as ITableConfigSave };
-      }
+      const diffId = componentData?.config_diff?.id;
+      // Preserve the id so any subsequent save upserts to the same record
+      componentData.config_diff = diffId
+        ? { id: diffId, config: {} as Partial<IComponentConfig> }
+        : undefined;
 
       setDiffState({
         currentConfig: { ...componentData.config } as Partial<ITableConfigSave>,
@@ -147,7 +170,10 @@ export function BoardTable(props: PBoardTable) {
       {...props}
       resizeableColumns={editMode || false}
       onReset={onReset}
-      showConfigReset={diffState.hasDiff}
+      showConfigReset={
+        diffState.hasDiff &&
+        !configsAreEqual(diffState.currentConfig, componentData?.config)
+      }
       resetConfigDifferences={diffState.configDifferences}
       advanceTab
       editableCells

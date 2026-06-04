@@ -491,6 +491,32 @@ export function updateFieldMetaAttribute(
   if (dataWithDefaults) updateTarget("dataWithDefaults");
 }
 
+export function configsAreEqual(
+  a: Partial<IComponentConfig> | null | undefined,
+  b: Partial<IComponentConfig> | null | undefined,
+): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  // Strip derived/transient fields and sort keys for a stable comparison
+  const normalise = (c: Partial<IComponentConfig>): string => {
+    const stripDerived = (obj: any): any => {
+      if (Array.isArray(obj)) return obj.map(stripDerived);
+      if (obj !== null && typeof obj === "object") {
+        const result: any = {};
+        // Sort keys so insertion order doesn't affect equality
+        Object.keys(obj)
+          .filter((k) => k !== "dataWithDefaults")
+          .sort()
+          .forEach((k) => { result[k] = stripDerived(obj[k]); });
+        return result;
+      }
+      return obj;
+    };
+    return JSON.stringify(stripDerived(c));
+  };
+  return normalise(a) === normalise(b);
+}
+
 /**
  * Computes the initial diff state for a component's table configuration.
  *
@@ -540,7 +566,8 @@ export async function getInitialDiffState(
   // Return a configDifferences object with the columns to add and remove,
   // represented as AttributeTitle components to show the source colour and provide on hover tooltips
   const getConfigDifferences = (): IConfigDifferences => {
-    const currentColumns = configState?.fieldMeta?.order?.active || [];
+    const resolvedConfig = configState ?? baseConfig;
+    const currentColumns = resolvedConfig?.fieldMeta?.order?.active || [];
     const publishedColumns = baseConfig?.fieldMeta?.order?.active || [];
 
     return {
@@ -570,6 +597,8 @@ export async function getInitialDiffState(
     hasDiff: editMode ? false : isLoggedIn ? !!remoteDiff : !!localDiff,
     currentConfig: (configState ??
       baseConfig) as Partial<ITableConfigSave> | null,
+    isRedundantDiff:
+      !editMode && !!configState && configsAreEqual(configState, baseConfig),
   };
 }
 
@@ -618,23 +647,30 @@ export async function handleSavedDiffReset(
 export function handleFirstLoadDiffState(
   componentData: IComponent,
 ): IDiffState {
+  const diffConfig = componentData?.config_diff?.config ?? null;
+  const baseConfig = componentData?.config ?? null;
+  const isRedundantDiff = !!diffConfig && configsAreEqual(diffConfig, baseConfig);
   return {
     currentConfig:
       (structuredClone(
-        componentData?.config_diff?.config ?? componentData?.config ?? null,
+        diffConfig ?? baseConfig ?? null,
       ) as Partial<ITableConfigSave>) ?? null,
-    hasDiff: !!componentData?.config_diff?.config,
+    hasDiff: !!diffConfig && !isRedundantDiff,
+    isRedundantDiff,
     configDifferences: { add: [], remove: [] },
   };
 }
 
 interface ITableConfigHandlerContext {
+  // TODO: move
   id: string;
   zone: IZone;
   boardDataSource: TsDataSource;
   editMode: boolean;
   isLoggedIn: boolean;
   userId?: string;
+  baseConfig: Partial<ITableConfigSave> | null | undefined;
+  componentData: IComponent;
   diffStateRef: MutableRefObject<IDiffState>;
   setDiffState: Dispatch<SetStateAction<IDiffState>>;
 }
@@ -650,6 +686,8 @@ export function createTableConfigHandlers({
   editMode,
   isLoggedIn,
   userId,
+  baseConfig,
+  componentData,
   diffStateRef,
   setDiffState,
 }: ITableConfigHandlerContext) {
@@ -658,15 +696,39 @@ export function createTableConfigHandlers({
   const setHasDiff = (value: boolean) =>
     setDiffState((prev) => ({ ...prev, hasDiff: value }));
 
-  const persistToDb = (nextConfig: Partial<ITableConfigSave>) =>
-    updateComponentConfigAndUpsert(id, nextConfig, zone, boardDataSource, editMode, setHasDiff, userId);
+  // If nextConfig is identical to the base, delete the stored diff instead of upserting
+  const persistOrDelete = (nextConfig: Partial<ITableConfigSave>) => {
+    if (configsAreEqual(nextConfig, baseConfig)) {
+      const diffId = componentData?.config_diff?.id;
+      if (diffId) {
+        deleteComponentDiff(boardDataSource, diffId, userId ?? "").catch(() => {});
+        // Keep the id so a subsequent save can upsert back to the same record
+        componentData.config_diff = { id: diffId, config: {} as Partial<IComponentConfig> };
+      }
+      setHasDiff(false);
+      return;
+    }
+    updateComponentConfigAndUpsert(
+      id,
+      nextConfig,
+      zone,
+      boardDataSource,
+      editMode,
+      setHasDiff,
+      userId,
+    );
+  };
 
   const persistToLocalStorage = (keys: string | string[], values: any) => {
     setTableConfigLocalStorage(localStorageKey, keys, values);
     setHasDiff(true);
   };
 
-  const onConfigSave = ({ fieldMeta, defaultSortByAttribute, defaultSortByType }: ITableDrawerSave) => {
+  const onConfigSave = ({
+    fieldMeta,
+    defaultSortByAttribute,
+    defaultSortByType,
+  }: ITableDrawerSave) => {
     const newFieldMeta = optimiseFieldMetaForSave(fieldMeta);
     const nextConfig: Partial<ITableConfigSave> = {
       ...diffStateRef.current.currentConfig,
@@ -676,7 +738,7 @@ export function createTableConfigHandlers({
     };
     setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
     if (isLoggedIn) {
-      persistToDb(nextConfig);
+      persistOrDelete(nextConfig);
     } else {
       persistToLocalStorage(
         ["fieldMeta", "defaultSortByAttribute", "defaultSortByType"],
@@ -691,27 +753,42 @@ export function createTableConfigHandlers({
       filterVisibility: visible,
     };
     setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
-    persistToDb(nextConfig);
+    persistOrDelete(nextConfig);
   };
 
   const onResizeColumn = (columnWidth: number, dataKey: string) => {
-    const nextConfig: Partial<ITableConfigSave> = { ...diffStateRef.current.currentConfig };
-    updateFieldMetaAttribute(nextConfig.fieldMeta!, dataKey, "width", columnWidth);
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+    };
+    updateFieldMetaAttribute(
+      nextConfig.fieldMeta!,
+      dataKey,
+      "width",
+      columnWidth,
+    );
     setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
-    persistToDb(nextConfig);
+    persistOrDelete(nextConfig);
   };
 
   const onPageSizeChange = (pageSize: number) => {
-    const nextConfig: Partial<ITableConfigSave> = { ...diffStateRef.current.currentConfig, pageSize };
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      pageSize,
+    };
     setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
     if (isLoggedIn) {
-      persistToDb(nextConfig);
+      persistOrDelete(nextConfig);
     } else {
       persistToLocalStorage("pageSize", pageSize);
     }
   };
 
-  return { onConfigSave, onFilterVisibilityChange, onResizeColumn, onPageSizeChange };
+  return {
+    onConfigSave,
+    onFilterVisibilityChange,
+    onResizeColumn,
+    onPageSizeChange,
+  };
 }
 
 export async function fetchActions(

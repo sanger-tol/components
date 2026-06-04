@@ -47,6 +47,10 @@ export interface IDiffState {
    * This is required in order to show the user what changes will be made if they choose to reset their configuration.
    */
   currentConfig: Partial<ITableConfigSave> | null;
+  /**
+   * Whether the stored diff is identical to the base config and can be safely deleted.
+   */
+  isRedundantDiff?: boolean;
 }
 
 export interface ITableConfigSave extends ITableDrawerSave, ITableOtherSave {}
