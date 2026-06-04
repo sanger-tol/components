@@ -18,8 +18,14 @@ import {
   handleFirstLoadDiffState,
   createTableConfigHandlers,
   configsAreEqual,
+  clearTableConfigLocalStorage,
 } from "..";
-import type { ITableConfigSave, PVisualisation, IDiffState, IComponentConfig } from "..";
+import type {
+  ITableConfigSave,
+  PVisualisation,
+  IDiffState,
+  IComponentConfig,
+} from "..";
 
 export interface PBoardTable extends PVisualisation {
   config: ITableConfigSave;
@@ -52,6 +58,10 @@ export function BoardTable(props: PBoardTable) {
     },
   );
 
+  useEffect(() => {
+    console.log(diffState);
+  }, [diffState]);
+
   const { data: remoteDiffState } = useQueryData<IDiffState>(
     // Fetch diff state when variables in the array change
     [
@@ -82,10 +92,16 @@ export function BoardTable(props: PBoardTable) {
     if (remoteDiffState.isRedundantDiff) {
       const diffId = componentData?.config_diff?.id;
       if (diffId) {
-        componentData.config_diff = { id: diffId, config: {} as Partial<IComponentConfig> };
+        componentData.config_diff = {
+          id: diffId,
+          config: {} as Partial<IComponentConfig>,
+        };
       } else {
         componentData.config_diff = undefined;
       }
+      clearTableConfigLocalStorage(
+        `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${id}`,
+      );
     }
 
     setDiffState({
@@ -165,7 +181,7 @@ export function BoardTable(props: PBoardTable) {
     <RemoteTable
       key={resetKey}
       {...props}
-      resizeableColumns={editMode || false}
+      resizeableColumns={isLoggedIn}
       onReset={onReset}
       showConfigReset={
         diffState.hasDiff &&

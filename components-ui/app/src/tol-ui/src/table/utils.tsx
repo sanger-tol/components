@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Dispatch, MutableRefObject, SetStateAction } from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useRef } from "react";
 import {
   FieldMeta,
   normaliseCaps,
@@ -693,17 +693,27 @@ export function createTableConfigHandlers({
 }: ITableConfigHandlerContext) {
   const localStorageKey = `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${id}`;
 
+  // Debounce timer ref — shared across all handlers
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debounce = (fn: () => void, ms = 500) => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(fn, ms);
+  };
+
   const setHasDiff = (value: boolean) =>
     setDiffState((prev) => ({ ...prev, hasDiff: value }));
 
   // If nextConfig is identical to the base, delete the stored diff instead of upserting
   const persistOrDelete = (nextConfig: Partial<ITableConfigSave>) => {
     if (configsAreEqual(nextConfig, baseConfig)) {
-      const diffId = componentData?.config_diff?.id;
-      if (diffId) {
-        deleteComponentDiff(boardDataSource, diffId, userId ?? "").catch(() => {});
-        // Clear the id — this record no longer exists in the DB
-        componentData.config_diff = undefined;
+      if (isLoggedIn) {
+        const diffId = componentData?.config_diff?.id;
+        if (diffId) {
+          deleteComponentDiff(boardDataSource, diffId, userId ?? "").catch(() => {});
+          componentData.config_diff = undefined;
+        }
+      } else {
+        clearTableConfigLocalStorage(localStorageKey);
       }
       setHasDiff(false);
       return;
@@ -753,13 +763,17 @@ export function createTableConfigHandlers({
       filterVisibility: visible,
     };
     setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
-    persistOrDelete(nextConfig);
+    debounce(() => persistOrDelete(nextConfig));
   };
 
   const onResizeColumn = (columnWidth: number, dataKey: string) => {
     const nextConfig: Partial<ITableConfigSave> = {
       ...diffStateRef.current.currentConfig,
+      fieldMeta: diffStateRef.current.currentConfig?.fieldMeta
+        ? { ...diffStateRef.current.currentConfig.fieldMeta }
+        : undefined,
     };
+    // Update the persisted 'data' field (not just dataWithDefaults which RemoteTable already updated)
     updateFieldMetaAttribute(
       nextConfig.fieldMeta!,
       dataKey,
@@ -767,7 +781,7 @@ export function createTableConfigHandlers({
       columnWidth,
     );
     setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
-    persistOrDelete(nextConfig);
+    debounce(() => persistOrDelete(nextConfig), 800);
   };
 
   const onPageSizeChange = (pageSize: number) => {
@@ -777,7 +791,7 @@ export function createTableConfigHandlers({
     };
     setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
     if (isLoggedIn) {
-      persistOrDelete(nextConfig);
+      debounce(() => persistOrDelete(nextConfig));
     } else {
       persistToLocalStorage("pageSize", pageSize);
     }
