@@ -58,10 +58,6 @@ export function BoardTable(props: PBoardTable) {
     },
   );
 
-  useEffect(() => {
-    console.log(diffState);
-  }, [diffState]);
-
   const { data: remoteDiffState } = useQueryData<IDiffState>(
     // Fetch diff state when variables in the array change
     [

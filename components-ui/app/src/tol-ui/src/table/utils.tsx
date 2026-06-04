@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Dispatch, MutableRefObject, SetStateAction, useRef } from "react";
+import { useRef } from "react";
 import {
   FieldMeta,
   normaliseCaps,
@@ -31,7 +31,6 @@ import {
   BOARD_MESSAGE_TEXT,
   updateComponentConfigAndUpsert,
 } from "..";
-
 import type {
   TsDataSource,
   IAttributeData,
@@ -48,7 +47,7 @@ import type {
   IComponentConfig,
   IComponent,
   ITableDrawerSave,
-  IZone,
+  ITableConfigHandlerContext,
 } from "..";
 
 interface Rgb {
@@ -491,6 +490,17 @@ export function updateFieldMetaAttribute(
   if (dataWithDefaults) updateTarget("dataWithDefaults");
 }
 
+/**
+ * Compares two component configs for semantic equality.
+ *
+ * This comparison ignores derived/transient fields (currently `dataWithDefaults`)
+ * and normalises object key order recursively so differences in insertion order
+ * do not affect the result.
+ *
+ * @param a The first component config to compare.
+ * @param b The second component config to compare.
+ * @returns `true` if both configs are semantically equal after normalisation, otherwise `false`.
+ */
 export function configsAreEqual(
   a: Partial<IComponentConfig> | null | undefined,
   b: Partial<IComponentConfig> | null | undefined,
@@ -602,6 +612,20 @@ export async function getInitialDiffState(
   };
 }
 
+/**
+ * Resets a saved table-config diff for a component and reports whether the reset succeeded.
+ *
+ * For logged-in users, this deletes the remote diff entry. For anonymous users, this
+ * removes the corresponding local-storage diff entry. A success or error popup message
+ * is displayed based on the outcome.
+ *
+ * @param boardDataSource The data source used to perform remote diff deletion.
+ * @param diffState The current diff state, used to determine whether a diff exists.
+ * @param componentData The component containing diff metadata and component type.
+ * @param isLoggedIn Whether the current user is authenticated.
+ * @param userId The identifier of the authenticated user, used for remote diff deletion.
+ * @returns `true` if a diff was reset successfully, otherwise `false`.
+ */
 export async function handleSavedDiffReset(
   boardDataSource: TsDataSource,
   diffState: IDiffState,
@@ -644,6 +668,16 @@ export async function handleSavedDiffReset(
   return successDiffReset;
 }
 
+/**
+ * Builds the initial diff state for first render from component data.
+ *
+ * The returned state prefers the saved diff config when present, otherwise the
+ * base component config. If the saved diff is semantically identical to the base
+ * config, it is marked as redundant and `hasDiff` is set to `false`.
+ *
+ * @param componentData The component containing base config and optional saved diff config.
+ * @returns The initial diff state used by table config handlers and UI.
+ */
 export function handleFirstLoadDiffState(
   componentData: IComponent,
 ): IDiffState {
@@ -661,23 +695,18 @@ export function handleFirstLoadDiffState(
   };
 }
 
-interface ITableConfigHandlerContext {
-  // TODO: move
-  id: string;
-  zone: IZone;
-  boardDataSource: TsDataSource;
-  editMode: boolean;
-  isLoggedIn: boolean;
-  userId?: string;
-  baseConfig: Partial<ITableConfigSave> | null | undefined;
-  componentData: IComponent;
-  diffStateRef: MutableRefObject<IDiffState>;
-  setDiffState: Dispatch<SetStateAction<IDiffState>>;
-}
-
 /**
- * Factory that returns config-change handlers for a board table component.
- * Centralises the repeated pattern of: build nextConfig → update local state → persist (DB or localStorage).
+ * Creates table-config change handlers that keep UI diff state and persisted config in sync.
+ *
+ * Each handler updates in-memory diff state immediately, then persists changes either
+ * to the server (logged-in users) or local storage (anonymous users). If the resulting
+ * config is equal to the base config, the stored diff is deleted rather than upserted.
+ *
+ * @param context The table-config handler context containing component identity, data source,
+ * auth/edit mode flags, base config, and diff-state refs.
+ * @returns An object with handlers for config save (`onConfigSave`), filter visibility
+ * (`onFilterVisibilityChange`), column resize (`onResizeColumn`), and page size
+ * (`onPageSizeChange`).
  */
 export function createTableConfigHandlers({
   id,
