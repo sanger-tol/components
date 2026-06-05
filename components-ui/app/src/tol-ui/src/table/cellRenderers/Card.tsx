@@ -33,7 +33,6 @@ export function Card(props: PCard) {
 
   return (
     <Tag type={tagType}>
-      {tagType}
       <Markdown
         contents={content}
       />
