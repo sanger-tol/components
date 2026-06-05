@@ -31,6 +31,10 @@ export interface PIcon {
    * Handler for if this icon is clicked
    */
   onClick?: () => void;
+  /**
+   * Test ID for Playwright tests
+   */
+  testid?: string;
 }
 
 /**
@@ -40,10 +44,10 @@ export interface PIcon {
  * Accepts additional options such as config and colour.
  */
 export function Icon(props: PIcon) {
-  const { icon, size, colour, config = "solid", className, onClick } = props;
+  const { icon, size, colour, config = "solid", className, onClick, testid } = props;
 
   return (
-    <span className={className} onClick={onClick}>
+    <span className={className} onClick={onClick} data-testid={testid}>
       {/* @ts-ignore */}
       <FontAwesomeIcon icon={`fa-${config} fa-${icon}`} size={size} color={colour} />
     </span>

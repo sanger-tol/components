@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 export * from './auth';
+export * from "./boards";
 export * from './boardShortcut';
 export * from './components';
 export * from './editMode';
