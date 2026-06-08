@@ -8,7 +8,7 @@ globalThis.crypto ??= require("node:crypto").webcrypto
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
-const insertAuthToDB = async ({userID, token, orcidID}) => {
+const insertAuthToDB = async (userID, token, orcidID) => {
   // insert the rest
   await sql.unsafe(`INSERT INTO "user"
   VALUES (${userID}, '${orcidID}');
@@ -28,7 +28,7 @@ export const setAuth = async (page: Page) => {
   const token = crypto.randomUUID();
   const orcidID = `https://orcid.org/${crypto.randomUUID()}`;
 
-  await insertAuthToDB({userID, token, orcidID});
+  await insertAuthToDB(userID, token, orcidID);
  
   const storageData = {
     user: {
@@ -68,6 +68,6 @@ export const addUserToDB = async () => {
   const token = crypto.randomUUID();
   const orcidID = `https://orcid.org/${crypto.randomUUID()}`;
 
-  await insertAuthToDB({userID, token, orcidID});
+  await insertAuthToDB(userID, token, orcidID);
   return {userID, token, orcidID};
 }
