@@ -9,6 +9,8 @@ import { Page } from "@playwright/test";
 import { enterEditMode, exitEditMode } from ".";
 
 export const createBoardID = () => `b_${crypto.randomUUID()}`;
+export const createViewID  = () => `v_${crypto.randomUUID()}`;
+export const createZoneID  = () => `z_${crypto.randomUUID()}`;
 
 export const createBoard = async (page: Page, boardName: string) => {
   // click the create new board button

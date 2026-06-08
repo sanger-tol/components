@@ -48,7 +48,7 @@ root.render(
     brand="Components"
     pageElements={pageElements}
     configDataSource={CONFIG_DS}
-/>
+  />
 );
 
 // If you want to start measuring performance in your app, pass a function

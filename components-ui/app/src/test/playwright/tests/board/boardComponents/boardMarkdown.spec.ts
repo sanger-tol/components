@@ -23,15 +23,15 @@ test.use({ headless: headless });
 test.beforeEach(async ({ page }) => {
   await setAuth({ page });
   await setBoard({ page, boardID: BOARD_ID });
-  await enterEditMode({ page });
+  await enterEditMode(page);
 });
 
 test.afterEach(async ({ page }) => {
-  await exitEditMode({ page });
+  await exitEditMode(page);
 });
 
 const addMarkdownComponent = async ({ page }) => {
-  await addComponent({ page }, 'text', 'Small');
+  await addComponent( page, 'text', 'Small');
   await expect(page.locator('.tol-markdown-viewer')).toBeVisible();
 }
 

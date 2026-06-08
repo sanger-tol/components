@@ -8,18 +8,12 @@ globalThis.crypto ??= require("node:crypto").webcrypto
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
 const insertAuthToDB = async ({userID, token, orcidID}) => {
-  // insert the admin role if not there already
-  try {
-    await sql.unsafe(`INSERT INTO "role" VALUES (1, 'admin');`).simple();
-  }
-  catch (e) {};
-
   // insert the rest
   await sql.unsafe(`INSERT INTO "user"
   VALUES (${userID}, '${orcidID}');
   
   INSERT INTO role_binding
-  VALUES (${randomInt()}, ${userID}, 1);
+  VALUES (${randomInt()}, ${userID}, 2);
   
   INSERT INTO "token"
   VALUES (${randomInt()}, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
@@ -41,7 +35,7 @@ export const setAuth = async ({page}) => {
       "token_created_at": "2025-03-31T14:13:36.345558",
       "token_expires_at": "2090-04-07T14:13:36.345581",
       "id": userID,
-      "roles": ["admin"],
+      "roles": ["tol"],
     },
     'token': token,
   };

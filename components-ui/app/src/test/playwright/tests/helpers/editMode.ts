@@ -12,4 +12,5 @@ export const enterEditMode = async (page: Page) => {
 export const exitEditMode = async (page: Page) => {
   // click the exit edit mode button
   await page.getByTestId("board-exit-edit-mode-button").click();
+  await page.evaluate(() => window.scrollTo(0, 0));
 };

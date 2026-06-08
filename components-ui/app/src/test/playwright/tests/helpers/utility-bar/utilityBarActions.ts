@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { sleep } from "../sleep";
-
 export const clickUtilityBarButton = async ({ page, testId }) => {
   // First, try to open the condensed utility bar if it exists
   const condensedUtilityBarButton = page.getByTestId("condensed-utility-bar-button");
