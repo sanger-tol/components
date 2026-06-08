@@ -9,7 +9,6 @@ export * from "./Boards";
 export * from "./Buttons";
 export * from "./Cells";
 export * from "./Chart";
-export * from "./Colours";
 export * from "./Drawer";
 export * from "./Download";
 export * from "./EntityMeta";
