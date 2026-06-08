@@ -21,7 +21,7 @@ const BOARD_ID = createBoardID();
 test.use({ headless: headless });
 
 test.beforeEach(async ({ page }) => {
-  await setAuth({ page });
+  await setAuth(page);
   await setBoard({ page, boardID: BOARD_ID });
   await enterEditMode( page );
 });

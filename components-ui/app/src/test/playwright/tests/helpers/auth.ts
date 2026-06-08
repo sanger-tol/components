@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
+import { Page } from '@playwright/test';
 import sql from '../../db';
 globalThis.crypto ??= require("node:crypto").webcrypto
 
@@ -22,7 +23,7 @@ const insertAuthToDB = async ({userID, token, orcidID}) => {
 
 // This function sets up authentication for the account used in the tests on the browser.
 // Call this function before a test to create an authenticated session for the test user.
-export const setAuth = async ({page}) => {
+export const setAuth = async (page: Page) => {
   const userID = randomInt();
   const token = crypto.randomUUID();
   const orcidID = `https://orcid.org/${crypto.randomUUID()}`;

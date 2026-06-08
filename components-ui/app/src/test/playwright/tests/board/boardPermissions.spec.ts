@@ -18,7 +18,7 @@ test.use({ headless: headless });
 test('Cannot edit others boards', async ({ page }) => {
   // Sets a user session up for the browser
   const browserUserBoard = createBoardID();
-  await setAuth({ page });
+  await setAuth(page);
   await setBoard({ page, boardID: browserUserBoard });
   await expect(page.getByTestId("board-enter-edit-mode-button")).toBeVisible();
 
