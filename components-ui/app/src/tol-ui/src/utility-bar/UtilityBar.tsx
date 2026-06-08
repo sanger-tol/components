@@ -95,8 +95,11 @@ export function UtilityBar(props: PUtilityBar) {
   const DropdownButtonsComponent = (
     <>
       {dropdownButtons &&
-        dropdownButtons.map((button, index) => (
-          <DropdownButton key={`dropdown-${index}`} {...(button as PDropdownButton)} />
+        dropdownButtons.map((dropdownButton, index) => (
+          <DropdownButton
+            key={`dropdown-${index}`}
+            {...(dropdownButton as PDropdownButton)}
+          />
         ))}
     </>
   );

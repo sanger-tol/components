@@ -50,11 +50,17 @@ export function DropdownButton(props: PDropdownButton) {
             onClick={button.onClick}
             disabled={button.disabled}
           >
-            <Icon
-              icon={button.icon}
-              className="tol-dropdown-icon"
-            />
-            {button.text}
+            {button.icon && (
+              <Icon
+                icon={button.icon}
+                className="tol-dropdown-icon"
+              />
+            )}
+            {button.text &&
+              <span className="tol-dropdown-text">
+                {button.text}
+              </span>
+            }
           </Dropdown.Item>
         ) : null
       )}
