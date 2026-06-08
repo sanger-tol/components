@@ -12,7 +12,6 @@ import {
   enterEditMode,
   clickUtilityBarButton,
   createBoardID,
-  sleep
 } from "../../helpers";
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
@@ -47,7 +46,6 @@ test("shows personal table configuration notices outside edit mode", async ({ pa
   await addTableComponent({ page });
   await exitEditMode(page);
 
-  await page.evaluate(() => window.scrollTo(0, 0));
   await clickUtilityBarButton({ page, testId: "table-config-button" });
 
   await expect(
