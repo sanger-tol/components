@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import {
   BOARD_ENTITIES,
+  COMPONENT_TYPES,
   defineBoardEntity,
   IComponent,
   IComponentConfig,
@@ -132,10 +133,8 @@ export function generateLayout(zone: IZone) {
 
     const size = component.widget_type || "sm";
     ["lg", "md", "sm"].forEach((breakpoint) => {
-      let w, h;
-      // filterBlock components have lg width but sm height
-      if (component.component_type === "filterBlock") {
-        // TODO: Add types for component_type
+      let w: number, h: number;
+      if (component.component_type === COMPONENT_TYPES.FILTER_BLOCK) {
         w = types.lg[breakpoint].w;
         h = breakpoint === "lg" ? 9 : breakpoint === "md" ? 15 : 26;
       } else {

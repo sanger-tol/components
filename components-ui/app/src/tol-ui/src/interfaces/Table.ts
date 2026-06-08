@@ -8,7 +8,6 @@ import { Dispatch, MutableRefObject, SetStateAction } from "react";
 import {
   FieldMeta,
   IComponent,
-  IComponentConfig,
   IZone,
   TsDataSource,
 } from "..";
