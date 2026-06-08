@@ -1,11 +1,12 @@
 /*
-SPDX-FileCopyrightText: 2024 Genome Research Ltd.
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
 import { ReactNode } from "react";
 import { Avatar } from "rsuite";
+
 
 export interface IProfileAvatar {
   /**
