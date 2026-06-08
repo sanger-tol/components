@@ -2,11 +2,12 @@
 //
 // SPDX-License-Identifier: MIT
 
+import { Page } from "@playwright/test";
 import { clickUtilityBarButton } from "../utility-bar";
 
 
 export const addComponent = async (
-  { page },
+  page: Page,
   component: string,
   size: string = "Small"
 ) => {
