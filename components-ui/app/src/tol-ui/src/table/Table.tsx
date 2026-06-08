@@ -44,6 +44,7 @@ export interface PTable extends IRemoteTargetAndZone {
   resizeableColumns?: boolean;
   source?: string;
   bubble?: boolean;
+  headings?: boolean;
 
   page: number;
   setPage: any;
@@ -102,6 +103,7 @@ export function Table(props: PTable) {
     resizeableColumns = false,
     source,
     bubble = false,
+    headings = false,
 
     page,
     setPage,
@@ -284,7 +286,7 @@ export function Table(props: PTable) {
     };
 
   const filterButton: PButton =
-    (!noFilter && fieldMeta.order.active.length !== 0 && editMode) ? {
+    (headings && !noFilter && fieldMeta.order.active.length !== 0 && editMode) ? {
       visible: true,
       position: "right",
       type: "primary",
@@ -397,6 +399,8 @@ export function Table(props: PTable) {
     }
   )
 
+  const headingHeight = !headings ? 0 : !noFilter && filterVisibility ? 85 : 0;
+
   return (
     <div
       id={wrapperId}
@@ -448,7 +452,7 @@ export function Table(props: PTable) {
                   wordWrap
                   rowKey={"key"}
                   data={data}
-                  headerHeight={!noFilter && filterVisibility ? 85 : 0}
+                  headerHeight={headingHeight}
                   loading={loading}
                   sortColumn={sortByAttribute}
                   sortType={sortByType}
