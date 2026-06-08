@@ -26,7 +26,7 @@ export function Card(props: PCard) {
   ) : warningBackground ? (
     COLOURS.WARNING
   ) : errorBackground ? (
-    COLOURS.ERROR
+    COLOURS.DANGER
   ) : (
     COLOURS.BACKGROUND
   );
