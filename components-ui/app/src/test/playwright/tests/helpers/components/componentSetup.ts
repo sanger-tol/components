@@ -25,7 +25,7 @@ export const addComponent = async (
 };
 
 export const addComponentFilter = async (
-  { page },
+  page: Page,
   component: string,
   attribute: string,
   filterValue: string,

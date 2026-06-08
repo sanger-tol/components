@@ -22,17 +22,17 @@ test.use({ headless: headless });
 test.beforeEach(async ({ page }) => {
   await setAuth({ page });
   await setBoard({ page, boardID: BOARD_ID });
-  await enterEditMode({ page });
+  await enterEditMode(page);
 });
 
 test.afterEach(async ({ page }) => {
   if (await page.getByTestId("board-exit-edit-mode-button").isVisible()) {
-    await exitEditMode({ page });
+    await exitEditMode(page);
   }
 });
   
 const addTableComponent = async ({ page }) => {
-  await addComponent({ page }, "table", "Large");
+  await addComponent(page, "table", "Large");
   await expect(page.locator(".tol-table")).toBeVisible();
 };
 
@@ -44,9 +44,11 @@ test("manage dashboard", async ({ page }) => {
 
 test("shows personal table configuration notices outside edit mode", async ({ page }) => {
   await addTableComponent({ page });
-  await exitEditMode({ page });
+  await exitEditMode(page);
 
-  await clickUtilityBarButton({ page, testId: "table-config-button" });
+  // await clickUtilityBarButton({ page, testId: "table-config-button" });
+  await page.getByTestId("table-config-button").click();
+
 
   await expect(
     page.getByText("Please be aware that you are editing a version of this table for yourself. If you want to edit the table for all board viewers please switch to edit mode."),
