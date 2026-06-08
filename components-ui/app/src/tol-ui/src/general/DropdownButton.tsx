@@ -29,19 +29,27 @@ export interface PDropdownButton {
  * and the PButton interface.
  */
 export function DropdownButton(props: PDropdownButton) {
-  const { toggle, buttons, placement } = props;
+  const { toggle, buttons } = props;
+  const { position = "none", ...toggleWithoutPosition } = toggle;
+
+  const placement = props.placement || (position === "left" ? "bottomStart" : position === "right" ? "bottomEnd" : "bottom");
 
   const renderButton = (propsToggle: any, ref: React.Ref<HTMLButtonElement>) => {
     const { disabled, ...restToggle } = propsToggle;
-    return <Button ref={ref} {...toggle} {...restToggle} />;
+    return <Button ref={ref} {...toggleWithoutPosition} {...restToggle} position="none" />;
   };
 
   return (
     <Dropdown
       className="tol-button-dropdown"
-      trigger={toggle.disabled ? [] : ["click"]}
+      trigger={toggle.disabled ? [] : ["click", "hover"]}
       placement={placement}
       renderToggle={renderButton}
+      style={{
+        float: position === "none" ? undefined : position,
+        marginLeft: position === "right" ? "6px" : "0px",
+        marginRight: position === "left" ? "6px" : "0px",
+      }}
     >
       {buttons.map((button: PButton, index) =>
         (button.visible !== false) ? (
