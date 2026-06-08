@@ -203,24 +203,6 @@ export function addValueBelow(id: string, value: string, list: string[]) {
 }
 
 /**
- * Adds a new component below the specified component in the given zone, and updates the zone's order accordingly.
- * 
- * @param id The identifier of the component below which the new component should be added.
- * @param newId The identifier of the new component to add.
- * @param zone The zone object containing the components and their order.
- */
-export function addComponentBelow(id: string, newId: string, zone: IZone) {
-  addComponentToZone(
-    {
-      id: newId,
-      filterPassThrough: zone.children?.[id].filterPassThrough,
-    },
-    zone,
-  );
-  zone.order = addValueBelow(id, newId, zone.order);
-}
-
-/**
  * Resets the filters of all components below the specified component in the given zone, starting from a certain index offset.
  * 
  * @param params An object containing the parameters for resetting filters below a component.

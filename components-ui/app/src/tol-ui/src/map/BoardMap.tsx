@@ -38,7 +38,8 @@ export function BoardMap(props: PVisualisation) {
       id,
       { ...updatedConfig },
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode,
     )
     setForceUpdate(!forceUpdate);
   };

@@ -12,14 +12,11 @@ import {
   BOARD_BUTTONS,
   BOARD_MESSAGE_TEXT,
   BOARD_ENTITIES,
+  HoverOverlay,
+  ProfileAvatar,
 } from "../../..";
-import {
-  boardButtonsBuilder,
-  ViewModeBoardTitle,
-  ViewTabs,
-} from ".";
+import { boardButtonsBuilder, ViewModeBoardTitle, ViewTabs } from ".";
 import type { PEditableTitle, PButton } from "../../..";
-
 
 export interface IBoardUtilityBar {
   /**
@@ -96,7 +93,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
   const onSaveBoardTitle = (newTitle: string) => {
     upsertTitle(newTitle, board.id!, boardDataSource);
     setBoard({ ...board, title: newTitle });
-  }
+  };
 
   const onSaveViewTitle = (viewId: string, newTitle: string) => {
     upsertTitle(newTitle, viewId, boardDataSource);
@@ -106,20 +103,23 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
         ...board?.children,
         [viewId]: {
           ...board?.children?.[viewId],
-          title: newTitle
+          title: newTitle,
         },
       },
     });
-  }
+  };
 
   const boardUtilityBarButtons = boardButtonsBuilder({
     activeViewId,
     privilege,
-    editMode, setEditMode,
-    layoutMode, setLayoutMode,
+    editMode,
+    setEditMode,
+    layoutMode,
+    setLayoutMode,
     tableLoading,
     boardTitle: board?.title!,
-    newBoardCopyTitle, setNewBoardCopyTitle,
+    newBoardCopyTitle,
+    setNewBoardCopyTitle,
     onOpenBoardCopyModal,
   });
 
@@ -127,7 +127,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     ...BOARD_BUTTONS.ADD_ZONE,
     onClick: onOpenAddZone,
     visible: editMode && !layoutMode,
-  }
+  };
 
   const editModeBoardTitle: PEditableTitle = {
     text: board?.title!,
@@ -137,36 +137,47 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     emptyAllowed: false,
     onEmptyMessage: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).MISC
       .EMPTY_TITLE_ERROR,
-  }
+  };
 
   const ViewModeTitle = (
-    <ViewModeBoardTitle
-      text={board?.title!}
-      editable={editMode}
-    />
+    <ViewModeBoardTitle text={board?.title!} editable={editMode} />
   );
 
   return (
     <div className="tol-board-bar">
-      <UtilityBar
-        id="tol-board-utility-bar"
-        buttons={boardUtilityBarButtons}
-        /**
-         * Display a larger title in view mode, and an editable title in edit mode.
-         */
-        title={editMode ? editModeBoardTitle : undefined}
-        elements={editMode ? undefined : [ViewModeTitle]}
-      />
+      <div className="tol-board-bar-container">
+        <div className="tol-board-bar-inner-container">
+          <UtilityBar
+            id="tol-board-utility-bar"
+            buttons={boardUtilityBarButtons}
+            /**
+             * Display a larger title in view mode, and an editable title in edit mode.
+             */
+            title={editMode ? editModeBoardTitle : undefined}
+            elements={editMode ? undefined : [ViewModeTitle]}
+          />
+        </div>
+        <ProfileAvatar
+          className="tol-board-bar-profile-bubble"
+          children={
+            <HoverOverlay
+              children={
+                board?.order
+                  ? `${board.owner_email?.split("@")[0].replace(/\d/g, "").toUpperCase()}`
+                  : "..."
+              }
+              contents={`Board owner: ${board.owner_email}`}
+              placement="left"
+            />
+          }
+        />
+      </div>
       {(board?.order?.length > 1 || editMode) && (
         <UtilityBar
           id="tol-board-views-utility-bar"
           className="tol-views-bar"
-          elements={[
-            <ViewTabs onSaveTitle={onSaveViewTitle} {...props} />
-          ]}
-          buttons={[
-            addZone,
-          ]}
+          elements={[<ViewTabs onSaveTitle={onSaveViewTitle} {...props} />]}
+          buttons={[addZone]}
         />
       )}
     </div>

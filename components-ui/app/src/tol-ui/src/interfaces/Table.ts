@@ -4,7 +4,14 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { FieldMeta, IComponentConfig } from "..";
+import { Dispatch, MutableRefObject, SetStateAction } from "react";
+import {
+  FieldMeta,
+  IComponent,
+  IComponentConfig,
+  IZone,
+  TsDataSource,
+} from "..";
 
 export interface ITableDrawerSave {
   fieldMeta?: FieldMeta;
@@ -32,6 +39,49 @@ export interface IConfigDifferences {
   remove: React.ReactNode[];
 }
 
+export interface ITableConfigHandlerContext {
+  /**
+   * The unique identifier for the table component.
+   */
+  id: string;
+  /**
+   * The zone in which the table component is located.
+   */
+  zone: IZone;
+  /**
+   * The data source used by the table component.
+   */
+  boardDataSource: TsDataSource;
+  /**
+   * Whether the table component is in edit mode.
+   */
+  editMode: boolean;
+  /**
+   * Whether the user is logged in.
+   */
+  isLoggedIn: boolean;
+  /**
+   * The ID of the logged-in user, if applicable.
+   */
+  userId?: string;
+  /**
+   * The base configuration of the table component.
+   */
+  baseConfig: Partial<ITableConfigSave> | null | undefined;
+  /**
+   * The data of the table component.
+   */
+  componentData: IComponent;
+  /**
+   * A reference to the current diff state of the table component.
+   */
+  diffStateRef: MutableRefObject<IDiffState>;
+  /**
+   * A function to update the diff state of the table component.
+   */
+  setDiffState: Dispatch<SetStateAction<IDiffState>>;
+}
+
 export interface IDiffState {
   /**
    * Differences between the current and default table configuration,
@@ -47,6 +97,10 @@ export interface IDiffState {
    * This is required in order to show the user what changes will be made if they choose to reset their configuration.
    */
   currentConfig: Partial<ITableConfigSave> | null;
+  /**
+   * Whether the stored diff is identical to the base config and can be safely deleted.
+   */
+  isRedundantDiff?: boolean;
 }
 
 export interface ITableConfigSave extends ITableDrawerSave, ITableOtherSave {}
@@ -56,3 +110,5 @@ export type TCellHeights = Record<string, Record<string, number>>;
 export type TFieldDropdownChoices = IFieldDropdownChoices[];
 
 export type IFieldDropdownChoices = "copyValues";
+
+export type TDiffComparison = Partial<IComponentConfig> | null | undefined;

@@ -60,8 +60,6 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
         data_source_instance_id: zone.data_source_instance_id,
         widget_type: widgetType,
         component_type: componentType,
-        config: {}, // TODO: remove with endpoint support
-        filter_pass_through: false, // TODO: remove with endpoint support
       }
     )
       .then((res) => {
