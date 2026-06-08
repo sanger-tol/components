@@ -38,7 +38,7 @@ const addTableComponent = async ({ page }) => {
 
 test("manage dashboard", async ({ page }) => {
   await addTableComponent({ page });
-  await deleteFirstComponent({ page, componentType: "table" });
+  await deleteFirstComponent(page, "table");
   await expect(page.locator('.tol-table')).not.toBeVisible({timeout: 1000});
 });
 

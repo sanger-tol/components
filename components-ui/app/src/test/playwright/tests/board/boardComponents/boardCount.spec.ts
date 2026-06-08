@@ -59,7 +59,6 @@ test('manage dashboard', async ({ page }) => {
 
   await filterCountComponent(page);
 
-  // await deleteCountComponent({page, testID});
-  await deleteFirstComponent({ page, componentType: "statistics" });
+  await deleteFirstComponent(page, "statistics");
   await expect(page.locator('.tol-count')).not.toBeVisible();
 });

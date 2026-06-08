@@ -60,6 +60,6 @@ test('manage dashboard', async ({ page }) => {
   await addMarkdownComponent({ page });
   await editMarkDownComponentOnAdd({ page });
   await saveMarkDownComponent({ page });
-  await deleteFirstComponent({ page, componentType: "text" });
+  await deleteFirstComponent(page, "text");
   await expect(page.locator('.tol-markdown-viewer')).not.toBeVisible();
 });
