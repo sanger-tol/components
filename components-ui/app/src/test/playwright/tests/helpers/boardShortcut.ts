@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
+import { createViewID, createZoneID } from '.';
 import sql from '../../db';
 globalThis.crypto ??= require("node:crypto").webcrypto
 
@@ -9,8 +10,8 @@ const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
 const insertBoardToDB = async (userID: string, boardID: string) => {
   try {
-    const zoneID = "z_" + randomInt();
-    const viewID = "v_" + randomInt();
+    const viewID = createViewID();
+    const zoneID = createZoneID();
     await sql.unsafe(`
       INSERT INTO "board"
       VALUES ('${boardID}', '${boardID}', '{"and_":{}}', ${userID});
