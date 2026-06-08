@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode } from "react";
 
-import { EColour } from "..";
+import { COLOURS, ConstantValue } from "..";
 
 
 export interface PTag {
@@ -17,7 +17,7 @@ export interface PTag {
   /**
    * The tag colour, uses the ToL colour palette.
    */
-  type?: EColour;
+  type?: ConstantValue<typeof COLOURS>;
 }
 
 /**
