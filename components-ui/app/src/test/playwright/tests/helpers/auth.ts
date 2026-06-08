@@ -25,6 +25,9 @@ const insertAuthToDB = async ({userID, token, orcidID}) => {
   VALUES (${randomInt()}, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
 };
 
+
+// This function sets up authentication for the account used in the tests on the browser.
+// Call this function before a test to create an authenticated session for the test user.
 export const setAuth = async ({page}) => {
   const userID = randomInt();
   const token = crypto.randomUUID();
@@ -58,3 +61,18 @@ export const setAuth = async ({page}) => {
   await page.reload();
   await page.waitForLoadState('load');
 };
+
+
+// This function adds a user to the database and returns the user's credentials.
+// This function differs from setAuth in that it does not set up an authenticated
+// session for the user on the browser.
+// Use this function when you just want to add a user to the database without logging
+// in as that user in the test.
+export const addUserToDB = async () => {
+  const userID = randomInt();
+  const token = crypto.randomUUID();
+  const orcidID = `https://orcid.org/${crypto.randomUUID()}`;
+
+  await insertAuthToDB({userID, token, orcidID});
+  return {userID, token, orcidID};
+}

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import sql from '../../db';
+import { createBoardID } from '.';
 globalThis.crypto ??= require("node:crypto").webcrypto
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
@@ -42,3 +43,9 @@ export const setBoard = async ({ page, boardID }) => {
   await page.goto(`/board/${boardId}`);
   await page.getByTestId("board-enter-edit-mode-button").waitFor({ state: "visible" });
 };
+
+export const createBoardForUser = async (userID: string) => {
+  const boardID = createBoardID();
+  await insertBoardToDB(userID, boardID);
+  return boardID;
+}
