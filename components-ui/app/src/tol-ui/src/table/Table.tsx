@@ -445,10 +445,9 @@ export function Table(props: PTable) {
             : undefined
         }
         showConfigReset={!noConfigModal && !editMode && showConfigReset}
-        // fetches all if inactive isn't specified
         customAttributeSelection={
-          fieldMeta.order.inactive && fieldMeta.order.inactive.length > 0
-            ? [...(fieldMeta.order.active ?? []), ...fieldMeta.order.inactive]
+          !editMode
+            ? [...(fieldMeta.order.active ?? []), ...(fieldMeta.order.inactive ?? [])]
             : undefined
         }
       />

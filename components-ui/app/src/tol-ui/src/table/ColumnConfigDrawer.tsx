@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from "react";
+import { Toggle } from "rsuite";
 import {
   Button,
   AttributeSelector,
@@ -25,6 +26,9 @@ import {
   EDIT_MODE_TABLE_CONFIG_MESSAGE,
   PERSONAL_TABLE_CONFIG_MESSAGE,
   ENTITY_DIFF_LOGGED_IN_OUT_DIFFERENCE_WARNING_MESSAGE,
+  Tabs,
+  IEntityMeta,
+  getFlattenedMetaData,
 } from "..";
 
 
@@ -68,6 +72,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
 
   const { privilege } = useBoard();
   const isEditable = privilege === PRIVILEGE.BOARD.WRITABLE;
+  const canManageColumnVisibility = isEditable && !!editMode;
 
   const [warningDismissed, setWarningDismissed] = useState(
     () =>
@@ -78,6 +83,9 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
 
   const [newFieldMeta, setNewFieldMeta] = useState<FieldMeta>();
   const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
+  const [inactiveAttributes, setInactiveAttributes] = useState<string[]>(fieldMeta.order.inactive || []);
+  const [limitVisibility, setLimitVisibility] = useState<boolean>(!!fieldMeta.order.limitVisibility);
+  const [allAttributeKeys, setAllAttributeKeys] = useState<string[] | undefined>(undefined);
   const initialActions = props.actions?.map((btn) => btn.name as string) ?? [];
   const [actions, setActions] = useState<string[]>(initialActions);
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
@@ -86,6 +94,8 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const hasPendingChanges = (
     JSON.stringify(newFieldMeta) !== JSON.stringify(fieldMeta) ||
     JSON.stringify(attributes) !== JSON.stringify(newFieldMeta?.order.active) ||
+    JSON.stringify(inactiveAttributes) !== JSON.stringify(newFieldMeta?.order.inactive || []) ||
+    limitVisibility !== !!newFieldMeta?.order.limitVisibility ||
     JSON.stringify(initialActions) !== JSON.stringify(actions) ||
     defaultSortByAttribute !== sortByAttribute ||
     defaultSortByType !== sortByType
@@ -93,12 +103,22 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
+    setInactiveAttributes(fieldMeta?.order?.inactive ?? []);
+    setLimitVisibility(!!fieldMeta?.order?.limitVisibility);
     setNewFieldMeta(deepCopy(fieldMeta));
+    if (open) {
+      props.dataSource.getEntityMeta().then((em: IEntityMeta) => {
+        const meta = getFlattenedMetaData(em, props.objectType);
+        if (meta) setAllAttributeKeys(Object.keys(meta));
+      }).catch(() => {});
+    }
   }, [open]);
 
   const onSave = () => {
     if (hasPendingChanges) {
       newFieldMeta!.order.active = attributes;
+      newFieldMeta!.order.inactive = inactiveAttributes;
+      newFieldMeta!.order.limitVisibility = limitVisibility;
       onConfigSave({
         fieldMeta: newFieldMeta,
         actions: actions.length !== 0 ? actions : undefined,
@@ -147,6 +167,58 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const additionalIcons = [
     CellRendererConfigurerWrapper,
   ];
+
+  const columnTabs = (
+    <Tabs defaultActiveKey="active">
+      <Tabs.Tab eventKey="active" title="Active Columns">
+        <div style={{ marginTop: "15px" }}>
+          <AttributeSelector
+            {...props}
+            sticky
+            recommendedFilterAvailable
+            renderSearchBySource
+            displaySource
+            placeholder="Select columns to display..."
+            attribute={attributes}
+            setAttributes={(nextActive) => {
+              setAttributes(nextActive);
+              setInactiveAttributes((prevInactive) =>
+                prevInactive.filter((col) => !nextActive.includes(col)),
+              );
+            }}
+            disabledValues={null}
+            numPopulatedFields={0}
+            populatedFieldType={"column"}
+            additionalPopulatedFieldData={"."}
+            customAttributeSelection={allAttributeKeys ?? customAttributeSelection}
+          />
+        </div>
+      </Tabs.Tab>
+      <Tabs.Tab eventKey="inactive" title="Inactive Columns">
+        <div style={{ marginTop: "15px" }}>
+          <AttributeSelector
+            {...props}
+            sticky
+            recommendedFilterAvailable
+            renderSearchBySource
+            displaySource
+            placeholder="Select columns to hide by default..."
+            attribute={inactiveAttributes}
+            setAttributes={setInactiveAttributes}
+            disabledValues={null}
+            numPopulatedFields={0}
+            populatedFieldType={"column"}
+            additionalPopulatedFieldData={"."}
+            customAttributeSelection={
+              allAttributeKeys
+                ? allAttributeKeys.filter((col) => !attributes.includes(col))
+                : undefined
+            }
+          />
+        </div>
+      </Tabs.Tab>
+    </Tabs>
+  );
 
   const resetButton: PButton = {
     visible: !!showConfigReset,
@@ -220,24 +292,43 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         sticky={true}
       />
       {sortByAttribute && SortByButtons}
-      <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
-      <div>
-        <AttributeSelector
-          {...props}
-          sticky
-          recommendedFilterAvailable
-          renderSearchBySource
-          displaySource
-          placeholder="Select columns to display..."
-          attribute={attributes}
-          setAttributes={setAttributes}
-          disabledValues={null}
-          numPopulatedFields={0}
-          populatedFieldType={"column"}
-          additionalPopulatedFieldData={"."}
-          customAttributeSelection={customAttributeSelection}
-        />
-      </div>
+      {canManageColumnVisibility && (
+        <div className="tol-config-drawer-column-title" style={{ marginTop: "15px" }}>
+          <div className="pass-through-toggle">
+            <Toggle
+              onClick={() => {
+                setLimitVisibility(!limitVisibility);
+              }}
+              checked={limitVisibility}
+            />
+            <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+              Limit column visibility?
+            </span>
+          </div>
+        </div>
+      )}
+      {canManageColumnVisibility && limitVisibility ? columnTabs : (
+        <>
+          <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
+          <div>
+            <AttributeSelector
+              {...props}
+              sticky
+              recommendedFilterAvailable
+              renderSearchBySource
+              displaySource
+              placeholder="Select columns to display..."
+              attribute={attributes}
+              setAttributes={setAttributes}
+              disabledValues={null}
+              numPopulatedFields={0}
+              populatedFieldType={"column"}
+              additionalPopulatedFieldData={"."}
+              customAttributeSelection={customAttributeSelection}
+            />
+          </div>
+        </>
+      )}
       {actions && actionChoices && (
         <div style={{ marginTop: "15px", marginBottom: "15px" }}>
           <h6>Actions</h6>
