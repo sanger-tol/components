@@ -48,6 +48,7 @@ import type {
   IComponent,
   ITableDrawerSave,
   ITableConfigHandlerContext,
+  TDiffComparison,
 } from "..";
 
 interface Rgb {
@@ -502,8 +503,8 @@ export function updateFieldMetaAttribute(
  * @returns `true` if both configs are semantically equal after normalisation, otherwise `false`.
  */
 export function configsAreEqual(
-  a: Partial<IComponentConfig> | null | undefined,
-  b: Partial<IComponentConfig> | null | undefined,
+  a: TDiffComparison,
+  b: TDiffComparison,
 ): boolean {
   if (a === b) return true;
   if (!a || !b) return false;
@@ -633,29 +634,29 @@ export async function handleSavedDiffReset(
   isLoggedIn?: boolean,
   userId?: string,
 ): Promise<boolean> {
-  let successDiffReset = false;
+  let isSuccessDiffReset = false;
   const diffId = componentData?.config_diff?.id;
   isLoggedIn && diffState.hasDiff && diffId
     ? await deleteComponentDiff(boardDataSource, diffId, userId ?? "").then(
         () => {
-          successDiffReset = true;
+          isSuccessDiffReset = true;
         },
       )
     : diffState.hasDiff
       ? (clearTableConfigLocalStorage(
           `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${diffId}`,
         ),
-        (successDiffReset = true))
+        (isSuccessDiffReset = true))
       : null;
 
-  if (successDiffReset) {
+  if (isSuccessDiffReset) {
     PopUpMessage({
       type: MESSAGE_TYPE.SUCCESS,
       message: BOARD_MESSAGE_TEXT(
         componentData?.component_type || BOARD_ENTITIES.ENTITIES.COMPONENT,
       ).DIFF.RESET_SUCCESS,
     });
-    return successDiffReset;
+    return isSuccessDiffReset;
   }
 
   PopUpMessage({
@@ -665,7 +666,7 @@ export async function handleSavedDiffReset(
     ).DIFF.RESET_ERROR,
   });
 
-  return successDiffReset;
+  return isSuccessDiffReset;
 }
 
 /**

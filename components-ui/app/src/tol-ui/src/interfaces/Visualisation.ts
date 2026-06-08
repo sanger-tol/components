@@ -11,7 +11,7 @@ import {
   CHART_TYPES,
 } from "..";
 
-export type TChart = (typeof CHART_TYPES)[keyof typeof CHART_TYPES];
+export type TChartType = (typeof CHART_TYPES)[keyof typeof CHART_TYPES];
 export type TStatisticsType =
   (typeof STATISTICS_TYPES)[keyof typeof STATISTICS_TYPES];
 export type TComponentType =
@@ -22,7 +22,7 @@ export interface IChartConfig {
   xAxis: string;
   stacked: boolean;
   grouping: HistogramGrouping;
-  chartType: TChart;
+  chartType: TChartType;
 }
 
 export interface IStatisticsConfig {

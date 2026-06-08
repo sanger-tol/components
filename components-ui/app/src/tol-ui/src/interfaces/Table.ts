@@ -8,6 +8,7 @@ import { Dispatch, MutableRefObject, SetStateAction } from "react";
 import {
   FieldMeta,
   IComponent,
+  IComponentConfig,
   IZone,
   TsDataSource,
 } from "..";
@@ -109,3 +110,5 @@ export type TCellHeights = Record<string, Record<string, number>>;
 export type TFieldDropdownChoices = IFieldDropdownChoices[];
 
 export type IFieldDropdownChoices = "copyValues";
+
+export type TDiffComparison = Partial<IComponentConfig> | null | undefined;

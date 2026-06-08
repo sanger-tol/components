@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Avatar } from "rsuite";
 import {
   upsertTitle,
   useBoard,
@@ -14,6 +13,7 @@ import {
   BOARD_MESSAGE_TEXT,
   BOARD_ENTITIES,
   HoverOverlay,
+  ProfileAvatar,
 } from "../../..";
 import { boardButtonsBuilder, ViewModeBoardTitle, ViewTabs } from ".";
 import type { PEditableTitle, PButton } from "../../..";
@@ -157,21 +157,20 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
             elements={editMode ? undefined : [ViewModeTitle]}
           />
         </div>
-          <HoverOverlay
-            children={
-              <Avatar
-                circle
-                size="sm"
-                className="tol-board-bar-profile-bubble"
-              >
-                {board?.order
+        <ProfileAvatar
+          className="tol-board-bar-profile-bubble"
+          children={
+            <HoverOverlay
+              children={
+                board?.order
                   ? `${board.owner_email?.split("@")[0].replace(/\d/g, "").toUpperCase()}`
-                  : "..."}
-              </Avatar>
-            }
-            contents={`Board owner: ${board.owner_email}`}
-            placement="left"
-          />
+                  : "..."
+              }
+              contents={`Board owner: ${board.owner_email}`}
+              placement="left"
+            />
+          }
+        />
       </div>
       {(board?.order?.length > 1 || editMode) && (
         <UtilityBar
