@@ -31,16 +31,16 @@ test.afterEach(async ({ page }) => {
 });
 
 const addCountComponent = async ({ page }) => {
-  await addComponent({ page }, 'statistics', 'Small');
+  await addComponent(page, 'statistics', 'Small');
   await expect(page.locator('.tol-count')).toBeVisible();
 }
 
-const filterCountComponent = async ({ page }) => {
+const filterCountComponent = async (page) => {
   // get the count before filtering
   const countBefore = await page.locator('.tol-count').textContent();
 
   await addComponentFilter(
-    { page },
+    page,
     'statistics',
     'grit_project',
     'ToL Rapid Curation',
@@ -57,7 +57,7 @@ const filterCountComponent = async ({ page }) => {
 test('manage dashboard', async ({ page }) => {
   await addCountComponent({ page });
 
-  await filterCountComponent({ page });
+  await filterCountComponent(page);
 
   // await deleteCountComponent({page, testID});
   await deleteFirstComponent({ page, componentType: "statistics" });
