@@ -8,12 +8,6 @@ globalThis.crypto ??= require("node:crypto").webcrypto
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
 const insertAuthToDB = async ({userID, token, orcidID}) => {
-  // insert the tol role if not there already
-  try {
-    await sql.unsafe(`INSERT INTO "role" VALUES (2, 'tol');`).simple();
-  }
-  catch (e) {};
-
   // insert the rest
   await sql.unsafe(`INSERT INTO "user"
   VALUES (${userID}, '${orcidID}');
