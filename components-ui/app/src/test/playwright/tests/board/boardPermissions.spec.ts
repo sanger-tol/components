@@ -8,7 +8,7 @@ import {
   addUserToDB,
   createBoardForUser,
   setBoard,
-  createBoardID,
+  createBoardId,
 } from '../helpers';
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
@@ -17,7 +17,7 @@ test.use({ headless: headless });
 
 test('Cannot edit others boards', async ({ page }) => {
   // Sets a user session up for the browser
-  const browserUserBoard = createBoardID();
+  const browserUserBoard = createBoardId();
   await setAuth(page);
   await setBoard({ page, boardID: browserUserBoard });
   await expect(page.getByTestId("board-enter-edit-mode-button")).toBeVisible();

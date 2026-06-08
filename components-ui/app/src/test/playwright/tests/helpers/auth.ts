@@ -8,16 +8,16 @@ globalThis.crypto ??= require("node:crypto").webcrypto
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
-const insertAuthToDB = async (userID, token, orcidID) => {
+const insertAuthToDB = async (userId, token, orcidId) => {
   // insert the rest
   await sql.unsafe(`INSERT INTO "user"
-  VALUES (${userID}, '${orcidID}');
+  VALUES (${userId}, '${orcidId}');
   
   INSERT INTO role_binding
-  VALUES (${randomInt()}, ${userID}, 2);
+  VALUES (${randomInt()}, ${userId}, 2);
   
   INSERT INTO "token"
-  VALUES (${randomInt()}, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
+  VALUES (${randomInt()}, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userId});`).simple();    
 };
 
 
@@ -64,10 +64,10 @@ export const setAuth = async (page: Page) => {
 // Use this function when you just want to add a user to the database without logging
 // in as that user in the test.
 export const addUserToDB = async () => {
-  const userID = randomInt();
+  const userId = randomInt();
   const token = crypto.randomUUID();
-  const orcidID = `https://orcid.org/${crypto.randomUUID()}`;
+  const orcidId = `https://orcid.org/${crypto.randomUUID()}`;
 
-  await insertAuthToDB(userID, token, orcidID);
-  return {userID, token, orcidID};
+  await insertAuthToDB(userId, token, orcidId);
+  return {userID: userId, token, orcidID: orcidId};
 }

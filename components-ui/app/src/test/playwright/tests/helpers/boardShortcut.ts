@@ -2,26 +2,26 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { createViewID, createZoneID } from '.';
+import { createViewId, createZoneId } from '.';
 import sql from '../../db';
-import { createBoardID } from '.';
+import { createBoardId } from '.';
 globalThis.crypto ??= require("node:crypto").webcrypto
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
-const insertBoardToDB = async (userID: string, boardID: string) => {
+const insertBoardToDB = async (userId: string, boardId: string) => {
   try {
-    const viewID = createViewID();
-    const zoneID = createZoneID();
+    const viewID = createViewId();
+    const zoneID = createZoneId();
     await sql.unsafe(`
       INSERT INTO "board"
-      VALUES ('${boardID}', '${boardID}', '{"and_":{}}', ${userID});
+      VALUES ('${boardId}', '${boardId}', '{"and_":{}}', ${userId});
       INSERT INTO "view"
-      VALUES ('${viewID}', '${randomInt()}', '{"and_":{}}', ${userID});
+      VALUES ('${viewID}', '${randomInt()}', '{"and_":{}}', ${userId});
       INSERT INTO "view_board"
-      VALUES (${randomInt()}, '1', '${viewID}', '${boardID}');
+      VALUES (${randomInt()}, '1', '${viewID}', '${boardId}');
       INSERT INTO "zone"
-      VALUES ('${zoneID}', '${randomInt()}', 'curation', '{"and_":{}}', ${userID}, 'tol_production');
+      VALUES ('${zoneID}', '${randomInt()}', 'curation', '{"and_":{}}', ${userId}, 'tol_production');
       INSERT INTO "zone_view"
       VALUES (${randomInt()}, '1', '${zoneID}', '${viewID}');
     `).simple();
@@ -32,19 +32,19 @@ const insertBoardToDB = async (userID: string, boardID: string) => {
 
 };
 
-export const setBoard = async ({ page, boardID }) => {
+export const setBoard = async ({ page, boardID: boardId }) => {
 
   const user = await page.evaluate(() => {
     return localStorage.getItem('user');
   });
   const userID = JSON.parse(user).id;
-  await insertBoardToDB(userID, boardID);
-  await page.goto(`/board/${boardID}`);
+  await insertBoardToDB(userID, boardId);
+  await page.goto(`/board/${boardId}`);
   await page.getByTestId("board-enter-edit-mode-button").waitFor({ state: "visible" });
 };
 
-export const createBoardForUser = async (userID: string) => {
-  const boardID = createBoardID();
-  await insertBoardToDB(userID, boardID);
-  return boardID;
+export const createBoardForUser = async (userId: string) => {
+  const boardId = createBoardId();
+  await insertBoardToDB(userId, boardId);
+  return boardId;
 }
