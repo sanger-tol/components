@@ -16,7 +16,6 @@ import {
   setUserToLocalStorage,
   tokenHasExpired,
   Login,
-  env,
   LoginIcon,
   RegisterIcon,
   PSmartApp,

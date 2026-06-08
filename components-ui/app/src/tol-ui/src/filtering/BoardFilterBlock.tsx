@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   PButton,
   useBoard,
@@ -13,6 +13,7 @@ import {
   RemoteFilters,
   mergeUtilityBarConfigs,
   NoAttributesPlaceholder,
+  updateComponentConfigAndUpsert,
 } from "..";
 
 
@@ -37,24 +38,25 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
 
   const onConfigSave = (updatedConfig: string[]) => {
     setFilterBlockConfig({ attributes: updatedConfig });
-    // updateComponentConfigAndUpsert(
-    //   id,
-    //   { attributes: updatedConfig },
-    //   zone,
-    //   boardDataSource
-    // )
+    updateComponentConfigAndUpsert(
+      id,
+      { attributes: updatedConfig },
+      zone,
+      boardDataSource,
+      editMode,
+    )
   };
 
-  useEffect(() => {
-    // TODO: ENSURE THIS COMPONENT WORKS!
-    // upsertCoreBoardEntity(
-    //   BOARD_ENTITIES.COMPONENT,
-    //   { filter: zone.children[0][id].filter },
-    //   boardDataSource,
-    //   undefined,
-    //   id,
-    // );
-  }, [zone]);
+  // useEffect(() => {
+  //   // TODO: ENSURE THIS COMPONENT WORKS! CAN WE REMOVE THIS?
+  //   upsertCoreBoardEntity(
+  //     BOARD_ENTITIES.COMPONENT,
+  //     { filter: zone.children[0][id].filter },
+  //     boardDataSource,
+  //     undefined,
+  //     id,
+  //   );
+  // }, [zone]);
 
   const Contents = () => {
     if (!filterBlockConfig.attributes || filterBlockConfig.attributes.length === 0) {

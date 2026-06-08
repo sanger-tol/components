@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { TsDataSource, BOARD_ENTITIES } from "..";
-import type { FieldMeta, PUtilityBar, IFilter } from "..";
+import type { FieldMeta, PUtilityBar, IFilter, TComponentType } from "..";
 
 export interface TBoardEntity {
   id?: string;
@@ -32,7 +32,7 @@ export interface IComponentConfig {
 export interface IComponent extends TBoardEntity, IBoardFilter {
   subFilter?: IFilter;
   filterPassThrough?: boolean;
-  component_type?: string;
+  component_type?: TComponentType;
   widget_type?: string;
 
   /**
@@ -58,6 +58,7 @@ export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
    */
   data_source_instance_id?: string;
   dataspace?: TsDataSource;
+  ui_api_details?: IDBDataSourceInstanceApiDetails;
 }
 
 export interface IView extends IBoardParentEntity<IZone> {}

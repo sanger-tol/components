@@ -39,7 +39,7 @@ export function TableResetConfirmationModal(
           <h5>Reset Table Configuration</h5>
           <p>
             Are you sure you want to reset this table to the published
-            configuration?
+            configuration (including column widths and page size)?
           </p>
           {resetConfigDifferences.remove?.length > 0 && (
             <div>

@@ -34,7 +34,8 @@ export function BoardChart(props: PVisualisation) {
       id,
       { ...updatedConfig },
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode,
     )
     setForceUpdate(!forceUpdate);
   };

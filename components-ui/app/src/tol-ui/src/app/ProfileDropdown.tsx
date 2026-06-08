@@ -6,13 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { Nav, NavDropdown } from "react-bootstrap";
-import { Avatar } from "rsuite";
-import {
-  collectNavigationItems,
-  TNavConfig,
-  IUser,
-} from "..";
-
+import { collectNavigationItems, TNavConfig, IUser, ProfileAvatar } from "..";
 
 export interface PProfileDropdown {
   /**
@@ -82,7 +76,10 @@ export function ProfileDropdown(props: PProfileDropdown) {
       setLoading(false);
     } else {
       if (user?.oidc_id) {
-        if (user.oidc_id.includes("/") || (user.oidc_id.includes("-") && user.oidc_id.length === 19)) {
+        if (
+          user.oidc_id.includes("/") ||
+          (user.oidc_id.includes("-") && user.oidc_id.length === 19)
+        ) {
           const orcidId = user.oidc_id.split("/").pop();
           fetchOrcidProfile(orcidId!);
         } else {
@@ -124,11 +121,7 @@ export function ProfileDropdown(props: PProfileDropdown) {
   return (
     <NavDropdown
       className="profile-dropdown"
-      title={
-        <Avatar size="sm" circle>
-          {avatarContent}
-        </Avatar>
-      }
+      title={<ProfileAvatar children={avatarContent} />}
       placement="bottom-end"
     >
       {userName && (

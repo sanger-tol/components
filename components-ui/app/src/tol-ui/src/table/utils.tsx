@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useRef } from "react";
 import {
   FieldMeta,
   normaliseCaps,
@@ -25,8 +26,11 @@ import {
   TOL_DS,
   AttributeTitle,
   BOARD_ENTITIES,
+  deleteComponentDiff,
+  MESSAGE_TYPE,
+  BOARD_MESSAGE_TEXT,
+  updateComponentConfigAndUpsert,
 } from "..";
-
 import type {
   TsDataSource,
   IAttributeData,
@@ -41,6 +45,10 @@ import type {
   IDiffState,
   IConfigDifferences,
   IComponentConfig,
+  IComponent,
+  ITableDrawerSave,
+  ITableConfigHandlerContext,
+  TDiffComparison,
 } from "..";
 
 interface Rgb {
@@ -484,38 +492,40 @@ export function updateFieldMetaAttribute(
 }
 
 /**
- * Resets a component's table configuration to its default state by deleting
- * the user-specific board diff record from the data source.
+ * Compares two component configs for semantic equality.
  *
- * @param componentId - The ID of the component whose table config should be reset
- * @param boardDataSource - The data source used to query and delete board diff records
- * @param userId - The ID of the user whose table config customisation should be removed
+ * This comparison ignores derived/transient fields (currently `dataWithDefaults`)
+ * and normalises object key order recursively so differences in insertion order
+ * do not affect the result.
+ *
+ * @param a The first component config to compare.
+ * @param b The second component config to compare.
+ * @returns `true` if both configs are semantically equal after normalisation, otherwise `false`.
  */
-export async function resetTableConfigToDefault(
-  componentId: string,
-  boardDataSource: TsDataSource,
-  userId: string,
-) {
-  await boardDataSource
-    .getListPage({
-      objectType: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
-      filter: {
-        and_: {
-          component_id: { eq: { value: componentId } },
-          user_id: { eq: { value: userId } },
-        },
-      },
-      requestedFields: ["id"],
-    })
-    .then(async (res: TDataObjectListOrNull) => {
-      const id: string = res?.["id"];
-      if (id) {
-        await boardDataSource.deleteByID({
-          objectType: BOARD_ENTITIES.ENTITIES.ENTITY_DIFF,
-          id: id,
-        });
+export function configsAreEqual(
+  a: TDiffComparison,
+  b: TDiffComparison,
+): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  // Strip derived/transient fields and sort keys for a stable comparison
+  const normalise = (c: Partial<IComponentConfig>): string => {
+    const stripDerived = (obj: any): any => {
+      if (Array.isArray(obj)) return obj.map(stripDerived);
+      if (obj !== null && typeof obj === "object") {
+        const result: any = {};
+        // Sort keys so insertion order doesn't affect equality
+        Object.keys(obj)
+          .filter((k) => k !== "dataWithDefaults")
+          .sort()
+          .forEach((k) => { result[k] = stripDerived(obj[k]); });
+        return result;
       }
-    });
+      return obj;
+    };
+    return JSON.stringify(stripDerived(c));
+  };
+  return normalise(a) === normalise(b);
 }
 
 /**
@@ -531,12 +541,11 @@ export async function resetTableConfigToDefault(
  * 2. The diff config from local storage — if there is a diff and the user is not logged in.
  * 3. The diff config from the database — if there is a diff and the user is logged in (non-edit mode).
  *
- * @param dataSource - The data source used to query component and board diff records
  * @param componentId - The ID of the component whose config state is being resolved
- * @param userId - The ID of the current user
  * @param isLoggedIn - Whether the user is currently authenticated
  * @param objectType - The object type used to resolve attribute titles in config differences
  * @param editMode - Optional flag indicating whether the table is in edit mode
+ * @param remoteDiff - Optional diff config sourced from the database, passed in to avoid redundant queries
  * @returns The resolved diff state, including the current config, diff flag, and column differences
  */
 export async function getInitialDiffState(
@@ -568,8 +577,10 @@ export async function getInitialDiffState(
   // Return a configDifferences object with the columns to add and remove,
   // represented as AttributeTitle components to show the source colour and provide on hover tooltips
   const getConfigDifferences = (): IConfigDifferences => {
-    const currentColumns = configState?.fieldMeta?.order?.active || [];
+    const resolvedConfig = configState ?? baseConfig;
+    const currentColumns = resolvedConfig?.fieldMeta?.order?.active || [];
     const publishedColumns = baseConfig?.fieldMeta?.order?.active || [];
+
     return {
       remove: currentColumns
         .filter((col: string) => !publishedColumns.includes(col))
@@ -595,7 +606,232 @@ export async function getInitialDiffState(
   return {
     configDifferences: getConfigDifferences(),
     hasDiff: editMode ? false : isLoggedIn ? !!remoteDiff : !!localDiff,
-    currentConfig: configState ?? baseConfig,
+    currentConfig: (configState ??
+      baseConfig) as Partial<ITableConfigSave> | null,
+    isRedundantDiff:
+      !editMode && !!configState && configsAreEqual(configState, baseConfig),
+  };
+}
+
+/**
+ * Resets a saved table-config diff for a component and reports whether the reset succeeded.
+ *
+ * For logged-in users, this deletes the remote diff entry. For anonymous users, this
+ * removes the corresponding local-storage diff entry. A success or error popup message
+ * is displayed based on the outcome.
+ *
+ * @param boardDataSource The data source used to perform remote diff deletion.
+ * @param diffState The current diff state, used to determine whether a diff exists.
+ * @param componentData The component containing diff metadata and component type.
+ * @param isLoggedIn Whether the current user is authenticated.
+ * @param userId The identifier of the authenticated user, used for remote diff deletion.
+ * @returns `true` if a diff was reset successfully, otherwise `false`.
+ */
+export async function handleSavedDiffReset(
+  boardDataSource: TsDataSource,
+  diffState: IDiffState,
+  componentData: IComponent,
+  isLoggedIn?: boolean,
+  userId?: string,
+): Promise<boolean> {
+  let isSuccessDiffReset = false;
+  const diffId = componentData?.config_diff?.id;
+  isLoggedIn && diffState.hasDiff && diffId
+    ? await deleteComponentDiff(boardDataSource, diffId, userId ?? "").then(
+        () => {
+          isSuccessDiffReset = true;
+        },
+      )
+    : diffState.hasDiff
+      ? (clearTableConfigLocalStorage(
+          `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${diffId}`,
+        ),
+        (isSuccessDiffReset = true))
+      : null;
+
+  if (isSuccessDiffReset) {
+    PopUpMessage({
+      type: MESSAGE_TYPE.SUCCESS,
+      message: BOARD_MESSAGE_TEXT(
+        componentData?.component_type || BOARD_ENTITIES.ENTITIES.COMPONENT,
+      ).DIFF.RESET_SUCCESS,
+    });
+    return isSuccessDiffReset;
+  }
+
+  PopUpMessage({
+    type: MESSAGE_TYPE.ERROR,
+    message: BOARD_MESSAGE_TEXT(
+      componentData?.component_type || BOARD_ENTITIES.ENTITIES.COMPONENT,
+    ).DIFF.RESET_ERROR,
+  });
+
+  return isSuccessDiffReset;
+}
+
+/**
+ * Builds the initial diff state for first render from component data.
+ *
+ * The returned state prefers the saved diff config when present, otherwise the
+ * base component config. If the saved diff is semantically identical to the base
+ * config, it is marked as redundant and `hasDiff` is set to `false`.
+ *
+ * @param componentData The component containing base config and optional saved diff config.
+ * @returns The initial diff state used by table config handlers and UI.
+ */
+export function handleFirstLoadDiffState(
+  componentData: IComponent,
+): IDiffState {
+  const diffConfig = componentData?.config_diff?.config ?? null;
+  const baseConfig = componentData?.config ?? null;
+  const isRedundantDiff = !!diffConfig && configsAreEqual(diffConfig, baseConfig);
+  return {
+    currentConfig:
+      (structuredClone(
+        diffConfig ?? baseConfig ?? null,
+      ) as Partial<ITableConfigSave>) ?? null,
+    hasDiff: !!diffConfig && !isRedundantDiff,
+    isRedundantDiff,
+    configDifferences: { add: [], remove: [] },
+  };
+}
+
+/**
+ * Creates table-config change handlers that keep UI diff state and persisted config in sync.
+ *
+ * Each handler updates in-memory diff state immediately, then persists changes either
+ * to the server (logged-in users) or local storage (anonymous users). If the resulting
+ * config is equal to the base config, the stored diff is deleted rather than upserted.
+ *
+ * @param context The table-config handler context containing component identity, data source,
+ * auth/edit mode flags, base config, and diff-state refs.
+ * @returns An object with handlers for config save (`onConfigSave`), filter visibility
+ * (`onFilterVisibilityChange`), column resize (`onResizeColumn`), and page size
+ * (`onPageSizeChange`).
+ */
+export function createTableConfigHandlers({
+  id,
+  zone,
+  boardDataSource,
+  editMode,
+  isLoggedIn,
+  userId,
+  baseConfig,
+  componentData,
+  diffStateRef,
+  setDiffState,
+}: ITableConfigHandlerContext) {
+  const localStorageKey = `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${id}`;
+
+  // Debounce timer ref — shared across all handlers
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debounce = (fn: () => void, ms = 500) => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(fn, ms);
+  };
+
+  const setHasDiff = (value: boolean) =>
+    setDiffState((prev) => ({ ...prev, hasDiff: value }));
+
+  // If nextConfig is identical to the base, delete the stored diff instead of upserting
+  const persistOrDelete = (nextConfig: Partial<ITableConfigSave>) => {
+    if (configsAreEqual(nextConfig, baseConfig)) {
+      if (isLoggedIn) {
+        const diffId = componentData?.config_diff?.id;
+        if (diffId) {
+          deleteComponentDiff(boardDataSource, diffId, userId ?? "").catch(() => {});
+          componentData.config_diff = undefined;
+        }
+      } else {
+        clearTableConfigLocalStorage(localStorageKey);
+      }
+      setHasDiff(false);
+      return;
+    }
+    updateComponentConfigAndUpsert(
+      id,
+      nextConfig,
+      zone,
+      boardDataSource,
+      editMode,
+      setHasDiff,
+      userId,
+    );
+  };
+
+  const persistToLocalStorage = (keys: string | string[], values: any) => {
+    setTableConfigLocalStorage(localStorageKey, keys, values);
+    setHasDiff(true);
+  };
+
+  const onConfigSave = ({
+    fieldMeta,
+    defaultSortByAttribute,
+    defaultSortByType,
+  }: ITableDrawerSave) => {
+    const newFieldMeta = optimiseFieldMetaForSave(fieldMeta);
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      defaultSortByAttribute,
+      defaultSortByType,
+      fieldMeta: newFieldMeta,
+    };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    if (isLoggedIn) {
+      persistOrDelete(nextConfig);
+    } else {
+      persistToLocalStorage(
+        ["fieldMeta", "defaultSortByAttribute", "defaultSortByType"],
+        [newFieldMeta, defaultSortByAttribute, defaultSortByType],
+      );
+    }
+  };
+
+  const onFilterVisibilityChange = (visible: boolean) => {
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      filterVisibility: visible,
+    };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    debounce(() => persistOrDelete(nextConfig));
+  };
+
+  const onResizeColumn = (columnWidth: number, dataKey: string) => {
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      fieldMeta: diffStateRef.current.currentConfig?.fieldMeta
+        ? { ...diffStateRef.current.currentConfig.fieldMeta }
+        : undefined,
+    };
+    // Update the persisted 'data' field (not just dataWithDefaults which RemoteTable already updated)
+    updateFieldMetaAttribute(
+      nextConfig.fieldMeta!,
+      dataKey,
+      "width",
+      columnWidth,
+    );
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    debounce(() => persistOrDelete(nextConfig), 800);
+  };
+
+  const onPageSizeChange = (pageSize: number) => {
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      pageSize,
+    };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    if (isLoggedIn) {
+      debounce(() => persistOrDelete(nextConfig));
+    } else {
+      persistToLocalStorage("pageSize", pageSize);
+    }
+  };
+
+  return {
+    onConfigSave,
+    onFilterVisibilityChange,
+    onResizeColumn,
+    onPageSizeChange,
   };
 }
 

@@ -29,7 +29,7 @@ export function BoardStatistics(props: PVisualisation) {
 
   const onConfigSave = (updatedConfig: IStatisticsConfig) => {
     setConfig({ ...updatedConfig });
-    updateComponentConfigAndUpsert(id, { ...updatedConfig }, zone, boardDataSource);
+    updateComponentConfigAndUpsert(id, { ...updatedConfig }, zone, boardDataSource, editMode);
   };
 
   const configButton: PButton = {

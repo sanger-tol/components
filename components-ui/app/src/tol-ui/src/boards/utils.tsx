@@ -195,6 +195,32 @@ export async function patchReorderBoardEntity(
     });
 }
 
+  /**
+   * Updates an existing board entity by upserting a partial set of attributes.
+   *
+   * @param boardDataSource The data source used to perform the upsert request.
+   * @param entityId The identifier of the board, view, zone, or component to update.
+   * @param attributes A partial attributes object to persist on the target entity.
+   * @returns The response returned by the data source upsert operation.
+   */
+export async function postUpdateBoardEntity(
+  boardDataSource: TsDataSource,
+  entityId: string,
+  attributes: Record<string, any> = {},
+) {
+  const entityType = deriveBoardObjectType(entityId);
+  return await boardDataSource.upsert({
+    objectType: entityType,
+    payload: [
+      {
+        type: entityType,
+        id: entityId,
+        attributes: attributes,
+      },
+    ],
+  });
+}
+
 /**
  * Posts a request to add a new board entity as a child of the given parent.
  *

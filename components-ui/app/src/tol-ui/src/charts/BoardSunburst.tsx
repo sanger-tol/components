@@ -33,7 +33,8 @@ export function BoardSunburst(props: PVisualisation) {
       id,
       { ...updatedConfig },
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode,
     )
     setForceUpdate(!forceUpdate);
   };

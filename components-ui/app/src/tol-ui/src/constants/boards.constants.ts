@@ -32,6 +32,30 @@ export const BOARD_ENTITIES = {
   },
 } as const;
 
+export const COMPONENT_TYPES = {
+  CHART: "chart",
+  TABLE: "table",
+  FILTER_BLOCK: "filterBlock",
+  STATISTICS: "statistics",
+  MAP: "map",
+  SUNBURST: "sunburst",
+  TEXT: "text",
+} as const;
+
+export const STATISTICS_TYPES = {
+  COUNT: "count",
+  MIN: "min",
+  MAX: "max",
+  AVG: "avg",
+  SUM: "sum",
+} as const;
+
+export const CHART_TYPES = {
+  BAR: "bar",
+  LINE: "line",
+  SCATTER: "scatter",
+} as const;
+
 export const MY_BOARDS_TITLE = "My Boards";
 
 export const MY_BOARDS_SUB_TITLE = `Here you can view and delete your boards, 

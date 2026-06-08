@@ -42,7 +42,8 @@ export function BoardMarkdown(props: PBoardMarkdown) {
         id,
         config,
         zone,
-        boardDataSource
+        boardDataSource,
+        editMode,
       )
     }
   }

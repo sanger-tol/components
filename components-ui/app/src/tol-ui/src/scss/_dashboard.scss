@@ -16,7 +16,6 @@
 }
 
 .tol-board {
-
   // Hover colour for placeholders when dragging
   .react-grid-item.react-grid-placeholder {
     background-color: var(--tol-primary) !important;
@@ -74,7 +73,7 @@
 // Registered custom property so it can be animated on the parent
 // and inherited by all ::after overlays, keeping them in sync.
 @property --tol-dash-opacity {
-  syntax: '<number>';
+  syntax: "<number>";
   initial-value: 0;
   inherits: true;
 }
@@ -162,6 +161,10 @@
   }
 }
 
+.utility-bar-stretch {
+  min-width: stretch !important;
+}
+
 .tol-board-bar {
   @extend .tol-boards-widget;
   margin: 6px;
@@ -169,10 +172,12 @@
   position: sticky;
   top: calc(var(--tol-navbar-height) + 20px);
   z-index: 15;
-  box-shadow: 0 8px 20px 4px rgba(0, 0, 0, calc(0.35 * var(--tol-bar-scroll, 0))) !important;
+  box-shadow: 0 8px 20px 4px
+    rgba(0, 0, 0, calc(0.35 * var(--tol-bar-scroll, 0))) !important;
 
   @media (prefers-color-scheme: dark) {
-    box-shadow: 0 8px 20px 6px rgba(0, 0, 0, calc(0.7 * var(--tol-bar-scroll, 0))) !important;
+    box-shadow: 0 8px 20px 6px
+      rgba(0, 0, 0, calc(0.7 * var(--tol-bar-scroll, 0))) !important;
   }
 
   // Large header for view mode
@@ -187,6 +192,24 @@
       &::-webkit-scrollbar {
         display: none;
       }
+    }
+  }
+
+  .tol-board-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+    .tol-board-bar-profile-bubble {
+      margin-left: auto;
+      color: var(--tol-emphasis);
+      cursor: default;
+      font-weight: bolder;
+      margin-left: 2px;
+    }
+
+    .tol-board-bar-inner-container {
+      flex: 1;
     }
   }
 
@@ -207,7 +230,7 @@
   box-shadow: unset;
 }
 
-.tol-board-bar>div div.tol-utility-bar {
+.tol-board-bar > div div.tol-utility-bar {
   margin-bottom: 0;
 }
 
@@ -298,7 +321,7 @@
 
 .my-boards-buttons {
   float: right;
-  margin: 2px
+  margin: 2px;
 }
 
 .my-boards-container {

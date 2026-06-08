@@ -136,6 +136,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     }
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
+    //TODO: ADD RESET FUNCTIONALITY
     // upsertCoreBoardEntity(
     //   boardObjectType === BOARD_ENTITIES.ZONE ? BOARD_ENTITIES.ZONE : BOARD_ENTITIES.COMPONENT,
     //   attributes,
@@ -162,7 +163,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
 
   const removeFilter = (attribute: string) => {
     setAttributes(attributes.filter((str) => str !== attribute));
-    setFilters((prev) => {
+    setFilters((prev: IFilter) => {
       const updatedFilter = deepCopy(prev);
       delete updatedFilter.and_?.[attribute];
       return updatedFilter;
