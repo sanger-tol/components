@@ -97,7 +97,7 @@ export function defineZoneWithComponentList(
       filter: filter,
       children: components.reduce(
         (acc, component) => {
-          acc[component.id!] = component;
+          acc[component.id!] = defineBoardEntity(component, BOARD_ENTITIES.ENTITIES.COMPONENT) as IComponent;
           return acc;
         },
         {} as Record<string, IComponent>,
