@@ -115,6 +115,10 @@
     padding: 6px 6px 6px 6px;
   }
 
+  .rs-picker-check-menu {
+    z-index: 20;
+  }
+
   .rs-picker-menu.rs-picker-select-menu,
   .rs-picker-menu.rs-picker-check-menu {
     padding-top: 0;

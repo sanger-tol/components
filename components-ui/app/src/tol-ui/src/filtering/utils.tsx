@@ -271,7 +271,13 @@ export function setFilterInput(params: {
     valueExists,
   } = params;
   const z = zone as IZone;
-  const and_ = z.children?.[componentId].filter?.and_ || {};
+
+  // Initialise filter on the zone if it doesn't exist before taking a reference to and_.
+  const component = z.children[componentId];
+  component.filter ??= { and_: {} };
+  component.filter.and_ ??= {};
+  const and_ = component.filter.and_;
+
   resetFiltersBelow({ id: componentId, zone: z });
 
   if (valueExists || exists) {
