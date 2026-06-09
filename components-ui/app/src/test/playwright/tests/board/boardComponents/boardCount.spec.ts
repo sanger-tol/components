@@ -37,6 +37,7 @@ const filterCountComponent = async (page) => {
   await addComponentFilter(
     page,
     "statistics",
+    0,
     "grit_project",
     "in_list",
     "ToL Rapid Curation"

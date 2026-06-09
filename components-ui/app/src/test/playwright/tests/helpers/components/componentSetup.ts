@@ -57,12 +57,13 @@ export const addComponent = async (
 export const addComponentFilter = async (
   page: Page,
   component: string,
+  componentIndex: number,
   attribute: string,
   filterType: string,
   filterValue: string,
 ) => {
   // click the filter button
-  await clickUtilityBarButton({ page, testId: `${component}-filter-button` });
+  await clickUtilityBarButton(page, `${component}-filter-button`, componentIndex);
 
   switch (filterType) {
     case "multiselect":
