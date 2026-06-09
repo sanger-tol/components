@@ -22,7 +22,7 @@ test.use({ headless: isInHeadlessMode });
 
 test.beforeEach(async ({ page }) => {
   await setAuth(page);
-  await setBoard({ page, boardID: BOARD_ID });
+  await setBoard(page, BOARD_ID);
   await enterEditMode(page);
 });
 

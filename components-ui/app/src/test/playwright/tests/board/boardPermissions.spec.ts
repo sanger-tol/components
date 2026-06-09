@@ -18,7 +18,7 @@ test("Cannot edit others' boards", async ({ page }) => {
   // Sets a user session up for the browser
   const browserUserBoard = createBoardId();
   await setAuth(page);
-  await setBoard({ page, boardID: browserUserBoard });
+  await setBoard(page, browserUserBoard);
   await expect(page.getByTestId("board-enter-edit-mode-button")).toBeVisible();
 
   // Add a new user and give them a board in the DB
