@@ -40,6 +40,7 @@ export interface PTable extends IRemoteTargetAndZone {
   id: string;
   data: any;
   fieldMeta: FieldMeta;
+  baseFieldMeta?: Partial<FieldMeta>;
   height: any;
   loading: boolean;
   resizeableColumns?: boolean;
@@ -142,6 +143,7 @@ export function Table(props: PTable) {
   const showConfigReset: boolean | undefined = props.showConfigReset;
   const resetConfigDifferences: IConfigDifferences | undefined =
     props.resetConfigDifferences;
+  const baseFieldMeta: Partial<FieldMeta> | undefined = props.baseFieldMeta;
 
   const { editMode } = useBoard();
 
@@ -447,7 +449,8 @@ export function Table(props: PTable) {
         showConfigReset={!noConfigModal && !editMode && showConfigReset}
         customAttributeSelection={
           !editMode
-            ? [...(fieldMeta.order.active ?? []), ...(fieldMeta.order.inactive ?? [])]
+          && ((baseFieldMeta?.order?.limitVisibility ?? fieldMeta?.order?.limitVisibility) === true)
+            ? [...((baseFieldMeta?.order?.active || fieldMeta.order.active) ?? []), ...((baseFieldMeta?.order?.inactive || fieldMeta.order.inactive) ?? [])]
             : undefined
         }
       />

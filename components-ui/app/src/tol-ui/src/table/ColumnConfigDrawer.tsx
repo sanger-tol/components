@@ -192,6 +192,13 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
             additionalPopulatedFieldData={"."}
             customAttributeSelection={allAttributeKeys ?? customAttributeSelection}
           />
+          <SelectedAttributesContainer
+            {...props}
+            attributes={attributes}
+            setAttributes={setAttributes}
+            additionalIcons={additionalIcons}
+            fieldMeta={fieldMeta!}
+          />
         </div>
       </Tabs.Tab>
       <Tabs.Tab eventKey="inactive" title="Inactive Columns">
@@ -214,6 +221,13 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
                 ? allAttributeKeys.filter((col) => !attributes.includes(col))
                 : undefined
             }
+          />
+          <SelectedAttributesContainer
+            {...props}
+            attributes={inactiveAttributes}
+            setAttributes={setInactiveAttributes}
+            additionalIcons={additionalIcons}
+            fieldMeta={fieldMeta!}
           />
         </div>
       </Tabs.Tab>
@@ -327,6 +341,13 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
               customAttributeSelection={customAttributeSelection}
             />
           </div>
+          <SelectedAttributesContainer
+            {...props}
+            attributes={attributes}
+            setAttributes={setAttributes}
+            additionalIcons={additionalIcons}
+            fieldMeta={fieldMeta!}
+          />
         </>
       )}
       {actions && actionChoices && (
@@ -335,13 +356,6 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
           {ActionDropdown}
         </div>
       )}
-      <SelectedAttributesContainer
-        {...props}
-        attributes={attributes}
-        setAttributes={setAttributes}
-        additionalIcons={additionalIcons}
-        fieldMeta={fieldMeta!}
-      />
     </>
   );
 
