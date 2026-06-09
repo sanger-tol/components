@@ -36,14 +36,14 @@ const filterCountComponent = async (page) => {
 
   await addComponentFilter(
     page,
-    'statistics',
-    'grit_project',
-    'ToL Rapid Curation',
-    'multiselect'
+    "statistics",
+    "grit_project",
+    "in_list",
+    "ToL Rapid Curation"
   );
 
   // check the count has changed
-  // This sleep should be removed at some point
+  // TODO This sleep should be removed at some point
   await sleep(200);
   const countAfter = await page.locator('.tol-count').textContent();
   expect(countAfter).not.toBe(countBefore);

@@ -4,7 +4,6 @@
 
 import { expect, Page } from "@playwright/test";
 import { clickUtilityBarButton } from "../utility-bar";
-import { sleep } from "../sleep";
 
 
 /**
@@ -45,35 +44,45 @@ export const addComponent = async (
   await expect(countAfter).toBe(countBefore + 1);
 };
 
+/**
+ * Adds a filter onto the `componentIndex`th component of the `component` kind
+ * @param page The Playwright page handle
+ * @param component The name of the component type
+ * @param componentIndex Out of all components of the `component` type on the screen,
+ * which one is it? Zero-indexed
+ * @param attribute The attrbiute to apply the filter to
+ * @param filterType The type of filter used on this attribute
+ * @param filterValue The value to filter with
+ */
 export const addComponentFilter = async (
   page: Page,
   component: string,
   attribute: string,
+  filterType: string,
   filterValue: string,
-  filterType: string
 ) => {
   // click the filter button
   await clickUtilityBarButton({ page, testId: `${component}-filter-button` });
 
   switch (filterType) {
-    case 'multiselect':
+    case "multiselect":
       // click the attribute selector dropdown
-      await page.getByRole('combobox').first().click();
+      await page.getByRole("combobox").first().click();
 
       // choose specific attribute
-      await page.locator('.rs-search-box-input').fill(attribute);
+      await page.locator(".rs-search-box-input").fill(attribute);
       await page.getByText(attribute).click();
 
       // click again to hide dropdown
-      await page.getByRole('combobox').first().click();
+      await page.getByRole("combobox").first().click();
 
 
       // Give filter a value
-      await page.getByRole('combobox').nth(1).click();
+      await page.getByRole("combobox").nth(1).click();
       await page.getByText(filterValue).click();
-      await page.getByRole('combobox').nth(1).click();
+      await page.getByRole("combobox").nth(1).click();
   }
 
   // Click Apply Filter button
-  await page.getByTestId('apply-filter-button').click();
+  await page.getByTestId("apply-filter-button").click();
 }
