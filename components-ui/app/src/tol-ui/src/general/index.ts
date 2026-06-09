@@ -7,12 +7,9 @@ SPDX-License-Identifier: MIT
 export * from "./Accordion";
 export * from "./BoardStatistics";
 export * from "./BoardMarkdown";
-export * from "./Button";
-export * from "./DropdownButton";
 export * from "./CenterContent";
 export * from "./ClickOverlay";
 export * from "./CustomIcons";
-export * from "./DeprecatedDropdownButtons";
 export * from "./ErrorBoundary";
 export * from "./Footer";
 export * from "./FormatTooltip";

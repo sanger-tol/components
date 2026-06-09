@@ -4,12 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-//@ts-nocheck
 
-import React from "react";
 import { Dropdown } from "rsuite";
 import { IDropdownButtonConfig, IDropdownMainIconProps } from "../interfaces";
-import { Toaster, Message, Button } from "../index";
+import { Button } from "../index";
 
 
 export interface PDeprecatedDropdownButtons {
@@ -17,7 +15,6 @@ export interface PDeprecatedDropdownButtons {
   placement?: string;
   menuStyle?: object;
   disabled?: boolean;
-  showMessages?: boolean;
 
   dropdownButtons: IDropdownButtonConfig[] | any;
   header?: IDropdownButtonConfig | any;
@@ -30,44 +27,14 @@ export function DeprecatedDropdownButtons(props: PDeprecatedDropdownButtons) {
     placement,
     menuStyle,
     disabled,
-    showMessages,
     dropdownButtons,
     header,
     footer,
   } = props;
 
-  const toaster = Toaster();
-
-  const pushMessage = (message: string, type: string = "info") => {
-    toaster.push(<Message children={message} type={type} showIcon={true} />, {
-      duration: 4000,
-      placement: "bottomEnd",
-    });
-  };
-
-  const pushSuccess = (actionName: string) =>
-    pushMessage(`Action "${actionName}" dispatched successfully.`);
-
-  const pushFailure = (actionName: string) =>
-    pushMessage(`Action "${actionName}" failed.`, "error");
-
-  // shouldn't do this at this level
-  const wrapAction = (action: IDropdownButtonConfig) => {
-    const name = action.name;
-
-    return async (...args) => {
-      try {
-        await action.action(...args);
-        showMessages ?? pushSuccess(name);
-      } catch (e: any) {
-        showMessages ?? pushFailure(name);
-        console.error(e);
-      }
-    };
-  };
-
   const RenderButton = (props: any, ref: any) => (
     <Button
+      ref={ref}
       {...props}
       {...mainButtonIcon}
     />

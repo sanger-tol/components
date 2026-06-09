@@ -122,10 +122,13 @@ $sizes: (
   }
 }
 
+.tol-button-wrapper {
+  &-left  { float: left;  margin-right: 6px; }
+  &-right { float: right; margin-left: 6px;  }
+}
+
 // Adds a margin to the right of the icon in the dropdown button if there is text present
 .tol-button-dropdown {
-  display: inline-block;
-
   .rs-dropdown-item-content:has(.tol-dropdown-text) {
     .tol-dropdown-icon {
       margin-right: 12px;

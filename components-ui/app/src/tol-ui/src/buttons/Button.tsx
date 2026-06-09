@@ -7,6 +7,8 @@ SPDX-License-Identifier: MIT
 import React, { useEffect, useRef, useState, ReactNode } from "react";
 import { Button as RsButton } from "rsuite";
 import { TolLoader, HoverOverlay, Icon } from "..";
+import { getButtonWrapperClass } from "./utils";
+
 
 export interface PButton {
   icon?: string;
@@ -102,7 +104,14 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
       (limit > 0 && buttonClicked >= limit) ||
       timeoutDisabled;
 
-    const buttonContent = (
+    const IconElement = icon && <div><Icon icon={icon} size={size} /></div>;
+    const TextElement = text && (
+      <span style={{ [position === "right" ? "marginRight" : "marginLeft"]: icon ? "6px" : "0px" }}>
+        {text}
+      </span>
+    );
+
+    const ButtonContent = (
       <RsButton
         as={Component}
         id={id}
@@ -118,49 +127,24 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
             <TolLoader size="sm" />
           </span>
         )}
-
-        {position === "right" ? (
-          <>
-            {text && <span style={{ marginRight: icon ? "6px" : "0px" }}>{text}</span>}
-            {icon && (
-              <div>
-                <Icon icon={icon} size={size} />
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            {icon && (
-              <div>
-                <Icon icon={icon} size={size} />
-              </div>
-            )}
-            {text && <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>}
-          </>
-        )}
+        {position === "right" ? <>{TextElement}{IconElement}</> : <>{IconElement}{TextElement}</>}
       </RsButton>
     );
 
     if (!visible) return null;
 
     return (
-      <div
-        style={{
-          float: position === "none" ? undefined : position,
-          marginLeft: position === "right" ? "6px" : "0px",
-          marginRight: position === "left" ? "6px" : "0px",
-        }}
-      >
+      <div className={getButtonWrapperClass(position)}>
         {contents ? (
           <HoverOverlay
             contents={contents}
             followCursor={disabled}
             delay={disabled ? undefined : 800}
           >
-            <div className="tooltip-wrapper">{buttonContent}</div>
+            <div className="tooltip-wrapper">{ButtonContent}</div>
           </HoverOverlay>
         ) : (
-          buttonContent
+          ButtonContent
         )}
       </div>
     );

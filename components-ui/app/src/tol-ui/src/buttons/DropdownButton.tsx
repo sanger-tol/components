@@ -5,7 +5,7 @@
  */
 
 import { Dropdown } from "rsuite";
-import { Button, Icon } from "..";
+import { Button, Icon, getButtonWrapperClass } from "..";
 import type { PButton } from "..";
 
 
@@ -39,17 +39,15 @@ export function DropdownButton(props: PDropdownButton) {
     return <Button ref={ref} {...toggleWithoutPosition} {...restToggle} position="none" />;
   };
 
+  const wrapperClass = getButtonWrapperClass(position);
+  const dropdownClass = ["tol-button-dropdown", wrapperClass].filter(Boolean).join(" ");
+
   return (
     <Dropdown
-      className="tol-button-dropdown"
+      className={dropdownClass}
       trigger={toggle.disabled ? [] : ["click", "hover"]}
       placement={placement}
       renderToggle={renderButton}
-      style={{
-        float: position === "none" ? undefined : position,
-        marginLeft: position === "right" ? "6px" : "0px",
-        marginRight: position === "left" ? "6px" : "0px",
-      }}
     >
       {buttons.map((button: PButton, index) =>
         (button.visible !== false) ? (
