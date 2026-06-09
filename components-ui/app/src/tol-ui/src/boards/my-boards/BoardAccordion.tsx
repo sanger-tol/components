@@ -151,7 +151,6 @@ export function BoardAccordion(props: BoardsAccordionProps) {
       mainButtonIcon={boardOptionsButton}
       placement="leftStart"
       dropdownButtons={dropdownButtons(boardId, viewId)}
-      showMessages={false}
       menuStyle={{
         position: "absolute",
         zIndex: "1050",
