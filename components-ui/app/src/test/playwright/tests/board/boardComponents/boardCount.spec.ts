@@ -12,13 +12,13 @@ import {
   deleteComponent,
   enterEditMode,
   exitEditMode,
-  createBoardId
+  createBoardId,
+  isInHeadlessMode
 } from "../../helpers";
 
-const headless = !!(process.env.CI || process.env.HEADLESS);
 const BOARD_ID = createBoardId();
 
-test.use({ headless: headless });
+test.use({ headless: isInHeadlessMode });
 
 test.beforeEach(async ({ page }) => {
   await setAuth(page);

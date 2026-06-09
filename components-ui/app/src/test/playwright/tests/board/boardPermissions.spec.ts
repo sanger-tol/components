@@ -9,11 +9,10 @@ import {
   createBoardForUser,
   setBoard,
   createBoardId,
+  isInHeadlessMode,
 } from '../helpers';
-
-const headless = !!(process.env.CI || process.env.HEADLESS);
-
-test.use({ headless: headless });
+  
+test.use({ headless: isInHeadlessMode });
 
 test('Cannot edit others boards', async ({ page }) => {
   // Sets a user session up for the browser
