@@ -30,11 +30,6 @@ test.afterEach(async ({ page }) => {
   await exitEditMode(page);
 });
 
-const addMarkdownComponent = async ({ page }) => {
-  await addComponent( page, 'text', 'Small');
-  await expect(page.locator('.tol-markdown-viewer')).toBeVisible();
-}
-
 const editMarkDownComponentOnAdd = async ({ page }) => {
   // get the markdown editor textarea
   const mardownEditor = page.locator('.tol-markdown-viewer textarea');
@@ -57,7 +52,7 @@ const saveMarkDownComponent = async ({ page }) => {
 }
 
 test('manage dashboard', async ({ page }) => {
-  await addMarkdownComponent({ page });
+  await addComponent( page, 0, "text", "Small");
   await editMarkDownComponentOnAdd({ page });
   await saveMarkDownComponent({ page });
   await deleteFirstComponent(page, "text");

@@ -30,11 +30,6 @@ test.afterEach(async ({ page }) => {
   await exitEditMode( page );
 });
 
-const addCountComponent = async ({ page }) => {
-  await addComponent(page, 'statistics', 'Small');
-  await expect(page.locator('.tol-count')).toBeVisible();
-}
-
 const filterCountComponent = async (page) => {
   // get the count before filtering
   const countBefore = await page.locator('.tol-count').textContent();
@@ -55,7 +50,7 @@ const filterCountComponent = async (page) => {
 }
 
 test('manage dashboard', async ({ page }) => {
-  await addCountComponent({ page });
+  await addComponent(page, 0, "statistics", "Small");
 
   await filterCountComponent(page);
 

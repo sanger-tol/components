@@ -31,19 +31,15 @@ test.afterEach(async ({ page }) => {
   }
 });
   
-const addTableComponent = async ({ page }) => {
-  await addComponent(page, "table", "Large");
-  await expect(page.locator(".tol-table")).toBeVisible();
-};
-
 test("manage dashboard", async ({ page }) => {
-  await addTableComponent({ page });
+  await addComponent(page, 0, "table", "large");
   await deleteFirstComponent(page, "table");
   await expect(page.locator('.tol-table')).not.toBeVisible({timeout: 1000});
 });
 
 test("shows personal table configuration notices outside edit mode", async ({ page }) => {
-  await addTableComponent({ page });
+  // await addTableComponent({ page });
+  await addComponent(page, 0, "table", "large");
   await exitEditMode(page);
 
   await clickUtilityBarButton({ page, testId: "table-config-button" });

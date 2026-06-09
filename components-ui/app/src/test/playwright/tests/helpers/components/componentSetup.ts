@@ -2,26 +2,51 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { Page } from "@playwright/test";
+import { expect, Page } from "@playwright/test";
 import { clickUtilityBarButton } from "../utility-bar";
 
 
+/**
+ * Adds the specified component to the specified zone.
+ * It checks whether the component was created successfully.
+ * @param page The Playwright page handle
+ * @param zoneIndex The zone to add this component to. Starts at 0 for the first zone in the board
+ * @param component The name of the component type to add
+ * (this will be picked from the component select modal)
+ * @param size The component size to select in the component select modal
+ */
 export const addComponent = async (
   page: Page,
+  zoneIndex: number,
   component: string,
-  size: string = "Small"
+  size: string = "Small",
 ) => {
-  // click the add component button
-  await page.getByTestId("add-component-button").first().click();
+  // Get how many of this component type exist already (so we can check one was added afterwards)
+  const countBefore = (await page.getByTestId(`board-component-${component}`).all()).length;
 
-  // select the component type
+  // Click the Add Component button for the desired zone
+  await page.getByTestId("add-component-button").nth(zoneIndex).click();
+
+  // Select the component type in the modal
   await page.getByTestId(`component-option-${component}`).click();
 
-  // select size
+  // Select the component size in the modal
   await page.getByText(size).click();
 
-  // click the add component button
+  // Click the confirm button in the modal
   await page.getByTestId("confirm-add-component-button").click();
+
+  // await page.waitForLoadState("networkidle");
+  // await page.getByTestId(`board-component-${component}`).click()
+
+  // Ensure the component was added
+  const countAfter = await page.getByTestId(`board-component-${component}`).count();
+  await expect(countAfter).toBe(countBefore + 1);
+
+  // Ensure every component (including this new one) is visible
+  (await page.getByTestId(`board-component-${component}`).all()).forEach(
+    async locator => await expect(locator).toBeVisible()
+  );
 };
 
 export const addComponentFilter = async (

@@ -39,6 +39,10 @@ export interface PRemoteStatistics extends IRemoteTargetAndZone {
    * The field to apply the statistic to (required when type is not "count")
    */
   field?: string;
+  /**
+   * Test ID used to identify this component in Playwright tests
+   */
+  testid?: string;
 }
 
 /**
@@ -57,6 +61,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
     utilityBarConfig,
     type = "count",
     field,
+    testid,
   } = props;
 
   const [value, setValue] = useState<number>(0);
@@ -165,7 +170,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
   return (
     <>
       <UtilityBar {...utilityBarConfig} id={id} />
-      <div className="tol-component-contents with-offset">
+      <div className="tol-component-contents with-offset" data-testid={testid}>
         <Contents />
       </div>
     </>
