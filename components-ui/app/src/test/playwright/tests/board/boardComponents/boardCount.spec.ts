@@ -9,7 +9,7 @@ import {
   setAuth,
   addComponentFilter,
   sleep,
-  deleteFirstComponent,
+  deleteComponent,
   enterEditMode,
   exitEditMode,
   createBoardId
@@ -55,6 +55,6 @@ test('manage dashboard', async ({ page }) => {
 
   await filterCountComponent(page);
 
-  await deleteFirstComponent(page, "statistics");
+  await deleteComponent(page, "statistics", 0);
   await expect(page.locator('.tol-count')).not.toBeVisible();
 });

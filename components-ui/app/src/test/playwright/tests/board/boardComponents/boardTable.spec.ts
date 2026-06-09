@@ -7,7 +7,7 @@ import {
   addComponent,
   setBoard,
   setAuth,
-  deleteFirstComponent,
+  deleteComponent,
   exitEditMode,
   enterEditMode,
   clickUtilityBarButton,
@@ -33,7 +33,7 @@ test.afterEach(async ({ page }) => {
   
 test("manage dashboard", async ({ page }) => {
   await addComponent(page, 0, "table", "large");
-  await deleteFirstComponent(page, "table");
+  await deleteComponent(page, "table", 0);
   await expect(page.locator('.tol-table')).not.toBeVisible({timeout: 1000});
 });
 

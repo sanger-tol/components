@@ -7,7 +7,7 @@ import {
     addComponent,
     setBoard,
     setAuth,
-    deleteFirstComponent,
+    deleteComponent,
     clickUtilityBarButton,
     sleep,
     enterEditMode,
@@ -55,6 +55,6 @@ test('manage dashboard', async ({ page }) => {
   await addComponent( page, 0, "text", "Small");
   await editMarkDownComponentOnAdd({ page });
   await saveMarkDownComponent({ page });
-  await deleteFirstComponent(page, "text");
+  await deleteComponent(page, "text", 0);
   await expect(page.locator('.tol-markdown-viewer')).not.toBeVisible();
 });
