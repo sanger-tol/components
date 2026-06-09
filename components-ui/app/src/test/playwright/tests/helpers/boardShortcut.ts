@@ -21,7 +21,7 @@ const insertBoardToDB = async (userId: string, boardId: string) => {
       INSERT INTO "view_board"
       VALUES (${randomInt()}, '1', '${viewID}', '${boardId}');
       INSERT INTO "zone"
-      VALUES ('${zoneID}', '${randomInt()}', 'category', '{"and_":{}}', ${userId}, 'test');
+      VALUES ('${zoneID}', '${randomInt()}', 'curation', '{"and_":{}}', ${userId}, 'tol_production');
       INSERT INTO "zone_view"
       VALUES (${randomInt()}, '1', '${zoneID}', '${viewID}');
     `).simple();
