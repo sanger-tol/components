@@ -1,8 +1,8 @@
-// SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+// SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 import {
   setAuth,
   addUserToDB,
@@ -10,11 +10,11 @@ import {
   setBoard,
   createBoardId,
   isInHeadlessMode,
-} from '../helpers';
+} from "../helpers";
   
 test.use({ headless: isInHeadlessMode });
 
-test('Cannot edit others boards', async ({ page }) => {
+test("Cannot edit others' boards", async ({ page }) => {
   // Sets a user session up for the browser
   const browserUserBoard = createBoardId();
   await setAuth(page);
