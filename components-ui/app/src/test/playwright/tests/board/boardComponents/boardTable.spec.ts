@@ -34,11 +34,10 @@ test.afterEach(async ({ page }) => {
 test("manage dashboard", async ({ page }) => {
   await addComponent(page, 0, "table", "large");
   await deleteComponent(page, "table", 0);
-  await expect(page.locator('.tol-table')).not.toBeVisible({timeout: 1000});
+  await expect(page.locator(".tol-table")).not.toBeVisible({ timeout: 1000 });
 });
 
 test("shows personal table configuration notices outside edit mode", async ({ page }) => {
-  // await addTableComponent({ page });
   await addComponent(page, 0, "table", "large");
   await exitEditMode(page);
 
