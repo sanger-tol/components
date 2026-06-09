@@ -41,14 +41,14 @@ const editMarkDownComponentOnAdd = async ({ page }) => {
   await expect(mardownEditor).toHaveValue('Test Text');
 
   // click the preview button
-  await clickUtilityBarButton({ page, testId: "preview-markdown" });
+  await clickUtilityBarButton(page, "preview-markdown", 0);
 
   // Count is 3, once for preview, editor and saved view (even though only two are visible)
   await expect(page.getByText('Test Text')).toHaveCount(3);
 }
 
 const saveMarkDownComponent = async ({ page }) => {
-  await clickUtilityBarButton({ page, testId: "save-markdown" });
+  await clickUtilityBarButton(page, "save-markdown", 0);
 }
 
 test('manage dashboard', async ({ page }) => {

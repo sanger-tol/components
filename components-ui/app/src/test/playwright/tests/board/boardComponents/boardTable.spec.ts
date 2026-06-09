@@ -42,7 +42,7 @@ test("shows personal table configuration notices outside edit mode", async ({ pa
   await addComponent(page, 0, "table", "large");
   await exitEditMode(page);
 
-  await clickUtilityBarButton({ page, testId: "table-config-button" });
+  await clickUtilityBarButton(page, "table-config-button", 0);
 
   await expect(
     page.getByText("Please be aware that you are editing a version of this table for yourself. If you want to edit the table for all board viewers please switch to edit mode."),
