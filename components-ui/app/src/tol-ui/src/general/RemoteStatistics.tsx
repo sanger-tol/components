@@ -153,7 +153,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
     }
 
     return (
-      <div id={id} className="tol-count">
+      <div id={id} className="tol-count" data-testid={testid}>
         <HoverOverlay contents={value}>
           <h1 className="count">{normaliseNumber(value)}</h1>
         </HoverOverlay>
@@ -170,7 +170,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
   return (
     <>
       <UtilityBar {...utilityBarConfig} id={id} />
-      <div className="tol-component-contents with-offset" data-testid={testid}>
+      <div className="tol-component-contents with-offset">
         <Contents />
       </div>
     </>

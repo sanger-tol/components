@@ -4,6 +4,7 @@
 
 import { expect, Page } from "@playwright/test";
 import { clickUtilityBarButton } from "../utility-bar";
+import { sleep } from "../sleep";
 
 
 /**
@@ -36,17 +37,12 @@ export const addComponent = async (
   // Click the confirm button in the modal
   await page.getByTestId("confirm-add-component-button").click();
 
-  // await page.waitForLoadState("networkidle");
-  // await page.getByTestId(`board-component-${component}`).click()
-
   // Ensure the component was added
+  // I have absolutely no idea why, but if this visibility check (which should be redundant)
+  // is removed, then the count retrieval afterwards does not work.
+  await expect(await page.getByTestId(`board-component-${component}`)).toBeVisible();
   const countAfter = await page.getByTestId(`board-component-${component}`).count();
   await expect(countAfter).toBe(countBefore + 1);
-
-  // Ensure every component (including this new one) is visible
-  (await page.getByTestId(`board-component-${component}`).all()).forEach(
-    async locator => await expect(locator).toBeVisible()
-  );
 };
 
 export const addComponentFilter = async (
