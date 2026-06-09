@@ -6,8 +6,7 @@ SPDX-License-Identifier: MIT
 
 import React, { useEffect, useRef, useState, ReactNode } from "react";
 import { Button as RsButton } from "rsuite";
-import { TolLoader, HoverOverlay, Icon } from "..";
-import { getButtonWrapperClass } from "./utils";
+import { TolLoader, HoverOverlay, Icon, getButtonWrapperClass } from "..";
 
 
 export interface PButton {
