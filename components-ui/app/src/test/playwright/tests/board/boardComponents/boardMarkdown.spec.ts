@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 import {
     addComponent,
     setBoard,
@@ -13,7 +13,7 @@ import {
     enterEditMode,
     exitEditMode,
     createBoardId
-} from '../../helpers'
+} from "../../helpers";
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 const BOARD_ID = createBoardId();
@@ -32,29 +32,29 @@ test.afterEach(async ({ page }) => {
 
 const editMarkDownComponentOnAdd = async ({ page }) => {
   // get the markdown editor textarea
-  const mardownEditor = page.locator('.tol-markdown-viewer textarea');
+  const mardownEditor = page.locator(".tol-markdown-viewer textarea");
 
   // click into the markdown editor and type text to simulate real user input
   await mardownEditor.click();
   await page.keyboard.type("Test Text", { delay: 10 });
   await sleep(1000);
-  await expect(mardownEditor).toHaveValue('Test Text');
+  await expect(mardownEditor).toHaveValue("Test Text");
 
   // click the preview button
   await clickUtilityBarButton(page, "preview-markdown", 0);
 
   // Count is 3, once for preview, editor and saved view (even though only two are visible)
-  await expect(page.getByText('Test Text')).toHaveCount(3);
+  await expect(page.getByText("Test Text")).toHaveCount(3);
 }
 
 const saveMarkDownComponent = async ({ page }) => {
   await clickUtilityBarButton(page, "save-markdown", 0);
 }
 
-test('manage dashboard', async ({ page }) => {
+test("manage dashboard", async ({ page }) => {
   await addComponent( page, 0, "text", "Small");
   await editMarkDownComponentOnAdd({ page });
   await saveMarkDownComponent({ page });
   await deleteComponent(page, "text", 0);
-  await expect(page.locator('.tol-markdown-viewer')).not.toBeVisible();
+  await expect(page.locator(".tol-markdown-viewer")).not.toBeVisible();
 });
