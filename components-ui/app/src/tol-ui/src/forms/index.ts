@@ -20,3 +20,4 @@ export * from "./utils";
 export * from "./MultipleFormInput";
 export * from "./FormLabel";
 export * from "./RequiredAsterisk";
+export * from "./defined-forms";

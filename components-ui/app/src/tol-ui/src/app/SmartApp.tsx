@@ -119,7 +119,7 @@ export function SmartApp(props: PSmartApp) {
   const [fetchedNavigation, setFetchedNavigation] = useState<TNavConfig>();
   const [fetchedProfileNavigation, setFetchedProfileNavigation] = useState<TNavConfig>();
 
-  const queryClient = new QueryClient();
+  const [queryClient] = useState(() => new QueryClient());
 
   // Combines the system defaults and incoming config
   const defaultNavigation = mergeNavConfigs(

@@ -229,3 +229,12 @@ export interface IRemoteAutoCompleteData {
 }
 
 export type TAutoCompleteValue = string | { value: string, id: string };
+
+export interface IUserProfileFormData {
+  name?: string;
+  email?: string;
+  workplace?: string;
+  [key: string]: any;
+}
+
+export type TUserProfileFormDataOrNull = IUserProfileFormData | null;
