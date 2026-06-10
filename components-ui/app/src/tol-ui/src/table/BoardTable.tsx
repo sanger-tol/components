@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect, useRef } from "react";
+import { ReactNode, useState, useEffect, useRef } from "react";
 import {
+  AttributeTitle,
   RemoteTable,
   useBoard,
   useAuth,
@@ -22,8 +23,10 @@ import {
   setTableConfigLocalStorage,
   PopUpMessage,
   MESSAGE_TYPE,
+  TOL_DS,
   updateComponentConfigAndUpsert,
   normaliseCaps,
+  RemovedColumnsModal,
 } from "..";
 import type {
   ITableConfigSave,
@@ -45,10 +48,16 @@ export function BoardTable(props: PBoardTable) {
   const isLoggedIn: boolean = !!user?.id;
   const componentData = zone?.children[id];
 
+  // Calculate sequential board number from zone.children keys
+  const boardIndex = zone?.children ? Object.keys(zone.children).indexOf(id) + 1 : 1;
+
   const [resetKey, setResetKey] = useState<number>(0);
   const [diffState, setDiffState] = useState<IDiffState>(
     handleFirstLoadDiffState(componentData),
   );
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [removedColumnsForModal, setRemovedColumnsForModal] = useState<ReactNode[]>([]);
+  const [columnsRemaining, setColumnsRemaining] = useState<number>(0);
   const removedColumnsMessageRef = useRef<string>("");
   const diffStateRef = useRef(diffState);
   useEffect(() => {
@@ -96,17 +105,47 @@ export function BoardTable(props: PBoardTable) {
 
       if (removedColumnsMessageRef.current !== removedColumnsSignature) {
         removedColumnsMessageRef.current = removedColumnsSignature;
+        
         // Resolve display names from enriched and saved metadata, with a readable fallback.
         const fieldMeta = componentData?.config?.fieldMeta;
-        const removedColumnNames = removedColumns.map(
-          (col) =>
-            fieldMeta?.dataWithDefaults?.[col]?.rename
-            || fieldMeta?.data?.[col]?.rename
-            || normaliseCaps(col),
+        const removedColumnNodes = removedColumns.map(
+          (col) => (
+            <AttributeTitle
+              attributeId={col}
+              dataSource={TOL_DS}
+              objectType={objectType}
+              rename={
+                fieldMeta?.dataWithDefaults?.[col]?.rename
+                || fieldMeta?.data?.[col]?.rename
+                || normaliseCaps(col)
+              }
+            />
+          ),
         );
+        
+        // Store for modal display
+        setRemovedColumnsForModal(removedColumnNodes);
+        const remaining = (remoteDiffState.currentConfig?.fieldMeta?.order?.active?.length || 0) + 
+                         (remoteDiffState.currentConfig?.fieldMeta?.order?.inactive?.length || 0);
+        setColumnsRemaining(remaining);
+
+        // Create persistent warning message with "See more" button
+        const warningMessage = (
+          <div className="removed-columns-warning-message">
+            <span>Board {boardIndex} has {removedColumns.length} column(s) removed due to board owner changes</span>
+            <button
+              onClick={() => setModalOpen(true)}
+              className="removed-columns-see-more-button"
+            >
+              More info
+            </button>
+          </div>
+        );
+
         PopUpMessage({
           type: MESSAGE_TYPE.WARNING,
-          message: `Column ${removedColumnNames.join(", ")} removed due to board owner changes`,
+          message: warningMessage as any,
+          persist: true,
         });
       }
 
@@ -245,32 +284,41 @@ export function BoardTable(props: PBoardTable) {
   };
 
   return (
-    <RemoteTable
-      key={resetKey}
-      {...props}
-      resizeableColumns={isLoggedIn}
-      onReset={onReset}
-      showConfigReset={
-        diffState.hasDiff &&
-        !configsAreEqual(diffState.currentConfig, componentData?.config)
-      }
-      resetConfigDifferences={diffState.configDifferences}
-      advanceTab
-      editableCells
-      displaySource
-      fields={diffState.currentConfig?.fieldMeta}
-      baseFieldMeta={componentData?.config?.fieldMeta}
-      pageSize={diffState.currentConfig?.pageSize}
-      filterVisibility={diffState.currentConfig?.filterVisibility}
-      defaultSortByAttribute={diffState.currentConfig?.defaultSortByAttribute}
-      defaultSortByType={diffState.currentConfig?.defaultSortByType}
-      actions={actionList.data}
-      actionDataSource={actionsDataSource}
-      rowSelection={actionList.data && actionList.data.length > 0}
-      onConfigSave={(config) => onConfigSave({ ...config })}
-      onToggleFilterVisibility={onFilterVisibilityChange}
-      onPageSizeChange={onPageSizeChange}
-      onResizeColumn={onResizeColumn}
-    />
+    <>
+      <RemoteTable
+        key={resetKey}
+        {...props}
+        resizeableColumns={isLoggedIn}
+        onReset={onReset}
+        showConfigReset={
+          diffState.hasDiff &&
+          !configsAreEqual(diffState.currentConfig, componentData?.config)
+        }
+        resetConfigDifferences={diffState.configDifferences}
+        advanceTab
+        editableCells
+        displaySource
+        fields={diffState.currentConfig?.fieldMeta}
+        baseFieldMeta={componentData?.config?.fieldMeta}
+        pageSize={diffState.currentConfig?.pageSize}
+        filterVisibility={diffState.currentConfig?.filterVisibility}
+        defaultSortByAttribute={diffState.currentConfig?.defaultSortByAttribute}
+        defaultSortByType={diffState.currentConfig?.defaultSortByType}
+        actions={actionList.data}
+        actionDataSource={actionsDataSource}
+        rowSelection={actionList.data && actionList.data.length > 0}
+        onConfigSave={(config) => onConfigSave({ ...config })}
+        onToggleFilterVisibility={onFilterVisibilityChange}
+        onPageSizeChange={onPageSizeChange}
+        onResizeColumn={onResizeColumn}
+      />
+      <RemovedColumnsModal
+        open={modalOpen}
+        setOpen={setModalOpen}
+        boardNumber={String(boardIndex)}
+        removedColumns={removedColumnsForModal}
+        columnsRemaining={columnsRemaining}
+      />
+    </>
   );
 }

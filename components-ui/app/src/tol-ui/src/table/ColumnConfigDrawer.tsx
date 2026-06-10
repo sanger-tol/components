@@ -174,7 +174,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const columnTabs = (
     <Tabs defaultActiveKey="active">
       <Tabs.Tab eventKey="active" title="Active Columns">
-        <div style={{ marginTop: "15px" }}>
+        <div className="tol-section-spacing-top">
           <AttributeSelector
             {...props}
             sticky
@@ -200,19 +200,18 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
             attributes={attributes}
             setAttributes={setAttributes}
             additionalIcons={additionalIcons}
-            fieldMeta={fieldMeta!}
-          />
+            fieldMeta={fieldMeta!}            emptyMessage="No active columns. Select columns to display..."          />
         </div>
       </Tabs.Tab>
       <Tabs.Tab eventKey="inactive" title="Inactive Columns">
-        <div style={{ marginTop: "15px" }}>
+        <div className="tol-section-spacing-top">
           <AttributeSelector
             {...props}
             sticky
             recommendedFilterAvailable
             renderSearchBySource
             displaySource
-            placeholder="Select columns to hide by default..."
+            placeholder="Select columns to make them visible for users..."
             attribute={inactiveAttributes}
             setAttributes={setInactiveAttributes}
             disabledValues={null}
@@ -231,6 +230,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
             setAttributes={setInactiveAttributes}
             additionalIcons={additionalIcons}
             fieldMeta={fieldMeta!}
+            emptyMessage="No inactive columns. Select columns to make them visible for users to add them to their tables."
           />
         </div>
       </Tabs.Tab>
@@ -252,7 +252,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const AttributeSelecting = (
     <>
       {isEditable && (
-        <div style={{ marginBottom: "15px" }}>
+        <div className="tol-section-spacing">
           <Message
             type="info"
             showIcon
@@ -268,7 +268,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         </div>
       )}
       {!editMode && !warningDismissed && (
-        <div style={{ marginBottom: "15px" }}>
+        <div className="tol-section-spacing">
           <Message
             type="warning"
             showIcon
@@ -310,7 +310,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       />
       {sortByAttribute && SortByButtons}
       {canManageColumnVisibility && (
-        <div className="tol-config-drawer-column-title" style={{ marginTop: "15px" }}>
+        <div className="tol-config-drawer-column-title tol-section-spacing-top">
           <div className="pass-through-toggle">
             <Toggle
               onClick={() => {
@@ -318,15 +318,15 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
               }}
               checked={limitVisibility}
             />
-            <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+            <span className="tol-toggle-text" onClick={(e) => e.stopPropagation()}>
               Limit column visibility?
             </span>
             <HoverOverlay
-              contents="When enabled, users can only choose columns listed under Active and Inactive. When disabled, users can choose from all available columns."
+              contents="When 'Limit Column Visibility' is enabled, users can only choose columns listed under Active and Inactive. When 'Limit Column Visibility' is disabled, users can choose from all available columns."
               placement="top"
               delay={200}
             >
-              <span style={{ display: "inline-flex", alignItems: "center" }}>
+              <span className="tol-inline-flex-center">
                 <Icon icon="circle-info" size="sm" />
               </span>
             </HoverOverlay>
@@ -334,13 +334,13 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         </div>
       )}
       {canManageColumnVisibility && limitVisibility && (
-                <div style={{ marginTop: "8px", marginBottom: "8px" }}>
+                <div className="tol-small-spacing">
                 <HoverOverlay
-                    contents="Active Columns are shown by default. Inactive Columns are allowed but hidden by default, and users can add them later from column selection."
+                    contents="Active Columns are shown by default. Inactive Columns are allowed to be selected but hidden by default, and users can add them later from column selection."
                     placement="top"
                     delay={200}
                 >
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: "6px",  color: "var(--tol-grey)" }}>
+                    <span className="tol-info-icon-group">
                     <Icon icon="circle-info" size="sm" />
                     <small>About Active/Inactive columns</small>
                     </span>
@@ -372,12 +372,12 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
             attributes={attributes}
             setAttributes={setAttributes}
             additionalIcons={additionalIcons}
-            fieldMeta={fieldMeta!}
-          />
+            fieldMeta={fieldMeta!}            
+            emptyMessage="No active columns. Select columns to display..."          />
         </>
       )}
       {actions && actionChoices && (
-        <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+        <div className="tol-section-spacing-vertical">
           <h6>Actions</h6>
           {ActionDropdown}
         </div>

@@ -15,6 +15,7 @@ export * from "./Field";
 export * from "./RowCounter";
 export * from "./Table";
 export * from "./TableResetConfirmationModal";
+export * from "./RemovedColumnsModal";
 export * from "./utils";
 export * from "./RemoteTable";
 export * from "./cellRenderers/CellRendererConfigurer";

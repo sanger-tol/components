@@ -164,3 +164,85 @@
     animation-iteration-count: infinite;
   }
 }
+
+/* Spacing classes */
+.tol-section-spacing {
+  margin-bottom: 15px;
+}
+
+.tol-section-spacing-top {
+  margin-top: 15px;
+}
+
+.tol-section-spacing-vertical {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.tol-small-spacing {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+/* Toggle and flex classes */
+.tol-toggle-text {
+  padding-right: 6px;
+}
+
+.tol-inline-flex-center {
+  display: inline-flex;
+  align-items: center;
+}
+
+.tol-info-icon-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--tol-grey);
+}
+
+/* Removed columns modal and warning classes */
+.removed-columns-warning-message {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.removed-columns-see-more-button {
+  background: none;
+  border: none;
+  color: #0066cc;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 0;
+  text-decoration: underline;
+
+  &:hover {
+    color: #0052a3;
+  }
+}
+
+.removed-columns-modal-content {
+  padding: 16px 0;
+
+  span {
+    display: block;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+}
+
+.removed-columns-info-box {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.removed-columns-buttons {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
