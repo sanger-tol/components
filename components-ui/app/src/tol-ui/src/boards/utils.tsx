@@ -69,13 +69,10 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
     objectType === BOARD_ENTITIES.ENTITIES.ZONE
   ) {
     const definedEntity = entity as Partial<IZone> | Partial<IComponent>;
+    const initialFilter = definedEntity.filter ?? { and_: {} };
     defaults = {
-      filter: definedEntity.filter
-        ? deepCopy(definedEntity.filter)
-        : { and_: {} },
-      defaultFilter: definedEntity.filter
-        ? deepCopy(definedEntity.filter)
-        : { and_: {} },
+      filter: deepCopy(initialFilter),
+      defaultFilter: deepCopy(initialFilter),
       title: definedEntity.title || "",
     };
   }
