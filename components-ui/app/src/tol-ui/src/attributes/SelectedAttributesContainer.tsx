@@ -149,7 +149,7 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
       </div>
       {(attributes.length === 0 && fieldMeta) && (
         <p>
-          <i>{No active columns. Select columns to display...}</i>
+          <i>No active columns. Select columns to display...</i>
         </p>
       )}
     </div>
