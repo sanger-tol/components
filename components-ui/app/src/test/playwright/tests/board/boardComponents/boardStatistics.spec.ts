@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, test } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 import {
   addComponent,
   setBoard,
@@ -30,7 +30,7 @@ test.afterEach(async ({ page }) => {
   await exitEditMode(page);
 });
 
-const filterStatisticsComponent = async (page) => {
+const filterStatisticsComponent = async (page: Page) => {
   // get the count before filtering
   const countBefore = await page.locator(".tol-count").textContent();
 
