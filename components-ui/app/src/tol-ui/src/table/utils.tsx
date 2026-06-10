@@ -714,7 +714,7 @@ export async function handleSavedDiffReset(
       )
     : diffState.hasDiff
       ? (clearTableConfigLocalStorage(
-          `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${diffId}`,
+          `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${componentData.id}`,
         ),
         (isSuccessDiffReset = true))
       : null;

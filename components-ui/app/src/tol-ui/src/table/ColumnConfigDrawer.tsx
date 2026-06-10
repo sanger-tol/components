@@ -20,6 +20,8 @@ import {
   deepCopy,
   PButton,
   Message,
+  HoverOverlay,
+  Icon,
   useBoard,
   PRIVILEGE,
   TABLE_CONFIG_DIFF_AUTH_VS_NO_AUTH_NOTICE_DISMISSED_KEY,
@@ -116,8 +118,9 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
 
   const onSave = () => {
     if (hasPendingChanges) {
+      const nextInactiveAttributes = limitVisibility ? inactiveAttributes : [];
       newFieldMeta!.order.active = attributes;
-      newFieldMeta!.order.inactive = inactiveAttributes;
+      newFieldMeta!.order.inactive = nextInactiveAttributes;
       newFieldMeta!.order.limitVisibility = limitVisibility;
       onConfigSave({
         fieldMeta: newFieldMeta,
@@ -318,9 +321,32 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
             <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
               Limit column visibility?
             </span>
+            <HoverOverlay
+              contents="When enabled, users can only choose columns listed under Active and Inactive. When disabled, users can choose from all available columns."
+              placement="top"
+              delay={200}
+            >
+              <span style={{ display: "inline-flex", alignItems: "center" }}>
+                <Icon icon="circle-info" size="sm" />
+              </span>
+            </HoverOverlay>
           </div>
         </div>
       )}
+      {canManageColumnVisibility && limitVisibility && (
+                <div style={{ marginTop: "8px", marginBottom: "8px" }}>
+                <HoverOverlay
+                    contents="Active Columns are shown by default. Inactive Columns are allowed but hidden by default, and users can add them later from column selection."
+                    placement="top"
+                    delay={200}
+                >
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "6px",  color: "var(--tol-grey)" }}>
+                    <Icon icon="circle-info" size="sm" />
+                    <small>About Active/Inactive columns</small>
+                    </span>
+                </HoverOverlay>
+                </div>
+            )}
       {canManageColumnVisibility && limitVisibility ? columnTabs : (
         <>
           <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
