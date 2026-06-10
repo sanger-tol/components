@@ -192,15 +192,15 @@ export async function patchReorderBoardEntity(
     });
 }
 
-  /**
-   * Updates an existing board entity by upserting a partial set of attributes.
-   *
-   * @param boardDataSource The data source used to perform the upsert request.
-   * @param entityId The identifier of the board, view, zone, or component to update.
-   * @param attributes A partial attributes object to persist on the target entity.
-   * @returns The response returned by the data source upsert operation.
-   */
-export async function postUpdateBoardEntity(
+/**
+ * Updates an existing board entity by upserting a partial set of attributes.
+ *
+ * @param boardDataSource The data source used to perform the upsert request.
+ * @param entityId The identifier of the board, view, zone, or component to update.
+ * @param attributes A partial attributes object to persist on the target entity.
+ * @returns The response returned by the data source upsert operation.
+ */
+export async function upsertBoardEntity(
   boardDataSource: TsDataSource,
   entityId: string,
   attributes: Record<string, any> = {},
@@ -264,19 +264,7 @@ export async function upsertTitle(
   boardDataSource: TsDataSource,
 ) {
   const objectType = deriveBoardObjectType(id);
-  await boardDataSource
-    .upsert({
-      objectType: objectType,
-      payload: [
-        {
-          type: objectType,
-          id: id,
-          attributes: {
-            title: title,
-          },
-        },
-      ],
-    })
+  await upsertBoardEntity(boardDataSource, id, { title: title })
     .catch(() => {
       PopUpMessage({
         type: MESSAGE_TYPE.ERROR,

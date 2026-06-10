@@ -21,6 +21,8 @@ import {
   IZone,
   FILTER_ALREADY_EXISTS,
   NO_FILTERS_APPLIED,
+  IDBBoardEntityFilter,
+  upsertBoardEntity,
 } from ".."
 
 
@@ -122,7 +124,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   );
 
   const onSave = (filter: IFilter, filterPassThrough: boolean) => {
-    let attributes = {
+    let attributes: IDBBoardEntityFilter = {
       filter: filter
     };
     if (boardObjectType === "zone") {
@@ -132,18 +134,11 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       zone.children[id].filter = deepCopy(filter);
       zone.children[id].defaultFilter = deepCopy(filter);
       zone.children[id].filterPassThrough = filterPassThrough;
-      attributes["filter_pass_through"] = filterPassThrough;
+      attributes.filter_pass_through = filterPassThrough;
     }
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
-    //TODO: ADD RESET FUNCTIONALITY
-    // upsertCoreBoardEntity(
-    //   boardObjectType === BOARD_ENTITIES.ZONE ? BOARD_ENTITIES.ZONE : BOARD_ENTITIES.COMPONENT,
-    //   attributes,
-    //   boardDataSource,
-    //   undefined,
-    //   id,
-    // );
+    upsertBoardEntity(boardDataSource, id, attributes);
   };
 
   // Function passed to attribute selector to remove all filters
