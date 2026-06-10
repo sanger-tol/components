@@ -52,7 +52,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
     let attributes = {
       filter: zone.children[id].filter
     };
-    upsertComponent(boardDataSource, id, attributes);
+    //upsertComponent(boardDataSource, id, attributes);
   }, [zone]);
 
   const Contents = () => {
