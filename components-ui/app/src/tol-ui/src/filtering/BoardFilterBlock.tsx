@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   PButton,
   useBoard,
@@ -47,16 +47,13 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
     )
   };
 
-  // useEffect(() => {
-  //   // TODO: ENSURE THIS COMPONENT WORKS! CAN WE REMOVE THIS?
-  //   upsertCoreBoardEntity(
-  //     BOARD_ENTITIES.COMPONENT,
-  //     { filter: zone.children[0][id].filter },
-  //     boardDataSource,
-  //     undefined,
-  //     id,
-  //   );
-  // }, [zone]);
+  useEffect(() => {
+    //TODO: WORK!!!
+    let attributes = {
+      filter: zone.children[id].filter
+    };
+    upsertComponent(boardDataSource, id, attributes);
+  }, [zone]);
 
   const Contents = () => {
     if (!filterBlockConfig.attributes || filterBlockConfig.attributes.length === 0) {

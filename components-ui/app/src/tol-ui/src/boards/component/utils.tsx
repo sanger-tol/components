@@ -12,7 +12,7 @@ import {
   IComponentConfig,
   IFilter,
   IZone,
-  postUpdateBoardEntity,
+  upsertBoardEntity,
   TDataObjectListOrNull,
   TsDataSource,
 } from "../..";
@@ -39,7 +39,7 @@ export async function updateComponentConfigAndUpsert(
 
   if (editMode) {
     component.config = { ...config };
-    return await postUpdateBoardEntity(boardDataSource, componentId, {
+    return await upsertBoardEntity(boardDataSource, componentId, {
       config: config,
     });
   }
