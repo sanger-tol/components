@@ -103,7 +103,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   return (
     <>
       <UtilityBar noLeftSide id={id} {...ubc} />
-      <div className="tol-markdown tol-component-contents" data-testid="board-component-markdown">
+      <div className="tol-markdown tol-component-contents" data-testid="board-component-text">
         {(showMarkdownViewer) ? MarkdownViewer : MarkdownEditor}
       </div>
     </>

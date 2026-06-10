@@ -4,16 +4,16 @@
 
 import { expect, test } from "@playwright/test";
 import {
-    addComponent,
-    setBoard,
-    setAuth,
-    deleteComponent,
-    clickUtilityBarButton,
-    sleep,
-    enterEditMode,
-    exitEditMode,
-    createBoardId,
-    isInHeadlessMode
+  addComponent,
+  setBoard,
+  setAuth,
+  deleteComponent,
+  clickUtilityBarButton,
+  sleep,
+  enterEditMode,
+  exitEditMode,
+  createBoardId,
+  isInHeadlessMode
 } from "../../helpers";
 
 const BOARD_ID = createBoardId();
