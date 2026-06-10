@@ -20,7 +20,7 @@ export const clickUtilityBarButton = async (page: Page, testId: string, testIdIn
     .catch(() => false);
 
   if (isCondensed) {
-    await condensedUtilityBarButton.dispatchEvent('click');
+    await condensedUtilityBarButton.dispatchEvent("click");
   }
 
   // Either way, the target utility bar button is visible and thus available to be clicked
