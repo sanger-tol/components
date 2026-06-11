@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { Dispatch, SetStateAction, useState } from "react";
 
-import { Button, BUTTONS, cellRendererParams, deepCopy, FormMarkdown, IRemoteTarget, TCellRenderer } from "../..";
+import { Button, BUTTONS, cellRendererParams, deepCopy, FormMarkdown } from "../..";
+import type { IRemoteTarget, TCellRenderer } from "../..";
 
 export interface PCellRendererMarkdownParamOptions extends IRemoteTarget {
   paramName: string;

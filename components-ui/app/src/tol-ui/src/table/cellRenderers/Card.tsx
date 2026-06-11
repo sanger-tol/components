@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { COLOURS, Markdown, PCellDisplay, Tag } from "../..";
+import { COLOURS, Markdown, Tag } from "../..";
+import type { PCellDisplay } from "../..";
 
 export interface PCard extends PCellDisplay {
   content: string;

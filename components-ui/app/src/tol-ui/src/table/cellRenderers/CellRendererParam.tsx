@@ -6,15 +6,12 @@ SPDX-License-Identifier: MIT
 
 import { Dispatch, SetStateAction } from "react";
 import { Input } from "rsuite";
+
 import {
   Button,
-  TCellRenderer,
   IconTooltip,
-  IBoardCellRendererParam,
-  IRemoteTarget,
-  IFilter
 } from "../..";
-
+import type { IBoardCellRendererParam, IFilter, IRemoteTarget, TCellRenderer } from "../..";
 
 export interface PCellRendererParam extends IRemoteTarget {
   param: string,

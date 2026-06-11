@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
-import { TLabelAndValueData } from "..";
+
+import type { TLabelAndValueData } from "..";
 
 
 export interface PSingleSelect {

@@ -13,13 +13,10 @@ import {
   deepCopy,
   defineZone,
   generateFilter,
-  IFilter,
-  IRemoteTarget,
   isEmptyObject,
-  IZone,
   RemoteFilters,
-  TCellRenderer
 } from "../..";
+import type { IFilter, IRemoteTarget, IZone, TCellRenderer } from "../..";
 
 export interface PCellRendererConditionParamOptions extends IRemoteTarget {
   paramName: string;

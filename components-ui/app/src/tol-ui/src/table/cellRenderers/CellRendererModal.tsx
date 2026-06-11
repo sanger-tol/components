@@ -16,14 +16,13 @@ import {
   deepCopy,
   FieldMeta,
   IconTooltip,
-  IRemoteTarget,
   isEmptyObject,
   Modal,
   normaliseCaps,
   SingleSelect,
-  TCellRenderer,
-  TCellRendererParamType
 } from "../..";
+import type { IRemoteTarget, TCellRenderer, TCellRendererParamType } from "../..";
+
 import { CellRendererParam } from "./CellRendererParam";
 
 export interface PCellRendererModal extends IRemoteTarget {
