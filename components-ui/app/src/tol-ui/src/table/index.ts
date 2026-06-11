@@ -11,7 +11,6 @@ export * from "./rowExpanders";
 export * from "./BoardTable";
 export * from "./CellTooltip";
 export * from "./ColumnConfigDrawer";
-export * from "./Field";
 export * from "./RowCounter";
 export * from "./Table";
 export * from "./utils";

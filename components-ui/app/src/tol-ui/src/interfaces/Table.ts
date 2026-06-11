@@ -4,7 +4,11 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { FieldMeta } from "..";
+import type { FieldMeta } from "..";
+
+export type ITableRecord = Record<string, any>;
+
+export type ITableData = ITableRecord[];
 
 export interface ITableDrawerSave {
   fieldMeta?: FieldMeta;

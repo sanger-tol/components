@@ -13,6 +13,7 @@ export * from "./Colours";
 export * from "./Drawer";
 export * from "./Download";
 export * from "./EntityMeta";
+export * from "./Field";
 export * from "./FileValidation";
 export * from "./Filter";
 export * from "./Forms";
