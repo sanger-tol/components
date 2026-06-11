@@ -44,8 +44,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setOpen,
   } = props;
 
-  // the fixed filter present on the component
-  const [prevFilters, setFilters] = useState(
+  // The fixed filter present on the component
+  const [prevFilters, setPrevFilters] = useState(
     deepCopy(
       boardObjectType === "zone"
         ? zone.defaultFilter
@@ -72,7 +72,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   );
 
   useEffect(() => {
-    setFilters(
+    setPrevFilters(
       deepCopy(
         boardObjectType === "zone"
           ? zone.defaultFilter
@@ -93,13 +93,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   }, [open]);
 
   useEffect(() => {
-    let newFilter
-    if (boardObjectType !== "zone") {
-      newFilter = generateFilter(filterZone, id);
-    } else {
-      newFilter = generateFilter(filterZone, id);
-    }
-    setFilters(newFilter);
+    const newFilter = generateFilter(filterZone, id);
+    setPrevFilters(newFilter);
     setFilterHasPendingChanges(
       JSON.stringify(newFilter) !== JSON.stringify(prevFilters),
     );
@@ -158,7 +153,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
 
   const removeFilter = (attribute: string) => {
     setAttributes(attributes.filter((str) => str !== attribute));
-    setFilters((prev: IFilter) => {
+    setPrevFilters((prev: IFilter) => {
       const updatedFilter = deepCopy(prev);
       delete updatedFilter.and_?.[attribute];
       return updatedFilter;

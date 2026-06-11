@@ -48,7 +48,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
   };
 
   useEffect(() => {
-    //TODO: WORK!!!
+    // TODO: WORK!!!
     let attributes = {
       filter: zone.children[id].filter
     };
