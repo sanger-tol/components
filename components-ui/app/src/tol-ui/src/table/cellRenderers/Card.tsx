@@ -28,7 +28,7 @@ export function Card(props: PCard) {
   ) : errorBackground ? (
     COLOURS.DANGER
   ) : (
-    COLOURS.BACKGROUND
+    COLOURS.GREY
   );
 
   return (

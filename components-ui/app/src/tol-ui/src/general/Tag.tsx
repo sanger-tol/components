@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode } from "react";
 
-import type { TColours } from "..";
+import { LIGHT_COLOURS, TLightColour } from "..";
+import type { TColour } from "..";
 
 
 export interface PTag {
@@ -17,7 +18,7 @@ export interface PTag {
   /**
    * The tag colour, uses the ToL colour palette.
    */
-  type?: TColours;
+  type?: TColour;
 }
 
 /**
@@ -28,7 +29,7 @@ export function Tag(props: PTag) {
 
   const style = type ? ({
     backgroundColor: `var(--tol-${type})`,
-    color: `var(--tol-${type == "bg" ? "text" : "light"})`
+    color: `var(--tol-${Object.values(LIGHT_COLOURS).includes(type) ? "text" : "light"})`
   }) : undefined;
 
   return (
