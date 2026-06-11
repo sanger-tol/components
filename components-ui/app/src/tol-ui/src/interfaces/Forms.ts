@@ -224,6 +224,14 @@ export interface IFormConfig {
   buttonConfig?: IFormButtons;
 }
 
+export interface IFieldMapping {
+  sourceField: string;
+  targetField: string;
+  condition?: (value: any) => boolean;
+  transform?: (value: any) => any;
+  readOnlyWhenMapped?: boolean;
+}
+
 export interface IRemoteAutoCompleteData {
   [key: string]: object[];
 }

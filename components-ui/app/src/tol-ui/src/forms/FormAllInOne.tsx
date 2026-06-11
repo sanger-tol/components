@@ -19,14 +19,20 @@ import {
   Dropzone,
   FormCheckboxes,
   Button,
-  IFormConfig,
-  PButton,
   setInitialData,
   validateForm,
   UNSUPPORTED_FIELD_TYPE,
   FormMarkdown,
   FormDatetime,
   MultipleFormInput,
+  FormLabel,
+  deepEqual,
+} from "..";
+
+import type {
+  IFormConfig,
+  PButton,
+  PIcon,
   TFormField,
   ITextField,
   ICountryselectField,
@@ -39,9 +45,6 @@ import {
   IMultipleselectField,
   IMarkdownField,
   ICheckboxFormField,
-  PIcon,
-  FormLabel,
-  deepEqual,
 } from "..";
 
 export interface PFormAllInOne {
@@ -218,7 +221,6 @@ export function FormAllInOne(props: PFormAllInOne) {
             generateMessages={dropzoneField.generateMessages}
             setResponse={dropzoneField.setResponse}
             errorText={errorText}
-            // icon={dropzoneField.icon}
           />
         );
       case "autocomplete":
@@ -366,6 +368,7 @@ export function FormAllInOne(props: PFormAllInOne) {
                   outline={button.outline}
                   active={button.active}
                   disabled={button.disabled}
+                  disabledTooltip={button.disabledTooltip}
                   loading={button.loading}
                   onClick={() => {
                     let isValid = true;
@@ -374,7 +377,7 @@ export function FormAllInOne(props: PFormAllInOne) {
                         formRef,
                         toaster,
                         formData,
-                        props.onSubmit
+                        props.onSubmit,
                       );
                       if (onValidate) {
                         onValidate(isValid);
@@ -388,7 +391,7 @@ export function FormAllInOne(props: PFormAllInOne) {
                     }
                   }}
                 />
-              )
+              ),
             )}
           </div>
         )}

@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Redirect, useLocation } from "react-router-dom";
-import { Loader, useUserProfile } from "..";
+import { useEffect } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { Loader, PopUpMessage, useUserProfile } from "..";
 
 export interface PRequireCompletedProfile {
   /**
@@ -19,29 +20,40 @@ export interface PRequireCompletedProfile {
 }
 
 /**
- * Guard that only renders its children when the current user has a completed
- * profile. While the profile is loading a spinner is shown; users without a
- * completed profile are redirected to the profile setup page, with the
- * original location passed in router state so they can be returned there
- * after completing their profile.
+ * Guards protected content until the current user has completed their profile.
  *
- * This is a UX guard only — any API endpoint that requires a completed
- * profile must also enforce that server-side.
+ * Once profile loading has finished, users without the required profile fields
+ * are shown an informational message and redirected to the profile page. The
+ * current pathname is preserved in router state so the profile form can return
+ * the user to their original destination after a successful save.
+ *
+ * While the profile is still loading, or while the redirect is pending,
+ * children are not rendered.
+ *
+ * @param props - The guard configuration and wrapped protected content.
+ * @returns The protected children when the profile is complete; otherwise a
+ * loading indicator while profile state is resolving or redirecting.
  */
 export function RequireCompletedProfile(props: PRequireCompletedProfile) {
   const { redirectTo = "/profile", children } = props;
   const { hasCompletedProfile, isLoading } = useUserProfile();
   const location = useLocation();
+  const history = useHistory();
 
-  if (isLoading) return <Loader />;
+  useEffect(() => {
+    if (!isLoading && !hasCompletedProfile) {
+      PopUpMessage({
+        type: "info",
+        message: "You must have a completed profile to access this page.",
+      });
+      history.replace({
+        pathname: redirectTo,
+        state: { from: location.pathname },
+      });
+    }
+  }, [isLoading, hasCompletedProfile, redirectTo, history, location.pathname]);
 
-  if (!hasCompletedProfile) {
-    return (
-      <Redirect
-        to={{ pathname: redirectTo, state: { from: location.pathname } }}
-      />
-    );
-  }
+  if (isLoading || !hasCompletedProfile) return <Loader />;
 
   return <>{children}</>;
 }

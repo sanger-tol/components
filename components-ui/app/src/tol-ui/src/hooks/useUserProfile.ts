@@ -15,6 +15,8 @@ import {
   PopUpMessage,
 } from "..";
 
+// TODO: Generalise for all form components
+
 /**
  * Provides the current user's profile, backed by the shared React Query cache.
  *
@@ -71,7 +73,7 @@ export const useUserProfile = () => {
 
   return {
     profile,
-    hasCompletedProfile: !!profile?.email,
+    hasCompletedProfile: !!profile?.email && !!profile?.name,
     isLoading,
     isError,
     error,

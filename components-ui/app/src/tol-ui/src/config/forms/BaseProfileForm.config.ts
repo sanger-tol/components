@@ -4,7 +4,19 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import type { IFormConfig } from "../..";
+import type { IFieldMapping, IFormConfig } from "../..";
+
+const isEmail = (value: string): boolean =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+export const PROFILE_FORM_FIELD_MAPPINGS: IFieldMapping[] = [
+  {
+    sourceField: "oidc_id",
+    targetField: "email",
+    condition: isEmail,
+    readOnlyWhenMapped: true,
+  },
+];
 
 export const BASE_PROFILE_FORM_CONFIG = (
   hasUnsavedChanges: boolean,
@@ -35,6 +47,9 @@ export const BASE_PROFILE_FORM_CONFIG = (
         text: "Save Profile",
         type: "success",
         disabled: !hasUnsavedChanges,
+        ...(!hasUnsavedChanges && {
+          disabledTooltip: "No unsaved changes detected.",
+        }),
       },
     ],
     buttonStyle: {
