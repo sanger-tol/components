@@ -66,7 +66,8 @@ export function deriveBoardObjectType(id: string): TBoardEntityType {
  * Returns the next child entity type in the board hierarchy for a given parent type.
  *
  * @param parentObjectType The parent entity type.
- * @returns The child entity type if one exists; otherwise `null`.
+ * @returns The next entity type in the hierarchy.
+ * @throws If the parent type is unknown or has no child type.
  */
 export function deriveBoardChildObjectType(parentObjectType: string): TBoardEntityType {
   const parentIndex = BOARD_ENTITY_HIERARCHY.indexOf(parentObjectType);
@@ -366,7 +367,6 @@ export async function deleteBoardEntity(
  * Since the entity_diff endpoint does not support DELETE, this upserts with config: null,
  * which causes getComponentData to skip the proxy and restore the original config.
  *
- * @param componentId The identifier of the component whose diff should be deleted.
  * @param boardDataSource The data source used to query the board diff.
  * @param diffId The identifier of the board diff to be deleted.
  * @param userId The identifier of the user who owns the diff. If not provided, the function returns early.
