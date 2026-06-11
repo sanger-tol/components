@@ -5,17 +5,29 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  TsDataSource,
-  BOARD_ENTITIES,
-  deepCopy,
   API_METHODS,
-  PopUpMessage,
+  BOARD_ENTITIES,
+  BOARD_ENTITY_HIERARCHY,
   BOARD_MESSAGE_TEXT,
   BOARDS_API,
-  MESSAGE_TYPE,
+  deepCopy,
   HTTP_STATUS_CODES,
+  isEmptyObject,
+  MESSAGE_TYPE,
+  PopUpMessage,
+  TsDataSource,
 } from "..";
-import type { IZone, IBoard, IView, IComponent, TBoardEntityType } from "..";
+import type {
+  IBoard,
+  IComponent,
+  IZone,
+  TBoardChildren,
+  TBoardEntity,
+  TBoardEntityType,
+  TChildBoardEntity,
+  TParentBoardEntity,
+} from "..";
+
 
 /**
  * Returns the prefix for a given board entity type.
@@ -51,6 +63,44 @@ export function deriveBoardObjectType(id: string): TBoardEntityType {
 }
 
 /**
+ * Returns the next child entity type in the board hierarchy for a given parent type.
+ *
+ * @param parentObjectType The parent entity type.
+ * @returns The child entity type if one exists; otherwise `null`.
+ */
+export function deriveBoardChildObjectType(parentObjectType: string): TBoardEntityType {
+  const parentIndex = BOARD_ENTITY_HIERARCHY.indexOf(parentObjectType);
+  if (parentIndex === -1 || parentIndex === BOARD_ENTITY_HIERARCHY.length - 1) {
+    throw new Error(`Unknown parent object type: ${parentObjectType}`);
+  }
+  return BOARD_ENTITY_HIERARCHY[parentIndex + 1] as TBoardEntityType;
+}
+
+/**
+ * Recursively defines all children of a parent board entity.
+ *
+ * @param entity The parent board entity whose children should be defined.
+ * @param objectType The type of the parent board entity.
+ * @returns A record containing all defined child entities.
+ */
+export function defineChildrenEntities(
+  entity: Partial<TParentBoardEntity>,
+  objectType: string
+): Record<string, TChildBoardEntity> {
+  return Object.entries(entity.children!).reduce(
+    (acc, [childId, childEntity]) => {
+      const childObjectType = deriveBoardChildObjectType(objectType);
+      acc[childId] = defineBoardEntity(
+        childEntity,
+        childObjectType!,
+      ) as TChildBoardEntity;
+      return acc;
+    },
+    {} as TBoardChildren<TChildBoardEntity>,
+  )
+}
+
+/**
  * Defines a board entity (view, zone, or component) by adding it to its parent entity and setting default
  * values for certain properties based on the entity type.
  *
@@ -58,19 +108,18 @@ export function deriveBoardObjectType(id: string): TBoardEntityType {
  * @param objectType The type of the board entity (e.g. 'view', 'zone', 'component').
  * @returns The defined board entity with default values applied.
  */
-export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
-  entity: Partial<TEntity>,
+export function defineBoardEntity(
+  entity: Partial<TBoardEntity>,
   objectType: string,
-): Partial<TEntity> {
-  // Add default values for filter and title if the entity is a zone or component
-  let defaults = {};
+): Partial<TBoardEntity> {
   if (
     objectType === BOARD_ENTITIES.ENTITIES.COMPONENT ||
     objectType === BOARD_ENTITIES.ENTITIES.ZONE
   ) {
     const definedEntity = entity as Partial<IZone> | Partial<IComponent>;
     const initialFilter = definedEntity.filter ?? { and_: {} };
-    defaults = {
+    entity = {
+      ...entity,
       filter: deepCopy(initialFilter),
       defaultFilter: deepCopy(initialFilter),
       title: definedEntity.title || "",
@@ -80,18 +129,20 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
   // If the objectType is not component, we need to set up an empty object for the child board level
   // and an empty order array in the parent board entity
   if (objectType !== BOARD_ENTITIES.ENTITIES.COMPONENT) {
-    defaults = {
-      children: {},
+    const entityWithChildren = entity as Partial<TParentBoardEntity>;
+    entity = {
+      // Default order
       order: [],
-      ...defaults,
+      // Spread the entity, allowing order to be overridden if it was already set on the entity
+      ...entity,
+      // Recusively define children with the same function, ensuring all nested entities are fully defined
+      children:
+        isEmptyObject(entityWithChildren.children) ? {} : defineChildrenEntities(entityWithChildren, objectType),
     };
   }
 
   // Return the defined board entity with defaults and necessary properties for it to be added to the parent entity
-  return {
-    ...defaults,
-    ...entity,
-  };
+  return entity;
 }
 
 /**
@@ -102,14 +153,15 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
  * @param parentEntity The parent entity (board, view, or zone) to which the new entity will be added.
  * @returns The updated parent entity with the new board entity added.
  */
-export function addBoardEntityInParentState<
-  TEntity extends IView | IZone | IComponent,
-  TParent extends IBoard | IView | IZone,
->(objectType: string, entity: Partial<TEntity>, parentEntity: TParent) {
+export function defineBoardEntityInParent(
+  objectType: string,
+  entity: Partial<TChildBoardEntity>,
+  parentEntity: TParentBoardEntity
+): TParentBoardEntity {
   const definedEntity = defineBoardEntity(entity, objectType);
   parentEntity.children[entity.id!] = {
     ...definedEntity,
-  } as TEntity;
+  } as TChildBoardEntity;
   parentEntity.order.push(entity.id!);
   return parentEntity;
 }
@@ -120,11 +172,9 @@ export function addBoardEntityInParentState<
  * @param id The identifier of the component, view, or zone to be removed.
  * @param parentEntity The current state of the parent entity from which the child entity will be removed.
  */
-export function deleteBoardEntityInParentState<
-  TParent extends IBoard | IView | IZone,
->(id: string, parentEntity: TParent) {
+export function removeBoardEntityInParent(id: string, parentEntity: TParentBoardEntity) {
   delete parentEntity.children[id];
-  parentEntity.order = parentEntity?.order?.filter(
+  parentEntity.order = parentEntity.order.filter(
     (currentId) => currentId !== id,
   );
 }
@@ -147,7 +197,7 @@ export async function fetchBoardEntityAndChildren(
       resource: `${BOARDS_API.OPERATIONS.GET}/${parentId}`,
     })
     .then((res: { data: IBoard }) => {
-      return res.data;
+      return defineBoardEntity(res.data, entityType) as IBoard;
     })
     .catch(() => {
       PopUpMessage({

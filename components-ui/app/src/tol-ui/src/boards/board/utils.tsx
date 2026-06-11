@@ -14,7 +14,7 @@ import {
   BOARD_MESSAGE_TEXT,
   upsertTitle,
   postAddBoardEntity,
-  addBoardEntityInParentState,
+  defineBoardEntityInParent,
 } from "../..";
 import type {
   TsDataSource,
@@ -223,7 +223,7 @@ export async function onAddView(boardDataSource: TsDataSource, board: IBoard) {
   return postAddBoardEntity(boardDataSource, board.id!).then((res) => {
     const view = res.data;
     updateViewInUrl(view.id);
-    return addBoardEntityInParentState<IView, IBoard>(
+    return defineBoardEntityInParent<IView, IBoard>(
       BOARD_ENTITIES.ENTITIES.VIEW,
       view,
       board,

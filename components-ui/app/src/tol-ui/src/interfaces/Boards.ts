@@ -7,15 +7,15 @@ SPDX-License-Identifier: MIT
 import { TsDataSource, BOARD_ENTITIES } from "..";
 import type { FieldMeta, PUtilityBar, IFilter, TComponentType } from "..";
 
-export interface TBoardEntity {
-  id?: string;
+export interface TBoardEntityCore {
+  id: string;
   type?: TBoardEntityType;
   title?: string;
 }
 
 export type TBoardChildren<TChild> = Record<string, TChild>;
 
-export interface IBoardParentEntity<TChild> extends TBoardEntity {
+export interface IBoardParentEntity<TChild> extends TBoardEntityCore {
   children: TBoardChildren<TChild>;
   order: string[];
 }
@@ -29,7 +29,7 @@ export interface IComponentConfig {
   fieldMeta: Partial<FieldMeta>;
 }
 
-export interface IComponent extends TBoardEntity, IBoardFilter {
+export interface IComponent extends TBoardEntityCore, IBoardFilter {
   subFilter?: IFilter;
   filterPassThrough?: boolean;
   component_type?: TComponentType;
@@ -71,19 +71,23 @@ export interface IBoard extends IBoardParentEntity<IView> {
   write_privilege?: boolean;
 }
 
+/**
+ * The hierarchy of board entities, used to derive object types and for type checking.
+ */
+export type TBoardEntity = IBoard | IView | IZone | IComponent;
+
+/**
+ * Possible parent entity types
+ */
+export type TParentBoardEntity = IBoard | IView | IZone;
+
+/**
+ * Possible child entity types
+ */
+export type TChildBoardEntity = IView | IZone | IComponent;
+
 export type TBoardEntityType =
   (typeof BOARD_ENTITIES.ENTITIES)[keyof typeof BOARD_ENTITIES.ENTITIES];
-export type TBoardParentEntityType = Exclude<
-  TBoardEntityType,
-  typeof BOARD_ENTITIES.ENTITIES.COMPONENT
->;
-export type TBoardChildEntityType = Exclude<
-  TBoardEntityType,
-  typeof BOARD_ENTITIES.ENTITIES.BOARD
->;
-export type TBoardJoiningEntityType =
-  keyof typeof BOARD_ENTITIES.JOINING_ENTITIES;
-export type TBoardAllEntityTypes = TBoardEntityType | TBoardJoiningEntityType;
 
 /**
  * Example of the board interface

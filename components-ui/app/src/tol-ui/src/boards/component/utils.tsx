@@ -91,7 +91,7 @@ export function defineZoneWithComponentList(
   components: IComponent[],
   filter?: IFilter,
 ) {
-  return defineBoardEntity<IZone>(
+  return defineBoardEntity(
     {
       object_type: objectType,
       filter: filter,
