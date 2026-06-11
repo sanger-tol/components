@@ -32,7 +32,7 @@ export function Card(props: PCard) {
   );
 
   return (
-    <Tag type={tagType}>
+    <Tag type={tagType} className="tol-table-card-cell">
       <Markdown
         contents={content}
       />

@@ -19,21 +19,25 @@ export interface PTag {
    * The tag colour, uses the ToL colour palette.
    */
   type?: TColour;
+  /**
+   * CSS class name to allow for additional styles
+   */
+  className?: string;
 }
 
 /**
  * A simple tag component, can be overidden with a different colour type
  */
 export function Tag(props: PTag) {
-  const { children, type } = props;
+  const { children, type, className } = props;
 
   const style = type ? ({
     backgroundColor: `var(--tol-${type})`,
-    color: `var(--tol-${Object.values(LIGHT_COLOURS).includes(type) ? "text" : "light"})`
+    color: `var(--tol-${Object.values(LIGHT_COLOURS).includes(type as TLightColour) ? "text" : "light"})`
   }) : undefined;
 
   return (
-    <div className="tol-tag" style={style}>
+    <div className={`tol-tag ${className}`} style={style}>
       {children}
     </div>
   );
