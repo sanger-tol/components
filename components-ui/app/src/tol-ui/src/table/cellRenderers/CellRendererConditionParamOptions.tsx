@@ -85,7 +85,6 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       if (!renderer || !paramName) return false;
       renderer!.props![paramName!] = newFilter ?? {};
       setRenderer({ ...renderer });
-      // return JSON.stringify(previousRenderer?.props?.[selectedConditionParam]) !== JSON.stringify(renderer.props?.[selectedConditionParam])
       return JSON.stringify(previousFilterConditions) !== JSON.stringify(newFilter);
     });
   }, [filterZone]);
