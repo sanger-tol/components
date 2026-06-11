@@ -47,7 +47,7 @@ export interface PCellRendererModal extends IRemoteTarget {
    * State setter for `fieldMeta`. Typically, changes are applied by writing to `fieldMeta` directly,
    * then this is called to 'formally apply' the changes (`setFieldMeta({ ...fieldMeta })`)
    */
-  setFieldMeta: (fieldMeta: FieldMeta) => void,
+  setFieldMeta: Dispatch<SetStateAction<FieldMeta>>,
 }
 
 /**
