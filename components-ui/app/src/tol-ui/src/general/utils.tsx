@@ -442,3 +442,29 @@ function normaliseDecimalNumber(value: number, iteration: number = 0) {
 export const isValidDate = (date: string) => {
   return !isNaN(Number(new Date(date)));
 };
+
+/**
+ * Performs a deep equality check between two values.
+ *
+ * Recursively compares objects and arrays by value rather than by reference.
+ * Handles `null`, primitives, arrays, and plain objects.
+ *
+ * @param a - The first value to compare.
+ * @param b - The second value to compare.
+ * @returns `true` if the two values are deeply equal, `false` otherwise.
+ */
+export function deepEqual(a: any, b: any): boolean {
+  if (a === b) return true;
+  if (a == null || b == null) return a === b;
+  if (typeof a !== "object" || typeof b !== "object") return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  if (Array.isArray(a)) {
+    if (a.length !== b.length) return false;
+    return a.every((item, i) => deepEqual(item, b[i]));
+  }
+  const keysA = Object.keys(a).sort();
+  const keysB = Object.keys(b).sort();
+  if (keysA.length !== keysB.length) return false;
+  if (keysA.some((key, i) => key !== keysB[i])) return false;
+  return keysA.every((key) => deepEqual(a[key], b[key]));
+}

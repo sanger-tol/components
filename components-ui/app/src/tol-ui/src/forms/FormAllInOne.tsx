@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Schema } from "rsuite";
 import {
   RSForm,
@@ -41,6 +41,7 @@ import {
   ICheckboxFormField,
   PIcon,
   FormLabel,
+  deepEqual,
 } from "..";
 
 export interface PFormAllInOne {
@@ -61,6 +62,9 @@ export function FormAllInOne(props: PFormAllInOne) {
   const [modifiedFields, setModifiedFields] = useState<object>({});
   const [formId, _] = useState<any>(() => crypto.randomUUID());
   const hasUnsavedChanges = useRef(false);
+  const initialSnapshotRef = useRef<object>({});
+  const onUnsavedChangesRef = useRef(props.onUnsavedChanges);
+  onUnsavedChangesRef.current = props.onUnsavedChanges;
 
   const formRef = useRef<any>(null);
   const toaster = Toaster();
@@ -69,6 +73,7 @@ export function FormAllInOne(props: PFormAllInOne) {
   useEffect(() => {
     if (initialData) {
       setInitialData(formConfig, setFormData, initialData);
+      initialSnapshotRef.current = initialData;
     }
   }, []);
 
@@ -87,16 +92,23 @@ export function FormAllInOne(props: PFormAllInOne) {
   }, []);
 
   useEffect(() => {
-    const hasChanges = modifiedFields && Object.keys(modifiedFields).length > 0;
+    const hasChanges = Object.keys(modifiedFields).length > 0;
     hasUnsavedChanges.current = hasChanges;
-    if (props.onUnsavedChanges) {
-      props.onUnsavedChanges(hasChanges);
+    if (onUnsavedChangesRef.current) {
+      onUnsavedChangesRef.current(hasChanges);
     }
-  }, [modifiedFields, props.onUnsavedChanges]);
+  }, [modifiedFields]);
 
   const handleInputChange = (name: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
-    setModifiedFields((prev: any) => ({ ...prev, [name]: value }));
+    setModifiedFields((prev: any) => {
+      const initialValue = (initialSnapshotRef.current as any)[name];
+      if (deepEqual(value, initialValue ?? null)) {
+        const { [name]: _, ...rest } = prev as any;
+        return rest;
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   const renderField = (field: TFormField) => {
@@ -318,9 +330,10 @@ export function FormAllInOne(props: PFormAllInOne) {
         ref={formRef}
         id={`form-${formId}`}
         onCheck={setFormErrors}
-        onSubmit={(e: any) => {
-          e.preventDefault();
+        onSubmit={(_formValue: any, event?: React.FormEvent) => {
+          event?.preventDefault();
           validateForm(formRef, toaster, formData, props.onSubmit);
+          setModifiedFields({});
         }}
         model={model || defaultModel}
         formValue={formData}
@@ -355,12 +368,21 @@ export function FormAllInOne(props: PFormAllInOne) {
                   disabled={button.disabled}
                   loading={button.loading}
                   onClick={() => {
-                    if (modifiedFields && onValidate) {
-                      onValidate(
-                        validateForm(formRef, toaster, formData, props.onSubmit)
+                    let isValid = true;
+                    if (onValidate || props.onSubmit) {
+                      isValid = validateForm(
+                        formRef,
+                        toaster,
+                        formData,
+                        props.onSubmit
                       );
+                      if (onValidate) {
+                        onValidate(isValid);
+                      }
                     }
-                    setModifiedFields({});
+                    if (isValid) {
+                      setModifiedFields({});
+                    }
                     if (button.onClick) {
                       button.onClick(formData);
                     }

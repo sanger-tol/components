@@ -7,11 +7,12 @@ SPDX-License-Identifier: MIT
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../contexts";
 import {
-  fetchUserProfile,
-  upsertUserProfileData,
+  fetchFormData,
+  upsertFormData,
   LOCAL_DS,
   useQueryData,
   type TUserProfileFormDataOrNull,
+  PopUpMessage,
 } from "..";
 
 /**
@@ -25,22 +26,41 @@ export const useUserProfile = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQueryData<TUserProfileFormDataOrNull>(
-    ["userProfile", user?.id!],
-    () => fetchUserProfile(LOCAL_DS, user?.id!),
-    {
-      enabled: !!user?.id,
-      staleTime: Infinity,
-      gcTime: Infinity,
-      refetchOnMount: false,
-    },
-  );
+  const { data, isLoading, isError, error } =
+    useQueryData<TUserProfileFormDataOrNull>(
+      ["userProfile", user?.id!],
+      () =>
+        fetchFormData<TUserProfileFormDataOrNull>(LOCAL_DS, "user", {
+          id: { eq: { value: user?.id } },
+        }).catch((err) => {
+          console.error("fetchFormData failed:", err);
+          throw err;
+        }),
+      {
+        enabled: !!user?.id,
+        staleTime: Infinity,
+        gcTime: Infinity,
+        refetchOnMount: false,
+      },
+    );
 
   const { mutate: updateUserProfile } = useMutation({
     mutationFn: (profileData: TUserProfileFormDataOrNull) =>
-      upsertUserProfileData(LOCAL_DS, user?.id, profileData),
-    onSuccess: (saved) =>
-      queryClient.setQueryData(["userProfile", user?.id], saved),
+      upsertFormData<TUserProfileFormDataOrNull>(
+        LOCAL_DS,
+        "user",
+        profileData,
+        user?.id,
+      ),
+    onSuccess: (saved) => {
+      (queryClient.setQueryData(["userProfile", user?.id], saved),
+        PopUpMessage({
+          type: "success",
+          message: "Profile updated successfully.",
+        }));
+    },
+    onError: () =>
+      PopUpMessage({ type: "error", message: "Failed to update profile." }),
   });
 
   // useQueryData defaults `data` to [] before the fetch resolves,
@@ -53,6 +73,8 @@ export const useUserProfile = () => {
     profile,
     hasCompletedProfile: !!profile?.email,
     isLoading,
+    isError,
+    error,
     updateUserProfile,
   };
 };

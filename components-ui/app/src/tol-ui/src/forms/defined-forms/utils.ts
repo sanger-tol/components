@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import type {
+  IAndAttributes,
   IFormConfig,
   TDataObjectListOrNull,
   TDataObjectOrNull,
@@ -73,56 +74,72 @@ export function createMergedConfig(
   };
 }
 
-export function normaliseProfileData(
-  profileData: TDataObjectOrNull,
-): TUserProfileFormDataOrNull {
-  if (!profileData) return null;
+export async function normaliseFormData(
+  dataSource: TsDataSource,
+  formData: TDataObjectOrNull,
+): Promise<TUserProfileFormDataOrNull> {
+  if (!formData) return null;
 
-  const { objectType, id, relationships, fetchRelationships, ...attributes } =
-    profileData;
+  const attributes: any = {};
+  await dataSource.getEntityMeta().then((em) => {
+    Object.keys(em.flatAttributes["user"]).map((attribute: any) => {
+      attributes[attribute] = formData[attribute] ?? null;
+    });
+  });
 
   return attributes;
 }
 
-export async function fetchUserProfile(
+export async function fetchFormData<T>(
   dataSource: TsDataSource,
-  userId?: string,
-): Promise<TUserProfileFormDataOrNull> {
-  if (!userId) return Promise.reject();
+  objectType: string,
+  andFilter: IAndAttributes,
+  fetchFn?: (dataSource: TsDataSource) => Promise<TDataObjectListOrNull>,
+): Promise<T> {
+  if (!andFilter) return Promise.reject("Fetching form data requires a filter");
 
-  return await dataSource
-    .getListPage({
-      objectType: "user",
-      filter: {
-        and_: {
-          id: { eq: { value: userId } },
-        },
-      },
-    })
-    .then((data: TDataObjectListOrNull) => {
-      return normaliseProfileData(data?.[0] ?? null);
-    });
+  const fetch = fetchFn
+    ? () => fetchFn(dataSource)
+    : () =>
+        dataSource.getListPage({
+          objectType,
+          filter: {
+            and_: {
+              ...andFilter,
+            },
+          },
+        });
+
+  return (await fetch().then(async (data: TDataObjectListOrNull) => {
+    return (await normaliseFormData(dataSource, data?.[0] ?? null)) as T;
+  })) as Promise<T>;
 }
 
-export async function upsertUserProfileData(
+export async function upsertFormData<T>(
   dataSource: TsDataSource,
-  userId: string | undefined,
-  data: TUserProfileFormDataOrNull,
-): Promise<TUserProfileFormDataOrNull> {
-  if (!userId || !data) return Promise.reject();
+  objectType: string,
+  data: T,
+  id?: string | undefined,
+  fetchFn?: (dataSource: TsDataSource) => Promise<TDataObjectListOrNull>,
+): Promise<T> {
+  if (!data)
+    return Promise.reject(new Error("upsertFormData called without data"));
 
-  return await dataSource
-    .upsert({
-      payload: [
-        {
-          type: "user",
-          id: userId,
-          attributes: data,
-        },
-      ],
-      objectType: "user",
-    })
-    .then((saved: TDataObjectListOrNull) => {
-      return normaliseProfileData(saved?.[0] ?? null);
-    });
+  const fetch = fetchFn
+    ? () => fetchFn(dataSource)
+    : () =>
+        dataSource.upsert({
+          payload: [
+            {
+              ...(id && { id }),
+              type: objectType,
+              attributes: data,
+            },
+          ],
+          objectType: objectType,
+        });
+
+  return (await fetch().then(async (data: TDataObjectListOrNull) => {
+    return (await normaliseFormData(dataSource, data?.[0] ?? null)) as T;
+  })) as Promise<T>;
 }

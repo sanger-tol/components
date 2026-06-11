@@ -8,7 +8,10 @@ import { useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import {
   BASE_PROFILE_FORM_CONFIG,
+  BASE_PROFILE_FORM_MODEL,
   FormAllInOne,
+  PopUpMessage,
+  TolLoader,
   Widgets,
   createMergedConfig,
   useUserProfile,
@@ -26,7 +29,7 @@ export function UserProfile(props: IUserProfile) {
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
 
-  const { profile, updateUserProfile } = useUserProfile();
+  const { profile, updateUserProfile, isLoading } = useUserProfile();
   const history = useHistory();
   const location = useLocation<{ from?: string }>();
 
@@ -42,6 +45,19 @@ export function UserProfile(props: IUserProfile) {
   const handleSubmit = (formData: object, isValid: boolean) => {
     if (!isValid) return;
 
+    
+    const { id, oidc_id, ...profileWithoutIds } = profile ?? {};
+    console.log(JSON.stringify(formData), JSON.stringify(profileWithoutIds));
+
+    if (JSON.stringify(formData) === JSON.stringify(profileWithoutIds)) {
+      PopUpMessage({
+        type: "info",
+        message: "Did not Save. No changes were made.",
+      });
+      setHasUnsavedChanges(false);
+      return;
+    }
+
     updateUserProfile(formData as IUserProfileFormData);
 
     // Return users sent here by RequireCompletedProfile to where they came from
@@ -55,6 +71,7 @@ export function UserProfile(props: IUserProfile) {
       <p>You must create a profile before you can access all features.</p>
       <FormAllInOne
         formConfig={mergedConfig}
+        model={BASE_PROFILE_FORM_MODEL}
         initialData={profile ?? undefined}
         fluid
         onUnsavedChanges={(unsavedChanges: boolean) =>
@@ -67,7 +84,11 @@ export function UserProfile(props: IUserProfile) {
 
   const components = [
     {
-      component: ProfileForm,
+      component: isLoading ? (
+        <TolLoader content="Loading profile..." vertical size="md" />
+      ) : (
+        ProfileForm
+      ),
       type: "full",
     },
   ];

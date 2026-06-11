@@ -5,3 +5,4 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./BaseProfileForm.config";
+export * from "./BaseProfileFormModel.config";
