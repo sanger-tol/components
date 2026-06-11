@@ -20,13 +20,13 @@ export type TCellRendererType =
   "relationship" |
   string;
 
-interface ElementProps {
+interface IElementProps {
   [prop: string]: string | IFilter;
 }
 
 export interface ICellRenderer {
   type: TCellRendererType;
-  props?: ElementProps;
+  props?: IElementProps;
   element?: any; // only added automatically
 }
 

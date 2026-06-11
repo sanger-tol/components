@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import type { TCellRenderer } from "./Cells";
 
-export interface Field {
+export interface IField {
   cellRenderer?: TCellRenderer;
   filter?: string | null;
   fixed?: boolean;
@@ -21,16 +21,16 @@ export interface Field {
   custom?: boolean;
 }
 
-export interface FieldMetaData {
-  [key: string]: Field;
+export interface IFieldMetaData {
+  [key: string]: IField;
 }
 
-export interface FieldMetaOrder {
+export interface IFieldMetaOrder {
   active: string[];
   inactive?: string[];
 }
-export interface FieldMeta {
-  data?: FieldMetaData; // original fields with specified options
-  dataWithDefaults?: FieldMetaData; // fields with defaults added
-  order: FieldMetaOrder;
+export interface IFieldMeta {
+  data?: IFieldMetaData; // original fields with specified options
+  dataWithDefaults?: IFieldMetaData; // fields with defaults added
+  order: IFieldMetaOrder;
 }

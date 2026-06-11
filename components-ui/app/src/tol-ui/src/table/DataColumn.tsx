@@ -13,7 +13,7 @@ import {
   FieldDropdown,
   AutoHeightCell,
   PTable,
-  Field,
+  IField,
   DEFAULT_COLUMN_WIDTH,
   MIN_COLUMN_WIDTH,
   MAX_COLUMN_WIDTH,
@@ -27,7 +27,7 @@ const lastWidths = new Map<string, number>();
 
 export interface PDataColumn extends PTable {
   fieldKey: string;
-  field: Field;
+  field: IField;
   sortable: boolean;
   filterable: boolean;
   resizeable?: boolean;

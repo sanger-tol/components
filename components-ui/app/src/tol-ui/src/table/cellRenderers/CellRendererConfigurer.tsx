@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   CellRendererModal,
-  FieldMeta,
+  IFieldMeta,
   Icon,
   IRemoteTarget,
 } from "../..";
@@ -15,8 +15,8 @@ import {
 
 export interface PCellRendererConfigurer extends IRemoteTarget {
   attributeId: string,
-  fieldMeta: FieldMeta
-  setFieldMeta: (fieldMeta: FieldMeta) => void,
+  fieldMeta: IFieldMeta
+  setFieldMeta: (fieldMeta: IFieldMeta) => void,
 }
 
 export function CellRendererConfigurer(props: PCellRendererConfigurer) {

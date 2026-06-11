@@ -14,7 +14,7 @@ import {
   CellRendererMarkdownParamOptions,
   cellRendererParams,
   deepCopy,
-  FieldMeta,
+  IFieldMeta,
   IconTooltip,
   isEmptyObject,
   Modal,
@@ -42,12 +42,12 @@ export interface PCellRendererModal extends IRemoteTarget {
    * The metadata for the field being configured: where the cell renderer options are stored.
    * It is often written to be reference rather than the state setter.
    * */
-  fieldMeta: FieldMeta,
+  fieldMeta: IFieldMeta,
   /**
    * State setter for `fieldMeta`. Typically, changes are applied by writing to `fieldMeta` directly,
    * then this is called to 'formally apply' the changes (`setFieldMeta({ ...fieldMeta })`)
    */
-  setFieldMeta: Dispatch<SetStateAction<FieldMeta>>,
+  setFieldMeta: Dispatch<SetStateAction<IFieldMeta>>,
 }
 
 /**
