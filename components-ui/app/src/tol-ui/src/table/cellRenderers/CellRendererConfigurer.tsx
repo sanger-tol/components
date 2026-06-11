@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   CellRendererModal,
   IFieldMeta,
@@ -12,13 +12,26 @@ import {
   IRemoteTarget,
 } from "../..";
 
-
 export interface PCellRendererConfigurer extends IRemoteTarget {
+  /**
+   * The table column being configured
+   */
   attributeId: string,
+  /**
+   * The metadata for the field being configured: where the cell renderer options are stored.
+   * It is often written to be reference rather than the state setter.
+   * */
   fieldMeta: IFieldMeta
-  setFieldMeta: (fieldMeta: IFieldMeta) => void,
+  /**
+   * State setter for `fieldMeta`. Typically, changes are applied by writing to `fieldMeta` directly,
+   * then this is called to 'formally apply' the changes (`setFieldMeta({ ...fieldMeta })`)
+   */
+  setFieldMeta: Dispatch<SetStateAction<IFieldMeta>>,
 }
 
+/**
+ * The palette icon in the column config drawer that open the cell renderer modal
+ */
 export function CellRendererConfigurer(props: PCellRendererConfigurer) {
   const { attributeId, fieldMeta } = props;
   const [modelOpen, setModalOpen] = useState(false);

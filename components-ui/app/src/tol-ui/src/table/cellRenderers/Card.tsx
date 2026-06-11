@@ -22,7 +22,7 @@ export interface PCard extends PCellDisplay {
    */
   warningBackground: boolean;
   /**
-   * Condition Parameter: WHether the error background colour should be used
+   * Condition Parameter: Whether the error background colour should be used
    */
   errorBackground: boolean;
 }
