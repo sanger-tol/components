@@ -26,14 +26,34 @@ import type { IRemoteTarget, TCellRenderer, TCellRendererParamType } from "../..
 import { CellRendererParam } from "./CellRendererParam";
 
 export interface PCellRendererModal extends IRemoteTarget {
+  /**
+   * Controls whether the modal is open or closed
+   */
   open: boolean,
+  /**
+   * The state setter for `open` so the modal can trigger a close
+   */
   setOpen: Dispatch<SetStateAction<boolean>>,
+  /**
+   * The table column being configured
+   */
   attributeId: string,
-  /** Accessed (and sometimes written to) by reference. Feeds back to the Zone */
+  /**
+   * The metadata for the field being configured: where the cell renderer options are stored.
+   * It is often written to be reference rather than the state setter.
+   * */
   fieldMeta: FieldMeta,
+  /**
+   * State setter for `fieldMeta`. Typically, changes are applied by writing to `fieldMeta` directly,
+   * then this is called to 'formally apply' the changes (`setFieldMeta({ ...fieldMeta })`)
+   */
   setFieldMeta: (fieldMeta: FieldMeta) => void,
 }
 
+/**
+ * The modal used to configure the cell renderer for a column in a table.
+ * Opened by the palette icon (`CellRendererConfigurer`) in the column config drawer.
+ */
 export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, objectType, dataSource, attributeId, fieldMeta, setFieldMeta } = props;
 
