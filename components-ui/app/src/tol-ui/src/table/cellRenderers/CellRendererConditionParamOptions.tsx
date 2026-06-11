@@ -19,15 +19,42 @@ import {
 import type { IFilter, IRemoteTarget, IZone, TCellRenderer } from "../..";
 
 export interface PCellRendererConditionParamOptions extends IRemoteTarget {
+  /**
+   * The name of the condition cell renderer parameter being edited
+   */
   paramName: string;
+  /**
+   * A reference to the cell renderer being configured
+   */
   renderer: TCellRenderer;
+  /**
+   * The state setter for `renderer`.
+   * Like `fieldMeta` in `CellRendererModal`, this is written to by reference,
+   * then 'formally updated' with `setRenderer({ ...renderer })`. 
+   */
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
+  /**
+   * The previous state of `renderer`, used to detect whether any changes have been made
+   */
   previousRenderer: TCellRenderer;
+  /**
+   * The state of the same name from the parent `CellRendererModal` component. Needed to disable
+   * the confirmation button
+   */
   hasPendingChanges: boolean;
+  /**
+   * State setter for `hasPendingChanges`. Updated using `previousRenderer` and `renderer`
+   */
   setHasPendingChanges: Dispatch<SetStateAction<boolean>>;
+  /**
+   * Switches the active page in `CellRendererModal` back to the first one (this is the second)
+   */
   goBack: () => void;
 }
 
+/**
+ * The second page of `CellRendererModal` when a condition parameter is being edited
+ */
 export function CellRendererConditionParamOptions(props: PCellRendererConditionParamOptions) {
   const {
     paramName,
