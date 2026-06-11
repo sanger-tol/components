@@ -206,6 +206,11 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * This is used in conjunction with `showConfigReset`
    */
   resetConfigDifferences?: IConfigDifferences;
+
+  /**
+   * Test ID used to identify this table in Playwright tests
+   */
+  testid?: string;
 }
 
 /**
@@ -257,6 +262,7 @@ export function RemoteTable(props: PRemoteTable) {
     forceUpdate,
     onReset: propOnReset,
     showConfigReset,
+    testid
   } = props;
 
   const runActionDatasource = new TsDataSource({
@@ -587,7 +593,7 @@ export function RemoteTable(props: PRemoteTable) {
   };
 
   return (
-    <div style={{ height: height }}>
+    <div style={{ height: height }} data-testid={testid}>
       <ActionCheckModal
         showIdExportModal={idExportModalOpen}
         setShowIdExportModal={setIdExportModalOpen}
