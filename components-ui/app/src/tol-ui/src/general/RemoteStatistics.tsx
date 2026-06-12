@@ -39,6 +39,10 @@ export interface PRemoteStatistics extends IRemoteTargetAndZone {
    * The field to apply the statistic to (required when type is not "count")
    */
   field?: string;
+  /**
+   * Test ID used to identify this component in Playwright tests
+   */
+  testid?: string;
 }
 
 /**
@@ -57,6 +61,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
     utilityBarConfig,
     type = "count",
     field,
+    testid,
   } = props;
 
   const [value, setValue] = useState<number>(0);
@@ -148,7 +153,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
     }
 
     return (
-      <div id={id} className="tol-count">
+      <div id={id} className="tol-count" data-testid={testid}>
         <HoverOverlay contents={value}>
           <h1 className="count">{normaliseNumber(value)}</h1>
         </HoverOverlay>
