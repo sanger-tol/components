@@ -8,7 +8,7 @@ import React from "react";
 import { Message, TMessageType } from "..";
 
 interface PStaticMessage {
-  message: string;
+  message: React.ReactNode;
   type?: TMessageType;
   header?: boolean;
   onClose?: () => void;

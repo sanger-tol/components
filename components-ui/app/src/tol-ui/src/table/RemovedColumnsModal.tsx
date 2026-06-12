@@ -4,14 +4,29 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { type Dispatch, type ReactNode, type SetStateAction } from "react";
 import { Modal } from "..";
-import { ReactNode } from "react";
 
 export interface PRemovedColumnsModal {
+    /**
+     * Whether the modal is open.
+     */
     open: boolean;
-    setOpen: (open: boolean) => void;
+    /**
+     * Setter for toggling modal open state.
+     */
+    setOpen: Dispatch<SetStateAction<boolean>>;
+    /**
+     * Sequential board number shown in the message.
+     */
     boardNumber: string;
+    /**
+     * Renderable removed column labels.
+     */
     removedColumns: ReactNode[];
+    /**
+     * Number of columns still available on the table.
+     */
     columnsRemaining: number;
 }
 

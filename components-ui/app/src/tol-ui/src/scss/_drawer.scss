@@ -202,14 +202,14 @@
 }
 
 /* Removed columns modal and warning classes */
-.removed-columns-warning-message {
+.tol-removed-columns-warning-message {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
 }
 
-.removed-columns-see-more-button {
+.tol-removed-columns-see-more-button {
   background: none;
   border: none;
   color: #0066cc;
@@ -224,7 +224,7 @@
   }
 }
 
-.removed-columns-modal-content {
+.tol-removed-columns-modal-content {
   padding: 16px 0;
 
   span {
@@ -234,13 +234,13 @@
   }
 }
 
-.removed-columns-info-box {
+.tol-removed-columns-info-box {
   margin-top: 16px;
   padding: 12px;
   border-radius: 4px;
 }
 
-.removed-columns-buttons {
+.tol-removed-columns-buttons {
   margin-top: 16px;
   display: flex;
   justify-content: flex-end;

@@ -4,53 +4,106 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { Toggle } from "rsuite";
 import {
-  Button,
   AttributeSelector,
-  Drawer,
-  SelectedAttributesContainer,
-  FieldMeta,
-  IRemoteTarget,
-  IDropdownButtonConfig,
-  MultipleSelect,
-  ITableConfigSave,
+  Button,
   CellRendererConfigurer,
   deepCopy,
-  PButton,
-  Message,
+  Drawer,
+  EDIT_MODE_TABLE_CONFIG_MESSAGE,
+  ENTITY_DIFF_LOGGED_IN_OUT_DIFFERENCE_WARNING_MESSAGE,
+  getFlattenedMetaData,
   HoverOverlay,
   Icon,
-  useBoard,
-  PRIVILEGE,
-  TABLE_CONFIG_DIFF_AUTH_VS_NO_AUTH_NOTICE_DISMISSED_KEY,
-  EDIT_MODE_TABLE_CONFIG_MESSAGE,
+  Message,
+  MultipleSelect,
   PERSONAL_TABLE_CONFIG_MESSAGE,
-  ENTITY_DIFF_LOGGED_IN_OUT_DIFFERENCE_WARNING_MESSAGE,
+  PRIVILEGE,
+  SelectedAttributesContainer,
+  TABLE_CONFIG_DIFF_AUTH_VS_NO_AUTH_NOTICE_DISMISSED_KEY,
   Tabs,
+  useBoard,
+} from "..";
+import type {
+  FieldMeta,
+  IDropdownButtonConfig,
   IEntityMeta,
-  getFlattenedMetaData,
+  IRemoteTarget,
+  ITableConfigSave,
+  PButton,
 } from "..";
 
 
 export interface PColumnConfigDrawer extends IRemoteTarget {
+  /**
+   * Whether the drawer is open.
+   */
   open: boolean;
-  setOpen: (open: boolean) => void;
+  /**
+   * Setter for toggling drawer open state.
+   */
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  /**
+   * Drawer title.
+   */
   title: string;
+  /**
+   * Current table field metadata.
+   */
   fieldMeta: FieldMeta;
+  /**
+   * Whether to display source badges.
+   */
   displaySource?: boolean;
+  /**
+   * Whether selectors should remain sticky.
+   */
   sticky?: boolean;
+  /**
+   * Optional list of selectable attributes.
+   */
   customAttributeSelection?: string[];
+  /**
+   * Configured actions for this table.
+   */
   actions?: IDropdownButtonConfig[];
+  /**
+   * Available action choices.
+   */
   actionChoices?: string[];
+  /**
+   * Whether grouping is enabled.
+   */
   groupBy?: boolean;
+  /**
+   * Default sort attribute.
+   */
   defaultSortByAttribute?: string;
+  /**
+   * Default sort direction.
+   */
   defaultSortByType?: string;
+  /**
+   * Callback used to persist configuration.
+   */
   onConfigSave: (config: ITableConfigSave) => void;
+  /**
+   * Callback used to reset configuration.
+   */
   onReset?: () => void;
+  /**
+   * Whether to show reset action.
+   */
   showConfigReset?: boolean;
+  /**
+   * Loading state for action buttons.
+   */
   loading?: boolean;
+  /**
+   * Whether board is currently in edit mode.
+   */
   editMode?: boolean;
 }
 
@@ -108,10 +161,13 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
     setInactiveAttributes(fieldMeta?.order?.inactive ?? []);
     setLimitVisibility(!!fieldMeta?.order?.limitVisibility);
     setNewFieldMeta(deepCopy(fieldMeta));
+
     if (open) {
       props.dataSource.getEntityMeta().then((em: IEntityMeta) => {
         const meta = getFlattenedMetaData(em, props.objectType);
-        if (meta) setAllAttributeKeys(Object.keys(meta));
+        if (meta) {
+          setAllAttributeKeys(Object.keys(meta));
+        }
       }).catch(() => {});
     }
   }, [open]);
@@ -139,11 +195,11 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       value={actions}
       setValue={setActions}
     />
-  )
+  );
 
   const SortByButtons = (
     <div className="tol-board-chart-interval-btn-container">
-      {['asc', 'desc'].map((direction: string) => (
+      {["asc", "desc"].map((direction: string) => (
         <Button
           outline
           key={direction}
@@ -200,7 +256,8 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
             attributes={attributes}
             setAttributes={setAttributes}
             additionalIcons={additionalIcons}
-            fieldMeta={fieldMeta!}            emptyMessage="No active columns. Select columns to display..."          />
+            fieldMeta={fieldMeta!}
+          />
         </div>
       </Tabs.Tab>
       <Tabs.Tab eventKey="inactive" title="Inactive Columns">
@@ -296,8 +353,8 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         placeholder="Default Sort Column"
         attribute={sortByAttribute ? [sortByAttribute] : []}
         setAttributes={(a) => {
-          setSortByAttribute(a[0])
-          setSortByType(a[0] ? 'asc' : undefined)
+          setSortByAttribute(a[0]);
+          setSortByType(a[0] ? "asc" : undefined);
         }}
         disabledValues={null}
         numPopulatedFields={0}
@@ -311,7 +368,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       {sortByAttribute && SortByButtons}
       {canManageColumnVisibility && (
         <div className="tol-config-drawer-column-title tol-section-spacing-top">
-          <div className="pass-through-toggle">
+          <div className="tol-pass-through-toggle">
             <Toggle
               onClick={() => {
                 setLimitVisibility(!limitVisibility);
@@ -334,19 +391,19 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         </div>
       )}
       {canManageColumnVisibility && limitVisibility && (
-                <div className="tol-small-spacing">
-                <HoverOverlay
-                    contents="Active Columns are shown by default. Inactive Columns are allowed to be selected but hidden by default, and users can add them later from column selection."
-                    placement="top"
-                    delay={200}
-                >
-                    <span className="tol-info-icon-group">
-                    <Icon icon="circle-info" size="sm" />
-                    <small>About Active/Inactive columns</small>
-                    </span>
-                </HoverOverlay>
-                </div>
-            )}
+        <div className="tol-small-spacing">
+          <HoverOverlay
+            contents="Active Columns are shown by default. Inactive Columns are allowed to be selected but hidden by default, and users can add them later from column selection."
+            placement="top"
+            delay={200}
+          >
+            <span className="tol-info-icon-group">
+              <Icon icon="circle-info" size="sm" />
+              <small>About Active/Inactive columns</small>
+            </span>
+          </HoverOverlay>
+        </div>
+      )}
       {canManageColumnVisibility && limitVisibility ? columnTabs : (
         <>
           <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
@@ -372,8 +429,8 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
             attributes={attributes}
             setAttributes={setAttributes}
             additionalIcons={additionalIcons}
-            fieldMeta={fieldMeta!}            
-            emptyMessage="No active columns. Select columns to display..."          />
+            fieldMeta={fieldMeta!}
+          />
         </>
       )}
       {actions && actionChoices && (

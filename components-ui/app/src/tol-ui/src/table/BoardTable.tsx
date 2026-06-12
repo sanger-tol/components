@@ -4,29 +4,29 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useState, useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import {
-  AttributeTitle,
-  RemoteTable,
-  useBoard,
-  useAuth,
-  BOARD_ENTITIES,
-  useQueryData,
-  getInitialDiffState,
-  fetchActions,
   ANONYMOUS_USER_QUERY_KEY,
-  handleSavedDiffReset,
-  handleFirstLoadDiffState,
-  createTableConfigHandlers,
-  configsAreEqual,
+  AttributeTitle,
+  BOARD_ENTITIES,
   clearTableConfigLocalStorage,
-  setTableConfigLocalStorage,
-  PopUpMessage,
+  configsAreEqual,
+  createTableConfigHandlers,
+  fetchActions,
+  getInitialDiffState,
+  handleFirstLoadDiffState,
+  handleSavedDiffReset,
   MESSAGE_TYPE,
+  PopUpMessage,
+  RemoteTable,
+  RemovedColumnsModal,
+  setTableConfigLocalStorage,
   TOL_DS,
   updateComponentConfigAndUpsert,
+  useAuth,
+  useBoard,
+  useQueryData,
   normaliseCaps,
-  RemovedColumnsModal,
 } from "..";
 import type {
   ITableConfigSave,
@@ -58,7 +58,6 @@ export function BoardTable(props: PBoardTable) {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [removedColumnsForModal, setRemovedColumnsForModal] = useState<ReactNode[]>([]);
   const [columnsRemaining, setColumnsRemaining] = useState<number>(0);
-  const removedColumnsMessageRef = useRef<string>("");
   const diffStateRef = useRef(diffState);
   useEffect(() => {
     diffStateRef.current = diffState;
@@ -101,53 +100,48 @@ export function BoardTable(props: PBoardTable) {
 
     if (!editMode && remoteDiffState.removedColumns?.length) {
       const removedColumns = remoteDiffState.removedColumns;
-      const removedColumnsSignature = removedColumns.join("|");
 
-      if (removedColumnsMessageRef.current !== removedColumnsSignature) {
-        removedColumnsMessageRef.current = removedColumnsSignature;
-        
-        // Resolve display names from enriched and saved metadata, with a readable fallback.
-        const fieldMeta = componentData?.config?.fieldMeta;
-        const removedColumnNodes = removedColumns.map(
-          (col) => (
-            <AttributeTitle
-              attributeId={col}
-              dataSource={TOL_DS}
-              objectType={objectType}
-              rename={
-                fieldMeta?.dataWithDefaults?.[col]?.rename
-                || fieldMeta?.data?.[col]?.rename
-                || normaliseCaps(col)
-              }
-            />
-          ),
-        );
-        
-        // Store for modal display
-        setRemovedColumnsForModal(removedColumnNodes);
-        const remaining = (remoteDiffState.currentConfig?.fieldMeta?.order?.active?.length || 0) + 
-                         (remoteDiffState.currentConfig?.fieldMeta?.order?.inactive?.length || 0);
-        setColumnsRemaining(remaining);
+      // Resolve display names from enriched and saved metadata, with a readable fallback.
+      const fieldMeta = componentData?.config?.fieldMeta;
+      const removedColumnNodes = removedColumns.map(
+        (col) => (
+          <AttributeTitle
+            attributeId={col}
+            dataSource={TOL_DS}
+            objectType={objectType}
+            rename={
+              fieldMeta?.dataWithDefaults?.[col]?.rename
+              || fieldMeta?.data?.[col]?.rename
+              || normaliseCaps(col)
+            }
+          />
+        ),
+      );
 
-        // Create persistent warning message with "See more" button
-        const warningMessage = (
-          <div className="removed-columns-warning-message">
-            <span>Board {boardIndex} has {removedColumns.length} column(s) removed due to board owner changes</span>
-            <button
-              onClick={() => setModalOpen(true)}
-              className="removed-columns-see-more-button"
-            >
-              More info
-            </button>
-          </div>
-        );
+      // Store for modal display
+      setRemovedColumnsForModal(removedColumnNodes);
+      const remaining = (remoteDiffState.currentConfig?.fieldMeta?.order?.active?.length || 0) +
+                       (remoteDiffState.currentConfig?.fieldMeta?.order?.inactive?.length || 0);
+      setColumnsRemaining(remaining);
 
-        PopUpMessage({
-          type: MESSAGE_TYPE.WARNING,
-          message: warningMessage as any,
-          persist: true,
-        });
-      }
+      // Create persistent warning message with "See more" button
+      const warningMessage = (
+        <div className="tol-removed-columns-warning-message">
+          <span>Board {boardIndex} has {removedColumns.length} column(s) removed due to board owner changes</span>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="tol-removed-columns-see-more-button"
+          >
+            More info
+          </button>
+        </div>
+      );
+
+      PopUpMessage({
+        type: MESSAGE_TYPE.WARNING,
+        message: warningMessage,
+        persist: true,
+      });
 
       const cleanedConfig = remoteDiffState.currentConfig;
       if (cleanedConfig) {
