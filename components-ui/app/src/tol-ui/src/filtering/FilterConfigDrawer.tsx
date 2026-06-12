@@ -97,10 +97,6 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setFilterHasPendingChanges(
       JSON.stringify(newFilter) !== JSON.stringify(prevFilters),
     );
-    console.log('---')
-    console.log("newFilter", JSON.stringify(newFilter));
-    console.log("prevFilters", JSON.stringify(prevFilters));
-    console.log("hasPendingChanges", hasPendingChanges);
   }, [zone, currentFilterZone]);
 
   const removeCurrentEntityFiltersForDisabledFilters = (
