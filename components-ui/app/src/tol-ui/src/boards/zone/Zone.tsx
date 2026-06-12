@@ -17,7 +17,6 @@ import {
   TitleTooltip,
   BUTTONS,
   useBoardState,
-  TsDataSource,
 } from "../..";
 import type { IZone, IView, PButton, PBoard } from "../..";
 

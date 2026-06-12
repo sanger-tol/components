@@ -68,7 +68,7 @@ export function Visualisations(props: PVisualisations) {
     deleteBoardEntity(boardDataSource, componentId)
       .then((status: string | void) => {
         if (status !== "success") return;
-        removeBoardEntityInParent<IZone>(componentId, zone);
+        removeBoardEntityInParent(componentId, zone);
         setZone({ ...zone });
       });
   };

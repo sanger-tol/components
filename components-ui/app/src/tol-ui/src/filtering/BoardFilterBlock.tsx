@@ -49,9 +49,9 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
 
   useEffect(() => {
     // TODO: WORK!!!
-    let attributes = {
-      filter: zone.children[id].filter
-    };
+    // let attributes = {
+    //   filter: zone.children[id].filter
+    // };
     //upsertComponent(boardDataSource, id, attributes);
   }, [zone]);
 

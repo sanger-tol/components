@@ -8,11 +8,12 @@
 import { Dropdown } from "rsuite";
 import { IDropdownButtonConfig, IDropdownMainIconProps } from "../interfaces";
 import { Button } from "../index";
+import type { DropdownProps } from "rsuite";
 
 
 export interface PDeprecatedDropdownButtons {
   mainButtonIcon: IDropdownMainIconProps;
-  placement?: string;
+  placement?: DropdownProps["placement"];
   menuStyle?: object;
   disabled?: boolean;
 
