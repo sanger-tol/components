@@ -11,6 +11,7 @@ SPDX-License-Identifier: MIT
 12-06-2026
 
 - Added the DOWNLOAD button type
+- Added the `cleanable` and `searchable` SingleSelect options
 
 ## tol-ui `3.5.6`
 
