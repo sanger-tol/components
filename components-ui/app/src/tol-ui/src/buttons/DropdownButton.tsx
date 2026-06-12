@@ -6,6 +6,7 @@
 
 import { Dropdown } from "rsuite";
 import { Button, Icon, getButtonWrapperClass } from "..";
+import type { DropdownProps } from "rsuite";
 import type { PButton } from "..";
 
 
@@ -21,7 +22,7 @@ export interface PDropdownButton {
   /**
    * Placement of the dropdown menu relative to the toggle button.
    */
-  placement?: string;
+  placement?: DropdownProps["placement"];
 }
 
 /**
@@ -32,7 +33,13 @@ export function DropdownButton(props: PDropdownButton) {
   const { toggle, buttons } = props;
   const { position = "none", ...toggleWithoutPosition } = toggle;
 
-  const placement = props.placement || (position === "left" ? "bottomStart" : position === "right" ? "bottomEnd" : "bottom");
+  const placement: DropdownProps["placement"] =
+    props.placement ||
+    (position === "left"
+      ? "bottomStart"
+      : position === "right"
+        ? "bottomEnd"
+        : "bottom");
 
   const renderButton = (propsToggle: any, ref: React.Ref<HTMLButtonElement>) => {
     const { disabled, ...restToggle } = propsToggle;
