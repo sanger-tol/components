@@ -584,7 +584,6 @@ export function RemoteTable(props: PRemoteTable) {
         <Placeholder
           loader
           height={height}
-          message={editMode ? "Entering edit mode..." : undefined}
           messagePosition="top"
         />
       );
