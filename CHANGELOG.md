@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.5.7`
+
+12-06-2026
+
+- Added the DOWNLOAD button type
+
 ## tol-ui `3.5.6`
 
 28-05-2026
