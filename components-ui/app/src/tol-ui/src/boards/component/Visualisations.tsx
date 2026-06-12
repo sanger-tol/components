@@ -115,12 +115,7 @@ export function Visualisations(props: PVisualisations) {
                 componentType={component.component_type!}
                 config={component.config}
                 objectType={component.object_type!}
-                dataSource={
-                  new TsDataSource({
-                    dataSourceInstanceId: component.data_source_instance_id,
-                    ...component.ui_api_details,
-                  })
-                }
+                dataSource={component.dataspace!}
                 boardDataSource={boardDataSource}
                 boardObjectType={BOARD_ENTITIES.ENTITIES.COMPONENT}
                 title={component.title!}

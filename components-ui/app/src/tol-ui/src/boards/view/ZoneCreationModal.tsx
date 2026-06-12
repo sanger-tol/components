@@ -18,7 +18,6 @@ import {
   normaliseCaps,
   PopUpMessage,
   IView,
-  IZone,
   defineBoardEntityInParent,
   BOARD_ENTITIES,
   postAddBoardEntity,
@@ -138,11 +137,11 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
       .then((res) => {
         if (!res.data) return;
         const zone = res.data;
-        const v = defineBoardEntityInParent<IZone, IView>(
+        const v = defineBoardEntityInParent(
           BOARD_ENTITIES.ENTITIES.ZONE,
           zone,
           view,
-        );
+        ) as IView;
         setView({ ...v });
         reset();
         setOpen(false);

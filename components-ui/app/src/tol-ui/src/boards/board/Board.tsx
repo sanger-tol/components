@@ -140,11 +140,11 @@ export function Board(props: PBoard) {
   const onAddView = async () => {
     postAddBoardEntity(boardDataSource, board?.id!).then((res) => {
       const view = res.data;
-      const b = defineBoardEntityInParent<IView, IBoard>(
+      const b = defineBoardEntityInParent(
         BOARD_ENTITIES.ENTITIES.VIEW,
         view,
         board,
-      );
+      ) as IBoard;
       setBoard({ ...b });
       setActiveViewId(view.id);
       updateViewInUrl(view.id);

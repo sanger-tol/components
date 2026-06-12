@@ -184,12 +184,7 @@ export function Zone(props: PZone) {
         id={id}
         boardObjectType={BOARD_ENTITIES.ENTITIES.ZONE}
         boardDataSource={boardDataSource}
-        dataSource={
-          new TsDataSource({
-            ...zone.ui_api_details,
-            dataspace: zone.data_source_instance_id,
-          })
-        }
+        dataSource={zone.dataspace!}
         objectType={zone.object_type!}
         open={openFilters}
         setOpen={setOpenFilters}

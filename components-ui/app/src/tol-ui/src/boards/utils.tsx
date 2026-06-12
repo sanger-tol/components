@@ -124,6 +124,10 @@ export function defineBoardEntity(
       filter: deepCopy(initialFilter),
       defaultFilter: deepCopy(initialFilter),
       title: definedEntity.title || "",
+      dataspace: new TsDataSource({
+        dataSourceInstanceId: definedEntity.data_source_instance_id,
+        ...definedEntity.ui_api_details,
+      })
     };
   }
 

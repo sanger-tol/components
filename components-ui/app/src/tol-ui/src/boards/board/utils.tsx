@@ -223,7 +223,7 @@ export async function onAddView(boardDataSource: TsDataSource, board: IBoard) {
   return postAddBoardEntity(boardDataSource, board.id!).then((res) => {
     const view = res.data;
     updateViewInUrl(view.id);
-    return defineBoardEntityInParent<IView, IBoard>(
+    return defineBoardEntityInParent(
       BOARD_ENTITIES.ENTITIES.VIEW,
       view,
       board,
