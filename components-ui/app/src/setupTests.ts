@@ -12,6 +12,18 @@ import "@testing-library/jest-dom";
 import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 
+
+// Mock ResizeObserver for dnd-kit
+class ResizeObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+if (typeof globalThis.ResizeObserver === "undefined") {
+  globalThis.ResizeObserver = ResizeObserverMock as typeof ResizeObserver;
+}
+
 // Mock the react-leaflet-core module to avoid issues with Leaflet in tests
 vi.mock("react-leaflet-cluster", () => ({
   __esModule: true,
