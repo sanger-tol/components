@@ -90,7 +90,7 @@ export function defineZoneWithComponentList(
   objectType: string,
   components: IComponent[],
   filter?: IFilter,
-) {
+): IZone {
   return defineBoardEntity(
     {
       object_type: objectType,
@@ -105,7 +105,7 @@ export function defineZoneWithComponentList(
       order: components.map((component) => component.id!),
     },
     BOARD_ENTITIES.ENTITIES.ZONE,
-  );
+  ) as IZone;
 }
 
 export function getWidgetOrder(layout: any) {

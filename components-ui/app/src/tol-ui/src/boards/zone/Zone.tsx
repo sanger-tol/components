@@ -170,7 +170,7 @@ export function Zone(props: PZone) {
               charts and more.
             </p>
           ) : (
-            <p>No components found</p>
+            <p>No Components found in Zone</p>
           )}
         </div>
       )}
