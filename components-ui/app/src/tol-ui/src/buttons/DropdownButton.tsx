@@ -6,8 +6,8 @@
 
 import { Dropdown } from "rsuite";
 import { Button, Icon, getButtonWrapperClass } from "..";
-import type { DropdownProps } from "rsuite";
 import type { PButton } from "..";
+import type { DropdownProps } from "rsuite";
 
 
 export interface PDropdownButton {
@@ -34,12 +34,12 @@ export function DropdownButton(props: PDropdownButton) {
   const { position = "none", ...toggleWithoutPosition } = toggle;
 
   const placement: DropdownProps["placement"] =
-    props.placement ||
-    (position === "left"
-      ? "bottomStart"
-      : position === "right"
+    props.placement || (
+      position === "right"
         ? "bottomEnd"
-        : "bottomCenter");
+        : "bottomStart"
+    );
+
 
   const renderButton = (propsToggle: any, ref: React.Ref<HTMLButtonElement>) => {
     const { disabled, ...restToggle } = propsToggle;
