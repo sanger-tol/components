@@ -64,11 +64,11 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
     )
       .then((res) => {
         const component = res.data;
-        const z = defineBoardEntityInParent<IComponent, IZone>(
+        const z = defineBoardEntityInParent(
           BOARD_ENTITIES.ENTITIES.COMPONENT,
           component,
           zone
-        )
+        ) as IZone;
         setZone({ ...z });
         reset();
       })
