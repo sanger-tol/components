@@ -48,6 +48,14 @@ export const BUTTONS: Record<string, PButton> = {
     disabledTooltip: "No changes to discard",
     position: "right",
   },
+  DOWNLOAD: {
+    outline: true,
+    type: "primary",
+    icon: "download",
+    tooltip: "Download",
+    disabledTooltip: "Download unavailable",
+    position: "right",
+  },
   EDIT: {
     outline: true,
     type: "warning",
