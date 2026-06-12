@@ -19,7 +19,6 @@ import {
   RequiredAsterisk,
   BUTTONS,
   BOARD_ENTITIES,
-  IComponent,
   defineBoardEntityInParent,
   postAddBoardEntity,
   TsDataSource,

@@ -31,7 +31,7 @@ import {
   defineBoardEntityInParent,
 } from "../..";
 import { BoardUtilityBar, ImportViewModal } from "./components";
-import type { IBoard, IView, TNavBrand, TsDataSource } from "../..";
+import type { IBoard, TNavBrand, TsDataSource } from "../..";
 
 
 export interface PBoard {
@@ -164,7 +164,7 @@ export function Board(props: PBoard) {
     await deleteBoardEntity(boardDataSource, viewId).then(
       (status: string | void) => {
         if (status !== "success") return;
-        removeBoardEntityInParent<IBoard>(viewId, board);
+        removeBoardEntityInParent(viewId, board);
         setBoard({ ...board });
         setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
         setActiveViewId(board.order[0]);

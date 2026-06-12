@@ -67,7 +67,7 @@ export function View(props: PView) {
     deleteBoardEntity(boardDataSource, zoneId)
       .then((status: string | void) => {
         if (status !== "success") return;
-        removeBoardEntityInParent<IView>(zoneId, view);
+        removeBoardEntityInParent(zoneId, view);
         setView({ ...view });
       });
   };

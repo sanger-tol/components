@@ -39,7 +39,7 @@ export function DropdownButton(props: PDropdownButton) {
       ? "bottomStart"
       : position === "right"
         ? "bottomEnd"
-        : "bottom");
+        : "bottomCenter");
 
   const renderButton = (propsToggle: any, ref: React.Ref<HTMLButtonElement>) => {
     const { disabled, ...restToggle } = propsToggle;
