@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { describe, expect, test } from "vitest";
 
-import { BOARD_ENTITIES, deriveBoardObjectType, getEntityPrefix } from "../../tol-ui/src";
+import { BOARD_ENTITIES, deriveBoardChildObjectType, deriveBoardObjectType, getEntityPrefix } from "../../tol-ui/src";
 
 describe("getEntityPrefix function", () => {
   test("The correct prefix is returned for each type of entity", () => {
@@ -33,5 +33,27 @@ describe("deriveBoardObjectType function", () => {
 
   test("An error is thrown for an invalid id", () => {
     expect(() => deriveBoardObjectType("  hu8og  8")).toThrow("Unknown board entity prefix:  ");
+  });
+});
+
+describe("deriveBoardChildObjectType function", () => {
+  test("Each valid child entity type is determined correctly", () => {
+    const entities = BOARD_ENTITIES.ENTITIES;
+
+    expect(deriveBoardChildObjectType(entities.BOARD)).toBe(entities.VIEW);
+    expect(deriveBoardChildObjectType(entities.VIEW)).toBe(entities.ZONE);
+    expect(deriveBoardChildObjectType(entities.ZONE)).toBe(entities.COMPONENT);
+  });
+
+  test("The last entity in the hierarchy has no child", () => {
+    expect(() => deriveBoardChildObjectType(BOARD_ENTITIES.ENTITIES.COMPONENT)).toThrow(
+      `Unknown parent object type: ${BOARD_ENTITIES.ENTITIES.COMPONENT}`
+    );
+  });
+
+  test("An error is thrown on a non-existant board entity kind", () => {
+    expect(() => deriveBoardChildObjectType("cool object 😎")).toThrow(
+      "Unknown parent object type: cool object 😎"
+    );
   });
 });
