@@ -18,8 +18,7 @@ import {
   normaliseCaps,
   PopUpMessage,
   IView,
-  IZone,
-  addBoardEntityInParentState,
+  defineBoardEntityInParent,
   BOARD_ENTITIES,
   postAddBoardEntity,
 } from "../..";
@@ -60,7 +59,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
               };
             });
             setDataSourceInstanceList(dsiList);
-            // TODO: new solution for pre-selecting tol data
+            // TODO FUTURE: new solution for pre-selecting tol data
             if (dsiList.map((dsi) => dsi.value).includes("tol_production")) {
               setDataSourceInstance("tol_production");
             } else {
@@ -138,11 +137,11 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
       .then((res) => {
         if (!res.data) return;
         const zone = res.data;
-        const v = addBoardEntityInParentState<IZone, IView>(
+        const v = defineBoardEntityInParent(
           BOARD_ENTITIES.ENTITIES.ZONE,
           zone,
           view,
-        );
+        ) as IView;
         setView({ ...v });
         reset();
         setOpen(false);

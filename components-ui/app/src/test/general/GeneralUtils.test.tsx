@@ -22,6 +22,7 @@ import {
   getJsonEditorTheme
 } from "../../tol-ui/src";
 
+
 test("isPropDefined function", () => {
   expect(isPropDefined(undefined)).toBe(false);
   expect(isPropDefined(true)).toBe(true);
@@ -49,7 +50,7 @@ test("normailseCaps function", () => {
 
 test("timeout function", () => {
   vi.useFakeTimers();
-  vi.spyOn(global, "setTimeout");
+  vi.spyOn(globalThis, "setTimeout");
   timeout(1);
   expect(setTimeout).toHaveBeenCalledTimes(1);
 });
@@ -121,6 +122,7 @@ test("getAttributeSources function", () => {
 
 test("getFlattenedMetaData function", () => {
   const entityMeta = {
+    relationships: {},
     flatAttributes: {
       endpoint1: {
         attr1: { data: "data1" },
@@ -143,6 +145,7 @@ test("getFlattenedMetaData function", () => {
 
 test("getAttributeDetail function", () => {
   const entityMeta = {
+    relationships: {},
     flatAttributes: {
       endpoint1: {
         attr1: { display_name: "Display Name 1" },
@@ -150,14 +153,14 @@ test("getAttributeDetail function", () => {
       },
     },
   };
-  expect(getAttributeDetail(entityMeta, "endpoint1", "attr1", 'display_name')).toBe(
+  expect(getAttributeDetail(entityMeta, "endpoint1", "attr1", "display_name")).toBe(
     "Display Name 1",
   );
-  expect(getAttributeDetail(entityMeta, "endpoint1", "attr2", 'display_name')).toBe(
+  expect(getAttributeDetail(entityMeta, "endpoint1", "attr2", "display_name")).toBe(
     "Display Name 2",
   );
-  expect(getAttributeDetail(entityMeta, "endpoint1", "attr3", 'display_name')).toBe("Attr3");
-  expect(getAttributeDetail(entityMeta, "endpoint2", "attr1", 'display_name')).toBe("Attr1");
+  expect(getAttributeDetail(entityMeta, "endpoint1", "attr3", "display_name")).toBe("Attr3");
+  expect(getAttributeDetail(entityMeta, "endpoint2", "attr1", "display_name")).toBe("Attr1");
 });
 
 test("normaliseNumber function", () => {
@@ -197,4 +200,4 @@ test("getJsonEditorTheme function", () => {
   // Test light mode
   window.matchMedia = vi.fn().mockImplementation(() => mockMatchMedia(false));
   expect(getJsonEditorTheme()).toEqual([expect.objectContaining({})]);
-})
+});

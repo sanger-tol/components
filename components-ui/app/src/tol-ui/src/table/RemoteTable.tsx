@@ -453,7 +453,7 @@ export function RemoteTable(props: PRemoteTable) {
       })
       .catch((error: any) => {
         // Temp fix for 500 errors, due to empty requested fields
-        // TODO: Remove when the SDK handles empty requested fields better.
+        // TODO FUTURE: Remove when the SDK handles empty requested fields better.
         const errorMsg = error.response.data.errors[0].detail;
         if (errorMsg.includes("Empty element in path")) {
           setData([]);
@@ -584,7 +584,6 @@ export function RemoteTable(props: PRemoteTable) {
         <Placeholder
           loader
           height={height}
-          message={editMode ? "Entering edit mode..." : undefined}
           messagePosition="top"
         />
       );

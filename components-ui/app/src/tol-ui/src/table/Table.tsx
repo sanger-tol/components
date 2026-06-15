@@ -508,7 +508,6 @@ export function Table(props: PTable) {
                       loader
                       opacity={0.8}
                       squareCorners
-                      message={editMode ? "Entering edit mode" : undefined}
                       messagePosition="top"
                     />
                   )}

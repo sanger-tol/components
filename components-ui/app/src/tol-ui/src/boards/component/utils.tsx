@@ -12,7 +12,7 @@ import {
   IComponentConfig,
   IFilter,
   IZone,
-  postUpdateBoardEntity,
+  upsertBoardEntity,
   TDataObjectListOrNull,
   TsDataSource,
 } from "../..";
@@ -39,7 +39,7 @@ export async function updateComponentConfigAndUpsert(
 
   if (editMode) {
     component.config = { ...config };
-    return await postUpdateBoardEntity(boardDataSource, componentId, {
+    return await upsertBoardEntity(boardDataSource, componentId, {
       config: config,
     });
   }
@@ -90,14 +90,14 @@ export function defineZoneWithComponentList(
   objectType: string,
   components: IComponent[],
   filter?: IFilter,
-) {
-  return defineBoardEntity<IZone>(
+): IZone {
+  return defineBoardEntity(
     {
       object_type: objectType,
       filter: filter,
       children: components.reduce(
         (acc, component) => {
-          acc[component.id!] = component;
+          acc[component.id!] = defineBoardEntity(component, BOARD_ENTITIES.ENTITIES.COMPONENT) as IComponent;
           return acc;
         },
         {} as Record<string, IComponent>,
@@ -105,7 +105,7 @@ export function defineZoneWithComponentList(
       order: components.map((component) => component.id!),
     },
     BOARD_ENTITIES.ENTITIES.ZONE,
-  );
+  ) as IZone;
 }
 
 export function getWidgetOrder(layout: any) {

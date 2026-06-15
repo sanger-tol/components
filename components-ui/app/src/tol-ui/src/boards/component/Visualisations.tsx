@@ -17,7 +17,7 @@ import {
   ACTIONS_DS,
   patchReorderBoardEntity,
   getWidgetOrder,
-  deleteBoardEntityInParentState,
+  removeBoardEntityInParent,
   deleteBoardEntity,
 } from "../..";
 
@@ -68,7 +68,7 @@ export function Visualisations(props: PVisualisations) {
     deleteBoardEntity(boardDataSource, componentId)
       .then((status: string | void) => {
         if (status !== "success") return;
-        deleteBoardEntityInParentState<IZone>(componentId, zone);
+        removeBoardEntityInParent(componentId, zone);
         setZone({ ...zone });
       });
   };
@@ -104,7 +104,6 @@ export function Visualisations(props: PVisualisations) {
       >
         {zone.order.map((componentId) => {
           const component = zone.children?.[componentId];
-          // TODO: Placeholder
           if (!component) return null;
           return cloneElement(
             <div key={component.id} className="tol-visualisation">
@@ -116,12 +115,7 @@ export function Visualisations(props: PVisualisations) {
                 componentType={component.component_type!}
                 config={component.config}
                 objectType={component.object_type!}
-                dataSource={
-                  new TsDataSource({
-                    dataSourceInstanceId: component.data_source_instance_id,
-                    ...component.ui_api_details,
-                  })
-                }
+                dataSource={component.dataspace!}
                 boardDataSource={boardDataSource}
                 boardObjectType={BOARD_ENTITIES.ENTITIES.COMPONENT}
                 title={component.title!}

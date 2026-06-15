@@ -4,17 +4,12 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export const BOARD_ID_FIELDS = {
-  BOARD: "board_id",
-  VIEW: "view_id",
-  ZONE: "zone_id",
-} as const;
-
-export const BOARD_CHILDREN_KEYS = {
-  VIEWS: "views",
-  ZONES: "zones",
-  COMPONENTS: "components",
-} as const;
+export const BOARD_ENTITY_HIERARCHY = [
+  "board",
+  "view",
+  "zone",
+  "component",
+];
 
 export const BOARD_ENTITIES = {
   ENTITIES: {
