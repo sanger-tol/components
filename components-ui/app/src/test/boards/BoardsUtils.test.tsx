@@ -6,7 +6,16 @@ SPDX-License-Identifier: MIT
 
 import { describe, expect, test } from "vitest";
 
-import { BOARD_ENTITIES, defineBoardEntity, defineBoardEntityInParent, deriveBoardChildObjectType, deriveBoardObjectType, getEntityPrefix, IComponent, IZone, removeBoardEntityInParent, TBoardEntity, TsDataSource } from "../../tol-ui/src";
+import {
+  BOARD_ENTITIES,
+  defineBoardEntity,
+  defineBoardEntityInParent,
+  deriveBoardChildObjectType,
+  deriveBoardObjectType,
+  getEntityPrefix,
+  removeBoardEntityInParent,
+} from "../../tol-ui/src";
+import type { IComponent, IZone, TBoardEntity } from "../../tol-ui/src";
 
 describe("getEntityPrefix function", () => {
   test("The correct prefix is returned for each type of entity", () => {
