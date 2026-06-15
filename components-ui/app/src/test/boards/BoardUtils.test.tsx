@@ -6,13 +6,22 @@ SPDX-License-Identifier: MIT
 
 import { describe, expect, test } from "vitest";
 
-import { getEntityPrefix } from "../../tol-ui/src";
+import { deriveBoardObjectType, getEntityPrefix } from "../../tol-ui/src";
 
 describe("getEntityPrefix function", () => {
-  test("The correct prefix is returned for each board entity kind", () => {
+  test("The correct prefix is returned for each type of entity", () => {
     expect(getEntityPrefix("board")).toBe("b");
     expect(getEntityPrefix("view")).toBe("v");
     expect(getEntityPrefix("zone")).toBe("z");
     expect(getEntityPrefix("component")).toBe("c");
+  });
+});
+
+describe("deriveBoardObjectType function", () => {
+  test("The correct prefix is returned for an id of each board entity kind", () => {
+    expect(deriveBoardObjectType("b_suyrg8ojo")).toBe("board");
+    expect(deriveBoardObjectType("v_lsdifu9uj")).toBe("view");
+    expect(deriveBoardObjectType("z_3ewrfdghE")).toBe("zone");
+    expect(deriveBoardObjectType("c_897YGHJuy")).toBe("component");
   });
 });
