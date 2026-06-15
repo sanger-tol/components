@@ -10,6 +10,7 @@ import {
   AttributeSelector,
   Button,
   CellRendererConfigurer,
+  ConfigDrawerTabs,
   deepCopy,
   Drawer,
   EDIT_MODE_TABLE_CONFIG_MESSAGE,
@@ -23,7 +24,6 @@ import {
   PRIVILEGE,
   SelectedAttributesContainer,
   TABLE_CONFIG_DIFF_AUTH_VS_NO_AUTH_NOTICE_DISMISSED_KEY,
-  Tabs,
   useBoard,
 } from "..";
 import type {
@@ -226,74 +226,6 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const additionalIcons = [
     CellRendererConfigurerWrapper,
   ];
-
-  const columnTabs = (
-    <Tabs defaultActiveKey="active">
-      <Tabs.Tab eventKey="active" title="Active Columns">
-        <div className="tol-section-spacing-top">
-          <AttributeSelector
-            {...props}
-            sticky
-            recommendedFilterAvailable
-            renderSearchBySource
-            displaySource
-            placeholder="Select columns to display..."
-            attribute={attributes}
-            setAttributes={(nextActive) => {
-              setAttributes(nextActive);
-              setInactiveAttributes((prevInactive) =>
-                prevInactive.filter((col) => !nextActive.includes(col)),
-              );
-            }}
-            disabledValues={null}
-            numPopulatedFields={0}
-            populatedFieldType={"column"}
-            additionalPopulatedFieldData={"."}
-            customAttributeSelection={allAttributeKeys ?? customAttributeSelection}
-          />
-          <SelectedAttributesContainer
-            {...props}
-            attributes={attributes}
-            setAttributes={setAttributes}
-            additionalIcons={additionalIcons}
-            fieldMeta={fieldMeta!}
-          />
-        </div>
-      </Tabs.Tab>
-      <Tabs.Tab eventKey="inactive" title="Inactive Columns">
-        <div className="tol-section-spacing-top">
-          <AttributeSelector
-            {...props}
-            sticky
-            recommendedFilterAvailable
-            renderSearchBySource
-            displaySource
-            placeholder="Select columns to make them visible for users..."
-            attribute={inactiveAttributes}
-            setAttributes={setInactiveAttributes}
-            disabledValues={null}
-            numPopulatedFields={0}
-            populatedFieldType={"column"}
-            additionalPopulatedFieldData={"."}
-            customAttributeSelection={
-              allAttributeKeys
-                ? allAttributeKeys.filter((col) => !attributes.includes(col))
-                : undefined
-            }
-          />
-          <SelectedAttributesContainer
-            {...props}
-            attributes={inactiveAttributes}
-            setAttributes={setInactiveAttributes}
-            additionalIcons={additionalIcons}
-            fieldMeta={fieldMeta!}
-            emptyMessage="No inactive columns. Select columns to make them visible for users to add them to their tables."
-          />
-        </div>
-      </Tabs.Tab>
-    </Tabs>
-  );
-
   const resetButton: PButton = {
     visible: !!showConfigReset,
     position: "right",
@@ -404,7 +336,19 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
           </HoverOverlay>
         </div>
       )}
-      {canManageColumnVisibility && limitVisibility ? columnTabs : (
+      {canManageColumnVisibility && limitVisibility ? (
+        <ConfigDrawerTabs
+          {...props}
+          attributes={attributes}
+          setAttributes={setAttributes}
+          inactiveAttributes={inactiveAttributes}
+          setInactiveAttributes={setInactiveAttributes}
+          additionalIcons={additionalIcons}
+          fieldMeta={fieldMeta}
+          allAttributeKeys={allAttributeKeys}
+          customAttributeSelection={customAttributeSelection}
+        />
+      ) : (
         <>
           <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
           <div>

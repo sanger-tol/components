@@ -49,7 +49,7 @@ export function BoardTable(props: PBoardTable) {
   const componentData = zone?.children[id];
 
   // Calculate sequential board number from zone.children keys
-  const boardIndex = zone?.children ? Object.keys(zone.children).indexOf(id) + 1 : 1;
+  const componentNumber = zone?.children ? Object.keys(zone.children).indexOf(id) + 1 : 1;
 
   const [resetKey, setResetKey] = useState<number>(0);
   const [diffState, setDiffState] = useState<IDiffState>(
@@ -127,7 +127,7 @@ export function BoardTable(props: PBoardTable) {
       // Create persistent warning message with "See more" button
       const warningMessage = (
         <div className="tol-removed-columns-warning-message">
-          <span>Board {boardIndex} has {removedColumns.length} column(s) removed due to board owner changes</span>
+          <span>Board {componentNumber} has {removedColumns.length} column(s) removed due to board owner changes</span>
           <button
             onClick={() => setModalOpen(true)}
             className="tol-removed-columns-see-more-button"
@@ -310,7 +310,7 @@ export function BoardTable(props: PBoardTable) {
       <RemovedColumnsModal
         open={modalOpen}
         setOpen={setModalOpen}
-        boardNumber={String(boardIndex)}
+        boardNumber={String(componentNumber)}
         removedColumns={removedColumnsForModal}
         columnsRemaining={columnsRemaining}
       />
