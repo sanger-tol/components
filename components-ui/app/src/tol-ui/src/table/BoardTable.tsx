@@ -305,7 +305,8 @@ export function BoardTable(props: PBoardTable) {
         onToggleFilterVisibility={onFilterVisibilityChange}
         onPageSizeChange={onPageSizeChange}
         onResizeColumn={onResizeColumn}
-      />
+        testid="board-component-table"
+    />
       <RemovedColumnsModal
         open={modalOpen}
         setOpen={setModalOpen}

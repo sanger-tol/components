@@ -17,7 +17,6 @@ import {
   TitleTooltip,
   BUTTONS,
   useBoardState,
-  TsDataSource,
 } from "../..";
 import type { IZone, IView, PButton, PBoard } from "../..";
 
@@ -109,7 +108,7 @@ export function Zone(props: PZone) {
   const translatorsButton: PButton = {
     ...BUTTONS.TRANSLATORS,
     //visible: editMode && !layoutMode,
-    // TODO: Implement translators
+    // TODO FUTURE: Implement translators
     visible: false,
     onClick: () => {},
   };
@@ -170,7 +169,7 @@ export function Zone(props: PZone) {
               charts and more.
             </p>
           ) : (
-            <p>No components found</p>
+            <p>No Components found in Zone</p>
           )}
         </div>
       )}
@@ -184,12 +183,7 @@ export function Zone(props: PZone) {
         id={id}
         boardObjectType={BOARD_ENTITIES.ENTITIES.ZONE}
         boardDataSource={boardDataSource}
-        dataSource={
-          new TsDataSource({
-            ...zone.ui_api_details,
-            dataspace: zone.data_source_instance_id,
-          })
-        }
+        dataSource={zone.dataspace!}
         objectType={zone.object_type!}
         open={openFilters}
         setOpen={setOpenFilters}

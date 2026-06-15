@@ -2,4 +2,4 @@
 //
 // SPDX-License-Identifier: MIT
 
-export * from "./tableConfiguration";
+export const isInHeadlessMode = !!(process.env.CI || process.env.HEADLESS);

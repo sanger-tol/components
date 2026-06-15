@@ -21,17 +21,17 @@ import {
   BOARD_MESSAGE_TEXT,
   NewTitleModal,
   PopUpMessage,
-  deleteBoardEntityInParentState,
+  removeBoardEntityInParent,
   ConfirmationModal,
   copyBoard,
   deleteBoardEntity,
   postAddBoardEntity,
   updateViewInUrl,
   patchReorderBoardEntity,
-  addBoardEntityInParentState,
+  defineBoardEntityInParent,
 } from "../..";
 import { BoardUtilityBar, ImportViewModal } from "./components";
-import type { IBoard, IView, TNavBrand, TsDataSource } from "../..";
+import type { IBoard, TNavBrand, TsDataSource } from "../..";
 
 
 export interface PBoard {
@@ -140,11 +140,11 @@ export function Board(props: PBoard) {
   const onAddView = async () => {
     postAddBoardEntity(boardDataSource, board?.id!).then((res) => {
       const view = res.data;
-      const b = addBoardEntityInParentState<IView, IBoard>(
+      const b = defineBoardEntityInParent(
         BOARD_ENTITIES.ENTITIES.VIEW,
         view,
         board,
-      );
+      ) as IBoard;
       setBoard({ ...b });
       setActiveViewId(view.id);
       updateViewInUrl(view.id);
@@ -164,7 +164,7 @@ export function Board(props: PBoard) {
     await deleteBoardEntity(boardDataSource, viewId).then(
       (status: string | void) => {
         if (status !== "success") return;
-        deleteBoardEntityInParentState<IBoard>(viewId, board);
+        removeBoardEntityInParent(viewId, board);
         setBoard({ ...board });
         setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
         setActiveViewId(board.order[0]);

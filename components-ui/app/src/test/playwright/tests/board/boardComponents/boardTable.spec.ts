@@ -7,21 +7,21 @@ import {
   addComponent,
   setBoard,
   setAuth,
-  deleteFirstComponent,
+  deleteComponent,
   exitEditMode,
   enterEditMode,
   clickUtilityBarButton,
-  createBoardID,
+  createBoardId,
+  isInHeadlessMode,
 } from "../../helpers";
 
-const headless = !!(process.env.CI || process.env.HEADLESS);
-const BOARD_ID = createBoardID();
+const BOARD_ID = createBoardId();
 
-test.use({ headless: headless });
+test.use({ headless: isInHeadlessMode });
 
 test.beforeEach(async ({ page }) => {
-  await setAuth({ page });
-  await setBoard({ page, boardID: BOARD_ID });
+  await setAuth(page);
+  await setBoard(page, BOARD_ID);
   await enterEditMode(page);
 });
 
@@ -31,22 +31,17 @@ test.afterEach(async ({ page }) => {
   }
 });
   
-const addTableComponent = async ({ page }) => {
-  await addComponent(page, "table", "Large");
-  await expect(page.locator(".tol-table")).toBeVisible();
-};
-
 test("manage dashboard", async ({ page }) => {
-  await addTableComponent({ page });
-  await deleteFirstComponent({ page, componentType: "table" });
-  await expect(page.locator('.tol-table')).not.toBeVisible({timeout: 1000});
+  await addComponent(page, 0, "table", "large");
+  await deleteComponent(page, "table", 0);
+  await expect(page.locator(".tol-table")).not.toBeVisible({ timeout: 1000 });
 });
 
 test("shows personal table configuration notices outside edit mode", async ({ page }) => {
-  await addTableComponent({ page });
+  await addComponent(page, 0, "table", "large");
   await exitEditMode(page);
 
-  await clickUtilityBarButton({ page, testId: "table-config-button" });
+  await clickUtilityBarButton(page, "table-config-button", 0);
 
   await expect(
     page.getByText("Please be aware that you are editing a version of this table for yourself. If you want to edit the table for all board viewers please switch to edit mode."),

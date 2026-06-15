@@ -12,7 +12,7 @@ import {
   useBoardState,
   IBoard,
   IView,
-  deleteBoardEntityInParentState,
+  removeBoardEntityInParent,
   IZone,
   patchReorderBoardEntity,
   reorderViaDirection,
@@ -67,7 +67,7 @@ export function View(props: PView) {
     deleteBoardEntity(boardDataSource, zoneId)
       .then((status: string | void) => {
         if (status !== "success") return;
-        deleteBoardEntityInParentState<IView>(zoneId, view);
+        removeBoardEntityInParent(zoneId, view);
         setView({ ...view });
       });
   };

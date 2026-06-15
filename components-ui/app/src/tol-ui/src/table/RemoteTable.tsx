@@ -211,6 +211,11 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * This is used in conjunction with `showConfigReset`
    */
   resetConfigDifferences?: IConfigDifferences;
+
+  /**
+   * Test ID used to identify this table in Playwright tests
+   */
+  testid?: string;
 }
 
 /**
@@ -262,6 +267,7 @@ export function RemoteTable(props: PRemoteTable) {
     forceUpdate,
     onReset: propOnReset,
     showConfigReset,
+    testid
   } = props;
 
   const runActionDatasource = new TsDataSource({
@@ -452,7 +458,7 @@ export function RemoteTable(props: PRemoteTable) {
       })
       .catch((error: any) => {
         // Temp fix for 500 errors, due to empty requested fields
-        // TODO: Remove when the SDK handles empty requested fields better.
+        // TODO FUTURE: Remove when the SDK handles empty requested fields better.
         const errorMsg = error.response.data.errors[0].detail;
         if (errorMsg.includes("Empty element in path")) {
           setData([]);
@@ -583,7 +589,6 @@ export function RemoteTable(props: PRemoteTable) {
         <Placeholder
           loader
           height={height}
-          message={editMode ? "Entering edit mode..." : undefined}
           messagePosition="top"
         />
       );
@@ -592,7 +597,7 @@ export function RemoteTable(props: PRemoteTable) {
   };
 
   return (
-    <div style={{ height: height }}>
+    <div style={{ height: height }} data-testid={testid}>
       <ActionCheckModal
         showIdExportModal={idExportModalOpen}
         setShowIdExportModal={setIdExportModalOpen}

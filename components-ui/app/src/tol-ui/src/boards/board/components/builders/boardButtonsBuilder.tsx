@@ -112,7 +112,7 @@ export function boardButtonsBuilder({
         setNewBoardCopyTitle(`${boardTitle} - copy`);
       }
       onOpenBoardCopyModal();
-    },
+    }
   };
 
   const copyViewIdButton: PButton = {
@@ -122,7 +122,7 @@ export function boardButtonsBuilder({
         activeViewId!,
         BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.VIEW).CLIPBOARD_COPY.ID_COPY
       );
-    },
+    }
   };
 
   const copyButton: PDropdownButton = {

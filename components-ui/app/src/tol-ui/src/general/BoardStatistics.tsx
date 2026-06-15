@@ -65,6 +65,7 @@ export function BoardStatistics(props: PVisualisation) {
         type={config.type}
         field={config.field}
         utilityBarConfig={ubc}
+        testid="board-component-statistics"
       />
     </>
   );

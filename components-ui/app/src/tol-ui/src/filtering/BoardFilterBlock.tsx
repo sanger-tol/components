@@ -22,7 +22,13 @@ export interface PBoardFilterBlock extends PVisualisation {
 }
 
 export function BoardFilterBlock(props: PBoardFilterBlock) {
-  const { id, utilityBarConfig, boardDataSource, config, zone } = props;
+  const {
+    id,
+    utilityBarConfig,
+    boardDataSource,
+    config,
+    zone
+  } = props;
   const [open, setOpen] = useState(false);
   const [filterBlockConfig, setFilterBlockConfig] = useState<{ attributes: string[] }>(config);
   const { editMode } = useBoard();
@@ -46,17 +52,6 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
       editMode,
     )
   };
-
-  // useEffect(() => {
-  //   // TODO: ENSURE THIS COMPONENT WORKS! CAN WE REMOVE THIS?
-  //   upsertCoreBoardEntity(
-  //     BOARD_ENTITIES.COMPONENT,
-  //     { filter: zone.children[0][id].filter },
-  //     boardDataSource,
-  //     undefined,
-  //     id,
-  //   );
-  // }, [zone]);
 
   const Contents = () => {
     if (!filterBlockConfig.attributes || filterBlockConfig.attributes.length === 0) {

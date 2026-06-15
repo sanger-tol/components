@@ -5,8 +5,9 @@
  */
 
 import { Dropdown } from "rsuite";
-import { Button, Icon } from "..";
+import { Button, Icon, getButtonWrapperClass } from "..";
 import type { PButton } from "..";
+import type { DropdownProps } from "rsuite";
 
 
 export interface PDropdownButton {
@@ -21,7 +22,7 @@ export interface PDropdownButton {
   /**
    * Placement of the dropdown menu relative to the toggle button.
    */
-  placement?: string;
+  placement?: DropdownProps["placement"];
 }
 
 /**
@@ -29,17 +30,29 @@ export interface PDropdownButton {
  * and the PButton interface.
  */
 export function DropdownButton(props: PDropdownButton) {
-  const { toggle, buttons, placement } = props;
+  const { toggle, buttons } = props;
+  const { position = "none", ...toggleWithoutPosition } = toggle;
+
+  const placement: DropdownProps["placement"] =
+    props.placement || (
+      position === "right"
+        ? "bottomEnd"
+        : "bottomStart"
+    );
+
 
   const renderButton = (propsToggle: any, ref: React.Ref<HTMLButtonElement>) => {
     const { disabled, ...restToggle } = propsToggle;
-    return <Button ref={ref} {...toggle} {...restToggle} />;
+    return <Button ref={ref} {...toggleWithoutPosition} {...restToggle} position="none" />;
   };
+
+  const wrapperClass = getButtonWrapperClass(position);
+  const dropdownClass = ["tol-button-dropdown", wrapperClass].filter(Boolean).join(" ");
 
   return (
     <Dropdown
-      className="tol-button-dropdown"
-      trigger={toggle.disabled ? [] : ["click"]}
+      className={dropdownClass}
+      trigger={toggle.disabled ? [] : ["click", "hover"]}
       placement={placement}
       renderToggle={renderButton}
     >
@@ -50,11 +63,17 @@ export function DropdownButton(props: PDropdownButton) {
             onClick={button.onClick}
             disabled={button.disabled}
           >
-            <Icon
-              icon={button.icon}
-              className="tol-dropdown-icon"
-            />
-            {button.text}
+            {button.icon && (
+              <Icon
+                icon={button.icon}
+                className="tol-dropdown-icon"
+              />
+            )}
+            {button.text &&
+              <span className="tol-dropdown-text">
+                {button.text}
+              </span>
+            }
           </Dropdown.Item>
         ) : null
       )}

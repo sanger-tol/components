@@ -146,7 +146,7 @@ class PlaywrightTestDataSource(
         value = body.get('value')
         negate = body.get('negate', False)
 
-        # TODO these should not be strings from the frontend
+        # TODO FUTURE: these should not be strings from the frontend
         is_false = 'false' in value
         is_true = 'true' in value
 

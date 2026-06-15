@@ -2,27 +2,27 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, test } from '@playwright/test';
+import { expect, Page, test } from "@playwright/test";
 import {
-    addComponent,
-    setBoard,
-    setAuth,
-    deleteFirstComponent,
-    clickUtilityBarButton,
-    sleep,
-    enterEditMode,
-    exitEditMode,
-    createBoardID
-} from '../../helpers'
+  addComponent,
+  setBoard,
+  setAuth,
+  deleteComponent,
+  clickUtilityBarButton,
+  sleep,
+  enterEditMode,
+  exitEditMode,
+  createBoardId,
+  isInHeadlessMode
+} from "../../helpers";
 
-const headless = !!(process.env.CI || process.env.HEADLESS);
-const BOARD_ID = createBoardID();
+const BOARD_ID = createBoardId();
 
-test.use({ headless: headless });
+test.use({ headless: isInHeadlessMode });
 
 test.beforeEach(async ({ page }) => {
-  await setAuth({ page });
-  await setBoard({ page, boardID: BOARD_ID });
+  await setAuth(page);
+  await setBoard(page, BOARD_ID);
   await enterEditMode(page);
 });
 
@@ -30,36 +30,37 @@ test.afterEach(async ({ page }) => {
   await exitEditMode(page);
 });
 
-const addMarkdownComponent = async ({ page }) => {
-  await addComponent( page, 'text', 'Small');
-  await expect(page.locator('.tol-markdown-viewer')).toBeVisible();
-}
-
-const editMarkDownComponentOnAdd = async ({ page }) => {
+/**
+ * Adds text to an empty Text component
+ * @param page The Playwright page handle
+ * @param componentIndex Out of all the Text components on the screen, which is it? Zero-indexed
+ */
+const addTextToMarkdownComponent = async (page: Page, componentIndex: number) => {
   // get the markdown editor textarea
-  const mardownEditor = page.locator('.tol-markdown-viewer textarea');
+  const markdownEditor = page.locator(".tol-markdown-viewer textarea");
 
   // click into the markdown editor and type text to simulate real user input
-  await mardownEditor.click();
+  await markdownEditor.click();
   await page.keyboard.type("Test Text", { delay: 10 });
   await sleep(1000);
-  await expect(mardownEditor).toHaveValue('Test Text');
+  await expect(markdownEditor).toHaveValue("Test Text");
 
   // click the preview button
-  await clickUtilityBarButton({ page, testId: "preview-markdown" });
+  await clickUtilityBarButton(page, "preview-markdown", componentIndex);
 
-  // Count is 3, once for preview, editor and saved view (even though only two are visible)
-  await expect(page.getByText('Test Text')).toHaveCount(3);
-}
+  // Check the text is in both of the expected places
+  await expect(page.locator("[data-testid=\"board-component-text\"] textarea")).toHaveText("Test Text");
+  await expect(page.locator("[data-testid=\"board-component-text\"] p")).toHaveText("Test Text");
+};
 
 const saveMarkDownComponent = async ({ page }) => {
-  await clickUtilityBarButton({ page, testId: "save-markdown" });
+  await clickUtilityBarButton(page, "save-markdown", 0);
 }
 
-test('manage dashboard', async ({ page }) => {
-  await addMarkdownComponent({ page });
-  await editMarkDownComponentOnAdd({ page });
+test("manage dashboard", async ({ page }) => {
+  await addComponent(page, 0, "text", "Small");
+  await addTextToMarkdownComponent(page, 0);
   await saveMarkDownComponent({ page });
-  await deleteFirstComponent({ page, componentType: "text" });
-  await expect(page.locator('.tol-markdown-viewer')).not.toBeVisible();
+  await deleteComponent(page, "text", 0);
+  await expect(page.locator(".tol-markdown-viewer")).not.toBeVisible();
 });
