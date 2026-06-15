@@ -260,10 +260,7 @@ describe(
           dataspace: "test",
           apiDataPath: "/data"
         },
-        filter: { and_: {} },
-        defaultFilter: { and_: {} },
-        title: "",
-        order: [],
+        order: ["c_jlhdYFA89"],
         children: {
           "c_jlhdYFA89": {
             id: "c_jlhdYFA89",
