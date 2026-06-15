@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { describe, expect, test } from "vitest";
 
-import { BOARD_ENTITIES, defineBoardEntity, deriveBoardChildObjectType, deriveBoardObjectType, getEntityPrefix, IComponent, TBoardEntity, TsDataSource } from "../../tol-ui/src";
+import { BOARD_ENTITIES, defineBoardEntity, deriveBoardChildObjectType, deriveBoardObjectType, getEntityPrefix, IComponent, IZone, TBoardEntity, TsDataSource } from "../../tol-ui/src";
 
 describe("getEntityPrefix function", () => {
   test("The correct prefix is returned for each type of entity", () => {
@@ -67,7 +67,7 @@ describe("Board entity definitions (the defineBoardEntity and defineChildrenEnti
   });
 
   test("Definition at the lowest level works (no recursion)", () => {
-    const component: IComponent = {
+    const component: Partial<IComponent> = {
       id: "c_jlhdYFA89",
       data_source_instance_id: "test",
       ui_api_details: {
@@ -78,7 +78,7 @@ describe("Board entity definitions (the defineBoardEntity and defineChildrenEnti
       },
     };
 
-    const expected: IComponent = {
+    const expected: Partial<IComponent> = {
       id: "c_jlhdYFA89",
       data_source_instance_id: "test",
       ui_api_details: {
@@ -93,5 +93,38 @@ describe("Board entity definitions (the defineBoardEntity and defineChildrenEnti
     };
 
     assertEntitiesEqual(defineBoardEntity(component, BOARD_ENTITIES.ENTITIES.COMPONENT), expected);
+  });
+
+  test("Defining one componebnt with no children", () => {
+    const zone: Partial<IZone> = {
+      id: "z_aklds8DcGv",
+      data_source_instance_id: "test",
+      ui_api_details: {
+        url: "https://portal.tol.sanger.ac.uk",
+        apiPath: "/api/v1",
+        dataspace: "test",
+        apiDataPath: "/data"
+      },
+    };
+
+    const expected: Partial<IZone> = {
+      id: "z_aklds8DcGv",
+      data_source_instance_id: "test",
+      ui_api_details: {
+        url: "https://portal.tol.sanger.ac.uk",
+        apiPath: "/api/v1",
+        dataspace: "test",
+        apiDataPath: "/data"
+      },
+      filter: { and_: {} },
+      defaultFilter: { and_: {} },
+      title: "",
+
+      // Difference from previous test (from additional if clause)
+      order: [],
+      children: {}
+    };
+
+    assertEntitiesEqual(defineBoardEntity(zone, BOARD_ENTITIES.ENTITIES.ZONE), expected);
   });
 });
