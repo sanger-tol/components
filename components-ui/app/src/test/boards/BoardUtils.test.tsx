@@ -26,4 +26,12 @@ describe("deriveBoardObjectType function", () => {
     expect(deriveBoardObjectType("z_3ewrfdghE")).toBe(entities.ZONE);
     expect(deriveBoardObjectType("c_897YGHJuy")).toBe(entities.COMPONENT);
   });
+
+  test("An error is thrown for an id that is of an unrecognised entity", () => {
+    expect(() => deriveBoardObjectType("u_lksSb873s")).toThrow("Unknown board entity prefix: u");
+  });
+
+  test("An error is thrown for an invalid id", () => {
+    expect(() => deriveBoardObjectType("  hu8og  8")).toThrow("Unknown board entity prefix:  ");
+  });
 });
