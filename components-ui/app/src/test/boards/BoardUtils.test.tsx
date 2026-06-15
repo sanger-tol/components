@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { describe, expect, test } from "vitest";
 
-import { BOARD_ENTITIES, defineBoardEntity, defineBoardEntityInParent, deriveBoardChildObjectType, deriveBoardObjectType, getEntityPrefix, IComponent, IZone, TBoardEntity, TsDataSource } from "../../tol-ui/src";
+import { BOARD_ENTITIES, defineBoardEntity, defineBoardEntityInParent, deriveBoardChildObjectType, deriveBoardObjectType, getEntityPrefix, IComponent, IZone, removeBoardEntityInParent, TBoardEntity, TsDataSource } from "../../tol-ui/src";
 
 describe("getEntityPrefix function", () => {
   test("The correct prefix is returned for each type of entity", () => {
@@ -285,3 +285,39 @@ describe(
     });
   }
 );
+
+describe("removeBoardEntityInParent function", () => {
+  test("The child is removed successfully", () => {
+    const zone: IZone = {
+      id: "z_aklds8DcGv",
+      order: ["c_jlhdYFA89", "c_LYG68tdda", "c_aljkhasd89Y"],
+      children: {
+        "c_jlhdYFA89": {
+          id: "c_jlhdYFA89",
+        },
+        "c_LYG68tdda": {
+          id: "c_LYG68tdda",
+        },
+        "c_aljkhasd89Y": {
+          id: "c_aljkhasd89Y",
+        },
+      }
+    };
+
+    const expected: IZone = {
+      id: "z_aklds8DcGv",
+      order: ["c_jlhdYFA89", "c_aljkhasd89Y"],
+      children: {
+        "c_jlhdYFA89": {
+          id: "c_jlhdYFA89",
+        },
+        "c_aljkhasd89Y": {
+          id: "c_aljkhasd89Y",
+        },
+      }
+    };
+    removeBoardEntityInParent("c_LYG68tdda", zone);
+
+    expect(zone).toEqual(expected);
+  });
+});
