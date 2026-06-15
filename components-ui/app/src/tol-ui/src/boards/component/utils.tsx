@@ -4,17 +4,20 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import type { Layout, Layouts } from "react-grid-layout";
 import {
   BOARD_ENTITIES,
   COMPONENT_TYPES,
   defineBoardEntity,
+  upsertBoardEntity,
+  TsDataSource,
+} from "../..";
+import type {
   IComponent,
   IComponentConfig,
   IFilter,
   IZone,
-  upsertBoardEntity,
-  TDataObjectListOrNull,
-  TsDataSource,
+  TDataObjectListOrNull
 } from "../..";
 
 /**
@@ -108,7 +111,7 @@ export function defineZoneWithComponentList(
   ) as IZone;
 }
 
-export function getWidgetOrder(layout: any) {
+export function getWidgetOrder(layout: Layout[]) {
   // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
   layout.sort((a, b) => a.y - b.y || a.x - b.x);
 
@@ -124,7 +127,7 @@ export function generateLayout(zone: IZone) {
     lg: { lg: { w: 4, h: 40 }, md: { w: 2, h: 40 }, sm: { w: 1, h: 40 } },
   };
 
-  const layout = { lg: [], md: [], sm: [] };
+  const layout: Layouts = { lg: [], md: [], sm: [] };
   const y = { lg: 0, md: 0, sm: 0 };
   const x = { lg: 0, md: 0, sm: 0 };
 

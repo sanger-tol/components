@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useRef, useEffect, cloneElement } from "react";
-import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
+import { WidthProvider, Responsive } from "react-grid-layout";
+import type { Layout, Layouts } from "react-grid-layout";
 import {
   generateLayout,
   IZone,
@@ -47,7 +48,7 @@ export function Visualisations(props: PVisualisations) {
    * newLayout is used to store the layout when the user is dragging
    * widgets, and is emptied once a user saves
    */
-  const [newLayout, setNewLayout] = useState(undefined);
+  const [newLayout, setNewLayout] = useState<Layout[]>();
   const internalLayouts = useRef(generateLayout(zone));
 
   useEffect(() => {
@@ -99,7 +100,7 @@ export function Visualisations(props: PVisualisations) {
         isResizable={false}
         compactType="vertical"
         rowHeight={5}
-        onLayoutChange={(l: any) => setNewLayout(l)}
+        onLayoutChange={(l: Layout[]) => setNewLayout(l)}
         onBreakpointChange={onBreakpointChange}
       >
         {zone.order.map((componentId) => {
