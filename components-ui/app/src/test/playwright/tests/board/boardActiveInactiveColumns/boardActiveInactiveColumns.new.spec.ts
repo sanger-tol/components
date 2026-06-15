@@ -41,7 +41,8 @@ test.afterEach(async ({ page }) => {
 
 const openTableConfig = async (page: Page) => {
   await clickUtilityBarButton(page, "table-config-button", 0);
-  await page.locator(".rs-drawer-wrapper").waitFor({ state: "visible" });
+  await expect(page.locator(".rs-drawer-wrapper")).toBeVisible();
+
 };
 
 const saveTableConfig = async (page: Page) => {
