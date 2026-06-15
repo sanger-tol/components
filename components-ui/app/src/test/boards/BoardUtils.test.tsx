@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { describe, expect, test } from "vitest";
 
-import { BOARD_ENTITIES, defineBoardEntity, deriveBoardChildObjectType, deriveBoardObjectType, getEntityPrefix, IComponent, IZone, TBoardEntity, TsDataSource } from "../../tol-ui/src";
+import { BOARD_ENTITIES, defineBoardEntity, defineBoardEntityInParent, deriveBoardChildObjectType, deriveBoardObjectType, getEntityPrefix, IComponent, IZone, TBoardEntity, TsDataSource } from "../../tol-ui/src";
 
 describe("getEntityPrefix function", () => {
   test("The correct prefix is returned for each type of entity", () => {
@@ -58,170 +58,233 @@ describe("deriveBoardChildObjectType function", () => {
   });
 });
 
-describe("Board entity definitions (the defineBoardEntity and defineChildrenEntities functions)", () => {
-  // The data space is a TsDataSource which we can't really compare
-  const assertEntitiesEqual = (actual: Partial<TBoardEntity>, expected: Partial<TBoardEntity>) => {
-    const removeDataspace = (obj: any) => {
-      let newObj = obj;
+describe(
+  "Board entity definitions (defineBoardEntity, defineChildrenEntities, defineBoardEntityInParent functions)",
+  () => {
+    // The data space is a TsDataSource which we can't really compare
+    const assertEntitiesEqual = (actual: Partial<TBoardEntity>, expected: Partial<TBoardEntity>) => {
+      const removeDataspace = (obj: any) => {
+        let newObj = obj;
 
-      // Remove the dataspace from this object
-      if (Object.hasOwn(obj, "dataspace")) {
-        delete newObj["dataspace"];
+        // Remove the dataspace from this object
+        if (Object.hasOwn(obj, "dataspace")) {
+          delete newObj["dataspace"];
+        }
+        
+        // If there are any child entities, remove it from them too
+        if (Object.hasOwn(obj, "children")) {
+          newObj = {
+            ...newObj,
+            children: Object.values(obj["children"]).map(child => removeDataspace(child))
+          };
+        }
+        
+        return newObj;
       }
       
-      // If there are any child entities, remove it from them too
-      if (Object.hasOwn(obj, "children")) {
-        newObj = {
-          ...newObj,
-          children: Object.values(obj["children"]).map(child => removeDataspace(child))
-        };
-      }
-      
-      return newObj;
-    }
-    
-    expect(removeDataspace(actual)).toEqual(removeDataspace(expected));
-  };
-
-  test("Definition at the lowest level works (no recursion)", () => {
-    const component: Partial<IComponent> = {
-      id: "c_jlhdYFA89",
-      data_source_instance_id: "test",
-      ui_api_details: {
-        url: "https://portal.tol.sanger.ac.uk",
-        apiPath: "/api/v1",
-        dataspace: "test",
-        apiDataPath: "/data"
-      },
+      expect(removeDataspace(actual)).toEqual(removeDataspace(expected));
     };
 
-    const expected: Partial<IComponent> = {
-      id: "c_jlhdYFA89",
-      data_source_instance_id: "test",
-      ui_api_details: {
-        url: "https://portal.tol.sanger.ac.uk",
-        apiPath: "/api/v1",
-        dataspace: "test",
-        apiDataPath: "/data"
-      },
-      filter: { and_: {} },
-      defaultFilter: { and_: {} },
-      title: ""
-    };
-
-    assertEntitiesEqual(defineBoardEntity(component, BOARD_ENTITIES.ENTITIES.COMPONENT), expected);
-  });
-
-  test("Defining one component with no children", () => {
-    const zone: Partial<IZone> = {
-      id: "z_aklds8DcGv",
-      data_source_instance_id: "test",
-      ui_api_details: {
-        url: "https://portal.tol.sanger.ac.uk",
-        apiPath: "/api/v1",
-        dataspace: "test",
-        apiDataPath: "/data"
-      },
-    };
-
-    const expected: Partial<IZone> = {
-      id: "z_aklds8DcGv",
-      data_source_instance_id: "test",
-      ui_api_details: {
-        url: "https://portal.tol.sanger.ac.uk",
-        apiPath: "/api/v1",
-        dataspace: "test",
-        apiDataPath: "/data"
-      },
-      filter: { and_: {} },
-      defaultFilter: { and_: {} },
-      title: "",
-
-      // Difference from previous test (from additional if clause)
-      order: [],
-      children: {}
-    };
-
-    assertEntitiesEqual(defineBoardEntity(zone, BOARD_ENTITIES.ENTITIES.ZONE), expected);
-  });
-
-  test("Defining a component with children (recursive)", () => {
-    const zone: Partial<IZone> = {
-      id: "z_aklds8DcGv",
-      data_source_instance_id: "test",
-      ui_api_details: {
-        url: "https://portal.tol.sanger.ac.uk",
-        apiPath: "/api/v1",
-        dataspace: "test",
-        apiDataPath: "/data"
-      },
-      children: {
-        "c_jlhdYFA89": {
-          id: "c_jlhdYFA89",
-          data_source_instance_id: "test",
-          ui_api_details: {
-            url: "https://portal.tol.sanger.ac.uk",
-            apiPath: "/api/v1",
-            dataspace: "test",
-            apiDataPath: "/data"
-          },
+    test("Definition at the lowest level works (no recursion)", () => {
+      const component: Partial<IComponent> = {
+        id: "c_jlhdYFA89",
+        data_source_instance_id: "test",
+        ui_api_details: {
+          url: "https://portal.tol.sanger.ac.uk",
+          apiPath: "/api/v1",
+          dataspace: "test",
+          apiDataPath: "/data"
         },
-        "c_687YLHdga": {
-          id: "c_687YLHdga",
-          data_source_instance_id: "test",
-          ui_api_details: {
-            url: "https://portal.tol.sanger.ac.uk",
-            apiPath: "/api/v1",
-            dataspace: "test",
-            apiDataPath: "/data"
-          },
-        }
-      }
-    };
+      };
 
-    const expected: Partial<IZone> = {
-      id: "z_aklds8DcGv",
-      data_source_instance_id: "test",
-      ui_api_details: {
-        url: "https://portal.tol.sanger.ac.uk",
-        apiPath: "/api/v1",
-        dataspace: "test",
-        apiDataPath: "/data"
-      },
-      filter: { and_: {} },
-      defaultFilter: { and_: {} },
-      title: "",
-      order: [],
-      children: {
-        "c_jlhdYFA89": {
-          id: "c_jlhdYFA89",
-          data_source_instance_id: "test",
-          ui_api_details: {
-            url: "https://portal.tol.sanger.ac.uk",
-            apiPath: "/api/v1",
-            dataspace: "test",
-            apiDataPath: "/data"
-          },
-          filter: { and_: {} },
-          defaultFilter: { and_: {} },
-          title: "",
+      const expected: Partial<IComponent> = {
+        id: "c_jlhdYFA89",
+        data_source_instance_id: "test",
+        ui_api_details: {
+          url: "https://portal.tol.sanger.ac.uk",
+          apiPath: "/api/v1",
+          dataspace: "test",
+          apiDataPath: "/data"
         },
-        "c_687YLHdga": {
-          id: "c_687YLHdga",
-          data_source_instance_id: "test",
-          ui_api_details: {
-            url: "https://portal.tol.sanger.ac.uk",
-            apiPath: "/api/v1",
-            dataspace: "test",
-            apiDataPath: "/data"
-          },
-          filter: { and_: {} },
-          defaultFilter: { and_: {} },
-          title: "",
-        }
-      }
-    };
+        filter: { and_: {} },
+        defaultFilter: { and_: {} },
+        title: ""
+      };
 
-    assertEntitiesEqual(defineBoardEntity(zone, BOARD_ENTITIES.ENTITIES.ZONE), expected);
-  });
-});
+      assertEntitiesEqual(defineBoardEntity(component, BOARD_ENTITIES.ENTITIES.COMPONENT), expected);
+    });
+
+    test("Defining one component with no children", () => {
+      const zone: Partial<IZone> = {
+        id: "z_aklds8DcGv",
+        data_source_instance_id: "test",
+        ui_api_details: {
+          url: "https://portal.tol.sanger.ac.uk",
+          apiPath: "/api/v1",
+          dataspace: "test",
+          apiDataPath: "/data"
+        },
+      };
+
+      const expected: Partial<IZone> = {
+        id: "z_aklds8DcGv",
+        data_source_instance_id: "test",
+        ui_api_details: {
+          url: "https://portal.tol.sanger.ac.uk",
+          apiPath: "/api/v1",
+          dataspace: "test",
+          apiDataPath: "/data"
+        },
+        filter: { and_: {} },
+        defaultFilter: { and_: {} },
+        title: "",
+
+        // Difference from previous test (from additional if clause)
+        order: [],
+        children: {}
+      };
+
+      assertEntitiesEqual(defineBoardEntity(zone, BOARD_ENTITIES.ENTITIES.ZONE), expected);
+    });
+
+    test("Defining a component with children (recursive)", () => {
+      const zone: Partial<IZone> = {
+        id: "z_aklds8DcGv",
+        data_source_instance_id: "test",
+        ui_api_details: {
+          url: "https://portal.tol.sanger.ac.uk",
+          apiPath: "/api/v1",
+          dataspace: "test",
+          apiDataPath: "/data"
+        },
+        children: {
+          "c_jlhdYFA89": {
+            id: "c_jlhdYFA89",
+            data_source_instance_id: "test",
+            ui_api_details: {
+              url: "https://portal.tol.sanger.ac.uk",
+              apiPath: "/api/v1",
+              dataspace: "test",
+              apiDataPath: "/data"
+            },
+          },
+          "c_687YLHdga": {
+            id: "c_687YLHdga",
+            data_source_instance_id: "test",
+            ui_api_details: {
+              url: "https://portal.tol.sanger.ac.uk",
+              apiPath: "/api/v1",
+              dataspace: "test",
+              apiDataPath: "/data"
+            },
+          }
+        }
+      };
+
+      const expected: Partial<IZone> = {
+        id: "z_aklds8DcGv",
+        data_source_instance_id: "test",
+        ui_api_details: {
+          url: "https://portal.tol.sanger.ac.uk",
+          apiPath: "/api/v1",
+          dataspace: "test",
+          apiDataPath: "/data"
+        },
+        filter: { and_: {} },
+        defaultFilter: { and_: {} },
+        title: "",
+        order: [],
+        children: {
+          "c_jlhdYFA89": {
+            id: "c_jlhdYFA89",
+            data_source_instance_id: "test",
+            ui_api_details: {
+              url: "https://portal.tol.sanger.ac.uk",
+              apiPath: "/api/v1",
+              dataspace: "test",
+              apiDataPath: "/data"
+            },
+            filter: { and_: {} },
+            defaultFilter: { and_: {} },
+            title: "",
+          },
+          "c_687YLHdga": {
+            id: "c_687YLHdga",
+            data_source_instance_id: "test",
+            ui_api_details: {
+              url: "https://portal.tol.sanger.ac.uk",
+              apiPath: "/api/v1",
+              dataspace: "test",
+              apiDataPath: "/data"
+            },
+            filter: { and_: {} },
+            defaultFilter: { and_: {} },
+            title: "",
+          }
+        }
+      };
+
+      assertEntitiesEqual(defineBoardEntity(zone, BOARD_ENTITIES.ENTITIES.ZONE), expected);
+    });
+
+    test("Defining new entity and adding it to the parent", () => {
+      const zone: IZone = {
+        id: "z_aklds8DcGv",
+        data_source_instance_id: "test",
+        ui_api_details: {
+          url: "https://portal.tol.sanger.ac.uk",
+          apiPath: "/api/v1",
+          dataspace: "test",
+          apiDataPath: "/data"
+        },
+        order: [],
+        children: {}
+      };
+      const component: Partial<IComponent> = {
+        id: "c_jlhdYFA89",
+        data_source_instance_id: "test",
+        ui_api_details: {
+          url: "https://portal.tol.sanger.ac.uk",
+          apiPath: "/api/v1",
+          dataspace: "test",
+          apiDataPath: "/data"
+        },
+      };
+
+      const expected: Partial<IZone> = {
+        id: "z_aklds8DcGv",
+        data_source_instance_id: "test",
+        ui_api_details: {
+          url: "https://portal.tol.sanger.ac.uk",
+          apiPath: "/api/v1",
+          dataspace: "test",
+          apiDataPath: "/data"
+        },
+        filter: { and_: {} },
+        defaultFilter: { and_: {} },
+        title: "",
+        order: [],
+        children: {
+          "c_jlhdYFA89": {
+            id: "c_jlhdYFA89",
+            data_source_instance_id: "test",
+            ui_api_details: {
+              url: "https://portal.tol.sanger.ac.uk",
+              apiPath: "/api/v1",
+              dataspace: "test",
+              apiDataPath: "/data"
+            },
+            filter: { and_: {} },
+            defaultFilter: { and_: {} },
+            title: ""
+          }
+        }
+      };
+
+      assertEntitiesEqual(
+        defineBoardEntityInParent(BOARD_ENTITIES.ENTITIES.COMPONENT, component, zone),
+        expected
+      );
+    });
+  }
+);
