@@ -19,12 +19,12 @@ describe("getEntityPrefix function", () => {
 
 describe("deriveBoardObjectType function", () => {
   test("The correct prefix is returned for an id of each board entity kind", () => {
-    const entities = BOARD_ENTITIES.ENTITIES;
+    const { BOARD, VIEW, ZONE, COMPONENT } = BOARD_ENTITIES.ENTITIES;
 
-    expect(deriveBoardObjectType("b_suyrg8ojo")).toBe(entities.BOARD);
-    expect(deriveBoardObjectType("v_lsdifu9uj")).toBe(entities.VIEW);
-    expect(deriveBoardObjectType("z_3ewrfdghE")).toBe(entities.ZONE);
-    expect(deriveBoardObjectType("c_897YGHJuy")).toBe(entities.COMPONENT);
+    expect(deriveBoardObjectType("b_suyrg8ojo")).toBe(BOARD);
+    expect(deriveBoardObjectType("v_lsdifu9uj")).toBe(VIEW);
+    expect(deriveBoardObjectType("z_3ewrfdghE")).toBe(ZONE);
+    expect(deriveBoardObjectType("c_897YGHJuy")).toBe(COMPONENT);
   });
 
   test("An error is thrown for an id that is of an unrecognised entity", () => {
@@ -38,11 +38,11 @@ describe("deriveBoardObjectType function", () => {
 
 describe("deriveBoardChildObjectType function", () => {
   test("Each valid child entity type is determined correctly", () => {
-    const entities = BOARD_ENTITIES.ENTITIES;
+    const { BOARD, VIEW, ZONE, COMPONENT } = BOARD_ENTITIES.ENTITIES;
 
-    expect(deriveBoardChildObjectType(entities.BOARD)).toBe(entities.VIEW);
-    expect(deriveBoardChildObjectType(entities.VIEW)).toBe(entities.ZONE);
-    expect(deriveBoardChildObjectType(entities.ZONE)).toBe(entities.COMPONENT);
+    expect(deriveBoardChildObjectType(BOARD)).toBe(VIEW);
+    expect(deriveBoardChildObjectType(VIEW)).toBe(ZONE);
+    expect(deriveBoardChildObjectType(ZONE)).toBe(COMPONENT);
   });
 
   test("The last entity in the hierarchy has no child", () => {
