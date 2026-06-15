@@ -60,11 +60,28 @@ describe("deriveBoardChildObjectType function", () => {
 
 describe("Board entity definitions (the defineBoardEntity and defineChildrenEntities functions)", () => {
   // The data space is a TsDataSource which we can't really compare
-  const assertEntitiesEqual = (actual: Partial<TBoardEntity>, expected: Partial<TBoardEntity>) => expect({ 
-    ...actual, dataspace: undefined
-  }).toEqual({
-    ...expected, dataspace: undefined
-  });
+  const assertEntitiesEqual = (actual: Partial<TBoardEntity>, expected: Partial<TBoardEntity>) => {
+    const removeDataspace = (obj: any) => {
+      let newObj = obj;
+
+      // Remove the dataspace from this object
+      if (Object.hasOwn(obj, "dataspace")) {
+        delete newObj["dataspace"];
+      }
+      
+      // If there are any child entities, remove it from them too
+      if (Object.hasOwn(obj, "children")) {
+        newObj = {
+          ...newObj,
+          children: Object.values(obj["children"]).map(child => removeDataspace(child))
+        };
+      }
+      
+      return newObj;
+    }
+    
+    expect(removeDataspace(actual)).toEqual(removeDataspace(expected));
+  };
 
   test("Definition at the lowest level works (no recursion)", () => {
     const component: Partial<IComponent> = {
@@ -95,7 +112,7 @@ describe("Board entity definitions (the defineBoardEntity and defineChildrenEnti
     assertEntitiesEqual(defineBoardEntity(component, BOARD_ENTITIES.ENTITIES.COMPONENT), expected);
   });
 
-  test("Defining one componebnt with no children", () => {
+  test("Defining one component with no children", () => {
     const zone: Partial<IZone> = {
       id: "z_aklds8DcGv",
       data_source_instance_id: "test",
@@ -123,6 +140,86 @@ describe("Board entity definitions (the defineBoardEntity and defineChildrenEnti
       // Difference from previous test (from additional if clause)
       order: [],
       children: {}
+    };
+
+    assertEntitiesEqual(defineBoardEntity(zone, BOARD_ENTITIES.ENTITIES.ZONE), expected);
+  });
+
+  test("Defining a component with children (recursive)", () => {
+    const zone: Partial<IZone> = {
+      id: "z_aklds8DcGv",
+      data_source_instance_id: "test",
+      ui_api_details: {
+        url: "https://portal.tol.sanger.ac.uk",
+        apiPath: "/api/v1",
+        dataspace: "test",
+        apiDataPath: "/data"
+      },
+      children: {
+        "c_jlhdYFA89": {
+          id: "c_jlhdYFA89",
+          data_source_instance_id: "test",
+          ui_api_details: {
+            url: "https://portal.tol.sanger.ac.uk",
+            apiPath: "/api/v1",
+            dataspace: "test",
+            apiDataPath: "/data"
+          },
+        },
+        "c_687YLHdga": {
+          id: "c_687YLHdga",
+          data_source_instance_id: "test",
+          ui_api_details: {
+            url: "https://portal.tol.sanger.ac.uk",
+            apiPath: "/api/v1",
+            dataspace: "test",
+            apiDataPath: "/data"
+          },
+        }
+      }
+    };
+
+    const expected: Partial<IZone> = {
+      id: "z_aklds8DcGv",
+      data_source_instance_id: "test",
+      ui_api_details: {
+        url: "https://portal.tol.sanger.ac.uk",
+        apiPath: "/api/v1",
+        dataspace: "test",
+        apiDataPath: "/data"
+      },
+      filter: { and_: {} },
+      defaultFilter: { and_: {} },
+      title: "",
+      order: [],
+      children: {
+        "c_jlhdYFA89": {
+          id: "c_jlhdYFA89",
+          data_source_instance_id: "test",
+          ui_api_details: {
+            url: "https://portal.tol.sanger.ac.uk",
+            apiPath: "/api/v1",
+            dataspace: "test",
+            apiDataPath: "/data"
+          },
+          filter: { and_: {} },
+          defaultFilter: { and_: {} },
+          title: "",
+        },
+        "c_687YLHdga": {
+          id: "c_687YLHdga",
+          data_source_instance_id: "test",
+          ui_api_details: {
+            url: "https://portal.tol.sanger.ac.uk",
+            apiPath: "/api/v1",
+            dataspace: "test",
+            apiDataPath: "/data"
+          },
+          filter: { and_: {} },
+          defaultFilter: { and_: {} },
+          title: "",
+        }
+      }
     };
 
     assertEntitiesEqual(defineBoardEntity(zone, BOARD_ENTITIES.ENTITIES.ZONE), expected);
