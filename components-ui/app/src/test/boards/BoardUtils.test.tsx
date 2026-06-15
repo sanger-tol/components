@@ -57,3 +57,7 @@ describe("deriveBoardChildObjectType function", () => {
     );
   });
 });
+
+describe("Board entity definitions (the defineBoardEntity and defineChildrenEntities functions)", () => {
+
+});
