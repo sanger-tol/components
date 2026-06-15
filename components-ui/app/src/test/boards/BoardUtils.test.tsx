@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { describe, expect, test } from "vitest";
 
-import { BOARD_ENTITIES, deriveBoardChildObjectType, deriveBoardObjectType, getEntityPrefix } from "../../tol-ui/src";
+import { BOARD_ENTITIES, defineBoardEntity, deriveBoardChildObjectType, deriveBoardObjectType, getEntityPrefix, IComponent, TBoardEntity, TsDataSource } from "../../tol-ui/src";
 
 describe("getEntityPrefix function", () => {
   test("The correct prefix is returned for each type of entity", () => {
@@ -59,5 +59,39 @@ describe("deriveBoardChildObjectType function", () => {
 });
 
 describe("Board entity definitions (the defineBoardEntity and defineChildrenEntities functions)", () => {
+  // The data space is a TsDataSource which we can't really compare
+  const assertEntitiesEqual = (actual: Partial<TBoardEntity>, expected: Partial<TBoardEntity>) => expect({ 
+    ...actual, dataspace: undefined
+  }).toEqual({
+    ...expected, dataspace: undefined
+  });
 
+  test("Definition at the lowest level works (no recursion)", () => {
+    const component: IComponent = {
+      id: "c_jlhdYFA89",
+      data_source_instance_id: "test",
+      ui_api_details: {
+        url: "https://portal.tol.sanger.ac.uk",
+        apiPath: "/api/v1",
+        dataspace: "test",
+        apiDataPath: "/data"
+      },
+    };
+
+    const expected: IComponent = {
+      id: "c_jlhdYFA89",
+      data_source_instance_id: "test",
+      ui_api_details: {
+        url: "https://portal.tol.sanger.ac.uk",
+        apiPath: "/api/v1",
+        dataspace: "test",
+        apiDataPath: "/data"
+      },
+      filter: { and_: {} },
+      defaultFilter: { and_: {} },
+      title: ""
+    };
+
+    assertEntitiesEqual(defineBoardEntity(component, BOARD_ENTITIES.ENTITIES.COMPONENT), expected);
+  });
 });
