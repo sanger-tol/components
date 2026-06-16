@@ -77,7 +77,7 @@ export async function updateComponentConfigAndUpsert(
       setHasDiff?.(true);
     })
     .catch((error) => {
-      console.error("Error upserting board diff:", error);
+      console.error("Error upserting board diff: ", error);
     });
 }
 
