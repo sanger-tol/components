@@ -14,14 +14,18 @@ import {
   CellRendererMarkdownParamOptions,
   cellRendererParams,
   deepCopy,
-  IFieldMeta,
   IconTooltip,
   isEmptyObject,
   Modal,
   normaliseCaps,
   SingleSelect,
 } from "../..";
-import type { IRemoteTarget, TCellRenderer, TCellRendererParamType } from "../..";
+import type {
+  IFieldMeta,
+  IRemoteTarget,
+  TCellRenderer,
+  TCellRendererParamType
+} from "../..";
 
 import { CellRendererParam } from "./CellRendererParam";
 
