@@ -148,7 +148,7 @@ export function CellRendererModal(props: PCellRendererModal) {
         renderer?.type || ""
       }
       onChange={(type: string) => setRenderer(
-        type ? { ...renderer, type, props: {} } : undefined // TODO: props needed?
+        type ? { ...renderer, type, props: {} } : undefined
       )}
       data={typeChoices}
     />
