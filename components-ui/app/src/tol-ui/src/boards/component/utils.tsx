@@ -125,16 +125,29 @@ export function getWidgetOrder(layout: Layout[]): string[] {
   return layout.map((item) => item.i);
 }
 
-export function generateLayout(zone: IZone) {
+/**
+ * Generates a react-grid-layout layout that determines the position and sizing of all of the
+ * components in the provided zone.
+ * 
+ * @param zone The zone containing the components to process
+ * @returns The layout describing where the components should be rendered to on the screen
+ */
+export function generateLayout(zone: IZone): Layouts {
+  // The layout we're building up
   const layout: Layouts = { lg: [], md: [], sm: [] };
-  const y = { lg: 0, md: 0, sm: 0 };
+
+  // The current position in the grid we're working at
   const x = { lg: 0, md: 0, sm: 0 };
+  const y = { lg: 0, md: 0, sm: 0 };
 
   zone.order.forEach((componentId) => {
     const component = zone.children?.[componentId];
-
     const size = component.widget_type || "sm";
+
     Object.keys(VISUALISATION_BREAKPOINTS).forEach((breakpoint) => {
+      // Determine the width and height of this component.
+      // Filter Block components are treated exceptionally,
+      // as they always fill the available width but its height changes depending on the size.
       let w: number, h: number;
       if (component.component_type === COMPONENT_TYPES.FILTER_BLOCK) {
         w = VISUALISATION_BREAKPOINTS.lg[breakpoint].w;
@@ -142,7 +155,8 @@ export function generateLayout(zone: IZone) {
       } else {
         ({ w, h } = VISUALISATION_BREAKPOINTS[size][breakpoint]);
       }
-      // if the widget won't fit on the current row, move it to the next row
+
+      // If the widget won't fit on the current row, start a new row
       if (
         x[breakpoint] + w >
         (breakpoint === "lg" ? 4 : breakpoint === "md" ? 2 : 1)
@@ -151,6 +165,9 @@ export function generateLayout(zone: IZone) {
         x[breakpoint] = 0;
       }
 
+      // Now we know its size, may have adjusted `y` because of adding a new row,
+      // and already have the `x` position from the last iteration,
+      // this component can be added to the layout.
       layout[breakpoint].push({
         i: component.id,
         x: x[breakpoint],
@@ -158,8 +175,11 @@ export function generateLayout(zone: IZone) {
         w,
         h,
       });
+
+      // Increase the x position we're keeping track of with the width of this new component
       x[breakpoint] += w;
     });
   });
+
   return layout;
 }
