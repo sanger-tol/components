@@ -11,6 +11,7 @@ import {
   defineBoardEntity,
   upsertBoardEntity,
   TsDataSource,
+  VISUALISATION_BREAKPOINTS,
 } from "../..";
 import type {
   IComponent,
@@ -125,13 +126,6 @@ export function getWidgetOrder(layout: Layout[]): string[] {
 }
 
 export function generateLayout(zone: IZone) {
-  // left hand side are the component types, right are the breakpoints
-  const types = {
-    sm: { lg: { w: 1, h: 10 }, md: { w: 1, h: 10 }, sm: { w: 1, h: 10 } },
-    md: { lg: { w: 2, h: 30 }, md: { w: 2, h: 30 }, sm: { w: 1, h: 30 } },
-    lg: { lg: { w: 4, h: 40 }, md: { w: 2, h: 40 }, sm: { w: 1, h: 40 } },
-  };
-
   const layout: Layouts = { lg: [], md: [], sm: [] };
   const y = { lg: 0, md: 0, sm: 0 };
   const x = { lg: 0, md: 0, sm: 0 };
@@ -140,13 +134,13 @@ export function generateLayout(zone: IZone) {
     const component = zone.children?.[componentId];
 
     const size = component.widget_type || "sm";
-    ["lg", "md", "sm"].forEach((breakpoint) => {
+    Object.keys(VISUALISATION_BREAKPOINTS).forEach((breakpoint) => {
       let w: number, h: number;
       if (component.component_type === COMPONENT_TYPES.FILTER_BLOCK) {
-        w = types.lg[breakpoint].w;
+        w = VISUALISATION_BREAKPOINTS.lg[breakpoint].w;
         h = breakpoint === "lg" ? 9 : breakpoint === "md" ? 15 : 26;
       } else {
-        ({ w, h } = types[size][breakpoint]);
+        ({ w, h } = VISUALISATION_BREAKPOINTS[size][breakpoint]);
       }
       // if the widget won't fit on the current row, move it to the next row
       if (
