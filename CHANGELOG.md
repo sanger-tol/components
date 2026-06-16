@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.5.8`
+
+16-06-2026
+
+- Added the Card cell renderer and Markdown parameter type
+
 ## tol-ui `3.5.7`
 
 12-06-2026
