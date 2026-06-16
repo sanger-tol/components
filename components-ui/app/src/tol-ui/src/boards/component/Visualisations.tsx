@@ -4,24 +4,24 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useRef, useEffect, cloneElement } from "react";
+import { cloneElement, useState, useRef, useEffect } from "react";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import type { Layout, Layouts } from "react-grid-layout";
+
 import {
+  ACTIONS_DS,
+  BOARD_ENTITIES,
+  deleteBoardEntity,
   generateLayout,
-  IZone,
+  getWidgetOrder,
+  patchReorderBoardEntity,
+  removeBoardEntityInParent,
   TsDataSource,
   useBoard,
   useEffectUpdate,
   Visualisation,
-  BOARD_ENTITIES,
-  ACTIONS_DS,
-  patchReorderBoardEntity,
-  getWidgetOrder,
-  removeBoardEntityInParent,
-  deleteBoardEntity,
 } from "../..";
-
+import type { IZone } from "../..";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
