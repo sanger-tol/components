@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useEffect, useState } from "react";
+import { Key, ReactNode, useEffect, useState } from "react";
 import {
   ACTIONS,
   ActionCheckModal,
@@ -49,6 +49,7 @@ import {
 } from '..';
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
+  key?: Key;
   /**
    * Unique identifier for this table instance; used as the key for persisted configuration
    */
@@ -62,6 +63,10 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Initial field metadata for columns; overridden by any saved configuration for this table `id`
    */
   fields?: FieldMeta;
+  /**
+   * Base field metadata set by the board owner (for determining allowed columns in non-edit mode)
+   */
+  baseFieldMeta?: Partial<FieldMeta>;
   /**
    * Default sort attribute when no saved sort configuration exists
    */

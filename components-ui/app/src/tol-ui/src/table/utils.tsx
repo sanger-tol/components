@@ -528,6 +528,71 @@ export function configsAreEqual(
   return normalise(a) === normalise(b);
 }
 
+export function validateAndCleanUserConfig(
+  config: Partial<IComponentConfig> | null,
+  baseConfig: Partial<IComponentConfig> | null,
+): {
+  cleanedConfig: Partial<IComponentConfig> | null;
+  removedColumns: string[];
+} {
+  if (!config || !baseConfig) {
+    return { cleanedConfig: config, removedColumns: [] };
+  }
+
+  const baseOrder = baseConfig?.fieldMeta?.order;
+  const limitVisibility = !!baseOrder?.limitVisibility;
+  // If limit visibility is disabled, allow full config without cleaning constraints
+  if (!limitVisibility) {
+    return { cleanedConfig: config, removedColumns: [] };
+  }
+
+  const allowedColumns = new Set<string>([
+    ...(baseOrder?.active || []),
+    ...(baseOrder?.inactive || []),
+  ]);
+
+  const nextConfig = structuredClone(config) as Partial<IComponentConfig>;
+  const currentOrder = nextConfig?.fieldMeta?.order;
+  if (!currentOrder) {
+    return { cleanedConfig: nextConfig, removedColumns: [] };
+  }
+
+  const originalActive = currentOrder.active || [];
+  const originalInactive = currentOrder.inactive || [];
+
+  const removedColumns = Array.from(
+    new Set(
+      [...originalActive, ...originalInactive].filter(
+        (column) => !allowedColumns.has(column),
+      ),
+    ),
+  );
+
+  if (removedColumns.length === 0) {
+    return { cleanedConfig: nextConfig, removedColumns: [] };
+  }
+
+  currentOrder.active = originalActive.filter((column) =>
+    allowedColumns.has(column),
+  );
+  currentOrder.inactive = originalInactive.filter((column) =>
+    allowedColumns.has(column),
+  );
+
+  if (
+    (nextConfig as any).defaultSortByAttribute &&
+    !allowedColumns.has((nextConfig as any).defaultSortByAttribute)
+  ) {
+    (nextConfig as any).defaultSortByAttribute = undefined;
+    (nextConfig as any).defaultSortByType = undefined;
+  }
+
+  return {
+    cleanedConfig: nextConfig,
+    removedColumns,
+  };
+}
+
 /**
  * Computes the initial diff state for a component's table configuration.
  *
@@ -572,12 +637,16 @@ export async function getInitialDiffState(
   };
 
   const configState = switchConfigState();
+  const { cleanedConfig, removedColumns } =
+    !editMode && !!configState
+      ? validateAndCleanUserConfig(configState, baseConfig)
+      : { cleanedConfig: configState, removedColumns: [] as string[] };
 
   // Calculate the config differences for the reset confirmation display
   // Return a configDifferences object with the columns to add and remove,
   // represented as AttributeTitle components to show the source colour and provide on hover tooltips
   const getConfigDifferences = (): IConfigDifferences => {
-    const resolvedConfig = configState ?? baseConfig;
+    const resolvedConfig = cleanedConfig ?? baseConfig;
     const currentColumns = resolvedConfig?.fieldMeta?.order?.active || [];
     const publishedColumns = baseConfig?.fieldMeta?.order?.active || [];
 
@@ -606,10 +675,11 @@ export async function getInitialDiffState(
   return {
     configDifferences: getConfigDifferences(),
     hasDiff: editMode ? false : isLoggedIn ? !!remoteDiff : !!localDiff,
-    currentConfig: (configState ??
+    currentConfig: (cleanedConfig ??
       baseConfig) as Partial<ITableConfigSave> | null,
     isRedundantDiff:
-      !editMode && !!configState && configsAreEqual(configState, baseConfig),
+      !editMode && !!cleanedConfig && configsAreEqual(cleanedConfig, baseConfig),
+    removedColumns,
   };
 }
 
@@ -644,7 +714,7 @@ export async function handleSavedDiffReset(
       )
     : diffState.hasDiff
       ? (clearTableConfigLocalStorage(
-          `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${diffId}`,
+          `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${componentData.id}`,
         ),
         (isSuccessDiffReset = true))
       : null;
@@ -684,14 +754,20 @@ export function handleFirstLoadDiffState(
 ): IDiffState {
   const diffConfig = componentData?.config_diff?.config ?? null;
   const baseConfig = componentData?.config ?? null;
-  const isRedundantDiff = !!diffConfig && configsAreEqual(diffConfig, baseConfig);
+  const { cleanedConfig, removedColumns } = validateAndCleanUserConfig(
+    diffConfig,
+    baseConfig,
+  );
+  const isRedundantDiff =
+    !!cleanedConfig && configsAreEqual(cleanedConfig, baseConfig);
   return {
     currentConfig:
       (structuredClone(
-        diffConfig ?? baseConfig ?? null,
+        cleanedConfig ?? baseConfig ?? null,
       ) as Partial<ITableConfigSave>) ?? null,
-    hasDiff: !!diffConfig && !isRedundantDiff,
+    hasDiff: !!cleanedConfig && !isRedundantDiff,
     isRedundantDiff,
+    removedColumns,
     configDifferences: { add: [], remove: [] },
   };
 }

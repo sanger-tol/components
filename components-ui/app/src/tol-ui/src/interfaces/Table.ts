@@ -101,6 +101,10 @@ export interface IDiffState {
    * Whether the stored diff is identical to the base config and can be safely deleted.
    */
   isRedundantDiff?: boolean;
+  /**
+   * Columns removed from user config because they are no longer allowed by the board owner.
+   */
+  removedColumns?: string[];
 }
 
 export interface ITableConfigSave extends ITableDrawerSave, ITableOtherSave {}
