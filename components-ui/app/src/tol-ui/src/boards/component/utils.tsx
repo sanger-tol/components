@@ -136,14 +136,21 @@ export function generateLayout(zone: IZone): Layouts {
   // The layout we're building up
   const layout: Layouts = { lg: [], md: [], sm: [] };
 
-  // The current position in the grid we're working at
-  const x = { lg: 0, md: 0, sm: 0 };
-  const y = { lg: 0, md: 0, sm: 0 };
+  // The current position in the grid we're working at for this component.
+  // A component will have a different position depending on the size it's being renderered at
+  // (which is different per screen size), so they're tracked separately.
+  const currentPosition = {
+    lg: { x: 0, y: 0 },
+    md: { x: 0, y: 0 },
+    sm: { x: 0, y: 0 },
+  };
 
   zone.order.forEach((componentId) => {
     const component = zone.children?.[componentId];
     const size = component.widget_type || "sm";
 
+    // As mentioned above, we need to calculate the component's position separately
+    // for each size
     Object.keys(VISUALISATION_BREAKPOINTS).forEach((breakpoint) => {
       // Determine the width and height of this component.
       // Filter Block components are treated exceptionally,
@@ -158,11 +165,11 @@ export function generateLayout(zone: IZone): Layouts {
 
       // If the widget won't fit on the current row, start a new row
       if (
-        x[breakpoint] + w >
+        currentPosition[breakpoint].x + w >
         (breakpoint === "lg" ? 4 : breakpoint === "md" ? 2 : 1)
       ) {
-        y[breakpoint] += h;
-        x[breakpoint] = 0;
+        currentPosition[breakpoint].y += h;
+        currentPosition[breakpoint].x = 0;
       }
 
       // Now we know its size, may have adjusted `y` because of adding a new row,
@@ -170,14 +177,13 @@ export function generateLayout(zone: IZone): Layouts {
       // this component can be added to the layout.
       layout[breakpoint].push({
         i: component.id,
-        x: x[breakpoint],
-        y: y[breakpoint],
+        ...currentPosition[breakpoint], // `x` and `y`
         w,
         h,
       });
 
       // Increase the x position we're keeping track of with the width of this new component
-      x[breakpoint] += w;
+      currentPosition[breakpoint].x += w;
     });
   });
 
