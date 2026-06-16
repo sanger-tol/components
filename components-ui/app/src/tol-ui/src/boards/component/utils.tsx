@@ -111,7 +111,12 @@ export function defineZoneWithComponentList(
   ) as IZone;
 }
 
-export function getWidgetOrder(layout: Layout[]) {
+/**
+ * Determines the order of widgets from a react grid layout
+ * @param layout The React Grid layout
+ * @returns A sorted array of component IDs
+ */
+export function getWidgetOrder(layout: Layout[]): string[] {
   // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
   layout.sort((a, b) => a.y - b.y || a.x - b.x);
 
