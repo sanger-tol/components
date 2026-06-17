@@ -4,18 +4,23 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
 import {
   BOARD_ENTITIES,
+  BOARDS_API,
   defineBoardEntity,
   defineBoardEntityInParent,
+  deleteBoardEntity,
+  deleteComponentDiff,
   deriveBoardChildObjectType,
   deriveBoardObjectType,
   fetchBoardEntityAndChildren,
   getEntityPrefix,
   patchReorderBoardEntity,
+  postAddBoardEntity,
   removeBoardEntityInParent,
+  upsertBoardEntity,
 } from "../../tol-ui/src";
 import type { IBoard, IComponent, IZone, TBoardEntity } from "../../tol-ui/src";
 import { MockDataSource } from "../mocks";
@@ -443,12 +448,15 @@ describe("removeBoardEntityInParent function", () => {
   });
 });
 
-describe("patchReorderBoardEntity function", () => {
-  test("The correct request occurs", async () => {
-    const mockDataSource = new MockDataSource({});
+describe("Board entity endpoints", () => {
+  let mockDataSource: MockDataSource;
 
+  beforeEach(() => {
+    mockDataSource = new MockDataSource({});
+  });
+
+  test("patchReorderBoardEntity", async () => {
     await patchReorderBoardEntity(mockDataSource, "z_sdfh23edh", ["c_dHUYFT", "c_8y7duahIDH"]);
-
     expect(mockDataSource.capturedRequests).toEqual([
       {
         method: "PATCH",
@@ -456,6 +464,56 @@ describe("patchReorderBoardEntity function", () => {
         body: {
           order: ["c_dHUYFT", "c_8y7duahIDH"]
         }
+      }
+    ]);
+  });
+
+  test("upsertBoardEntity", async () => {
+    await upsertBoardEntity(mockDataSource, "c_DEY87gea", { newAttributes: "yay!" });
+    expect(mockDataSource.capturedRequests).toEqual([
+      {
+        method: "POST",
+        resource: `${BOARD_ENTITIES.ENTITIES.COMPONENT}:upsert`,
+        body: {
+          data: [
+            {
+              type: BOARD_ENTITIES.ENTITIES.COMPONENT,
+              id: "c_DEY87gea",
+              attributes: { newAttributes: "yay!" },
+            }
+          ]
+        }
+      }
+    ]);
+  });
+
+  test("postAddBoardEntity", async () => {
+    await postAddBoardEntity(mockDataSource, "z_gafF24Gga", {});
+    expect(mockDataSource.capturedRequests).toEqual([
+      {
+        method: "POST",
+        resource: `${BOARDS_API.OPERATIONS.ADD_NEW}/z_gafF24Gga`,
+        body: { attributes: {} }
+      }
+    ]);
+  });
+
+  test("deleteBoardEntity", async () => {
+    await deleteBoardEntity(mockDataSource, "v_Duyg98765");
+    expect(mockDataSource.capturedRequests).toEqual([
+      {
+        method: "DELETE",
+        resource: `${BOARDS_API.OPERATIONS.DELETE}/v_Duyg98765`
+      }
+    ]);
+  });
+
+  test("deleteComponentDiff", async () => {
+    await deleteComponentDiff(mockDataSource, "diffid", "0");
+    expect(mockDataSource.capturedRequests).toEqual([
+      {
+        method: "DELETE",
+        resource: `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}/diffid`
       }
     ]);
   });
