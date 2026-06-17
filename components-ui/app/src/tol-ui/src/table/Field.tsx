@@ -59,6 +59,7 @@ export interface FieldMetaData {
 export interface FieldMetaOrder {
   active: string[];
   inactive?: string[];
+  limitVisibility?: boolean;
 }
 export interface FieldMeta {
   data?: FieldMetaData; // original fields with specified options

@@ -194,7 +194,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           onClean={onClean}
         />
         {boardObjectType !== "zone" &&
-          <div className="pass-through-toggle">
+          <div className="tol-pass-through-toggle">
             <Toggle
               key="recommended-tick-filter"
               onClick={() => {
