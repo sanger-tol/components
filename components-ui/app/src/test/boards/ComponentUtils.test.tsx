@@ -58,6 +58,43 @@ describe("updateComponentConfigAndUpsert function", () => {
       }
     ]);
   });
+
+  test("When not in edit mode", async () => {
+    await updateComponentConfigAndUpsert(
+      "c_asdlID7j2",
+      {},
+      {
+        id: "z_aLFJKH763Y",
+        order: ["c_asdlID7j2"],
+        children: {
+          "c_asdlID7j2": {
+            id: "c_asdlID7j2"
+          }
+        }
+      },
+      mockDataSource,
+      false
+    );
+
+    expect(mockDataSource.capturedRequests).toEqual([
+      {
+        method: "POST",
+        resource: "entity_diff:upsert",
+        body: {
+          data: [
+            {
+              type: "entity_diff",
+              attributes: {
+                component_id: "c_asdlID7j2",
+                user_id: undefined, // Because it is an optional parameter to the function
+                config: {},
+              }
+            }
+          ]
+        }
+      }
+    ]);
+  });
 });
 
 describe("getWidgetOrder function", () => {
