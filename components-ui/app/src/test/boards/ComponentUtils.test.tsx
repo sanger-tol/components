@@ -4,17 +4,67 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 import type { Layout } from "react-grid-layout";
 
 import {
   defineZoneWithComponentList,
-  deleteBoardEntity,
   generateLayout,
   getWidgetOrder,
-  updateComponentConfigAndUpsert
+  updateComponentConfigAndUpsert,
 } from "../../tol-ui/src";
+import type { IZone } from "../../tol-ui/src";
+
 import { MockDataSource } from "../mocks";
+
+describe("updateComponentConfigAndUpsert function", () => {
+  let mockDataSource: MockDataSource;
+
+  beforeEach(() => {
+    mockDataSource = new MockDataSource({});
+  });
+
+  const mockParams = (): {
+    componentId: string;
+    config: object;
+    zone: IZone;
+  } => ({
+    componentId: "c_asdlID7j2",
+    config: {},
+    zone: {
+      id: "z_aLFJKH763Y",
+      order: ["c_asdlID7j2"],
+      children: {
+        "c_asdlID7j2": {
+          id: "c_asdlID7j2"
+        }
+      }
+    },
+  });
+
+  test("When in edit mode", async () => {
+    const { componentId, config, zone } = mockParams();
+    await updateComponentConfigAndUpsert(componentId, config, zone, mockDataSource, true);
+
+    expect(mockDataSource.requests).toEqual([
+      {
+        method: "POST",
+        resource: "component:upsert",
+        body: {
+          data: [
+            {
+              type: "component",
+              id: "c_asdlID7j2",
+              attributes: {
+                config: {}
+              }
+            }
+          ]
+        }
+      }
+    ]);
+  });
+});
 
 describe("getWidgetOrder function", () => {
   test("Components are sorted by y position", () => {
