@@ -14,6 +14,7 @@ import {
   deriveBoardObjectType,
   fetchBoardEntityAndChildren,
   getEntityPrefix,
+  patchReorderBoardEntity,
   removeBoardEntityInParent,
 } from "../../tol-ui/src";
 import type { IBoard, IComponent, IZone, TBoardEntity } from "../../tol-ui/src";
@@ -439,5 +440,23 @@ describe("removeBoardEntityInParent function", () => {
     removeBoardEntityInParent("c_LYG68tdda", zone);
 
     expect(zone).toEqual(expected);
+  });
+});
+
+describe("patchReorderBoardEntity function", () => {
+  test("The correct request occurs", async () => {
+    const mockDataSource = new MockDataSource({});
+
+    await patchReorderBoardEntity(mockDataSource, "z_sdfh23edh", ["c_dHUYFT", "c_8y7duahIDH"]);
+
+    expect(mockDataSource.capturedRequests).toEqual([
+      {
+        method: "PATCH",
+        resource: "reorder/z_sdfh23edh",
+        body: {
+          order: ["c_dHUYFT", "c_8y7duahIDH"]
+        }
+      }
+    ]);
   });
 });
