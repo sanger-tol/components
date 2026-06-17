@@ -16,6 +16,7 @@ import {
 import type {
   IAttributeDescriptor,
   IAttributes,
+  IClient,
   IConfigPromises,
   ICustom,
   IDataSource,
@@ -46,7 +47,7 @@ const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
 export class TsDataSource {
-  private client: any;
+  private client: IClient;
   private url: string | undefined;
   private apiPath: string | undefined;
   private apiDataPath: string | undefined;

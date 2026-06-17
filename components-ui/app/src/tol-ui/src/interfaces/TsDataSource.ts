@@ -11,6 +11,19 @@ import type {
   TApiMethod,
 } from "..";
 
+export interface IClientRequestConfig {
+  baseURL: string;
+  params?: any;
+}
+
+export interface IClient {
+  get: (url: string, config: IClientRequestConfig) => any;
+  post: (url: string, body: any, config: IClientRequestConfig) => any;
+  put: (url: string, body: any, config: IClientRequestConfig) => any;
+  patch: (url: string, body: any, config: IClientRequestConfig) => any;
+  delete: (url: string, config: IClientRequestConfig) => any;
+}
+
 export interface IConfigPromises {
   [baseURL: string]: Promise<object>;
 }
