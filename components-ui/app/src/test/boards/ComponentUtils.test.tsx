@@ -13,7 +13,6 @@ import {
   getWidgetOrder,
   updateComponentConfigAndUpsert,
 } from "../../tol-ui/src";
-import type { IZone } from "../../tol-ui/src";
 
 import { MockDataSource } from "../mocks";
 
@@ -24,27 +23,22 @@ describe("updateComponentConfigAndUpsert function", () => {
     mockDataSource = new MockDataSource({});
   });
 
-  const mockParams = (): {
-    componentId: string;
-    config: object;
-    zone: IZone;
-  } => ({
-    componentId: "c_asdlID7j2",
-    config: {},
-    zone: {
-      id: "z_aLFJKH763Y",
-      order: ["c_asdlID7j2"],
-      children: {
-        "c_asdlID7j2": {
-          id: "c_asdlID7j2"
-        }
-      }
-    },
-  });
-
   test("When in edit mode", async () => {
-    const { componentId, config, zone } = mockParams();
-    await updateComponentConfigAndUpsert(componentId, config, zone, mockDataSource, true);
+    await updateComponentConfigAndUpsert(
+      "c_asdlID7j2",
+      {},
+      {
+        id: "z_aLFJKH763Y",
+        order: ["c_asdlID7j2"],
+        children: {
+          "c_asdlID7j2": {
+            id: "c_asdlID7j2"
+          }
+        }
+      },
+      mockDataSource,
+      true
+    );
 
     expect(mockDataSource.requests).toEqual([
       {
