@@ -40,7 +40,7 @@ describe("updateComponentConfigAndUpsert function", () => {
       true
     );
 
-    expect(mockDataSource.requests).toEqual([
+    expect(mockDataSource.capturedRequests).toEqual([
       {
         method: "POST",
         resource: "component:upsert",

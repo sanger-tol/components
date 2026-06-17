@@ -13,7 +13,11 @@ import type {
 const PLACEHOLDER_CLIENT_METHOD = () => Promise.resolve({ data: {} });
 
 export class MockDataSource extends TsDataSource {
-  public requests: ICustom[];
+  /**
+   * Keeps track of every request that was made via  this object since it was instantiated.
+   * Each request is in the format `ICustom`, as it's captured just before `.custom` is called.
+   */
+  public capturedRequests: ICustom[];
 
   constructor({ onGet, onPost, onPut, onPatch, onDelete }: {
     onGet?: IClientMethods["get"],
@@ -31,11 +35,11 @@ export class MockDataSource extends TsDataSource {
     });
   
     super({ client });
-    this.requests = [];
+    this.capturedRequests = [];
   }
 
   public override async custom(request: ICustom) {
-    this.requests.push(request);
+    this.capturedRequests.push(request);
     return super.custom(request);
   }
 }
