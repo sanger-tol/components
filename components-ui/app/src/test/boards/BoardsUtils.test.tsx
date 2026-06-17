@@ -12,10 +12,12 @@ import {
   defineBoardEntityInParent,
   deriveBoardChildObjectType,
   deriveBoardObjectType,
+  fetchBoardEntityAndChildren,
   getEntityPrefix,
   removeBoardEntityInParent,
 } from "../../tol-ui/src";
-import type { IComponent, IZone, TBoardEntity } from "../../tol-ui/src";
+import type { IBoard, IComponent, IZone, TBoardEntity } from "../../tol-ui/src";
+import { MockDataSource } from "../mocks";
 
 describe("getEntityPrefix function", () => {
   test("The correct prefix is returned for each type of entity", () => {
@@ -68,7 +70,8 @@ describe("deriveBoardChildObjectType function", () => {
 });
 
 describe(
-  "Board entity definitions (defineBoardEntity, defineChildrenEntities, defineBoardEntityInParent functions)",
+  "Board entity definitions " +
+  "(defineBoardEntity, defineChildrenEntities, defineBoardEntityInParent, fetchBoardEntityAndChildren functions)",
   () => {
     // The data space is a TsDataSource which we can't really compare
     const assertEntitiesEqual = (actual: Partial<TBoardEntity>, expected: Partial<TBoardEntity>) => {
@@ -291,6 +294,114 @@ describe(
         defineBoardEntityInParent(BOARD_ENTITIES.ENTITIES.COMPONENT, component, zone),
         expected
       );
+    });
+
+    test("Defining a whole board fetched over the network", async () => {
+      // The board is fetched over the network
+      const mockDataSource = new MockDataSource({onGet: (): { data: IBoard } => ({
+        data: {
+          id: "b_adA6GDn34",
+          order: ["v_hgafdtyug"],
+          children: {
+            "v_hgafdtyug": {
+              id: "v_hgafdtyug",
+              order: ["z_aklds8DcGv"],
+              children: {
+                "z_aklds8DcGv": {
+                  id: "z_aklds8DcGv",
+                  data_source_instance_id: "test",
+                  order: ["c_jlhdYFA89", "c_687YLHdga"],
+                  ui_api_details: {
+                    url: "https://portal.tol.sanger.ac.uk",
+                    apiPath: "/api/v1",
+                    dataspace: "test",
+                    apiDataPath: "/data"
+                  },
+                  children: {
+                    "c_jlhdYFA89": {
+                      id: "c_jlhdYFA89",
+                      data_source_instance_id: "test",
+                      ui_api_details: {
+                        url: "https://portal.tol.sanger.ac.uk",
+                        apiPath: "/api/v1",
+                        dataspace: "test",
+                        apiDataPath: "/data"
+                      },
+                    },
+                    "c_687YLHdga": {
+                      id: "c_687YLHdga",
+                      data_source_instance_id: "test",
+                      ui_api_details: {
+                        url: "https://portal.tol.sanger.ac.uk",
+                        apiPath: "/api/v1",
+                        dataspace: "test",
+                        apiDataPath: "/data"
+                      },
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      })});
+
+      const expected: IBoard = {
+        id: "b_adA6GDn34",
+        order: ["v_hgafdtyug"],
+        children: {
+          "v_hgafdtyug": {
+            id: "v_hgafdtyug",
+            order: ["z_aklds8DcGv"],
+            children: {
+              "z_aklds8DcGv": {
+                id: "z_aklds8DcGv",
+                title: "",
+                filter: { and_: {} },
+                defaultFilter: { and_: {} },
+                data_source_instance_id: "test",
+                order: ["c_jlhdYFA89", "c_687YLHdga"],
+                ui_api_details: {
+                  url: "https://portal.tol.sanger.ac.uk",
+                  apiPath: "/api/v1",
+                  dataspace: "test",
+                  apiDataPath: "/data"
+                },
+                children: {
+                  "c_jlhdYFA89": {
+                    id: "c_jlhdYFA89",
+                    title: "",
+                    filter: { and_: {} },
+                    defaultFilter: { and_: {} },
+                    data_source_instance_id: "test",
+                    ui_api_details: {
+                      url: "https://portal.tol.sanger.ac.uk",
+                      apiPath: "/api/v1",
+                      dataspace: "test",
+                      apiDataPath: "/data"
+                    },
+                  },
+                  "c_687YLHdga": {
+                    id: "c_687YLHdga",
+                    title: "",
+                    filter: { and_: {} },
+                    defaultFilter: { and_: {} },
+                    data_source_instance_id: "test",
+                    ui_api_details: {
+                      url: "https://portal.tol.sanger.ac.uk",
+                      apiPath: "/api/v1",
+                      dataspace: "test",
+                      apiDataPath: "/data"
+                    },
+                  }
+                }
+              }
+            }
+          }
+        }
+      };
+
+      assertEntitiesEqual(await fetchBoardEntityAndChildren(mockDataSource, "b_adA6GDn34"), expected);
     });
   }
 );
