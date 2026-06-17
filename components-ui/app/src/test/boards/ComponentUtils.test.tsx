@@ -40,6 +40,7 @@ describe("updateComponentConfigAndUpsert function", () => {
       true
     );
 
+    // The component should be upserted rather than the diff being updated
     expect(mockDataSource.capturedRequests).toEqual([
       {
         method: "POST",
@@ -76,6 +77,7 @@ describe("updateComponentConfigAndUpsert function", () => {
       false
     );
 
+    // The diff should be added
     expect(mockDataSource.capturedRequests).toEqual([
       {
         method: "POST",
@@ -84,6 +86,49 @@ describe("updateComponentConfigAndUpsert function", () => {
           data: [
             {
               type: "entity_diff",
+              attributes: {
+                component_id: "c_asdlID7j2",
+                user_id: undefined, // Because it is an optional parameter to the function
+                config: {},
+              }
+            }
+          ]
+        }
+      }
+    ]);
+  });
+
+  test("When not in edit mode and a diff exists already", async () => {
+    await updateComponentConfigAndUpsert(
+      "c_asdlID7j2",
+      {},
+      {
+        id: "z_aLFJKH763Y",
+        order: ["c_asdlID7j2"],
+        children: {
+          "c_asdlID7j2": {
+            id: "c_asdlID7j2",
+            config_diff: {
+              id: "configdiffid",
+              config: {}
+            }
+          }
+        }
+      },
+      mockDataSource,
+      false
+    );
+
+    // The existing diff should be updated
+    expect(mockDataSource.capturedRequests).toEqual([
+      {
+        method: "POST",
+        resource: "entity_diff:upsert",
+        body: {
+          data: [
+            {
+              type: "entity_diff",
+              id: "configdiffid",
               attributes: {
                 component_id: "c_asdlID7j2",
                 user_id: undefined, // Because it is an optional parameter to the function
