@@ -4,9 +4,12 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-
-import { IEntityMeta, IFilter, IJsonApiDataExtra } from "..";
-
+import type {
+  IEntityMeta,
+  IFilter,
+  IJsonApiDataExtra,
+  TApiMethod,
+} from "..";
 
 export interface IConfigPromises {
   [baseURL: string]: Promise<object>;
@@ -91,7 +94,7 @@ export interface IGetListCursor {
 }
 
 export interface ICustom {
-  method: string;
+  method: TApiMethod;
   resource: string;
   body?: any;
   params?: any;
