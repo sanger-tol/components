@@ -10,6 +10,8 @@ import type {
   ICustom,
 } from "../../tol-ui/src";
 
+const PLACEHOLDER_CLIENT_METHOD = () => Promise.resolve({ data: {} });
+
 export class MockDataSource extends TsDataSource {
   public requests: ICustom[];
 
@@ -21,11 +23,11 @@ export class MockDataSource extends TsDataSource {
     onDelete?: IClientMethods["delete"],
   }) {
     const client = () => ({
-      get: onGet ?? (() => {}),
-      post: onPost ?? (() => {}),
-      put: onPut ?? (() => {}),
-      patch: onPatch ?? (() => {}),
-      delete: onDelete ?? (() => {}),
+      get: onGet ?? PLACEHOLDER_CLIENT_METHOD,
+      post: onPost ?? PLACEHOLDER_CLIENT_METHOD,
+      put: onPut ?? PLACEHOLDER_CLIENT_METHOD,
+      patch: onPatch ?? PLACEHOLDER_CLIENT_METHOD,
+      delete: onDelete ?? PLACEHOLDER_CLIENT_METHOD,
     });
   
     super({ client });
@@ -34,6 +36,6 @@ export class MockDataSource extends TsDataSource {
 
   public override async custom(request: ICustom) {
     this.requests.push(request);
-    super.custom(request);
+    return super.custom(request);
   }
 }
