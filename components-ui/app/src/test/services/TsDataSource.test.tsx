@@ -15,6 +15,7 @@ import {
 } from "../../tol-ui/src";
 import type {
   IClientRequestConfig,
+  TClient,
   TDataObjectOrNull,
 } from "../../tol-ui/src";
 
@@ -307,7 +308,7 @@ const relationshipConfigMockData = {
   },
 };
 
-const mockClient = () => ({
+const mockClient: TClient = () => ({
   get(
     endpoint: string,
     { baseURL }: IClientRequestConfig,
@@ -513,12 +514,6 @@ describe("Testing relationshipConfig function", () => {
     expect(clientGetSpy).toHaveBeenCalledTimes(0);
   });
 });
-
-/*
-describe("Testing getEntityMeta function", () => {
-  // Add tests for getEntityMeta if needed
-});
-*/
 
 describe("Testing getOne function", () => {
   test("ID does not exist in promise", async () => {
