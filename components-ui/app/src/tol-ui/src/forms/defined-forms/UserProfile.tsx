@@ -79,7 +79,7 @@ export function UserProfile(props: IUserProfile) {
   };
 
   const ProfileForm = (
-    <div style={{ padding: "15px" }}>
+    <div style={{ padding: "15px", border: "1px solid var(--tol-grey-subtle)", borderRadius: "5px" }}>
       <h3>{`${hasCompletedProfile ? "Edit" : "Create"} Your Profile`}</h3>
       {!hasCompletedProfile && (
         <p>You must create a profile before you can access all features.</p>

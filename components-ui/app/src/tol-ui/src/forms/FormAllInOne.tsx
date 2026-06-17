@@ -27,6 +27,7 @@ import {
   MultipleFormInput,
   FormLabel,
   deepEqual,
+  normaliseCaps,
 } from "..";
 
 import type {
@@ -58,7 +59,7 @@ export interface PFormAllInOne {
 }
 
 export function FormAllInOne(props: PFormAllInOne) {
-  const { formConfig, initialData, fluid, model, onValidate } = props;
+  const { formConfig, initialData, fluid = true, model, onValidate } = props;
 
   const [formData, setFormData] = useState<object>({});
   const [formErrors, setFormErrors] = useState<Record<string, any>>({});
@@ -140,6 +141,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             type={textField.type}
             readOnly={textField.readOnly}
             centered={textField.centered}
+            labelInline={textField.labelInline}
           />
         );
       case "countryselect":
@@ -325,6 +327,12 @@ export function FormAllInOne(props: PFormAllInOne) {
     }
   };
 
+  const uniqueSections = Array.from(
+    new Set(formConfig.fields.map((field) => field.section)),
+  )
+    .filter((section) => section !== undefined)
+    .map((section) => section as string);
+
   return (
     <div className="form-wrapper">
       <RSForm
@@ -340,23 +348,125 @@ export function FormAllInOne(props: PFormAllInOne) {
         model={model || defaultModel}
         formValue={formData}
       >
-        {formConfig.fields.map((field: any) => (
-          <div key={`${formId}-${field.name}`}>
-            {field.multiple ? (
-              <MultipleFormInput
-                renderField={renderField}
-                field={field}
-                formData={formData}
-                setFormData={setFormData}
-                setModifiedFields={setModifiedFields}
-                minOne={field.minOne}
-                onChange={handleInputChange}
-              />
-            ) : (
-              renderField(field)
+        {uniqueSections.length > 0 ? (
+          <>
+            {uniqueSections.map((section) => (
+              <div
+                key={`section-${section}`}
+                id={`section-${section}`}
+                style={{ marginBottom: "30px" }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    marginBottom: "20px",
+                    borderBottom: "2px solid var(--tol-grey-subtle)",
+                  }}
+                >
+                  <h5>{normaliseCaps(section)}</h5>
+                </div>
+                {formConfig.fields
+                  .filter((field) => field.section === section)
+                  .map((field: any) => (
+                    <div key={`${field.id ?? formId}-${field.name}`}>
+                      {field.multiple ? (
+                        <MultipleFormInput
+                          renderField={renderField}
+                          field={field}
+                          formData={formData}
+                          setFormData={setFormData}
+                          setModifiedFields={setModifiedFields}
+                          minOne={field.minOne}
+                          onChange={handleInputChange}
+                        />
+                      ) : (
+                        <div
+                          id={`${field.id}`}
+                          key={`${field.id ?? formId}-${field.name}`}
+                          style={{ display: "block" }}
+                          className={
+                            field.labelInline ? "tol-form-field-inline" : ""
+                          }
+                        >
+                          {renderField(field)}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            ))}
+            {formConfig.fields.some((field) => !field.section) && (
+              <div
+                key="section-misc"
+                id="section-misc"
+                style={{ marginBottom: "30px" }}
+              >
+                <div
+                  style={{
+                    width: "100%",
+                    marginBottom: "20px",
+                    borderBottom: "2px solid var(--tol-grey-subtle)",
+                  }}
+                >
+                  <h5>{normaliseCaps("Misc")}</h5>
+                </div>
+                {formConfig.fields
+                  .filter((field) => !field.section)
+                  .map((field: any) => (
+                    <div key={`${formId}-${field.name}`}>
+                      {field.multiple ? (
+                        <MultipleFormInput
+                          renderField={renderField}
+                          field={field}
+                          formData={formData}
+                          setFormData={setFormData}
+                          setModifiedFields={setModifiedFields}
+                          minOne={field.minOne}
+                          onChange={handleInputChange}
+                        />
+                      ) : (
+                        <div
+                          id={`${field.id}`}
+                          key={`${field.id ?? formId}-${field.name}`}
+                          style={{ display: "block" }}
+                          className={
+                            field.labelInline ? "tol-form-field-inline" : ""
+                          }
+                        >
+                          {renderField(field)}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
             )}
-          </div>
-        ))}
+          </>
+        ) : (
+          formConfig.fields.map((field: any) => (
+            <div key={`${formId}-${field.name}`}>
+              {field.multiple ? (
+                <MultipleFormInput
+                  renderField={renderField}
+                  field={field}
+                  formData={formData}
+                  setFormData={setFormData}
+                  setModifiedFields={setModifiedFields}
+                  minOne={field.minOne}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <div
+                  id={`${field.id}`}
+                  key={`${field.id ?? formId}-${field.name}`}
+                  style={{ display: "block" }}
+                  className={field.labelInline ? "tol-form-field-inline" : ""}
+                >
+                  {renderField(field)}
+                </div>
+              )}
+            </div>
+          ))
+        )}
         {formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
             {formConfig.buttonConfig.buttons.map(

@@ -19,10 +19,32 @@
   flex-direction: column;
 }
 
+.tol-form-field-inline {
+  margin-top: 20px !important;
+}
+
+.tol-form-field-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+
+  label {
+    margin-bottom: 0 !important;
+  }
+}
+
 .tol-form-label {
   display: flex;
   gap: 5px;
   align-items: center;
+
+  &.inline {
+    display: inline-flex;
+    width: 140px;
+    padding-right: 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }
 
 .tol-multiple-form-input-row {
