@@ -40,7 +40,7 @@
   "resolutions": {
     "styled-components": "~6.4.0",
     "filelist": "1.0.6",
-    "sass": "1.101.0"
+    "sass": "1.77.0"
   },
   "scripts": {
     "start": "vite",
