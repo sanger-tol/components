@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { Loader, PopUpMessage, useUserProfile } from "..";
+import { TolLoader, PopUpMessage, useUserProfile } from "..";
 
 export interface PRequireCompletedProfile {
   /**
@@ -53,7 +53,7 @@ export function RequireCompletedProfile(props: PRequireCompletedProfile) {
     }
   }, [isLoading, hasCompletedProfile, redirectTo, history, location.pathname]);
 
-  if (isLoading || !hasCompletedProfile) return <Loader />;
+  if (isLoading || !hasCompletedProfile) return <TolLoader content="Loading Content..." vertical size="md" />;
 
   return <>{children}</>;
 }

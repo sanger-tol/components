@@ -28,14 +28,6 @@ export const BUTTONS: Record<string, PButton> = {
     disabledTooltip: "No changes to save",
     position: "right",
   },
-    SAVE_OUTLINE: {
-    outline: true,
-    type: "success",
-    icon: "save",
-    tooltip: "Save Changes",
-    disabledTooltip: "No changes to save",
-    position: "right",
-  },
   RETURN: {
     outline: true,
     type: "warning",
@@ -110,5 +102,5 @@ export const BUTTONS: Record<string, PButton> = {
     text: "Settings",
     tooltip: "Settings",
     position: "right",
-  }
+  },
 };
