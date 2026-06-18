@@ -66,7 +66,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
   /**
    * Base field metadata set by the board owner (for determining allowed columns in non-edit mode)
    */
-  baseFieldMeta?: Partial<FieldMeta>;
+  baseFieldMeta?: Partial<IFieldMeta>;
   /**
    * Default sort attribute when no saved sort configuration exists
    */
