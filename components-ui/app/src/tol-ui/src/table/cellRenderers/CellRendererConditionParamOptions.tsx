@@ -11,7 +11,7 @@ import {
   BUTTONS,
   cellRendererParams,
   deepCopy,
-  defineZone,
+  defineZoneWithComponentList,
   generateFilter,
   isEmptyObject,
   RemoteFilters,
@@ -72,7 +72,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   // so here's a zone to assign the filters to while we're defining them
   const zoneFilterId = "cell-renderer-component";
   const [filterZone, setFilterZone] = useState<IZone>(
-    defineZone("dummy-object-for-remote-filters", [
+    defineZoneWithComponentList("dummy-object-for-remote-filters", [
       { id: zoneFilterId, filter: renderer?.props?.[paramName!] as IFilter || { and_: {} } },
     ]),
   );
@@ -95,7 +95,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       setAttributes(Object.keys(filterValue.and_ || {}) || []);
       setFilterConditions(filterValue);
       setPreviousFilterConditions(previousRenderer?.props?.[paramName] as IFilter | undefined);
-      setFilterZone(defineZone("dummy-object-for-remote-filters", [
+      setFilterZone(defineZoneWithComponentList("dummy-object-for-remote-filters", [
         { id: zoneFilterId, filter: filterValue },
       ]));
     } else {
@@ -118,7 +118,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
 
   // Needed for the BottomButtons. Either adding the parameter or going back means that the filter
   // making up the parameter should be cleared (it gets tied to the renderer somehow!)
-  const resetFilterZone = () => setFilterZone(defineZone("dummy-object-for-remote-filters", [
+  const resetFilterZone = () => setFilterZone(defineZoneWithComponentList("dummy-object-for-remote-filters", [
     { id: zoneFilterId, filter: { and_: {} } },
   ]));
 
@@ -176,11 +176,11 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
         populatedFieldType="filter"
         onClean={() => {
           // We know that the component exists because it is set by default (filterZone state)
-          const component = filterZone.components[zoneFilterId];
+          const component = filterZone.children[zoneFilterId];
 
           // When the multi-select is cleared, the filter should be reset
-          component.data.filter!.and_ = {};
-          component.data.defaultFilter!.and_ = {};
+          component.filter!.and_ = {};
+          component.defaultFilter!.and_ = {};
           setFilterZone({ ...filterZone });
         }}
       />
