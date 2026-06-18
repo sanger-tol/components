@@ -1,159 +1,98 @@
 /*
-SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+
 import {
-  FieldMeta,
-  SingleSelect,
+  AttributeTitle,
+  Button,
+  BUTTONS,
+  CellRendererConditionParamOptions,
+  CellRendererMarkdownParamOptions,
+  cellRendererParams,
+  deepCopy,
+  IconTooltip,
+  isEmptyObject,
   Modal,
   normaliseCaps,
-  cellRendererParams,
-  Button,
-  deepCopy,
-  TCellRenderer,
-  IRemoteTarget,
-  RemoteFilters,
-  IFilter,
-  isEmptyObject,
-  BUTTONS,
-  defineZone,
-  AttributeSelector,
-  IZone,
-  generateFilter,
-  AttributeTitle,
-  IconTooltip,
+  SingleSelect,
 } from "../..";
+import type {
+  IFieldMeta,
+  IRemoteTarget,
+  TCellRenderer,
+  TCellRendererParamType
+} from "../..";
+
 import { CellRendererParam } from "./CellRendererParam";
 
-
 export interface PCellRendererModal extends IRemoteTarget {
+  /**
+   * Controls whether the modal is open or closed
+   */
   open: boolean,
+  /**
+   * The state setter for `open` so the modal can trigger a close
+   */
   setOpen: Dispatch<SetStateAction<boolean>>,
+  /**
+   * The table column being configured
+   */
   attributeId: string,
-  fieldMeta: FieldMeta,
-  setFieldMeta: (fieldMeta: FieldMeta) => void,
+  /**
+   * The metadata for the field being configured: where the cell renderer options are stored.
+   * It is often written to be reference rather than the state setter.
+   * */
+  fieldMeta: IFieldMeta,
+  /**
+   * State setter for `fieldMeta`. Typically, changes are applied by writing to `fieldMeta` directly,
+   * then this is called to 'formally apply' the changes (`setFieldMeta({ ...fieldMeta })`)
+   */
+  setFieldMeta: Dispatch<SetStateAction<IFieldMeta>>,
 }
 
+/**
+ * The modal used to configure the cell renderer for a column in a table.
+ * Opened by the palette icon (`CellRendererConfigurer`) in the column config drawer.
+ */
 export function CellRendererModal(props: PCellRendererModal) {
-  const { open, setOpen, attributeId, fieldMeta, setFieldMeta, objectType, dataSource } = props;
+  const { open, setOpen, objectType, dataSource, attributeId, fieldMeta, setFieldMeta } = props;
+
+  // The config of the cell renderer that's being edited
   const [renderer, setRenderer] = useState<TCellRenderer>();
+  // Used to know whether changes have been made to the cell renderer (by checking it against `renderer`)
   const [previousRenderer, setPreviousRenderer] = useState<TCellRenderer>();
-  const [selectedConditionParam, setSelectedConditionParam] = useState<string | undefined>();
-  const [filterConditions, setFilterConditions] = useState<IFilter>();
-  const [attributes, setAttributes] = useState<string[]>(Object.keys(filterConditions?.and_ || {}));
-  const [conditionHasPendingChanges, setConditionHasPendingChanges] = useState<boolean>(false);
-  const zoneFilterId = "cell-renderer-zone";
-  const [filterZone, setFilterZone] = useState<IZone>(
-    defineZone("dummy-object-for-remote-filters", [
-      { id: zoneFilterId, filter: renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} } },
-    ]),
-  );
+  // A parameter may need to be highlighted to be edited in more detail (via switching to the second page)
+  const [selectedParameter, setSelectedParameter] = useState<string | undefined>();
+  // Whether changes have been made in page 2
+  const [doesSelectedParamHavePendingChanges, setDoesSelectedParamHavePendingChanges] = useState(false);
 
-  // On adding a cell renderer parameter, or going back, the filter making
-  // up the parameter should be cleared
-  const resetFilterZone = () => setFilterZone(defineZone("dummy-object-for-remote-filters", [
-    { id: zoneFilterId, filter: { and_: {} } },
-  ]));
-
-  const requiredParamKeys = renderer && cellRendererParams[renderer.type]
-    ? Object.entries(cellRendererParams[renderer.type].params || {})
-      .filter(([_, v]) => v.required)
-      .map(([k, _]) => k)
-    : [];
-  const requiredParamsCount = requiredParamKeys.length;
-  const filledParamsCount = requiredParamKeys.filter(key => {
-    return renderer?.props && renderer.props[key];
-  }).length;
-
-  const rendererHasPendingChanges = (
-    JSON.stringify(renderer) !== JSON.stringify(previousRenderer)
+  // Used in the modal config and for disabling buttons.
+  // Whether changes have been made in page 1
+  const doesRendererHavePendingChanges = useMemo(
+    () => JSON.stringify(renderer) !== JSON.stringify(previousRenderer),
+    [renderer, previousRenderer]
   );
 
   useEffect(() => {
     if (open) {
-      setRenderer(
-        deepCopy(
-          fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer
-        )
-      );
-      setPreviousRenderer(
-        deepCopy(
-          fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer
-        )
-      );
+      // Fetch any pre-existing cell renderer on this table column
+      setRenderer(deepCopy(
+        fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer
+      ));
+      setPreviousRenderer(deepCopy(
+        fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer
+      ));
     }
-    setSelectedConditionParam(undefined);
+
+    // Reset state
+    setSelectedParameter(undefined);
   }, [open]);
 
-  // Checks that the condition exists and has a value, stops the condition filters spreading across all conditions
-  useEffect(() => {
-    if (renderer?.props?.[selectedConditionParam!] && selectedConditionParam) {
-      const paramValue = renderer.props[selectedConditionParam];
-      const filterValue = typeof paramValue === 'object' ? paramValue as IFilter : { and_: {} };
-      setAttributes(Object.keys(filterValue.and_ || {}) || []);
-      setFilterConditions(filterValue);
-      setFilterZone(defineZone("dummy-object-for-remote-filters", [
-        { id: zoneFilterId, filter: filterValue },
-      ]));
-    } else {
-      setAttributes([]);
-      setFilterConditions({ and_: {} });
-    }
-  }, [selectedConditionParam]);
-
-  useEffect(() => {
-    const newFilter = generateFilter(filterZone, zoneFilterId);
-    setFilterConditions(newFilter);
-    setConditionHasPendingChanges(() => {
-      if (!renderer || !selectedConditionParam) return false;
-      renderer!.props![selectedConditionParam!] = newFilter ?? {};
-      setRenderer({ ...renderer });
-      return JSON.stringify(previousRenderer?.props?.[selectedConditionParam]) !== JSON.stringify(renderer.props?.[selectedConditionParam])
-    });
-  }, [filterZone]);
-
-  const onTypeChange = (type: string) => {
-    setRenderer(
-      type ? { ...renderer, type: type, props: {} } : undefined // TODO: props needed?
-    );
-  };
-
-  const onAddNewRenderer = () => {
-    if (renderer) {
-      fieldMeta.data![attributeId] = fieldMeta.data![attributeId] || {};
-      fieldMeta.data![attributeId].cellRenderer = renderer;
-      fieldMeta.dataWithDefaults![attributeId] = fieldMeta.dataWithDefaults![attributeId] || {};
-      fieldMeta.dataWithDefaults![attributeId].cellRenderer = renderer;
-    } else {
-      delete fieldMeta.data![attributeId].cellRenderer;
-      if (isEmptyObject(fieldMeta.data![attributeId])) {
-        delete fieldMeta.data![attributeId];
-      }
-      delete fieldMeta.dataWithDefaults![attributeId].cellRenderer;
-      if (isEmptyObject(fieldMeta.dataWithDefaults![attributeId])) {
-        delete fieldMeta.dataWithDefaults![attributeId];
-      }
-    }
-    setFieldMeta({ ...fieldMeta! });
-    setOpen(false);
-  }
-
-  const onConditionSave = () => {
-    // delete empty params if no condition present
-    if (isEmptyObject(filterConditions?.and_ || {})) {
-      delete renderer!.props![selectedConditionParam!];
-    } else {
-      renderer!.props![selectedConditionParam!] = filterConditions ?? {};
-    }
-    setRenderer({ ...renderer! });
-    setSelectedConditionParam(undefined);
-    setConditionHasPendingChanges(false);
-    resetFilterZone();
-  }
-
+  // Used in the Header
   const TooltipHelp = (
     <ul>
       <li>
@@ -165,6 +104,7 @@ export function CellRendererModal(props: PCellRendererModal) {
     </ul>
   );
 
+  // The header is shared between both pages
   const Header = (
     <>
       <h5>
@@ -184,126 +124,179 @@ export function CellRendererModal(props: PCellRendererModal) {
     </>
   );
 
-  const SaveCellRendererButton = (
-    <Button
-      {...BUTTONS.ADD}
-      disabled={!rendererHasPendingChanges || requiredParamsCount > filledParamsCount}
-      onClick={onAddNewRenderer}
+  // The cell renderer types that can be picked in CellRendererSelector
+  const typeChoices = useMemo(
+    () => Object.keys(cellRendererParams)
+      .filter(cellRendererType => {
+        const allowed = cellRendererParams[cellRendererType]?.allowedDataTypes;
+        const attrType = fieldMeta?.dataWithDefaults?.[attributeId]?.type;
+        // if allowedDataTypes is not defined, allow all
+        if (!allowed) return true;
+        return allowed.includes(attrType!);
+      })
+      .map(cellRendererType => ({
+        label: cellRendererParams[cellRendererType]?.rename || normaliseCaps(cellRendererType),
+        value: cellRendererType
+      })),
+    []
+  );
+
+  // The dropdown where the cell renderer type is chosen. This determines which parameters
+  // need to be shown in ParameterList
+  const CellRendererSelector = (
+    <SingleSelect
+      className="tol-data-point-renderer-modal-selector"
+      block
+      placeholder="Default Cell Renderer"
+      value={
+        renderer?.type || ""
+      }
+      onChange={(type: string) => setRenderer(
+        type ? { ...renderer, type, props: {} } : undefined
+      )}
+      data={typeChoices}
     />
   );
 
-  const ConditionButtons = (
+  // Each parameter associated with the selected cell renderer type
+  const ParameterList = renderer && (
     <>
-      <Button
-        {...BUTTONS.ADD}
-        disabled={!conditionHasPendingChanges}
-        onClick={onConditionSave}
-      />
-      <Button
-        {...BUTTONS.RETURN}
-        onClick={() => {
-          setSelectedConditionParam(undefined);
-          resetFilterZone();
-        }}
-      />
+      {Object.keys(cellRendererParams[renderer?.type]?.params || {}).length > 0 && (
+        <div className="tol-data-point-renderer-modal-params">
+          {Object.entries(cellRendererParams[renderer.type].params || {}).map(([param, meta]) => {
+            return (
+              <CellRendererParam
+                {...props}
+                key={param}
+                param={param}
+                meta={meta}
+                renderer={renderer}
+                setRenderer={setRenderer}
+                selectedParam={selectedParameter}
+                setSelectedParam={setSelectedParameter}
+              />
+            )
+          })}
+        </div>
+      )}
     </>
   );
 
-  const typeChoices = Object.keys(cellRendererParams)
-    .filter(cellRendererType => {
-      const allowed = cellRendererParams[cellRendererType]?.allowedDataTypes;
-      const attrType = fieldMeta?.dataWithDefaults?.[attributeId]?.type;
-      // if allowedDataTypes is not defined, allow all
-      if (!allowed) return true;
-      return allowed.includes(attrType!);
-    })
-    .map(cellRendererType => ({
-      label: cellRendererParams[cellRendererType]?.rename || normaliseCaps(cellRendererType),
-      value: cellRendererType
-    }));
+  // Called when the AddCellRendererButton is clicked.
+  // The end goal of this modal; applies the changes made throughout
+  const handleAddRenderer = () => {
+    // Prepare fieldMeta to be set on the zone.
+    // If there's a renderer (either made in this modal or carried over from what the attribute already had)
+    // then we apply this new renderer onto fieldMeta.
+    // If there's not a renderer (either we made no changes or the renderer on the attribute was removed)
+    // then we clear the cell renderer off of fieldMeta.
+    if (renderer) {
+      // Make sure the data is a valid object
+      fieldMeta.data![attributeId] = fieldMeta.data![attributeId] || {};
+      fieldMeta.dataWithDefaults![attributeId] = fieldMeta.dataWithDefaults![attributeId] || {};
+      
+      // Set the new cell renderer we made in this modal to the attribute
+      fieldMeta.data![attributeId].cellRenderer = renderer;
+      fieldMeta.dataWithDefaults![attributeId].cellRenderer = renderer;
+    } else {
+      // Remove any existing cell renderer
+      delete fieldMeta.data![attributeId].cellRenderer;
+      // Remove other metadata
+      if (isEmptyObject(fieldMeta.data![attributeId])) {
+        delete fieldMeta.data![attributeId];
+      }
 
-  const onClean = () => {
-    const component = filterZone.components[zoneFilterId];
-    // We know that the component exists because it is set by default (filterZone state)
-    component.data.filter!.and_ = {};
-    component.data.defaultFilter!.and_ = {};
-    setFilterZone({ ...filterZone });
+      // Do the same for dataWithDefaults
+      delete fieldMeta.dataWithDefaults![attributeId].cellRenderer;
+      if (isEmptyObject(fieldMeta.dataWithDefaults![attributeId])) {
+        delete fieldMeta.dataWithDefaults![attributeId];
+      }
+    }
+
+    // Formally apply the changes to fieldMeta so that they update on the Zone
+    setFieldMeta({ ...fieldMeta! });
+
+    // Close the modal
+    setOpen(false);
   };
+
+  // Shown only on the first page. Needs to be added as the action button instead of at the
+  // bottom of the page so that it sits alongside the close button.
+  // (In contrast to the second page, which has custom buttons at the bottom)
+  const AddCellRendererButton = (
+    <Button
+      {...BUTTONS.ADD}
+      disabled={!doesRendererHavePendingChanges} // || requiredParamsCount > filledParamsCount
+      onClick={handleAddRenderer}
+    />
+  );
+
+  // The first page of the modal where the cell renderer type is selected and its parameters
+  // shown. Some parameters can be edited directly, while others take you to the second page
+  // to edit them
+  const FirstPage = (
+    <>
+      {CellRendererSelector}
+      <p>
+        {renderer && cellRendererParams[renderer.type]?.description}
+      </p>
+      <hr />
+      {ParameterList}
+    </>
+  );
+
+  // The second page of the modal: a dedicated space to edit a specific parameter
+  const selectedParameterType: TCellRendererParamType | undefined = useMemo(() => {
+    if (renderer && selectedParameter) {
+      return cellRendererParams[renderer.type].params?.[selectedParameter].type;
+    } else {
+      return undefined;
+    }
+  }, [selectedParameter]);
+  const SecondPage = selectedParameterType == "condition" ? (
+    <CellRendererConditionParamOptions
+      paramName={selectedParameter || ""}
+      renderer={renderer}
+      setRenderer={setRenderer}
+      previousRenderer={previousRenderer}
+      hasPendingChanges={doesSelectedParamHavePendingChanges}
+      setHasPendingChanges={setDoesSelectedParamHavePendingChanges}
+      goBack={() => setSelectedParameter(undefined)}
+      objectType={objectType}
+      dataSource={dataSource}
+    />
+  ) : selectedParameterType == "markdown" ? (
+    <CellRendererMarkdownParamOptions
+      paramName={selectedParameter || ""}
+      renderer={renderer}
+      setRenderer={setRenderer}
+      hasPendingChanges={doesSelectedParamHavePendingChanges}
+      setHasPendingChanges={setDoesSelectedParamHavePendingChanges}
+      goBack={() => setSelectedParameter(undefined)}
+      objectType={objectType}
+      dataSource={dataSource}
+    />
+  ) : (
+    <></>
+  );
 
   return (
     <Modal
-      header={Header}
       open={open}
       setOpen={setOpen}
-      size={selectedConditionParam ? "sm" : "xs"}
-      closeButton={!selectedConditionParam}
-      actionButton={selectedConditionParam ? undefined : SaveCellRendererButton}
-      hasPendingChanges={rendererHasPendingChanges || conditionHasPendingChanges}
+      header={Header}
+      size={selectedParameter ? "sm" : "xs"}
+      closeButton={!selectedParameter}
+      actionButton={selectedParameter ? undefined : AddCellRendererButton}
+      hasPendingChanges={doesRendererHavePendingChanges || doesSelectedParamHavePendingChanges}
     >
-      {!selectedConditionParam ? (
-        <div className="tol-data-point-renderer-modal-selector">
-          <SingleSelect
-            block
-            placeholder="Default Cell Renderer"
-            value={
-              renderer?.type || ""
-            }
-            onChange={onTypeChange}
-            data={typeChoices}
-          />
-        </div>
-      ) : <></>}
-      {selectedConditionParam ? (
-        <div className="tol-data-point-renderer-modal-condition-params">
-          <div className="tol-param-header">
-            <h6 className="tol-param-title">
-              Configure Condition for
-              '{cellRendererParams[renderer?.type!].params?.[selectedConditionParam]?.rename}'
-              Parameter
-            </h6>
-          </div>
-          <AttributeSelector
-            {...props}
-            displaySource
-            recommendedFilterAvailable
-            renderSearchBySource
-            attribute={attributes}
-            setAttributes={setAttributes}
-            populatedFieldType="filter"
-            onClean={onClean}
-          />
-          <RemoteFilters
-            {...props}
-            utilityBarConfig={undefined}
-            zone={filterZone}
-            setZone={setFilterZone}
-            componentId={zoneFilterId}
-            attributes={attributes}
-          />
-          {ConditionButtons}
-        </div>
-      ) : (
+      {selectedParameter ? (
         <>
-          {renderer &&
-            Object.keys(cellRendererParams[renderer?.type]?.params || {}).length > 0 && (
-              <div className="tol-data-point-renderer-modal-params">
-                {Object.entries(cellRendererParams[renderer.type].params || {}).map(([param, meta]) => {
-                  return (
-                    <CellRendererParam
-                      {...props}
-                      key={param}
-                      param={param}
-                      meta={meta}
-                      renderer={renderer}
-                      setRenderer={setRenderer}
-                      selectedConditionParam={selectedConditionParam}
-                      setSelectedConditionParam={setSelectedConditionParam}
-                    />
-                  )
-                })}
-              </div>
-            )}
+          <hr/>
+          {SecondPage}
         </>
+      ) : (
+        FirstPage
       )}
     </Modal>
   )

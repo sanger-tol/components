@@ -75,3 +75,8 @@ a:hover {
 #webpack-dev-server-client-overlay {
   position: unset !important;
 }
+
+hr {
+  color: var(--tol-grey);
+  border-color: var(--tol-grey);
+}

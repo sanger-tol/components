@@ -13,6 +13,31 @@ export const cellRendererParams: IBoardCellRenderers = {
   boolean: {
     allowedDataTypes: ["bool"]
   },
+  card: {
+    rename: "Card",
+    params: {
+      content: {
+        type: "markdown",
+        rename: "Content",
+        description: "Markdown-formatted content"
+      },
+      successBackground: {
+        type: "condition",
+        rename: "Success Background",
+        description: "Condition for making the background the success colour"
+      },
+      warningBackground: {
+        type: "condition",
+        rename: "Warning Background",
+        description: "Condition for making the background the success colour"
+      },
+      errorBackground: {
+        type: "condition",
+        rename: "Error Background",
+        description: "Condition for making the background the success colour"
+      }
+    }
+  },
   datetime: {
     rename: "DateTime",
     allowedDataTypes: ["datetime"]
@@ -21,6 +46,7 @@ export const cellRendererParams: IBoardCellRenderers = {
     allowedDataTypes: ["float", "int"]
   },
   image: {
+    description: "Displays an image inside of a cell, which can be enlarged by clicking on it.",
     params: {
       value: {
         type: "string",
@@ -41,6 +67,7 @@ export const cellRendererParams: IBoardCellRenderers = {
     allowedDataTypes: ["int"]
   },
   link: {
+    description: "Shows a clickable hyperlink in the cell.",
     params: {
       url: {
         type: "string",
@@ -60,11 +87,16 @@ export const cellRendererParams: IBoardCellRenderers = {
   },
   longText: {
     rename: "Long Text",
-    allowedDataTypes: ["str", "float", "int"]
+    allowedDataTypes: ["str", "float", "int"],
+    description: (
+      "Shows a shortened version of the data. " +
+      "The longer version can be seen by hovering over the cell."
+    )
   },
   none: {},
   priority: {
     rename: "Priority",
+    description: "Show an icon representing priority.",
     params: {
       highest: {
         type: "condition",
@@ -105,6 +137,7 @@ export const cellRendererParams: IBoardCellRenderers = {
   },
   trafficLightStatus: {
     rename: "Traffic Light Status",
+    description: "Highlight the cell contents with colour to emphasise its status.",
     params: {
       success: {
         type: "condition",

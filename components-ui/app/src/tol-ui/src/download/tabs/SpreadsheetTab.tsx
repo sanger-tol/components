@@ -9,7 +9,7 @@ import { Progress } from "rsuite";
 import {
   downloadForChart,
   downloadForTable,
-  FieldMeta,
+  IFieldMeta,
   IChartDataset,
   IFilter,
   PEditableTitle,
@@ -29,7 +29,7 @@ export interface PSpreadsheetTab {
   datasets?: IChartDataset[]
   labels?: string[]
   title?: PEditableTitle
-  fieldMeta?: FieldMeta
+  fieldMeta?: IFieldMeta
   dataSource?: TsDataSource
   // These must live in DownloadModal as SpreadhseetTab is unmounted
   // whenever the Modal is closed, which resets the states

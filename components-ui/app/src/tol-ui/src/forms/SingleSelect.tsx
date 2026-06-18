@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
 
-import { TLabelAndValueData } from "..";
+import type { TLabelAndValueData } from "..";
 
 export interface PSingleSelect {
   /**
@@ -39,6 +39,10 @@ export interface PSingleSelect {
    * (and so shouldn't be interacted with yet)
    */
   loading?: boolean;
+  /**
+   * Additional CSS class name(s)
+   */
+  className?: string;
   /**
    * Test ID to use for Playwright tests
    */

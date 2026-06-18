@@ -10,7 +10,7 @@ import {
   Modal,
   TsDataSource,
   PEditableTitle,
-  FieldMeta,
+  IFieldMeta,
   Tabs,
   IChartDataset,
   TDisabledTab,
@@ -88,7 +88,7 @@ export interface PDownloadModal {
   /**
    * Field meta for the data being downloaded (Table Only)
    */
-  fieldMeta?: FieldMeta;
+  fieldMeta?: IFieldMeta;
 
   // Chart specific props
   /**

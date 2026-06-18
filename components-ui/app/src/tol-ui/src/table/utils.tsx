@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  FieldMeta,
+  IFieldMeta,
   normaliseCaps,
   colours,
   TsDataSource,
@@ -67,20 +67,20 @@ const sourceColours = {
   other: "var(--tol-grey)",
 };
 
-export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
+export function initialiseFieldMeta(fieldMeta?: IFieldMeta): IFieldMeta {
   return {
     data: fieldMeta?.data || {},
     dataWithDefaults: deepCopy(fieldMeta?.data),
     order: fieldMeta?.order || {
       active: [],
     },
-  } as FieldMeta;
+  } as IFieldMeta;
 }
 
 export function convertTableData(
   dataObjects: TDataObjectListOrNull,
   dataSource: TsDataSource,
-  fieldMeta: FieldMeta,
+  fieldMeta: IFieldMeta,
   setExpandedRows: (expandedRows: string[]) => void,
   customCellRenderers?: ICustomCellRenderers,
   editableCells?: boolean,
@@ -125,7 +125,7 @@ function addRemoteFilterType(type: string, cardinality: number) {
   return type;
 }
 
-function sortFieldsByRename(fieldMeta: FieldMeta) {
+function sortFieldsByRename(fieldMeta: IFieldMeta) {
   if (!fieldMeta || !fieldMeta.order.inactive) return;
   return fieldMeta.order.inactive.sort((a, b) => {
     const fieldA = fieldMeta.dataWithDefaults![a];
@@ -139,7 +139,7 @@ function sortFieldsByRename(fieldMeta: FieldMeta) {
 export function addDefaultsFromEntityMeta(
   key: string,
   meta: IAttributeData,
-  fieldMeta: FieldMeta
+  fieldMeta: IFieldMeta
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
@@ -162,7 +162,7 @@ export function addDefaultsFromEntityMeta(
 
 export async function addFieldMetaDefaults(
   objectType: string,
-  fieldMeta: FieldMeta,
+  fieldMeta: IFieldMeta,
   dataSource: TsDataSource,
 ) {
   const attributes = fieldMeta.order.active.concat(
@@ -192,7 +192,7 @@ export function createSort(sortColumn?: string, sortType?: string) {
   return sortColumn;
 }
 
-export function optimiseFieldMetaForSave(fieldMeta?: FieldMeta) {
+export function optimiseFieldMetaForSave(fieldMeta?: IFieldMeta) {
   const fm = deepCopy(fieldMeta);
   delete fm.dataWithDefaults;
   return fm;
@@ -350,7 +350,7 @@ function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
 }
 
 
-export async function amalgamateRequestedFields(fieldMeta: FieldMeta): Promise<string[]> {
+export async function amalgamateRequestedFields(fieldMeta: IFieldMeta): Promise<string[]> {
   const requestedFields = new Set<string>(fieldMeta?.order.active || []);
 
   const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
@@ -419,7 +419,7 @@ export function hasExpandableRows(
  * the "dataWithDefaults" target if the corresponding flag is set to true.
  */
 export function updateFieldMetaAttribute(
-  fieldMeta: FieldMeta,
+  fieldMeta: IFieldMeta,
   dataKey: string,
   attribute: any,
   value: any,

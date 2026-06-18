@@ -6,23 +6,20 @@ SPDX-License-Identifier: MIT
 
 import { Dispatch, SetStateAction } from "react";
 import { Input } from "rsuite";
+
 import {
   Button,
-  TCellRenderer,
   IconTooltip,
-  IBoardCellRendererParam,
-  IRemoteTarget,
-  IFilter
 } from "../..";
-
+import type { IBoardCellRendererParam, IFilter, IRemoteTarget, TCellRenderer } from "../..";
 
 export interface PCellRendererParam extends IRemoteTarget {
   param: string,
   meta: IBoardCellRendererParam,
   renderer: TCellRenderer
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
-  selectedConditionParam: string | undefined;
-  setSelectedConditionParam: Dispatch<SetStateAction<string | undefined>>;
+  selectedParam: string | undefined;
+  setSelectedParam: Dispatch<SetStateAction<string | undefined>>;
 }
 
 export function CellRendererParam(props: PCellRendererParam) {
@@ -31,8 +28,8 @@ export function CellRendererParam(props: PCellRendererParam) {
     meta,
     renderer,
     setRenderer,
-    selectedConditionParam,
-    setSelectedConditionParam
+    selectedParam,
+    setSelectedParam
   } = props;
 
   const paramValue = renderer?.props![param];
@@ -68,8 +65,20 @@ export function CellRendererParam(props: PCellRendererParam) {
             icon="puzzle-piece"
             type={conditionPresent ? "warning" : "success"}
             onClick={() => {
-              setSelectedConditionParam(
-                param === selectedConditionParam ? undefined : param
+              setSelectedParam(
+                param === selectedParam ? undefined : param
+              );
+            }}
+          />
+        ) : meta.type === "markdown" ? (
+          <Button
+            outline
+            text={paramValue ? "Edit Markdown" : "Add Markdown"}
+            icon="puzzle-piece"
+            type={paramValue ? "warning" : "success"}
+            onClick={() => {
+              setSelectedParam(
+                param === selectedParam ? undefined : param
               );
             }}
           />
