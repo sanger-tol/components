@@ -21,6 +21,7 @@ import {
   Button,
   IFormConfig,
   PButton,
+  createInitialDataSnapshot,
   setInitialData,
   validateForm,
   UNSUPPORTED_FIELD_TYPE,
@@ -56,21 +57,29 @@ export interface PFormAllInOne {
 export function FormAllInOne(props: PFormAllInOne) {
   const { formConfig, initialData, fluid, model, onValidate } = props;
 
-  const [formData, setFormData] = useState<object>({});
+  const [formData, setFormData] = useState<Record<string, any>>({});
   const [formErrors, setFormErrors] = useState<Record<string, any>>({});
-  const [modifiedFields, setModifiedFields] = useState<object>({});
+  const [modifiedFields, setModifiedFields] = useState<Record<string, any>>({});
   const [formId, _] = useState<any>(() => crypto.randomUUID());
   const hasUnsavedChanges = useRef(false);
+  const initialSnapshotRef = useRef<Record<string, any>>({});
+  const onUnsavedChangesRef = useRef(props.onUnsavedChanges);
 
   const formRef = useRef<any>(null);
   const toaster = Toaster();
   const defaultModel = Schema.Model({});
+  onUnsavedChangesRef.current = props.onUnsavedChanges;
+
+  const deepEqual = (left: any, right: any) =>
+    JSON.stringify(left) === JSON.stringify(right);
 
   useEffect(() => {
-    if (initialData) {
-      setInitialData(formConfig, setFormData, initialData);
-    }
-  }, []);
+    initialSnapshotRef.current = createInitialDataSnapshot(
+      formConfig,
+      initialData
+    );
+    setInitialData(formConfig, setFormData, initialData);
+  }, [formConfig, initialData]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -89,14 +98,21 @@ export function FormAllInOne(props: PFormAllInOne) {
   useEffect(() => {
     const hasChanges = modifiedFields && Object.keys(modifiedFields).length > 0;
     hasUnsavedChanges.current = hasChanges;
-    if (props.onUnsavedChanges) {
-      props.onUnsavedChanges(hasChanges);
+    if (onUnsavedChangesRef.current) {
+      onUnsavedChangesRef.current(hasChanges);
     }
-  }, [modifiedFields, props.onUnsavedChanges]);
+  }, [modifiedFields]);
 
   const handleInputChange = (name: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
-    setModifiedFields((prev: any) => ({ ...prev, [name]: value }));
+    setModifiedFields((prev: any) => {
+      const initialValue = initialSnapshotRef.current[name];
+      if (deepEqual(value, initialValue ?? null)) {
+        const { [name]: _, ...rest } = prev as any;
+        return rest;
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   const renderField = (field: TFormField) => {

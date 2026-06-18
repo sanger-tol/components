@@ -136,7 +136,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       ) === "true"
   );
 
-  const [newFieldMeta, setNewFieldMeta] = useState<IFieldMeta>();
+  const [newFieldMeta, setNewFieldMeta] = useState<IFieldMeta>(deepCopy(fieldMeta));
   const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
   const [inactiveAttributes, setInactiveAttributes] = useState<string[]>(fieldMeta.order.inactive || []);
   const [limitVisibility, setLimitVisibility] = useState<boolean>(!!fieldMeta.order.limitVisibility);
