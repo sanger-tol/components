@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./Boolean";
+export * from "./Card";
 export * from "./DataPoints";
 export * from "./DataPoint";
 export * from "./CellDisplay";
@@ -17,6 +18,7 @@ export * from "./LongText";
 export * from "./Float";
 export * from "./OldImage";
 export * from "./Integer";
+export * from "./Priority";
 export * from "./Link";
 export * from "./TrafficLightStatus";
 export * from "./utils";

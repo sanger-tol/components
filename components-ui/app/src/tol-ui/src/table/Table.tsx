@@ -13,7 +13,7 @@ import {
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  FieldMeta,
+  IFieldMeta,
   IDropdownButtonConfig,
   useStateFallback,
   IRemoteTargetAndZone,
@@ -39,8 +39,8 @@ import {
 export interface PTable extends IRemoteTargetAndZone {
   id: string;
   data: any;
-  fieldMeta: FieldMeta;
-  baseFieldMeta?: Partial<FieldMeta>;
+  fieldMeta: IFieldMeta;
+  baseFieldMeta?: Partial<IFieldMeta>;
   height: any;
   loading: boolean;
   resizeableColumns?: boolean;

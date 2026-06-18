@@ -16,8 +16,6 @@ import {
   getUserFromLocalStorage,
   getBoardDetails,
   LoadingContent,
-  InitialBoardsTourModal,
-  fetchTourStepSeen,
   PBoard,
 } from "../..";
 
@@ -27,13 +25,10 @@ export function MyBoards(props: PBoard) {
   const [boardDetails, setBoardDetails] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [initialBoardsTourModalOpen, setInitialBoardsTourModalOpen] = useState(false);
-  const [userId, setUserId] = useState("");
   const toaster = Toaster();
 
   useEffect(() => {
     fetchBoardDetails();
-    fetchTourStatus();
   }, []);
 
   useEffect(() => {
@@ -67,15 +62,6 @@ export function MyBoards(props: PBoard) {
       setErrorMessage("User not found. Please login and try again.");
       setLoading(false);
     }
-  }
-
-  const fetchTourStatus = async () => {
-    const id = getUserFromLocalStorage().id as string | undefined;
-    if (!id) return;
-    setUserId(id);
-
-    const tourStepSeen = await fetchTourStepSeen("initial", id);
-    setInitialBoardsTourModalOpen(!tourStepSeen);
   }
 
   if (loading) return <LoadingContent text={"Finding your Boards..."} />;
@@ -127,12 +113,7 @@ export function MyBoards(props: PBoard) {
     },
   ];
 
-  return (<>
+  return (
     <Widgets components={components} />
-    <InitialBoardsTourModal
-      open={initialBoardsTourModalOpen}
-      setOpen={setInitialBoardsTourModalOpen}
-      userId={userId}
-    />
-  </>)
+  )
 }

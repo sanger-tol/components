@@ -4,17 +4,21 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Dispatch, MutableRefObject, SetStateAction } from "react";
+import type { Dispatch, MutableRefObject, SetStateAction } from "react";
 import {
-  FieldMeta,
+  IFieldMeta,
   IComponent,
   IComponentConfig,
   IZone,
   TsDataSource,
 } from "..";
 
+export type ITableRecord = Record<string, any>;
+
+export type ITableData = ITableRecord[];
+
 export interface ITableDrawerSave {
-  fieldMeta?: FieldMeta;
+  fieldMeta?: IFieldMeta;
   actions?: string[];
   defaultSortByAttribute?: string;
   defaultSortByType?: string;

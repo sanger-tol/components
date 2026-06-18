@@ -5,8 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import {
+  CELL_RENDERER_PARENT_OPERATOR,
   CELL_RENDERER_PROP_ATTRIBUTE,
   CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
+  CELL_RENDERER_PROP_TAG_START,
   CELL_RENDERER_SPREAD_OPERATOR,
   getFieldByName,
   IFilter,
@@ -104,13 +106,19 @@ export function processTagsToValues(
   field: string,
   value: any,
   dataObject: TDataObjectOrNull,
+  parentDataObject: TDataObjectOrNull,
 ): any {
   const isList = key.includes(CELL_RENDERER_SPREAD_OPERATOR);
 
-  // remove spread operator if present - still includes object keys
-  const keyWithoutSpread = key.replace(CELL_RENDERER_SPREAD_OPERATOR, "");
+  // Determine which data object to use based on presence of parent operator
+  const requiresParentDataObject = key.includes(CELL_RENDERER_PARENT_OPERATOR);
+  const chosenDataObject = requiresParentDataObject ? parentDataObject : dataObject;
+  const keyWithoutParentOperator = key.replace(CELL_RENDERER_PARENT_OPERATOR, "").trim();
 
-  // remove the attribute object key prefixes to get the actual field name
+  // Remove spread operator if present - still includes object keys
+  const keyWithoutSpread = keyWithoutParentOperator.replace(CELL_RENDERER_SPREAD_OPERATOR, "");
+
+  // Remove the attribute object key prefixes to get the actual field name
   const fieldName = keyWithoutSpread
     .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
     .trim();
@@ -120,7 +128,7 @@ export function processTagsToValues(
   if (isList && fieldName === field) {
     newPropValue = value;
   } else {
-    newPropValue = getFieldByName(dataObject, fieldName) || "";
+    newPropValue = getFieldByName(chosenDataObject, fieldName) || "";
   }
 
   // If the key includes any object keys, retrieve the value
@@ -144,12 +152,13 @@ export function getCellRendererPropValue(
   propValue: string | IFilter,
   elementProps: Record<string, any>,
   dataObject: TDataObjectOrNull,
+  parentDataObject: TDataObjectOrNull,
 ) {
-  if (typeof propValue === "string" && propValue.includes("${")) {
+  if (typeof propValue === "string" && propValue.includes(CELL_RENDERER_PROP_TAG_START)) {
     // replace placeholders '${}' with values from a dataObject
     elementProps[prop] = propValue.replace(
       CELL_RENDERER_PROP_ATTRIBUTE,
-      (_, key) => processTagsToValues(key, field, value, dataObject),
+      (_, key) => processTagsToValues(key, field, value, dataObject, parentDataObject),
     );
   } else if (typeof propValue === "object" && "and_" in propValue) {
     elementProps[prop] = processConditionToBoolean(propValue, dataObject);

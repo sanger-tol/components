@@ -6,13 +6,51 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `3.6.0`
+## tol-ui `3.5.8`
 
-20-04-2026
+16-06-2026
 
-- Added personal table configuration reset controls and clearer messages for published versus user-specific table configs.
-- Fixed board table config saves so user-specific `entity_diff` changes are applied immediately after saving.
-- Added notices explaining that logged-in and logged-out table configuration changes are stored separately.
+- Added the Card cell renderer and Markdown parameter type
+
+## tol-ui `3.5.7`
+
+12-06-2026
+
+- Added the DOWNLOAD button type
+- Added the `cleanable` and `searchable` SingleSelect options
+
+## tol-ui `3.5.6`
+
+28-05-2026
+
+- Added configurable tours commenced by `processTour` (including the first tour for adding a zone)
+
+## tol-ui `3.5.5`
+
+21-04-2026
+
+- Added Priority cell renderer
+- Fixed bug: Table download - columns with duplicate display names are silently overwritten
+
+## tol-ui `3.5.4`
+
+30-04-2026
+
+- Allow for DataPointRenderers to access current and parent data objects
+- Link DataPointRenderer now requires a `Text` parameter
+
+## tol-ui `3.5.3`
+
+29-04-2026
+
+- Fixed bug: Sort aggregation labels for Bar Charts.
+
+## tol-ui `3.5.2`
+
+27-04-2026
+
+- The TitleTooltip on utility bars for zones and components on boards now show the ID of said
+  zone or component.
 
 ## tol-ui `3.5.1`
 

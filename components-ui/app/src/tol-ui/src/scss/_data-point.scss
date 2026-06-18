@@ -10,17 +10,11 @@
 }
 
 .tol-data-point-renderer-modal-selector {
-  margin: 12px 0 20px 0;
+  margin: 12px 0 0 0;
 }
 
+
 .tol-data-point-renderer-modal-params {
-  border-top: 1px solid var(--tol-grey);
-  padding-top: 16px;
-
-  .tol-param-info {
-    margin-left: 6px;
-  }
-
   .tol-param-required {
     margin-left: 2px;
     color: var(--tol-danger);
@@ -31,10 +25,11 @@
   }
 }
 
-.tol-data-point-renderer-modal-condition-params {
-  border-top: 1px solid var(--tol-grey);
-  padding-top: 20px;
-  margin-top: 20px;
+.tol-data-point-renderer-info {
+  margin-left: 6px;
+}
+
+.tol-data-point-renderer-modal-condition-param-options {
   overflow: hidden;
 
   .tol-param-header {

@@ -14,14 +14,14 @@ import {
   IAttributeDetails,
   TRANSITION_TIME,
   AttributeTitle,
-  FieldMeta
+  IFieldMeta
 } from "../index";
 
 export interface PSelectedAttributesContainer extends IRemoteTarget {
   attributes: readonly string[];
   setAttributes: (attributes: string[]) => void;
   additionalIcons?: any[];
-  fieldMeta?: FieldMeta; // temporary addition for table renames
+  fieldMeta?: IFieldMeta; // temporary addition for table renames
   emptyMessage?: string;
 }
 

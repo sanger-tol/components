@@ -14,37 +14,17 @@ export const BUTTONS: Record<string, PButton> = {
     disabledTooltip: "No changes to add",
     position: "right",
   },
-  CONFIRM: {
-    type: "success",
-    icon: "check",
-    tooltip: "Confirm",
-    disabledTooltip: "No changes to confirm",
-    position: "right",
-  },
-  SAVE: {
-    type: "success",
-    icon: "save",
-    tooltip: "Save Changes",
-    disabledTooltip: "No changes to save",
-    position: "right",
-  },
-  RETURN: {
-    outline: true,
-    type: "warning",
-    icon: "arrow-left",
-    tooltip: "Return",
-  },
   BACK: {
     outline: true,
     type: "warning",
     icon: "arrow-left",
     tooltip: "Back",
   },
-  DISCARD: {
+  CANCEL: {
+    outline: true,
     type: "error",
-    icon: "trash",
-    tooltip: "Discard Changes",
-    disabledTooltip: "No changes to discard",
+    icon: "xmark",
+    tooltip: "Cancel",
     position: "right",
   },
   CLOSE: {
@@ -53,20 +33,49 @@ export const BUTTONS: Record<string, PButton> = {
     tooltip: "Close",
     position: "right",
   },
-  CANCEL: {
-    type: "error",
-    icon: "xmark",
-    tooltip: "Cancel",
+  CONFIRM: {
+    type: "success",
+    icon: "check",
+    tooltip: "Confirm",
+    disabledTooltip: "No changes to confirm",
     position: "right",
   },
-  OK: {
-    text: "OK",
+  DISCARD: {
+    type: "error",
+    icon: "trash",
+    tooltip: "Discard Changes",
+    disabledTooltip: "No changes to discard",
+    position: "right",
+  },
+  DOWNLOAD: {
+    outline: true,
+    type: "primary",
+    icon: "download",
+    tooltip: "Download",
+    disabledTooltip: "Download unavailable",
     position: "right",
   },
   EDIT: {
     type: "warning",
     icon: "pen-to-square",
     tooltip: "Edit",
+    position: "right",
+  },
+  OK: {
+    text: "OK",
+    position: "right",
+  },
+  RETURN: {
+    outline: true,
+    type: "warning",
+    icon: "arrow-left",
+    tooltip: "Return",
+  },
+  SAVE: {
+    type: "success",
+    icon: "save",
+    tooltip: "Save Changes",
+    disabledTooltip: "No changes to save",
     position: "right",
   },
   SHARE: {

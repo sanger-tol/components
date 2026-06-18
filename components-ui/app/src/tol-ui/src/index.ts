@@ -50,6 +50,7 @@ export * from "./services";
 export { retry } from "./services/http";
 export { clearExpiredToken } from "./services/auth";
 export * from "./table";
+export * from "./tours";
 export * from "./timeline";
 export * from "./utility-bar";
 export * from "./variables";
@@ -63,8 +64,9 @@ export const CORE_CONFIG_DS = new TsDataSource({
   apiDataPath: API_PATHS.BOARDS,
   dataspace: '',
 });
-export const ACTIONS_DS = new TsDataSource({
+export const LOCAL_DS = new TsDataSource({
   apiPath: API_PATHS.API_PATH,
   apiDataPath: API_PATHS.ACTION,
-  dataspace: '',
+  dataspace: ''
 });
+export const ACTIONS_DS = LOCAL_DS;
