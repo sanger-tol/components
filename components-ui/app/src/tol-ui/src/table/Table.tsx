@@ -143,7 +143,7 @@ export function Table(props: PTable) {
   const showConfigReset: boolean | undefined = props.showConfigReset;
   const resetConfigDifferences: IConfigDifferences | undefined =
     props.resetConfigDifferences;
-  const baseFieldMeta: Partial<FieldMeta> | undefined = props.baseFieldMeta;
+  const baseFieldMeta: Partial<IFieldMeta> | undefined = props.baseFieldMeta;
 
   const { editMode } = useBoard();
 

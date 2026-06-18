@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { TsDataSource, BOARD_ENTITIES } from "..";
-import type { FieldMeta, PUtilityBar, IFilter, TComponentType } from "..";
+import type { IFieldMeta, PUtilityBar, IFilter, TComponentType } from "..";
 
 export interface TBoardEntityCore {
   id: string;
@@ -26,7 +26,7 @@ export interface IBoardFilter {
 }
 
 export interface IComponentConfig {
-  fieldMeta: Partial<FieldMeta>;
+  fieldMeta: Partial<IFieldMeta>;
 }
 
 export interface IComponent extends TBoardEntityCore, IBoardFilter {

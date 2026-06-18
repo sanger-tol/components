@@ -10,7 +10,7 @@ import {
   SelectedAttributesContainer,
   Tabs,
 } from "..";
-import type { FieldMeta, IRemoteTarget } from "..";
+import type { IFieldMeta, IRemoteTarget } from "..";
 
 interface PConfigDrawerTabs extends IRemoteTarget {
   attributes: string[];
@@ -18,7 +18,7 @@ interface PConfigDrawerTabs extends IRemoteTarget {
   inactiveAttributes: string[];
   setInactiveAttributes: Dispatch<SetStateAction<string[]>>;
   additionalIcons: Array<({ attributeId }: { attributeId: string }) => ReactElement>;
-  fieldMeta: FieldMeta;
+  fieldMeta: IFieldMeta;
   allAttributeKeys?: string[];
   customAttributeSelection?: string[];
 }
