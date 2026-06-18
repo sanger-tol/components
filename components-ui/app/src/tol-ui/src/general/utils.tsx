@@ -168,6 +168,10 @@ export function deepCopy(o?: object | any[]) {
   return JSON.parse(JSON.stringify(o));
 }
 
+export function deepEqual(left: any, right: any) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
 export function capitaliseFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }

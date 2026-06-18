@@ -38,20 +38,25 @@ export function setInitialData(
   setFormData: React.Dispatch<React.SetStateAction<object>>,
   data?: any
 ) {
-  setFormData(() => {
-    const initialData = {};
-    formConfig.fields.forEach((field: any) => {
-      if (field.type === "checkbox" && field.defaultChecked) {
-        initialData[field.name] = field.defaultChecked;
-      } else if (field.multiple) {
-        initialData[field.name] = data[field.name] || {};
-      } else {
-        initialData[field.name] = data[field.name] || "";
-      }
-    });
-    return initialData;
-  });
+  setFormData(() => createInitialDataSnapshot(formConfig, data));
 };
+
+export function createInitialDataSnapshot(
+  formConfig: IFormConfig,
+  data?: any
+): Record<string, any> {
+  const initialData: Record<string, any> = {};
+  formConfig.fields.forEach((field: any) => {
+    if (field.type === "checkbox" && field.defaultChecked) {
+      initialData[field.name] = field.defaultChecked;
+    } else if (field.multiple) {
+      initialData[field.name] = data?.[field.name] || {};
+    } else {
+      initialData[field.name] = data?.[field.name] || "";
+    }
+  });
+  return initialData;
+}
 
 /**
  * Validates data of a form. If valid, `onSubmit` is run. If not, an error toast is shown.

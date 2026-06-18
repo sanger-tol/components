@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Toggle } from "rsuite";
 import {
   Button,
@@ -12,6 +12,7 @@ import {
   AttributeSelector,
   IconTooltip,
   normaliseCaps,
+  deepEqual,
   IRemoteTargetAndZone,
   IChartConfig,
   HistogramGrouping,
@@ -50,6 +51,13 @@ export function ChartConfigDrawer(props: IChartConfigDrawer) {
   const [chartType, setChartType] = useState<'bar' | 'line' | 'scatter'>(config.chartType || 'bar');
   const [attributeDescriptor, setAttributeDescriptor] = useState<any>(null);
   const [chartDataType, setChartDataType] = useState<string>("");
+  const initialConfigRef = useRef({
+    xAxis: config.xAxis ? [config.xAxis] : [],
+    breakDownBy: config.breakDownBy ? [config.breakDownBy] : [],
+    stacked: config.stacked,
+    grouping: config.grouping,
+    chartType: config.chartType || "bar",
+  });
 
   const CHART_TYPES = ['bar', 'line', 'scatter']
   const INTERVALS: IIntervalListItem[] = [
@@ -70,12 +78,15 @@ export function ChartConfigDrawer(props: IChartConfigDrawer) {
       value: "y",
     },
   ];
-  const hasUpdated = (
-    xAxis[0] !== config.xAxis ||
-    breakDownBy[0] !== config.breakDownBy ||
-    stacked !== config.stacked ||
-    (chartDataType === "datetime" ? grouping !== config.grouping : false) ||
-    chartType !== config.chartType
+  const hasUpdated = !deepEqual(
+    {
+      xAxis,
+      breakDownBy,
+      stacked,
+      grouping,
+      chartType,
+    },
+    initialConfigRef.current
   );
   const hasRequiredFields = (
     xAxis.length > 0 &&
@@ -87,11 +98,19 @@ export function ChartConfigDrawer(props: IChartConfigDrawer) {
 
   useEffect(() => {
     if (open) {
-      setXAxis(config.xAxis ? [config.xAxis] : []);
-      setBreakDownBy(config.breakDownBy ? [config.breakDownBy] : []);
-      setStacked(config.stacked);
-      setGrouping(config.grouping);
-      setChartType(config.chartType);
+      const initialConfig = {
+        xAxis: config.xAxis ? [config.xAxis] : [],
+        breakDownBy: config.breakDownBy ? [config.breakDownBy] : [],
+        stacked: config.stacked,
+        grouping: config.grouping,
+        chartType: config.chartType || "bar",
+      };
+      initialConfigRef.current = initialConfig;
+      setXAxis(initialConfig.xAxis);
+      setBreakDownBy(initialConfig.breakDownBy);
+      setStacked(initialConfig.stacked);
+      setGrouping(initialConfig.grouping);
+      setChartType(initialConfig.chartType);
     }
   }, [open]);
 
