@@ -16,12 +16,12 @@ import {
   LongText,
   getCellRendererPropValue,
   TrafficLightStatus,
-  PDataPoints,
   DataPointDefaultDisplay,
-  PDataPoint,
   Tag,
   ErrorBoundary,
+  Card,
 } from "../..";
+import type { PDataPoints, PDataPoint } from "../..";
 
 export interface PCellDisplay extends PDataPoint {
   /**
@@ -32,6 +32,7 @@ export interface PCellDisplay extends PDataPoint {
 
 const preDefinedElements = {
   boolean: Boolean,
+  card: Card,
   datetime: Datetime,
   float: Float,
   image: OldImage,

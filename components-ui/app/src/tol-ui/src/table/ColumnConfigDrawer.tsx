@@ -10,7 +10,7 @@ import {
   AttributeSelector,
   Drawer,
   SelectedAttributesContainer,
-  FieldMeta,
+  IFieldMeta,
   IRemoteTarget,
   IDropdownButtonConfig,
   MultipleSelect,
@@ -24,7 +24,7 @@ export interface PColumnConfigDrawer extends IRemoteTarget {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
-  fieldMeta: FieldMeta;
+  fieldMeta: IFieldMeta;
   displaySource?: boolean;
   sticky?: boolean;
   customAttributeSelection?: string[];
@@ -50,7 +50,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
     actionChoices,
   } = props;
 
-  const [newFieldMeta, setNewFieldMeta] = useState<FieldMeta>();
+  const [newFieldMeta, setNewFieldMeta] = useState<IFieldMeta>();
   const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
   const initialActions = props.actions?.map((btn) => btn.name as string) ?? [];
   const [actions, setActions] = useState<string[]>(initialActions);
