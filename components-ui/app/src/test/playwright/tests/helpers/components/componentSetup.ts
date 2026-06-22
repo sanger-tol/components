@@ -50,7 +50,7 @@ export const addComponent = async (
  * @param component The name of the component type
  * @param componentIndex Out of all components of the `component` type on the screen,
  * which one is it? Zero-indexed
- * @param attribute The attrbiute to apply the filter to
+ * @param attribute The attribute to apply the filter to
  * @param filterType The type of filter used on this attribute
  * @param filterValue The value to filter with
  */
@@ -66,7 +66,7 @@ export const addComponentFilter = async (
   await clickUtilityBarButton(page, `${component}-filter-button`, componentIndex);
 
   switch (filterType) {
-    case "multiselect":
+    case "in_list":
       // click the attribute selector dropdown
       await page.getByRole("combobox").first().click();
 
