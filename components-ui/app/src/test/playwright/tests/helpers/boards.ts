@@ -15,11 +15,11 @@ export const createBoardId = () => `b_${crypto.randomUUID()}`;
 /**
  * @returns A random View ID
  */
-export const createViewId  = () => `v_${crypto.randomUUID()}`;
+export const createViewId = () => `v_${crypto.randomUUID()}`;
 /**
  * @returns A random Zone ID
  */
-export const createZoneId  = () => `z_${crypto.randomUUID()}`;
+export const createZoneId = () => `z_${crypto.randomUUID()}`;
 
 export const createZone = async (page: Page) => {
   // enter edit mode
@@ -32,14 +32,18 @@ export const createZone = async (page: Page) => {
   // choose the dataspace picker
   await page.getByTestId("dataspace-picker").click();
 
-  // select the dataspace
+  // select the dataspace;
   await page.locator("[data-key=\"tol_production\"]").click();
 
   // choose the object type picker
-  await page.getByTestId("object-type-picker").click();
+  const objectTypePicker = page.getByTestId("object-type-picker");
+  await objectTypePicker.waitFor({ state: "visible" });
+  await objectTypePicker.click();
 
   // select the object type
-  await page.getByText("Curation").click();
+  const curationOption = page.getByText("Curation", { exact: true });
+  await curationOption.waitFor({ state: "visible" });
+  await curationOption.click();
 
 
   // click confirm add zone button
@@ -68,17 +72,13 @@ export const deleteBoard = async ({ page, boardID }) => {
 };
 
 export const addView = async (page: Page) => {
-  // enter edit mode
-  await enterEditMode(page);
-
   // click add view button
   const addViewButton = await page.getByTestId("board-add-view-button");
   await addViewButton.click();
 
-  const newViewButton = await page.getByTestId("board-new-view-button");
-  await newViewButton.waitFor();
+  const newViewButton = await page.getByText("New View");
   await newViewButton.click();
-  
+
   // exit edit mode
   await exitEditMode(page);
 };

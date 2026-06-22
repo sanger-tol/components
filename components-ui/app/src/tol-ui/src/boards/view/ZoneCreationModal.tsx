@@ -198,7 +198,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
         onChange={setObjectType as any}
         disabled={!dataspace}
         loading={objectTypesLoading}
-        testid="object-type-picker"
+        testid={objectTypesLoading ? "object-type-picker-loading" : "object-type-picker"}
       />
     </Modal>
   );

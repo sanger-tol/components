@@ -9,6 +9,7 @@ import {
   addComponent,
   isInHeadlessMode,
   createZone,
+  addView,
 } from "../helpers";
   
 test.use({ headless: isInHeadlessMode });
@@ -35,4 +36,6 @@ test("User can create a board", async ({ page }) => {
     await enterEditMode(page);
     // Add a new component to the zone
     await addComponent(page, 0, "table");
+
+    await addView(page);
 });
