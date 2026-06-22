@@ -4,6 +4,7 @@
 
 import { expect, Page } from "@playwright/test";
 import { clickUtilityBarButton } from "../utility-bar";
+import { enterEditMode } from "..";
 
 
 /**
@@ -11,7 +12,7 @@ import { clickUtilityBarButton } from "../utility-bar";
  * It checks whether the component was created successfully.
  * @param page The Playwright page handle
  * @param zoneIndex The zone to add this component to. Starts at 0 for the first zone in the board
- * @param component The name of the component type to add
+ * @param component The name of the component type to add (lowercase)
  * (this will be picked from the component select modal)
  * @param size The component size to select in the component select modal
  */
