@@ -15,27 +15,13 @@ export const createBoardId = () => `b_${crypto.randomUUID()}`;
 /**
  * @returns A random View ID
  */
-export const createViewId  = () => `v_${crypto.randomUUID()}`;
+export const createViewId = () => `v_${crypto.randomUUID()}`;
 /**
  * @returns A random Zone ID
  */
-export const createZoneId  = () => `z_${crypto.randomUUID()}`;
+export const createZoneId = () => `z_${crypto.randomUUID()}`;
 
-export const createBoard = async (page: Page, boardName: string) => {
-  // click the create new board button
-  await page.getByTestId("create-new-board-button").click();
-
-  // click the modal
-  await page.getByText("Create New Board").click();
-
-  // name the board
-  await page.getByRole("textbox").fill(boardName);
-
-  // save the board
-  await page.getByRole("button", { name: "Create" }).click();
-};
-
-export const createZone = async (page: Page, zoneName: string) => {
+export const createZone = async (page: Page) => {
   // enter edit mode
   await enterEditMode(page);
 
@@ -46,17 +32,19 @@ export const createZone = async (page: Page, zoneName: string) => {
   // choose the dataspace picker
   await page.getByTestId("dataspace-picker").click();
 
-  // select the dataspace
+  // select the dataspace;
   await page.locator("[data-key=\"tol_production\"]").click();
 
   // choose the object type picker
-  await page.getByTestId("object-type-picker").click();
+  const objectTypePicker = page.getByTestId("object-type-picker");
+  await objectTypePicker.waitFor({ state: "visible" });
+  await objectTypePicker.click();
 
   // select the object type
-  await page.getByText("Curation").click();
+  const curationOption = page.getByText("Curation", { exact: true });
+  await curationOption.waitFor({ state: "visible" });
+  await curationOption.click();
 
-  // name the zone
-  await page.getByRole("textbox").fill(zoneName);
 
   // click confirm add zone button
   const confirmZoneButton = await page.getByTestId("add-zone-button");
@@ -64,7 +52,7 @@ export const createZone = async (page: Page, zoneName: string) => {
   await confirmZoneButton.click();
 
   // exit edit mode
-  await exitEditMode( page );
+  await exitEditMode(page);
 };
 
 export const deleteBoard = async ({ page, boardID }) => {
@@ -81,4 +69,16 @@ export const deleteBoard = async ({ page, boardID }) => {
 
   // click the confirm button
   await page.getByTestId("confirm-delete-button").click();
+};
+
+export const addView = async (page: Page) => {
+  // click add view button
+  const addViewButton = await page.getByTestId("board-add-view-button");
+  await addViewButton.click();
+
+  const newViewButton = await page.getByText("New View");
+  await newViewButton.click();
+
+  // exit edit mode
+  await exitEditMode(page);
 };

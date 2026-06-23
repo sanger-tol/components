@@ -120,6 +120,7 @@ export function ProfileDropdown(props: PProfileDropdown) {
 
   return (
     <NavDropdown
+      data-testid="profile-dropdown"
       className="profile-dropdown"
       title={<ProfileAvatar children={avatarContent} />}
       placement="bottom-end"
