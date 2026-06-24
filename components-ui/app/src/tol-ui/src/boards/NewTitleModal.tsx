@@ -43,6 +43,7 @@ export function NewTitleModal(props: PNewTitleModal) {
             value={title}
             onChange={setTitle}
             placeholder={`Enter new ${itemType} title`}
+            data-testid="new-title-input"
           />
         </>
       }
@@ -51,6 +52,7 @@ export function NewTitleModal(props: PNewTitleModal) {
           {...BUTTONS.CONFIRM}
           disabledTooltip={"Please enter a title before saving."}
           disabled={!title.trim()}
+          testid="new-title-confirm-button"
           onClick={async () => await confirmationAction()}
         />
       }

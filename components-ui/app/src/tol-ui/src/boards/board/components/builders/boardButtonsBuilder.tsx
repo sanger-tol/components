@@ -128,6 +128,7 @@ export function boardButtonsBuilder({
   const copyButton: PDropdownButton = {
     toggle: BUTTONS.COPY,
     buttons: [copyBoardButton, copyViewIdButton],
+    testid: "board-copy-dropdown",
   };
 
   return [
