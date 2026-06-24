@@ -52,7 +52,7 @@ export function DropdownButton(props: PDropdownButton) {
   return (
     <Dropdown
       className={dropdownClass}
-      trigger={toggle.disabled ? [] : ["click", "hover"]}
+      trigger={toggle.disabled ? [] : ["click"]}
       placement={placement}
       renderToggle={renderButton}
     >
