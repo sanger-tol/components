@@ -23,6 +23,10 @@ export interface PDropdownButton {
    * Placement of the dropdown menu relative to the toggle button.
    */
   placement?: DropdownProps["placement"];
+  /**
+   * data-testid for the dropdown button wrapper.
+   */
+  testid?: string;
 }
 
 /**
@@ -30,7 +34,7 @@ export interface PDropdownButton {
  * and the PButton interface.
  */
 export function DropdownButton(props: PDropdownButton) {
-  const { toggle, buttons } = props;
+  const { toggle, buttons, testid } = props;
   const { position = "none", ...toggleWithoutPosition } = toggle;
 
   const placement: DropdownProps["placement"] =
@@ -52,9 +56,10 @@ export function DropdownButton(props: PDropdownButton) {
   return (
     <Dropdown
       className={dropdownClass}
-      trigger={toggle.disabled ? [] : ["click", "hover"]}
+      trigger={toggle.disabled ? [] : ["click"]}
       placement={placement}
       renderToggle={renderButton}
+      data-testid={testid}
     >
       {buttons.map((button: PButton, index) =>
         (button.visible !== false) ? (
