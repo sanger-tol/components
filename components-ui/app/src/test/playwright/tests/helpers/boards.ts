@@ -20,6 +20,10 @@ export const createViewId = () => `v_${crypto.randomUUID()}`;
  * @returns A random Zone ID
  */
 export const createZoneId = () => `z_${crypto.randomUUID()}`;
+/**
+ * @returns A random Component ID
+ */
+export const createComponentId = () => `c_${crypto.randomUUID()}`;
 
 export const createZone = async (page: Page) => {
   // enter edit mode

@@ -8,6 +8,7 @@ import {
   addUserToDB,
   createBoardForUser,
   isInHeadlessMode,
+  InsertComponentToBoard,
 } from "../helpers";
   
 test.use({ headless: isInHeadlessMode });
@@ -19,8 +20,17 @@ test("User can copy another users board", async ({ page }) => {
   // Add a new user and give them a board in the DB
   // This is not the same user as our browser session
   const { userId } = await addUserToDB();
-  const otherUserBoard = await createBoardForUser(String(userId));
-  await page.goto(`/board/${otherUserBoard}`);
+  const { boardId, zoneId } = await createBoardForUser(String(userId));
+
+  await InsertComponentToBoard(
+    String(userId),
+    "Test Table",
+    zoneId
+  );
+
+  await page.goto(`/board/${boardId}`);
+
+  await expect(page.getByText("Test Table")).toBeVisible();
 
   const copyDorpdown = page.getByTestId("board-copy-dropdown");
   await expect(copyDorpdown).toBeVisible();
@@ -41,5 +51,7 @@ test("User can copy another users board", async ({ page }) => {
 
   const boardTitle = page.getByTestId("view-mode-board-title");
   await expect(boardTitle).toBeVisible();
-  await expect(boardTitle).toHaveText("My Copied Board"); 
+  await expect(boardTitle).toHaveText("My Copied Board");
+
+  await expect(page.getByText("Test Table")).toBeVisible();
 });
