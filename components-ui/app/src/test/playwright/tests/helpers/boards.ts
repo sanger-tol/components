@@ -8,22 +8,24 @@ import { Page } from "@playwright/test";
 
 import { enterEditMode, exitEditMode } from ".";
 
+const createShortId = (prefix: string) => `${prefix}_${crypto.randomUUID().slice(0, 12)}`;
+
 /**
  * @returns A random Board ID
  */
-export const createBoardId = () => `b_${crypto.randomUUID()}`;
+export const createBoardId = () => createShortId("b");
 /**
  * @returns A random View ID
  */
-export const createViewId = () => `v_${crypto.randomUUID()}`;
+export const createViewId = () => createShortId("v");
 /**
  * @returns A random Zone ID
  */
-export const createZoneId = () => `z_${crypto.randomUUID()}`;
+export const createZoneId = () => createShortId("z");
 /**
  * @returns A random Component ID
  */
-export const createComponentId = () => `c_${crypto.randomUUID()}`;
+export const createComponentId = () => createShortId("c");
 
 export const createZone = async (page: Page) => {
   // enter edit mode

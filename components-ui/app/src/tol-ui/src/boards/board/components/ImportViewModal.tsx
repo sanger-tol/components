@@ -102,6 +102,7 @@ export function ImportViewModal(props: PImportViewModal) {
             placeholder="Enter or paste view ID..."
             value={viewImportId}
             onChange={(value: string) => setViewImportId(value)}
+            data-testid="view-import-input"
           />
         </div>
       }
@@ -111,6 +112,7 @@ export function ImportViewModal(props: PImportViewModal) {
           onClick={async () => await onViewImport()}
           disabledTooltip="Please ensure the entered id is a valid view ID."
           disabled={!checkViewIdValidity(viewImportId)}
+          testid="view-import-confirm-button"
         />
       }
     />

@@ -9,14 +9,22 @@ import {
   createBoardForUser,
   isInHeadlessMode,
   InsertComponentToBoard,
+  setBoard,
+  createBoardId,
+  enterEditMode,
 } from "../helpers";
   
 test.use({ headless: isInHeadlessMode });
+test.beforeEach(async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"], {
+    origin: process.env.PLAYWRIGHT_URL ?? "https://localhost:3011",
+  });
 
-test("User can copy another users board", async ({ page }) => {
   // Sets a user session up for the browser
   await setAuth(page);
+});
 
+const setupBoardWithComponent = async (page) => {
   // Add a new user and give them a board in the DB
   // This is not the same user as our browser session
   const { userId } = await addUserToDB();
@@ -35,6 +43,10 @@ test("User can copy another users board", async ({ page }) => {
   const copyDorpdown = page.getByTestId("board-copy-dropdown");
   await expect(copyDorpdown).toBeVisible();
   await copyDorpdown.click();
+}
+
+test("User can copy another users board", async ({ page }) => {
+  await setupBoardWithComponent(page);
 
   const copyBoardButton = page.getByText("Copy Board");
   await expect(copyBoardButton).toBeVisible();
@@ -52,6 +64,40 @@ test("User can copy another users board", async ({ page }) => {
   const boardTitle = page.getByTestId("view-mode-board-title");
   await expect(boardTitle).toBeVisible();
   await expect(boardTitle).toHaveText("My Copied Board");
+
+  await expect(page.getByText("Test Table")).toBeVisible();
+});
+
+
+test("User can copy another users view", async ({ page }) => {
+  setupBoardWithComponent(page);
+
+  const copyBoardButton = page.getByText("Copy Current View");
+  await expect(copyBoardButton).toBeVisible();
+  await copyBoardButton.click();
+
+  // Create a new board for the view to be imported into
+  const userBoardId = createBoardId()
+  await setBoard(page, userBoardId);
+
+  await enterEditMode(page);
+
+  const addViewButton = page.getByTestId("board-add-view-button");
+  await expect(addViewButton).toBeVisible();
+  await addViewButton.click();
+
+  const importViewButton = page.getByText("Import View");
+  await expect(importViewButton).toBeVisible();
+  await importViewButton.click();
+
+  const viewImportInput = page.getByTestId("view-import-input");
+  await expect(viewImportInput).toBeVisible();
+  const clipBoardContent: string = await page.evaluate("navigator.clipboard.readText()");
+  await viewImportInput.fill(clipBoardContent);
+
+  const confirmButton = page.getByTestId("view-import-confirm-button");
+  await expect(confirmButton).toBeVisible();
+  await confirmButton.click();
 
   await expect(page.getByText("Test Table")).toBeVisible();
 });
