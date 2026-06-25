@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import React, { useState } from "react";
 import { Tabs as RSTabs } from "rsuite";
 
-type PTabs = { placeholder: React.ReactNode } & React.ComponentProps<
+type PTabs = { placeholder?: React.ReactNode } & React.ComponentProps<
   typeof RSTabs
 >;
 type TabSubcomponent = typeof RSTabs.Tab;
