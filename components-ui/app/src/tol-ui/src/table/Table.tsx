@@ -19,7 +19,7 @@ import {
   IRemoteTargetAndZone,
   PUtilityBar,
   PButton,
-  PDropdownButtons,
+  PDeprecatedDropdownButtons,
   useBoard,
   ITableConfigSave,
   RowCounter,
@@ -32,12 +32,15 @@ import {
   DataColumn,
   mergeUtilityBarConfigs,
   NoAttributesPlaceholder,
+  IConfigDifferences,
+  TableResetConfirmationModal,
 } from "..";
 
 export interface PTable extends IRemoteTargetAndZone {
   id: string;
   data: any;
   fieldMeta: IFieldMeta;
+  baseFieldMeta?: Partial<IFieldMeta>;
   height: any;
   loading: boolean;
   resizeableColumns?: boolean;
@@ -87,6 +90,9 @@ export interface PTable extends IRemoteTargetAndZone {
 
   downloadInProgress: boolean;
   setDownloadInProgress: (downloadInProgress: boolean) => void;
+  onReset?: () => void;
+  showConfigReset?: boolean;
+  resetConfigDifferences?: IConfigDifferences;
 }
 
 export function Table(props: PTable) {
@@ -129,16 +135,24 @@ export function Table(props: PTable) {
     actionsFooter,
     utilityBarConfig = {},
     contents,
-    groupBy,
     /* eslint-enable */
   } = props;
 
+  const groupBy: boolean | undefined = props.groupBy;
+  const onReset: (() => void) | undefined = props.onReset;
+  const showConfigReset: boolean | undefined = props.showConfigReset;
+  const resetConfigDifferences: IConfigDifferences | undefined =
+    props.resetConfigDifferences;
+  const baseFieldMeta: Partial<IFieldMeta> | undefined = props.baseFieldMeta;
+
   const { editMode } = useBoard();
 
-  const [open, setOpen] = useState(false);
-  const [downloadOpen, setDownloadOpen] = useState(false);
-  const [smallBreakpoint, setSmallBreakpoint] = useState(true);
-  const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
+  const [open, setOpen] = useState<boolean>(false);
+  const [resetConfirmationOpen, setResetConfirmationOpen] =
+    useState<boolean>(false);
+  const [downloadOpen, setDownloadOpen] = useState<boolean>(false);
+  const [smallBreakpoint, setSmallBreakpoint] = useState<boolean>(true);
+  const [mediumBreakpoint, setMediumBreakpoint] = useState<boolean>(true);
   const [cellHeights, setCellHeights] = useState<TCellHeights>({});
   const [heightExpandedRows, setHeightExpandedRows] = useState<
     Record<string, boolean>
@@ -150,7 +164,7 @@ export function Table(props: PTable) {
   );
 
   // @ts-ignore - temp turned off
-  const [bulkSelect, setBulkSelect] = useState(false);
+  const [bulkSelect, setBulkSelect] = useState<boolean>(false);
 
   let checked = false;
   let indeterminate = false;
@@ -264,36 +278,38 @@ export function Table(props: PTable) {
 
   const configButton: PButton = !noConfigModal
     ? {
-      visible: true,
-      position: "right",
-      type: "primary",
-      testid: "table-config-button",
-      tooltip: "Configure Table",
-      onClick: () => {
-        setOpen(true);
-      },
-      icon: "sliders",
-      outline: true,
-      disabled: loading,
-    }
+        visible: true,
+        position: "right",
+        type: "primary",
+        testid: "table-config-button",
+        tooltip: "Configure Table",
+        onClick: () => {
+          setOpen(true);
+        },
+        icon: "sliders",
+        outline: true,
+        disabled: loading,
+      }
     : {
         visible: false,
       };
 
   const filterButton: PButton =
-    (!noFilter && fieldMeta.order.active.length !== 0 && editMode) ? {
-      visible: true,
-      position: "right",
-      type: "primary",
-      onClick: () => {
-        setFilterVisibility(!filterVisibility);
-      },
-      icon: filterVisibility ? "eye-slash" : "eye",
-      tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
-      outline: true,
-    } : {
-      visible: false,
-    };
+    !noFilter && fieldMeta.order.active.length !== 0 && editMode
+      ? {
+          visible: true,
+          position: "right",
+          type: "primary",
+          onClick: () => {
+            setFilterVisibility(!filterVisibility);
+          },
+          icon: filterVisibility ? "eye-slash" : "eye",
+          tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+          outline: true,
+        }
+      : {
+          visible: false,
+        };
 
   const downloadButton: PButton = !noDownload
     ? {
@@ -316,7 +332,7 @@ export function Table(props: PTable) {
         visible: false,
       };
 
-  const actionDropdown: PDropdownButtons | undefined =
+  const actionDropdown: PDeprecatedDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
           mainButtonIcon: {
@@ -335,9 +351,7 @@ export function Table(props: PTable) {
   const allRowsExpanded =
     Array.isArray(data) &&
     data.length > 0 &&
-    data.every(
-      (row: any) => !!(row?.key && heightExpandedRows[row.key])
-    );
+    data.every((row: any) => !!(row?.key && heightExpandedRows[row.key]));
 
   const PageSizePicker = (
     <span className="tol-page-size">
@@ -375,7 +389,7 @@ export function Table(props: PTable) {
       boundaryLinks
       maxButtons={mediumBreakpoint ? 1 : 3}
     />
-  )
+  );
 
   const ubc = mergeUtilityBarConfigs(
     utilityBarConfig,
@@ -396,9 +410,16 @@ export function Table(props: PTable) {
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
+      <TableResetConfirmationModal
+        open={resetConfirmationOpen}
+        setOpen={setResetConfirmationOpen}
+        setConfigOpen={setOpen}
+        onReset={onReset}
+        resetConfigDifferences={resetConfigDifferences}
+      />
       <DownloadModal
         {...props}
-        disabledTabs={['Image']}
+        disabledTabs={["Image"]}
         size="sm"
         componentId={id}
         open={downloadOpen}
@@ -418,11 +439,18 @@ export function Table(props: PTable) {
         open={open}
         groupBy={groupBy}
         setOpen={setOpen}
+        editMode={editMode}
         displaySource={displaySource}
-        // fetches all if inactive isn't specified
+        onReset={
+          !noConfigModal && !editMode && showConfigReset
+            ? () => setResetConfirmationOpen(true)
+            : undefined
+        }
+        showConfigReset={!noConfigModal && !editMode && showConfigReset}
         customAttributeSelection={
-          fieldMeta.order.inactive && fieldMeta.order.inactive.length > 0
-            ? [...(fieldMeta.order.active ?? []), ...fieldMeta.order.inactive]
+          !editMode
+          && ((baseFieldMeta?.order?.limitVisibility ?? fieldMeta?.order?.limitVisibility) === true)
+            ? [...((baseFieldMeta?.order?.active || fieldMeta.order.active) ?? []), ...((baseFieldMeta?.order?.inactive || fieldMeta.order.inactive) ?? [])]
             : undefined
         }
       />
@@ -431,7 +459,9 @@ export function Table(props: PTable) {
         contents
       ) : (
         <>
-          {noFieldsSelected ? <NoAttributesPlaceholder /> : (
+          {noFieldsSelected ? (
+            <NoAttributesPlaceholder />
+          ) : (
             <>
               <RowCounter {...props} />
               <div className="tol-table-inner">
@@ -467,10 +497,7 @@ export function Table(props: PTable) {
                     const rowId = rowData?.key;
                     const row = cellHeights[rowId];
                     const fullHeight = row
-                      ? Math.max(
-                          DEFAULT_ROW_HEIGHT,
-                          ...Object.values(row),
-                        )
+                      ? Math.max(DEFAULT_ROW_HEIGHT, ...Object.values(row))
                       : DEFAULT_ROW_HEIGHT;
 
                     if (heightExpandedRows[rowId]) {
@@ -479,7 +506,12 @@ export function Table(props: PTable) {
                     return Math.min(fullHeight, COLLAPSED_ROW_MAX_HEIGHT);
                   }}
                   renderLoading={() => (
-                    <Placeholder loader opacity={0.8} squareCorners />
+                    <Placeholder
+                      loader
+                      opacity={0.8}
+                      squareCorners
+                      messagePosition="top"
+                    />
                   )}
                 >
                   {/* Has to be a function as only rsuite components can be children on their Table */}

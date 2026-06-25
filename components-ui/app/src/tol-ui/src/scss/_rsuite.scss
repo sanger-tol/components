@@ -77,8 +77,10 @@
     color: var(--tol-grey);
   }
 
-  .rs-inline-edit .rs-plaintext:hover {
+  .rs-inline-edit:not(.rs-inline-edit-disabled) .rs-plaintext:hover {
     border: 1px solid transparent !important;
+    background-color: var(--tol-grey-subtle);
+    color: var(--tol-text);
   }
 
   .rs-picker-menu {

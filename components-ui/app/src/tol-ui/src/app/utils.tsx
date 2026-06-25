@@ -8,15 +8,12 @@ import { ReactNode } from "react";
 import { Nav, NavDropdown } from "react-bootstrap";
 import {
   TsDataSource,
-  BOARDS,
-  TDataObjectOrNull,
   PRIVILEGE,
   TBoardPrivilege,
-  env,
   TNavConfig,
   TPageOrDropdown,
   PAGE_ACCESS,
-  User,
+  IUser,
   deepCopy,
   IPageLink,
   IPageElement,
@@ -26,6 +23,7 @@ import {
   INavDestination,
   formatPath,
   TNavBrand,
+  API_PATHS,
 } from "..";
 
 
@@ -35,7 +33,7 @@ export const assumeProduction = (): string => {
 };
 
 export const fetchEnvironment = (): Promise<string> => {
-  return fetch(env.API_PATH + "/system/environment")
+  return fetch(API_PATHS.API_PATH + "/system/environment")
     .then((res) => {
       if (res.ok) {
         return res.json() as Promise<any>;
@@ -67,24 +65,12 @@ export const getNavBackgroundClass = (environment: string): string => {
   }
 };
 
-export async function getUserPrivilege(
-  user: User | null | undefined,
-  boardDataSource: TsDataSource | null | undefined,
-  boardId: string | null | undefined,
-): Promise<TBoardPrivilege> {
-  if (!user?.id || !boardDataSource || !boardId) return PRIVILEGE.BOARD.VIEWABLE;
-
-  const board: TDataObjectOrNull = await boardDataSource.getOne({
-    objectType: BOARDS.BOARD,
-    id: boardId,
-  });
-
-  const boardUser = await board?.relationships?.user;
-  const isOwner = boardUser?.["id"].toString() === user.id.toString();
-  const isAdmin = user.roles?.includes("admin") ?? false;
-
-  if (board && (isOwner || isAdmin)) return PRIVILEGE.BOARD.EDITABLE;
-  return PRIVILEGE.BOARD.VIEWABLE;
+// When we add private boards, we can also check this to determine whether
+// the board is viewable or not
+export function getUserPrivilege(
+  writePrivilege: boolean,
+): TBoardPrivilege {
+  return writePrivilege ? PRIVILEGE.BOARD.WRITABLE : PRIVILEGE.BOARD.VIEWABLE as TBoardPrivilege;
 }
 
 /**
@@ -168,7 +154,7 @@ export function generateRoutePath(
  */
 export function normaliseNavConfig(
   navigation: TNavConfig | undefined,
-  user: User | null,
+  user: IUser | null,
   routePrefix: string = ""
 ): TNavConfig {
   const source: TNavConfig = navigation ?? { data: {}, order: [] };
@@ -243,7 +229,7 @@ export function mergeNavConfigs(
 export function mergeAndNormaliseNavConfig(
   navigation: TNavConfig | undefined,
   defaultNavigation: TNavConfig,
-  user: User | null,
+  user: IUser | null,
   routePrefix: string = "",
 ): TNavConfig {
   // Combine system nav config with incoming config
@@ -383,7 +369,7 @@ export function collectNavigationItems(navigation: TNavConfig | undefined): Reac
  * 
  * @returns `true` if the user is allowed to access the page; otherwise `false`.
  */
-export function isPageAccessible(user: User | null, page: TPageOrDropdown): boolean {
+export function isPageAccessible(user: IUser | null, page: TPageOrDropdown): boolean {
   // If no auth required, allow access
   if (!page.access || page.access === PAGE_ACCESS.PUBLIC) return true;
 

@@ -26,6 +26,7 @@ export function PlaceholderIcon(Props: PPlaceholder) {
     download,
     loader,
     message,
+    messagePosition = "bottom",
     warningMessage,
     errorMessage,
   } = Props;
@@ -53,8 +54,13 @@ export function PlaceholderIcon(Props: PPlaceholder) {
 
   return (
     <div>
+      {messagePosition === "top" && message && (
+        <p className="tol-placeholder-message">{message}</p>
+      )}
       {icon}
-      {message && <p className="tol-placeholder-message">{message}</p>}
+      {messagePosition === "bottom" && message && (
+        <p className="tol-placeholder-message">{message}</p>
+      )}
     </div>
   );
 }

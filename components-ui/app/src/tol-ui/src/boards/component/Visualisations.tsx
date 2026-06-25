@@ -10,11 +10,15 @@ import {
   generateLayout,
   IZone,
   TsDataSource,
-  generateVisualisations,
-  updateLayout,
   useBoard,
   useEffectUpdate,
+  Visualisation,
+  BOARD_ENTITIES,
   ACTIONS_DS,
+  patchReorderBoardEntity,
+  getWidgetOrder,
+  removeBoardEntityInParent,
+  deleteBoardEntity,
 } from "../..";
 
 
@@ -38,41 +42,48 @@ export function Visualisations(props: PVisualisations) {
 
   const { layoutMode } = useBoard();
 
-  const [layoutsState, setLayouts] = useState<Layouts>();
-  // newLayout is used to store the layout when the user is dragging widgets, and is emtptied once a user saves
+  const [layouts, setLayouts] = useState<Layouts>();
+  /**
+   * newLayout is used to store the layout when the user is dragging
+   * widgets, and is emptied once a user saves
+   */
   const [newLayout, setNewLayout] = useState(undefined);
-  const [elements, setElements] = useState<JSX.Element[]>([]);
   const internalLayouts = useRef(generateLayout(zone));
 
   useEffect(() => {
-    setElements(
-      generateVisualisations(
-        zone,
-        setZone,
-        boardDataSource,
-        actionsDataSource
-      )
-    );
     const newLayout = generateLayout(zone);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
   }, [zone]);
 
-  // When layout mode is turned off, we want to update the layout of the zone with the new layout
   useEffectUpdate(() => {
-    if (!layoutMode) {
-      updateLayout(
-        newLayout,
-        zone,
-        setZone,
-        boardDataSource
-      );
-    }
+    /**
+     * When layout mode is turned off, we want to update the layout
+     * of the zone with the new layout
+     */
+    if (!layoutMode) onReorderComponents(getWidgetOrder(newLayout!));
   }, [layoutMode]);
+
+  const onDeleteComponent = (componentId: string) => {
+    deleteBoardEntity(boardDataSource, componentId)
+      .then((status: string | void) => {
+        if (status !== "success") return;
+        removeBoardEntityInParent(componentId, zone);
+        setZone({ ...zone });
+      });
+  };
+
+  const onReorderComponents = (reorderedIds: string[]) => {
+    patchReorderBoardEntity(boardDataSource, zone.id!, reorderedIds)
+      .then(() => {
+        zone.order = reorderedIds;
+        setZone({ ...zone });
+      });
+  };
 
   const onBreakpointChange = () => {
     if (
-      JSON.stringify(internalLayouts.current) !== JSON.stringify(layoutsState)
+      JSON.stringify(internalLayouts.current) !== JSON.stringify(layouts)
     ) {
       setLayouts(internalLayouts.current);
     }
@@ -81,17 +92,39 @@ export function Visualisations(props: PVisualisations) {
   return (
     <div className="tol-responsive-grid">
       <ResponsiveReactGridLayout
-        layouts={layoutsState}
+        layouts={layouts}
         breakpoints={{ lg: 992, md: 576, sm: 0 }}
         cols={{ lg: 4, md: 2, sm: 1 }}
         isDraggable={layoutMode}
         isResizable={false}
         compactType="vertical"
         rowHeight={5}
-        onLayoutChange={(layout: any) => setNewLayout(layout)}
+        onLayoutChange={(l: any) => setNewLayout(l)}
         onBreakpointChange={onBreakpointChange}
       >
-        {elements.map((element) => cloneElement(element))}
+        {zone.order.map((componentId) => {
+          const component = zone.children?.[componentId];
+          if (!component) return null;
+          return cloneElement(
+            <div key={component.id} className="tol-visualisation">
+              <Visualisation
+                id={component.id!}
+                size={component.widget_type!}
+                zone={zone}
+                setZone={setZone}
+                componentType={component.component_type!}
+                config={component.config}
+                objectType={component.object_type!}
+                dataSource={component.dataspace!}
+                boardDataSource={boardDataSource}
+                boardObjectType={BOARD_ENTITIES.ENTITIES.COMPONENT}
+                title={component.title!}
+                actionsDataSource={actionsDataSource}
+                onDeleteComponent={onDeleteComponent}
+              />
+            </div>,
+          );
+        })}
       </ResponsiveReactGridLayout>
     </div>
   );

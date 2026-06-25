@@ -19,6 +19,7 @@ import {
   Dropzone,
   FormCheckboxes,
   Button,
+  createInitialDataSnapshot,
   setInitialData,
   validateForm,
   UNSUPPORTED_FIELD_TYPE,
@@ -26,7 +27,7 @@ import {
   FormDatetime,
   MultipleFormInput,
   FormLabel,
-  deepEqual,
+  deepestEqual,
   normaliseCaps,
 } from "..";
 
@@ -61,25 +62,26 @@ export interface PFormAllInOne {
 export function FormAllInOne(props: PFormAllInOne) {
   const { formConfig, initialData, fluid = true, model, onValidate } = props;
 
-  const [formData, setFormData] = useState<object>({});
+  const [formData, setFormData] = useState<Record<string, any>>({});
   const [formErrors, setFormErrors] = useState<Record<string, any>>({});
-  const [modifiedFields, setModifiedFields] = useState<object>({});
+  const [modifiedFields, setModifiedFields] = useState<Record<string, any>>({});
   const [formId, _] = useState<any>(() => crypto.randomUUID());
   const hasUnsavedChanges = useRef(false);
-  const initialSnapshotRef = useRef<object>({});
+  const initialSnapshotRef = useRef<Record<string, any>>({});
   const onUnsavedChangesRef = useRef(props.onUnsavedChanges);
-  onUnsavedChangesRef.current = props.onUnsavedChanges;
 
   const formRef = useRef<any>(null);
   const toaster = Toaster();
   const defaultModel = Schema.Model({});
+  onUnsavedChangesRef.current = props.onUnsavedChanges;
 
   useEffect(() => {
-    if (initialData) {
-      setInitialData(formConfig, setFormData, initialData);
-      initialSnapshotRef.current = initialData;
-    }
-  }, []);
+    initialSnapshotRef.current = createInitialDataSnapshot(
+      formConfig,
+      initialData
+    );
+    setInitialData(formConfig, setFormData, initialData);
+  }, [formConfig, initialData]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -106,8 +108,8 @@ export function FormAllInOne(props: PFormAllInOne) {
   const handleInputChange = (name: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
     setModifiedFields((prev: any) => {
-      const initialValue = (initialSnapshotRef.current as any)[name];
-      if (deepEqual(value, initialValue ?? null)) {
+      const initialValue = initialSnapshotRef.current[name];
+      if (deepestEqual(value, initialValue ?? null)) {
         const { [name]: _, ...rest } = prev as any;
         return rest;
       }

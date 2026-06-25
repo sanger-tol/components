@@ -92,12 +92,12 @@ export function RemotePlateSingle(Props: PRemotePlateSingle) {
           filter: compoundFilter,
           requestedFields,
         })
-        .then((response) => {
+        .then((res) => {
           setWellData(
             generatePlateData(
               objectType,
               entityMeta,
-              response,
+              res,
               baseData,
               wellPositionAttribute,
               wellHoverAttributeKeys

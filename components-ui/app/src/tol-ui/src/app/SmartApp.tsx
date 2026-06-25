@@ -43,6 +43,7 @@ import {
   mergeAndNormaliseNavConfig,
   GlobalLoadingProvider,
   ACTIONS_DS,
+  URL_PATHS,
 } from "..";
 
 
@@ -222,6 +223,7 @@ export function SmartApp(props: PSmartApp) {
             }}
           >
             <Router>
+              <div className="tol-board-backing-fade" />
               <Navigation {...navProps} />
               <div className="tol-smart-app">
                 <div className="tol-smart-app-content">
@@ -238,11 +240,11 @@ export function SmartApp(props: PSmartApp) {
                           actionsDataSource
                         )}
                         <ReactRouter
-                          path={`/page-not-found`}
+                          path={URL_PATHS.PAGE_NOT_FOUND}
                           component={() => <PageNotFound />}
                         />
                         <ReactRouter path="*">
-                          <Redirect to={`/page-not-found`} />
+                          <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />
                         </ReactRouter>
                       </Switch>
                     </>

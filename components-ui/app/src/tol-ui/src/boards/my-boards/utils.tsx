@@ -9,7 +9,7 @@ import {
   TsDataSource,
   TDataObjectListOrNull,
   TDataObjectOrNull,
-  BOARDS,
+  BOARD_ENTITIES,
 } from "../..";
 
 export async function getBoardDetails(
@@ -19,7 +19,7 @@ export async function getBoardDetails(
 ) {
   return boardDataSource
     .getListPage({
-      objectType: BOARDS.BOARD,
+      objectType: BOARD_ENTITIES.ENTITIES.BOARD,
       filter: {
         and_: {
           user_id: { eq: { value: userId } },
@@ -85,7 +85,7 @@ export async function returnViewInfo(
 ) {
   return boardDataSource
     .getListPage({
-      objectType: BOARDS.VIEW,
+      objectType: BOARD_ENTITIES.ENTITIES.VIEW,
       filter: {
         and_: {
           id: { eq: { value: viewId } },
@@ -107,7 +107,7 @@ export async function returnZoneInfo(
 ) {
   return boardDataSource
     .getListPage({
-      objectType: BOARDS.ZONE,
+      objectType: BOARD_ENTITIES.ENTITIES.ZONE,
       filter: {
         and_: {
           id: { eq: { value: zoneId } },
@@ -132,7 +132,7 @@ export async function returnComponentInfo(
 ) {
   return boardDataSource
     .getListPage({
-      objectType: BOARDS.COMPONENT,
+      objectType: BOARD_ENTITIES.ENTITIES.COMPONENT,
       filter: {
         and_: {
           id: { eq: { value: componentId } },

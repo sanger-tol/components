@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useEffect } from "react";
 import {
   IZone,
-  defineComponent,
   IFilter,
   IAndAttributes,
   deepCopy,
@@ -163,18 +162,18 @@ export function generateFilter(
     // Exclude pass throughs except self
     if (
       shouldFilterPassThrough(
-        id, currentId, zone.components[currentId].data.filterPassThrough
+        id, currentId, zone.children?.[currentId].filterPassThrough
       )
     ) continue;
 
     // Get the current filter, using the default filter as a base
     let currentFilter: IFilter = mergeFilters(
-      zone.components[currentId].data.defaultFilter || {},
-      zone.components[currentId].data.filter || {},
+      zone.children?.[currentId].defaultFilter || {},
+      zone.children?.[currentId].filter || {},
     );
 
     // Include sub filter if required
-    const subFilter = zone.components[currentId].data.subFilter;
+    const subFilter = zone.children?.[currentId].subFilter;
     if ((currentId !== id || includeOwnSubFilter) && subFilter) {
       currentFilter = mergeFilters(currentFilter, subFilter);
     }
@@ -204,24 +203,6 @@ export function addValueBelow(id: string, value: string, list: string[]) {
 }
 
 /**
- * Adds a new component below the specified component in the given zone, and updates the zone's order accordingly.
- * 
- * @param id The identifier of the component below which the new component should be added.
- * @param newId The identifier of the new component to add.
- * @param zone The zone object containing the components and their order.
- */
-export function addComponentBelow(id: string, newId: string, zone: IZone) {
-  defineComponent(
-    {
-      id: newId,
-      filterPassThrough: zone.components[id].data.filterPassThrough,
-    },
-    zone,
-  );
-  zone.order = addValueBelow(id, newId, zone.order);
-}
-
-/**
  * Resets the filters of all components below the specified component in the given zone, starting from a certain index offset.
  * 
  * @param params An object containing the parameters for resetting filters below a component.
@@ -238,10 +219,10 @@ export function resetFiltersBelow(params: {
   let id = params.id;
   const z = zone as IZone;
   for (const currentId of getComponentsBelow(id, z.order, indexOffset)) {
-    z.components[currentId].data.filter = deepCopy(
-      z.components[currentId].data.defaultFilter!,
+    z.children[currentId].filter = deepCopy(
+      z.children?.[currentId].defaultFilter!,
     );
-    z.components[currentId].data.subFilter = undefined;
+    z.children[currentId].subFilter = undefined;
   }
 }
 
@@ -253,22 +234,11 @@ export function resetFiltersBelow(params: {
 export function resetAllFilters(zone: IZone) {
   zone.filter = deepCopy(zone.defaultFilter!);
   for (const currentId of zone.order) {
-    zone.components[currentId].data.filter = deepCopy(
-      zone.components[currentId].data.defaultFilter!,
+    zone.children[currentId].filter = deepCopy(
+      zone.children[currentId].defaultFilter!,
     );
-    zone.components[currentId].data.subFilter = undefined;
+    zone.children[currentId].subFilter = undefined;
   }
-}
-
-/**
- * Removes a component with the specified identifier from the given zone, and updates the zone's order accordingly.
- * 
- * @param id The identifier of the component to remove.
- * @param zone The zone containing the components and their order.
- */
-export function removeComponent(id: string, zone: IZone) {
-  delete zone.components[id];
-  zone.order = zone.order.filter((currentId) => currentId !== id);
 }
 
 /**
@@ -301,7 +271,13 @@ export function setFilterInput(params: {
     valueExists,
   } = params;
   const z = zone as IZone;
-  const and_ = z.components[componentId].data?.filter?.and_ || {};
+
+  // Initialise filter on the zone if it doesn't exist before taking a reference to and_.
+  const component = z.children[componentId];
+  component.filter ??= { and_: {} };
+  component.filter.and_ ??= {};
+  const and_ = component.filter.and_;
+
   resetFiltersBelow({ id: componentId, zone: z });
 
   if (valueExists || exists) {
@@ -458,11 +434,11 @@ export function filterListener(
 
     // Loop through 'above' components and perform updates based on their filters, including itself by default
     for (const currentId of aboveComponents) {
-      const componentData = zone.components[currentId].data;
+      const componentData = zone.children?.[currentId];
       filterListenerUpdater({
-        filter: componentData.filter,
+        filter: componentData?.filter,
         filterPassThrough: shouldFilterPassThrough(
-          componentId, currentId, componentData.filterPassThrough
+          componentId, currentId, componentData?.filterPassThrough
         ),
         attribute,
         operators,
@@ -502,7 +478,7 @@ export function addSubFilter(params: {
   const z = zone as IZone;
   const f = filter as IFilter;
   resetFiltersBelow({ id: id, zone: z! });
-  z.components[id].data.subFilter = f;
+  z.children[id].subFilter = f;
 }
 
 /**

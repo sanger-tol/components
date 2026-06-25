@@ -26,7 +26,7 @@ import {
   VALIDATION_TIMEOUT_MS,
   getUserFromLocalStorage,
   setValidationTimeout,
-  DropdownButtons,
+  DeprecatedDropdownButtons,
   useValidationPolicyModule,
   SubmissionMutateModal,
   IconTooltip,
@@ -293,7 +293,7 @@ export function ValidationResultsViewer() {
                     onClick={() => latestPipelineResults.refetch()}
                     timeout={BUTTON_TIMEOUT}
                   />
-                  <DropdownButtons
+                  <DeprecatedDropdownButtons
                     mainButtonIcon={{ icon: "paper-plane", text: "Actions" }}
                     placement="leftStart"
                     menuStyle={{ marginRight: "5px" }}

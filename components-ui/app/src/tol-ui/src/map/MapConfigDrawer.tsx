@@ -4,11 +4,12 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AttributeSelector,
   RequiredAsterisk,
   Drawer,
+  deepEqual,
   IRemoteTargetAndZone,
   IMapConfig
 } from "..";
@@ -53,17 +54,35 @@ export function MapConfigDrawer(props: PMapConfigDrawer) {
   const [longitudeKey, setLongitudeKey] = useState<string[]>(config.longitudeKey ? [config.longitudeKey] : []);
   const [latitudeKey, setLatitudeKey] = useState<string[]>(config.latitudeKey ? [config.latitudeKey] : []);
   const [attributeKeys, setAttributeKeys] = useState<string[]>(config.attributeKeys ? [config.attributeKeys] : []);
+  const initialConfigRef = useRef({
+    longitudeKey: config.longitudeKey ? [config.longitudeKey] : [],
+    latitudeKey: config.latitudeKey ? [config.latitudeKey] : [],
+    attributeKeys: config.attributeKeys ? [config.attributeKeys] : [],
+  });
 
-  const longChanged = longitudeKey[0] !== config.longitudeKey;
-  const latChanged = latitudeKey[0] !== config.latitudeKey;
-  const attrChanged = attributeKeys.join(",") !== config.attributeKeys;
-  const hasPendingChanges = (longChanged || latChanged || attrChanged) && longitudeKey.length > 0 && latitudeKey.length > 0;
+  const hasPendingChanges =
+    !deepEqual(
+      {
+        longitudeKey,
+        latitudeKey,
+        attributeKeys,
+      },
+      initialConfigRef.current
+    ) &&
+    longitudeKey.length > 0 &&
+    latitudeKey.length > 0;
 
   useEffect(() => {
     if (open) {
-      setLongitudeKey(config.longitudeKey ? [config.longitudeKey] : []);
-      setLatitudeKey(config.latitudeKey ? [config.latitudeKey] : []);
-      setAttributeKeys(config.attributeKeys ? [config.attributeKeys] : []);
+      const initialConfig = {
+        longitudeKey: config.longitudeKey ? [config.longitudeKey] : [],
+        latitudeKey: config.latitudeKey ? [config.latitudeKey] : [],
+        attributeKeys: config.attributeKeys ? [config.attributeKeys] : [],
+      };
+      initialConfigRef.current = initialConfig;
+      setLongitudeKey(initialConfig.longitudeKey);
+      setLatitudeKey(initialConfig.latitudeKey);
+      setAttributeKeys(initialConfig.attributeKeys);
     }
   }, [open, config.longitudeKey, config.latitudeKey, config.attributeKeys]);
 

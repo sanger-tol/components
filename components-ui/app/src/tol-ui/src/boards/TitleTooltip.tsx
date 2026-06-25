@@ -18,19 +18,25 @@ export interface PTitleTooltip {
 }
 
 export function TitleTooltip(props: PTitleTooltip) {
-  const { title, objectType, dataSource, filter, id } = props;
+  const {
+    title,
+    objectType,
+    dataSource,
+    filter,
+    id
+  } = props;
 
   return (
     <div className="tol-utility-bar-title-tooltip">
       <h6>{title}</h6>
-      <p><b>Object Type:</b> {normaliseCaps(objectType)}</p>
+      <p><b>Object Type:</b> {normaliseCaps(objectType!)}</p>
       <>
         <b>Filters:</b>
         &nbsp;
         <ReadOnlyFilters
           filter={filter}
-          objectType={objectType}
-          dataSource={dataSource}
+          objectType={objectType!}
+          dataSource={dataSource!}
         />
       </>
       {id && <p><b>ID: </b> {id}</p>}

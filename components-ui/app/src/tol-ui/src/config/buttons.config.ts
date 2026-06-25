@@ -28,7 +28,6 @@ export const BUTTONS: Record<string, PButton> = {
     position: "right",
   },
   CLOSE: {
-    outline: true,
     type: "error",
     icon: "xmark",
     tooltip: "Close",
@@ -57,7 +56,6 @@ export const BUTTONS: Record<string, PButton> = {
     position: "right",
   },
   EDIT: {
-    outline: true,
     type: "warning",
     icon: "pen-to-square",
     tooltip: "Edit",
@@ -109,6 +107,27 @@ export const BUTTONS: Record<string, PButton> = {
     icon: "gear",
     text: "Settings",
     tooltip: "Settings",
+    position: "right",
+  },
+  TRANSLATORS: {
+    outline: true,
+    type: "primary",
+    icon: "diagram-predecessor",
+    tooltip: "Translate filters from one Zone to another",
+    position: "right",
+  },
+  COPY: {
+    outline: true,
+    type: "primary",
+    icon: "copy",
+    tooltip: "Copy",
+    position: "right",
+  },
+  PASTE: {
+    outline: true,
+    type: "primary",
+    icon: "paste",
+    tooltip: "Paste",
     position: "right",
   },
 };

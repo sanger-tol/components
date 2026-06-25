@@ -18,6 +18,7 @@ export interface PPlaceholder {
   clear?: boolean;
   squareCorners?: boolean;
   message?: string | JSX.Element;
+  messagePosition?: "top" | "bottom";
   warningMessage?: string;
   errorMessage?: string;
   backing?: JSX.Element;
@@ -36,6 +37,7 @@ export function Placeholder(props: PPlaceholder) {
     opacity,
     clear,
     squareCorners,
+    messagePosition,
   } = props;
 
   // this temporarily fills a gap - used for on load
@@ -56,7 +58,13 @@ export function Placeholder(props: PPlaceholder) {
           className={clear ? "tol-placeholder-empty" : "tol-placeholder"}
           style={style}
         >
-          <div className="tol-placeholder-icons">{Icon}</div>
+          <div
+            className={`tol-placeholder-icons${
+              messagePosition === "top" ? " message-top" : ""
+            }`}
+          >
+            {Icon}
+          </div>
         </div>
       </div>
     );
@@ -68,7 +76,13 @@ export function Placeholder(props: PPlaceholder) {
       <div className="overlay-top" style={{ zIndex: 1002 }}>
         <div style={{ height: height, width: width }}>
           <div className="tol-placeholder-empty">
-            <div className="tol-placeholder-icons">{Icon}</div>
+            <div
+              className={`tol-placeholder-icons${
+                messagePosition === "top" ? " message-top" : ""
+              }`}
+            >
+              {Icon}
+            </div>
           </div>
         </div>
       </div>

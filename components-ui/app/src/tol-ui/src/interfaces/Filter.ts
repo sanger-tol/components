@@ -22,10 +22,15 @@ export interface IAndAttributes {
   [attribute: string]: IFilterOperators;
 }
 
-export interface IFilter { // TODO: check usages
+export interface IFilter {
   and_?: IAndAttributes;
 }
 
 export type TFilterOrUndefined = IFilter | undefined;
 
 export type TDescribedFilters = Record<string, string[]>;
+
+export type IDBBoardEntityFilter = {
+  filter: IFilter;
+  filter_pass_through?: boolean;
+}

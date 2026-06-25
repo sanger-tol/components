@@ -14,19 +14,17 @@ import {
   BoardMarkdown,
   PUtilityBar,
   useBoard,
-  saveTitle,
-  BOARDS,
+  upsertTitle,
+  BOARD_ENTITIES,
   PButton,
   TitleTooltip,
-  generateFilter,
   mergeUtilityBarConfigs,
   BoardFilterBlock,
   FilterConfigDrawer,
-  removeComponent,
   BUTTONS,
   ConfirmationModal,
   BoardMap,
-  TsDataSource
+  TsDataSource,
 } from "../..";
 
 
@@ -38,37 +36,26 @@ export interface PVisualisation extends IBoardTargetAndZone {
   title: string;
   utilityBarConfig?: PUtilityBar;
   actionsDataSource: TsDataSource;
+  onDeleteComponent: (id: string) => void;
 }
 
 export function Visualisation(props: PVisualisation) {
   const {
     id,
-    objectType,
     componentType,
     boardDataSource,
     zone,
-    setZone,
-    dataSource,
-    utilityBarConfig
+    utilityBarConfig,
+    onDeleteComponent,
   } = props;
+
+  const { object_type, dataspace, filter } = zone;
 
   const { editMode, layoutMode } = useBoard();
 
   const [title, setTitle] = useState(props.title);
   const [openFilters, setOpenFilters] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-
-  const filter = generateFilter(zone, id);
-
-  const onDelete = () => {
-    boardDataSource
-      .deleteByID({
-        objectType: BOARDS.COMPONENT,
-        id: id,
-      })
-    removeComponent(id, zone);
-    setZone({ ...zone });
-  };
 
   const filterButton: PButton = {
     outline: true,
@@ -99,8 +86,8 @@ export function Visualisation(props: PVisualisation) {
   const Description = (
     <TitleTooltip
       title={title}
-      objectType={objectType}
-      dataSource={dataSource}
+      objectType={object_type!}
+      dataSource={dataspace!}
       filter={filter}
       id={id}
     />
@@ -113,9 +100,10 @@ export function Visualisation(props: PVisualisation) {
         text: title,
         editable: editMode,
         onSave: (value: string) => {
-          saveTitle(value, id, boardDataSource, BOARDS.COMPONENT);
+          upsertTitle(value, id, boardDataSource);
           setTitle(value);
-        }
+        },
+        hideButtons: true,
       } : undefined,
       description: Description,
       buttons: [
@@ -182,8 +170,8 @@ export function Visualisation(props: PVisualisation) {
       <ConfirmationModal
         setOpen={setConfirmationModalOpen}
         open={confirmationModalOpen}
-        onConfirmClick={onDelete}
-        itemType={BOARDS.COMPONENT}
+        onConfirmClick={() => onDeleteComponent(id)}
+        itemType={BOARD_ENTITIES.ENTITIES.COMPONENT}
       />
     </>
   );

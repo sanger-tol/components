@@ -54,3 +54,44 @@
     }
   }
 }
+
+.tol-tabs-nav {
+  overflow: auto;
+  display: flex;
+  border-radius: 6px;
+  margin-right: 6px;
+
+  // Ensure shadows are visible top and bottom of the tabs
+  padding: 6px 0;
+
+  // Remove the second border for the input
+  .rs-input {
+    border: unset !important;
+  }
+
+  .tol-view-tab:has(.tol-editable-title) {
+    margin: 0;
+    padding: 0;
+  }
+
+  .tol-tabs-nav-tab {
+    display: flex;
+    align-items: center;
+
+    .tol-editable-title {
+      min-width: max-content;
+    }
+  }
+
+  .tol-tabs-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 6px;
+    color: var(--tol-grey);
+
+    .tol-grip {
+      cursor: grab;
+    }
+  }
+}

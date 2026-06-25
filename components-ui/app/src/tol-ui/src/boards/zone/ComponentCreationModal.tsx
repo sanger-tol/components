@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Button,
   Modal,
@@ -12,84 +12,65 @@ import {
   Col,
   Icon,
   HoverOverlay,
-  addComponent,
   IZone,
   componentOptions,
   sizeOptions,
-  upsertNewComponent,
   PBoard,
-  getNextComponentOrder,
-  TsDataSource,
   RequiredAsterisk,
   BUTTONS,
+  BOARD_ENTITIES,
+  defineBoardEntityInParent,
+  postAddBoardEntity,
+  TsDataSource,
 } from "../..";
 
 
-export interface PComponentPickerModal extends PBoard {
+export interface PComponentCreationModal extends PBoard {
   open: boolean;
-  setOpen: any;
+  setOpen: (open: boolean) => void;
   zone: IZone;
-  setZone: any;
-  zoneId: string;
-  dataspace: TsDataSource;
+  setZone: (zone: IZone) => void;
+  boardDataSource: TsDataSource;
 }
 
-export function ComponentPickerModal(props: PComponentPickerModal) {
+export function ComponentCreationModal(props: PComponentCreationModal) {
   const {
     open,
     setOpen,
     zone,
     setZone,
-    zoneId,
-    dataspace,
     boardDataSource,
   } = props;
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
 
-  useEffect(() => {
-    if (!open) {
-      reset();
-    }
-  }, [open]);
-
-  function reset() {
+  const reset = () => {
     setComponentType("");
     setWidgetType("");
+    setOpen(false);
   }
 
-  const canAddComponent = componentType !== "" && widgetType !== "";
-
   const onAddComponent = async () => {
-    if (canAddComponent) {
-      const nextOrder = getNextComponentOrder(zone);
-      const newComponent = await upsertNewComponent(
-        dataspace,
-        boardDataSource,
-        zone.type!,
-        "",
-        nextOrder,
-        componentType,
-        widgetType,
-        zoneId,
-      );
-      addComponent({
-        id: newComponent.newComponentId,
-        size: widgetType,
-        type: componentType,
-        order: nextOrder,
-        componentZoneId: newComponent.newComponentZoneId,
-        filter: { and_: {} },
-        title: "",
-        objectType: zone.type,
-        dataspace: dataspace,
-        config: {},
-        filterPassThrough: false,
-      }, zone);
-      setZone({ ...zone });
-      reset();
-      setOpen(false);
-    }
+    postAddBoardEntity(
+      boardDataSource,
+      zone.id!,
+      {
+        object_type: zone.object_type,
+        data_source_instance_id: zone.data_source_instance_id,
+        widget_type: widgetType,
+        component_type: componentType,
+      }
+    )
+      .then((res) => {
+        const component = res.data;
+        const z = defineBoardEntityInParent(
+          BOARD_ENTITIES.ENTITIES.COMPONENT,
+          component,
+          zone
+        ) as IZone;
+        setZone({ ...z });
+        reset();
+      })
   };
 
   const PlusButton = (
@@ -97,7 +78,7 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
       {...BUTTONS.CONFIRM}
       onClick={onAddComponent}
       testid="confirm-add-component-button"
-      disabled={!canAddComponent}
+      disabled={componentType === "" || widgetType === ""}
     />
   );
 
@@ -111,9 +92,10 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
       className={"dashboard-component-modal-full"}
     >
       <>
-        <h6>
+        <h4>Add New Component</h4>
+        <p>
           Select Component <RequiredAsterisk />
-        </h6>
+        </p>
         <Row>
           {componentOptions.map((option, index) => {
             return (
@@ -149,9 +131,9 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
           })}
         </Row>
         <br />
-        <h6>
+        <p>
           Select Size <RequiredAsterisk />
-        </h6>
+        </p>
         <Row>
           {sizeOptions(componentType).map((option, index) => {
             return (

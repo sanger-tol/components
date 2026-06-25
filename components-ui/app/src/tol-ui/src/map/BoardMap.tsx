@@ -8,7 +8,7 @@ import { useState } from "react";
 import {
   UtilityBar,
   PButton,
-  updateConfigAndUpsert,
+  updateComponentConfigAndUpsert,
   useBoard,
   PVisualisation,
   mergeUtilityBarConfigs,
@@ -34,11 +34,12 @@ export function BoardMap(props: PVisualisation) {
 
   const onConfigSave = (updatedConfig: IMapConfig) => {
     setConfig({ ...updatedConfig });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       { ...updatedConfig },
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode,
     )
     setForceUpdate(!forceUpdate);
   };
@@ -53,7 +54,7 @@ export function BoardMap(props: PVisualisation) {
     visible: editMode,
   }
 
-  const utilityBarConfigMerged = mergeUtilityBarConfigs(
+  const ubc = mergeUtilityBarConfigs(
     utilityBarConfig,
     {
       buttons: [
@@ -80,7 +81,7 @@ export function BoardMap(props: PVisualisation) {
         title="Map Configuration"
         config={deepCopy(config)}
       />
-      <UtilityBar id={id} {...utilityBarConfigMerged} />
+      <UtilityBar id={id} {...ubc} />
       <div className="tol-component-contents with-offset">
         <RemoteMap
           {...props}

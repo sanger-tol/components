@@ -168,6 +168,10 @@ export function deepCopy(o?: object | any[]) {
   return JSON.parse(JSON.stringify(o));
 }
 
+export function deepEqual(left: any, right: any) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
 export function capitaliseFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -246,14 +250,17 @@ export function encodeImageSrc(url: string): string {
   return origin + path.split("/").map(s => encodeURIComponent(s)).join("/");
 }
 
-export function copyToClipboard(text: string): void {
+export function copyToClipboard(
+  copyText: string,
+  message: string = "Copied to clipboard",
+): void {
   if (navigator.clipboard) {
     navigator.clipboard
-      .writeText(text)
+      .writeText(copyText)
       .catch((err) => console.error("Failed to copy text: ", err));
     PopUpMessage({
       type: "success",
-      message: "Copied to clipboard",
+      message: message,
     });
   } else {
     console.warn("Clipboard API not available");
@@ -453,18 +460,18 @@ export const isValidDate = (date: string) => {
  * @param b - The second value to compare.
  * @returns `true` if the two values are deeply equal, `false` otherwise.
  */
-export function deepEqual(a: any, b: any): boolean {
+export function deepestEqual(a: any, b: any): boolean {
   if (a === b) return true;
   if (a == null || b == null) return a === b;
   if (typeof a !== "object" || typeof b !== "object") return false;
   if (Array.isArray(a) !== Array.isArray(b)) return false;
   if (Array.isArray(a)) {
     if (a.length !== b.length) return false;
-    return a.every((item, i) => deepEqual(item, b[i]));
+    return a.every((item, i) => deepestEqual(item, b[i]));
   }
   const keysA = Object.keys(a).sort();
   const keysB = Object.keys(b).sort();
   if (keysA.length !== keysB.length) return false;
   if (keysA.some((key, i) => key !== keysB[i])) return false;
-  return keysA.every((key) => deepEqual(a[key], b[key]));
+  return keysA.every((key) => deepestEqual(a[key], b[key]));
 }

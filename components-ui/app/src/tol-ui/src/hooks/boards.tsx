@@ -9,30 +9,27 @@ import {
   IRemoteTargetAndZone,
   IZone,
   TsDataSource,
-  IComponentData,
   IFilter,
   useEffectUpdate,
   generateFilter,
   resetAllFilters,
-  deepCopy,
   useStateFallback,
   IUseZoneMeta,
+  IComponent,
+  IView,
+  IBoard,
+  defineZoneWithComponentList,
 } from "..";
-
 
 export function useZone(params: {
   objectType: string;
   dataSource: TsDataSource;
-  components: IComponentData[];
+  components: IComponent[];
   filter?: IFilter;
 }) {
   const { objectType, dataSource, components, filter } = params;
   const [zone, setZone] = useState(
-    defineZone(
-      objectType,
-      components,
-      filter
-    ),
+    defineZoneWithComponentList(objectType, components, filter),
   );
   return {
     objectType,
@@ -53,7 +50,8 @@ export function generateTranslatedFilter(
   const translatedFilter = { and_: {} };
   Object.entries(translations).map(([sourceAttribute, targetAttribute]) => {
     if (sourceFilter?.and_ && sourceAttribute in sourceFilter.and_) {
-      translatedFilter.and_[targetAttribute] = sourceFilter.and_[sourceAttribute];
+      translatedFilter.and_[targetAttribute] =
+        sourceFilter.and_[sourceAttribute];
     }
   });
   return translatedFilter;
@@ -89,69 +87,54 @@ export function useTranslator(params: {
   }, [source.zone]);
 }
 
-export function defineComponent(component: IComponentData, zone: IZone) {
-	// setting default as empty if no filter provided
-	const f = component.filter === undefined ? { and_: {} } : component.filter;
-	zone.components[component.id!] = {
-		data: {
-			filter: deepCopy(f),
-			defaultFilter: deepCopy(f),
-			...component,
-		},
-	};
-}
-
-export function addComponent(component: IComponentData, zone: IZone) {
-  defineComponent(component, zone);
-  zone.order.push(component.id!);
-}
-
-export function addComponents(components: IComponentData[], zone: IZone) {
-  for (const component of Object.values(components)) {
-    addComponent(component, zone);
-  }
-}
-
-export function defineZone(
-  objectType: string,
-  components: IComponentData[],
-  filter?: IFilter,
-) {
-  const f = filter === undefined ? { and_: {} } : filter;
-  const zone: IZone = {
-    components: {},
-    order: [],
-    type: objectType,
-    filter: deepCopy(f),
-    defaultFilter: deepCopy(f),
-  };
-  addComponents(components, zone);
-  return zone;
-}
-
 /**
  * A custom hook that provides a fallback mechanism for managing the state of a zone.
  *
- * @param {IRemoteTargetAndZone & { id: string }} params - The parameters for the hook.
- * @param {string} params.id - The unique identifier for the component.
- * @param {string} params.objectType - The type of the object associated with the zone.
- * @param {any} params.zone - The current state of the zone.
- * @param {(state: any) => void} params.setZone - A function to update the state of the zone.
- * 
- * @returns {[any, (state: any) => void]} - A tuple containing the current state of the zone and a function to update it.
+ * @param id - The unique identifier for the component.
+ * @param objectType - The type of the object associated with the zone.
+ * @param zone - The current state of the zone.
+ * @param setZone - A function to update the state of the zone.
+ *
+ * @returns A tuple containing the current state of the zone and a function to update it.
  */
 export function useZoneStateFallback({
   id,
   objectType,
   zone,
   setZone,
-}: IRemoteTargetAndZone & {id: string}): [any, (state: any) => void] {
+}: IRemoteTargetAndZone & { id: string }): [any, (state: any) => void] {
   return useStateFallback(
     zone,
     setZone,
-    defineZone(
-      objectType,
-      [{id: id}],
-    ),
+    defineZoneWithComponentList(objectType, [{ id: id }]),
   );
+}
+
+/**
+ * Custom hook for managing board state at different levels (board, view, zone). It initializes state if not already set and provides a setter function to update the state.
+ *
+ * @param id - The ID of the board element to manage.
+ * @param parentStateValue - The current state of the board (IBoard, IView, or IZone).
+ * @param setParentStateValue - The setter function to update the board state.
+ *
+ * @returns A tuple containing the current value of the board element and a setter function to update it.
+ */
+export function useBoardState<
+  TParent extends IBoard | IView | IZone,
+  TChildren extends IView | IZone | IComponent
+>(
+  id: string,
+  parentStateValue: TParent,
+  setParentStateValue: (newValue: TParent) => void,
+): [TChildren, (newValue: TChildren) => void] {
+  const value = parentStateValue.children[id] as TChildren;
+  const setValue = (newValue: TChildren) => setParentStateValue({
+    ...parentStateValue,
+    children: {
+      ...parentStateValue.children,
+      [id]: newValue
+    },
+  } as TParent);
+
+  return [value, setValue];
 }

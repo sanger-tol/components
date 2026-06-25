@@ -11,7 +11,7 @@ import {
   Markdown,
   UtilityBar,
   PButton,
-  updateConfigAndUpsert,
+  updateComponentConfigAndUpsert,
   useBoard,
   IMarkdownConfig,
   PVisualisation,
@@ -29,7 +29,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showMarkdownViewer, setShowMarkdownViewer] = useState<boolean>(false);
-  const { editMode} = useBoard();
+  const { editMode } = useBoard();
 
 
   useEffect(() => {
@@ -38,11 +38,12 @@ export function BoardMarkdown(props: PBoardMarkdown) {
 
   const onMarkdownSave = (config: IMarkdownConfig) => {
     if (!showMarkdownViewer) {
-      updateConfigAndUpsert(
+      updateComponentConfigAndUpsert(
         id,
         config,
         zone,
-        boardDataSource
+        boardDataSource,
+        editMode,
       )
     }
   }
@@ -82,20 +83,17 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   )
 
   const MarkdownEditor = (
-    <>
-      <span className={size !== "sm" ? "tol-hide-extra-viewer-buttons" : ""} />
-      <MDEditor
-        value={content}
-        onChange={(content?: string) => setContent(content ?? "")}
-        preview={showPreview ? "live" : "edit"}
-        previewOptions={{
-          rehypePlugins: [[rehypeSanitize]],
-        }}
-        hideToolbar={size === "sm"}
-        className="tol-markdown-viewer"
-        height="100%"
-      />
-    </>
+    <MDEditor
+      value={content}
+      onChange={(content?: string) => setContent(content ?? "")}
+      preview={showPreview ? "live" : "edit"}
+      previewOptions={{
+        rehypePlugins: [[rehypeSanitize]],
+      }}
+      hideToolbar={size === "sm"}
+      className="tol-markdown-viewer"
+      height="100%"
+    />
   );
 
   const MarkdownViewer = (
@@ -104,8 +102,8 @@ export function BoardMarkdown(props: PBoardMarkdown) {
 
   return (
     <>
-      <UtilityBar id={id} {...ubc} />
-      <div className="tol-component-contents with-offset tol-markdown">
+      <UtilityBar noLeftSide id={id} {...ubc} />
+      <div className="tol-markdown tol-component-contents" data-testid="board-component-text">
         {(showMarkdownViewer) ? MarkdownViewer : MarkdownEditor}
       </div>
     </>

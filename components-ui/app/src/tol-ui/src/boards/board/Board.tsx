@@ -5,27 +5,34 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Redirect, useParams } from "react-router-dom";
+import { Redirect, useLocation, useParams } from "react-router-dom";
 import {
-  BOARDS,
-  getBoard,
+  BOARD_ENTITIES,
   getCssVarValue,
-  getUserFromLocalStorage,
   LoadingContent,
-  saveTitle,
   themeListener,
-  TsDataSource,
   View,
-  getUserPrivilege,
   useBoard,
-  copyToClipboard,
-  TBoardPrivilege,
   PRIVILEGE,
-  TNavBrand,
-  BUTTONS,
-  UtilityBar,
-  PButton,
+  useQueryData,
+  fetchBoardEntityAndChildren,
+  URL_PATHS,
+  MESSAGE_TYPE,
+  BOARD_MESSAGE_TEXT,
+  NewTitleModal,
+  PopUpMessage,
+  removeBoardEntityInParent,
+  ConfirmationModal,
+  copyBoard,
+  deleteBoardEntity,
+  postAddBoardEntity,
+  updateViewInUrl,
+  patchReorderBoardEntity,
+  defineBoardEntityInParent,
 } from "../..";
+import { BoardUtilityBar, ImportViewModal } from "./components";
+import type { IBoard, TNavBrand, TsDataSource } from "../..";
+
 
 export interface PBoard {
   /**
@@ -50,20 +57,25 @@ export interface PBoard {
  * Component to render a board based on its ID and TSDataSource.
  */
 export function Board(props: PBoard) {
-  const { boardDataSource, actionsDataSource, brand } = props;
+  const { boardId, boardDataSource, brand, actionsDataSource } = props;
 
-  const { privilege, setPrivilege, editMode, setEditMode, layoutMode, setLayoutMode } = useBoard();
+  const { setPrivilege, editMode, board, setBoard } = useBoard();
 
-  const { boardId: paramBoardId, viewId } = useParams<any>();
-  const [user, setUser] = useState<any>(null);
-  const [boardData, setBoardData] = useState<any>({});
-  const [title, setTitle] = useState("");
-  const [view, setView] = useState(viewId);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { boardId: paramBoardId } = useParams<any>();
+  const location = useLocation();
+
+  const [activeViewId, setActiveViewId] = useState<string | null>(null);
+  const [mountedViewIds, setMountedViewIds] = useState<string[]>([]);
+  const [deleteViewConfirmModal, setDeleteViewConfirmModal] = useState(false);
+  const [openAddZoneModal, setOpenAddZoneModal] = useState(false);
+  const [boardCopyModalOpen, setBoardCopyModalOpen] = useState<boolean>(false);
+  const [newBoardCopyTitle, setNewBoardCopyTitle] = useState<string>("");
+  const [viewImportId, setViewImportId] = useState<string>("");
+  const [viewImportModalOpen, setViewImportModalOpen] =
+    useState<boolean>(false);
 
   // Ability to override boardId from props over URL params
-  const boardId = props.boardId ?? paramBoardId;
+  const id = boardId ?? paramBoardId;
 
   themeListener(() => {
     try {
@@ -74,142 +86,198 @@ export function Board(props: PBoard) {
     }
   });
 
-  useEffect(() => {
-    const u = getUserFromLocalStorage();
-    if (u) setUser(u);
+  const {
+    data: boardData,
+    isSuccess,
+    isError,
+    isLoading,
+  } = useQueryData<IBoard>(
+    [BOARD_ENTITIES.ENTITIES.BOARD, id],
+    () => fetchBoardEntityAndChildren(boardDataSource, id!),
+    { enabled: !!id },
+  );
 
-    const awaitUserPrivilege = async () => {
-      const userPrivilege: TBoardPrivilege = await getUserPrivilege(u, boardDataSource!, boardId)
-      setPrivilege(userPrivilege);
+  const isBoardNotFound = isSuccess && !boardData?.id;
+
+  useEffect(() => {
+    if (!isSuccess || !boardData?.id) return;
+    setBoard(boardData as IBoard);
+    setPrivilege(
+      boardData.write_privilege
+        ? PRIVILEGE.BOARD.WRITABLE
+        : PRIVILEGE.BOARD.VIEWABLE,
+    );
+    const viewFromUrl = new URLSearchParams(location.search).get("view");
+    setActiveViewId(
+      viewFromUrl && boardData.order?.includes(viewFromUrl)
+        ? viewFromUrl
+        : boardData.order?.[0],
+    );
+  }, [isSuccess]);
+
+  // Preload the current and two most recently accessed views for faster loading when switching between them
+  useEffect(() => {
+    if (!activeViewId) return;
+    setMountedViewIds((prev) =>
+      [...prev.filter((vid) => vid !== activeViewId), activeViewId].slice(-3),
+    );
+  }, [activeViewId]);
+
+  // Scroll listener for sticky board bar shadow effect
+  useEffect(() => {
+    const bar = document.querySelector<HTMLElement>(".tol-board-bar");
+    if (!bar) return;
+    const onScroll = () => {
+      const progress = Math.min(window.scrollY / 20, 1);
+      bar.style.setProperty("--tol-bar-scroll", progress.toString());
     };
-    awaitUserPrivilege();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    if (boardId) {
-      getBoard(boardId, boardDataSource!)
-        .then((data: any) => {
-          if (!view) setView(data.views[0].id);
-          setBoardData(data);
-          setTitle(data.boardTitle);
-        })
-        .catch((e: any) => {
-          setError(e);
-          console.error(e);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-  }, [boardId, user]);
+  const onClickView = (viewId: string) => () => {
+    setActiveViewId(viewId);
+    updateViewInUrl(viewId);
+  };
 
-  if (error !== "") {
-    return <Redirect to="/page-not-found" />;
-  }
+  const onAddView = async () => {
+    postAddBoardEntity(boardDataSource, board?.id!).then((res) => {
+      const view = res.data;
+      const b = defineBoardEntityInParent(
+        BOARD_ENTITIES.ENTITIES.VIEW,
+        view,
+        board,
+      ) as IBoard;
+      setBoard({ ...b });
+      setActiveViewId(view.id);
+      updateViewInUrl(view.id);
+    });
+  };
 
-  if (loading) {
-    return (
-      <LoadingContent
-        overlayNav
-        brand={brand}
-        text="Finding Board..."
-      />
+  const onReorderViews = (reorderedIds: string[]) => {
+    patchReorderBoardEntity(boardDataSource, board?.id!, reorderedIds).then(
+      () => {
+        board.order = reorderedIds;
+        setBoard({ ...board });
+      },
     );
+  };
+
+  const onDeleteView = async (viewId: string) => {
+    await deleteBoardEntity(boardDataSource, viewId).then(
+      (status: string | void) => {
+        if (status !== "success") return;
+        removeBoardEntityInParent(viewId, board);
+        setBoard({ ...board });
+        setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
+        setActiveViewId(board.order[0]);
+        updateViewInUrl(board.order[0]);
+      },
+    );
+  };
+
+  if (isError || isBoardNotFound) {
+    return <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />;
   }
 
-  const onLayoutModeToggle = () => {
-    setLayoutMode(!layoutMode);
-  };
-
-  const layoutOrExitLogic: PButton = layoutMode ? {
-    ...BUTTONS.SAVE,
-    text: "Save Layouts",
-  } : {
-    ...BUTTONS.EDIT,
-    text: "Change Layout",
-  };
-
-  const layoutOrExitButton: PButton = {
-    ...layoutOrExitLogic,
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE && editMode,
-    onClick: onLayoutModeToggle,
-    testid: "board-layout-mode-button",
-    tooltip: "",
+  if (isLoading && !isSuccess && !boardData && !board) {
+    return <LoadingContent overlayNav brand={brand} text="Finding Board..." />;
   }
 
-  const editOrExitLogic: PButton = editMode ? {
-    ...BUTTONS.CONFIRM,
-    type: "primary",
-    text: "Exit Edit Mode",
-  } : {
-    ...BUTTONS.EDIT,
-    text: "Edit",
-  };
-
-  const editOrExitButton: PButton = {
-    ...editOrExitLogic,
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE && !layoutMode,
-    onClick: () => {
-      setEditMode(!editMode);
-    },
-    testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
-    tooltip: "",
-  };
-
-  const shareButton: PButton = {
-    ...BUTTONS.SHARE,
-    onClick: () => {
-      copyToClipboard(location.href);
-    },
-  };
-
-  // Different format used for the main Board title
-  const editModeTitle = editMode ? {
-    text: title,
-    editable: editMode,
-    onSave: (value: string) => {
-      saveTitle(value, boardId, boardDataSource, BOARDS.BOARD);
-      setTitle(value);
-    }
-  } : undefined;
-
-  // Large header for view mode
-  const viewModeTitle = !editMode ? [(
-    <h3>
-      {title}
-    </h3>
-  )] : undefined;
-
-  const Bar = (
-    <div className="tol-board-bar">
-      <UtilityBar
-        id="board-utility-bar"
-        buttons={[
-          editOrExitButton,
-          layoutOrExitButton,
-          shareButton,
-        ]}
-        title={editModeTitle}
-        elements={viewModeTitle}
+  return (
+    <div className={`tol-board${editMode ? " tol-edit-mode" : ""}`}>
+      <ImportViewModal
+        open={viewImportModalOpen}
+        onClose={() => {
+          setViewImportModalOpen(false);
+          setViewImportId("");
+        }}
+        boardDataSource={boardDataSource}
+        viewImportId={viewImportId}
+        setViewImportId={setViewImportId}
+        setActiveViewId={setActiveViewId}
+      />
+      <NewTitleModal
+        open={boardCopyModalOpen}
+        setOpen={setBoardCopyModalOpen}
+        title={newBoardCopyTitle}
+        setTitle={setNewBoardCopyTitle}
+        itemType={BOARD_ENTITIES.ENTITIES.BOARD}
+        confirmationAction={async () => {
+          if (!newBoardCopyTitle.trim()) {
+            PopUpMessage({
+              type: MESSAGE_TYPE.WARNING,
+              message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD)
+                .BOARD_COPY.NO_TITLE_ERROR,
+            });
+            return;
+          }
+          const copiedBoard = await copyBoard(
+            boardDataSource,
+            id!,
+            newBoardCopyTitle,
+            BOARD_ENTITIES.ENTITIES.BOARD,
+          );
+          if (copiedBoard) {
+            setBoard(copiedBoard);
+            const firstViewId = copiedBoard.order?.[0];
+            if (firstViewId) {
+              setActiveViewId(firstViewId);
+              setMountedViewIds([firstViewId]);
+            }
+          }
+          setPrivilege(
+            copiedBoard?.write_privilege
+              ? PRIVILEGE.BOARD.WRITABLE
+              : PRIVILEGE.BOARD.VIEWABLE,
+          );
+          setBoardCopyModalOpen(false);
+        }}
+        onExited={() => {
+          !newBoardCopyTitle.trim()
+            ? setNewBoardCopyTitle(`${board?.title} - copy`)
+            : null;
+        }}
+        userInfoHelp={
+          <>
+            <h3>Save a copy of this board</h3>
+            <p>
+              You are about to create a copy of this board, would you like to
+              rename it before copying?
+            </p>
+          </>
+        }
+      />
+      <BoardUtilityBar
+        onOpenBoardCopyModal={() => setBoardCopyModalOpen(true)}
+        setNewBoardCopyTitle={setNewBoardCopyTitle}
+        onOpenAddZone={() => setOpenAddZoneModal(true)}
+        newBoardCopyTitle={newBoardCopyTitle}
+        activeViewId={activeViewId}
+        boardDataSource={boardDataSource}
+        onOpenDeleteViewModal={() => setDeleteViewConfirmModal(true)}
+        onOpenViewImportModal={() => setViewImportModalOpen(true)}
+        onClickView={onClickView}
+        onAddView={onAddView}
+        onReorderView={onReorderViews}
+      />
+      {mountedViewIds.map((viewId) => (
+        <View
+          key={viewId}
+          id={viewId}
+          boardDataSource={boardDataSource}
+          actionsDataSource={actionsDataSource}
+          open={openAddZoneModal && viewId === activeViewId}
+          setOpen={setOpenAddZoneModal}
+          active={viewId === activeViewId}
+        />
+      ))}
+      <ConfirmationModal
+        open={deleteViewConfirmModal}
+        setOpen={setDeleteViewConfirmModal}
+        onConfirmClick={() => onDeleteView(activeViewId!)}
+        itemType={BOARD_ENTITIES.ENTITIES.VIEW}
       />
     </div>
-  )
-
-  const classMode = () => {
-    if (editMode) return "tol-edit-mode";
-    return "";
-  }
-
-  // returns the first view at the moment
-  return (
-    <div className={`tol-board ${classMode()}`} >
-      {Bar}
-      < View
-        id={boardData.views[0].id}
-        defaultFilter={boardData.views[0].filter}
-        boardDataSource={boardDataSource}
-        actionsDataSource={actionsDataSource}
-      />
-    </div >
   );
 }

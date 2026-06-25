@@ -19,7 +19,6 @@
 
   .tol-markdown-viewer {
     border-radius: 6px;
-    padding-left: 8px;
   }
 }
 
@@ -36,15 +35,4 @@ pre:has(code) {
 
 .tol-form-markdown-help-text {
   margin-top: -6px;
-}
-
-.tol-hide-extra-viewer-buttons {
-  display: block;
-  margin-top: 2px;
-  right: 15px;
-  height: 25px;
-  width: 100px;
-  background-color: var(--tol-bg);
-  position: absolute;
-  z-index: 50;
 }

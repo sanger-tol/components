@@ -16,7 +16,7 @@ import {
   getUserFromLocalStorage,
   getBoardDetails,
   LoadingContent,
-  PBoard
+  PBoard,
 } from "../..";
 
 

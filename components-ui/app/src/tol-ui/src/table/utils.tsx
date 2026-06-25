@@ -4,24 +4,16 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useRef } from "react";
 import {
   IFieldMeta,
   normaliseCaps,
   colours,
-  TsDataSource,
-  IAttributeData,
-  TDataObjectListOrNull,
   getFieldByName,
-  ITableData,
-  ITableRecord,
-  TCellRenderer,
   DataPoints,
   deepCopy,
-  ICustomCellRenderers,
   copyToClipboard,
   CELL_RENDERER_PROP_ATTRIBUTE,
-  IFilter,
-  TCellHeights,
   DEFAULT_ROW_HEIGHT,
   COLLAPSED_ROW_MAX_HEIGHT,
   getRelationshipNameByField,
@@ -29,11 +21,34 @@ import {
   CELL_RENDERER_SPREAD_OPERATOR,
   getRoleIdsByNames,
   PopUpMessage,
-  User,
+  IUser,
   ACTIONS,
-  CELL_RENDERER_PARENT_OPERATOR,
-  CELL_RENDERER_PROP_TAG_START,
-  CELL_RENDERER_PROP_TAG_END
+  TOL_DS,
+  AttributeTitle,
+  BOARD_ENTITIES,
+  deleteComponentDiff,
+  MESSAGE_TYPE,
+  BOARD_MESSAGE_TEXT,
+  updateComponentConfigAndUpsert,
+} from "..";
+import type {
+  TsDataSource,
+  IAttributeData,
+  TDataObjectListOrNull,
+  ITableData,
+  ITableRecord,
+  TCellRenderer,
+  ICustomCellRenderers,
+  IFilter,
+  TCellHeights,
+  ITableConfigSave,
+  IDiffState,
+  IConfigDifferences,
+  IComponentConfig,
+  IComponent,
+  ITableDrawerSave,
+  ITableConfigHandlerContext,
+  TDiffComparison,
 } from "..";
 
 interface Rgb {
@@ -139,7 +154,7 @@ function sortFieldsByRename(fieldMeta: IFieldMeta) {
 export function addDefaultsFromEntityMeta(
   key: string,
   meta: IAttributeData,
-  fieldMeta: IFieldMeta
+  fieldMeta: IFieldMeta,
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
@@ -166,19 +181,18 @@ export async function addFieldMetaDefaults(
   dataSource: TsDataSource,
 ) {
   const attributes = fieldMeta.order.active.concat(
-    fieldMeta.order.inactive || []
+    fieldMeta.order.inactive || [],
   );
   for (const key of attributes) {
     const descriptor = dataSource.getAttributeDescriptor({
       objectType: objectType,
       field: key,
     });
-    await descriptor
-      .then((meta) => {
-        if (meta) {
-          addDefaultsFromEntityMeta(key, meta, fieldMeta);
-        }
-      })
+    await descriptor.then((meta) => {
+      if (meta) {
+        addDefaultsFromEntityMeta(key, meta, fieldMeta);
+      }
+    });
   }
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
   return fieldMeta;
@@ -204,12 +218,20 @@ function getTableConfigKey(id: string) {
 
 export function setTableConfigLocalStorage(
   tableId: string,
-  key: string,
-  value: any
+  key: string | string[],
+  value: any | any[],
 ) {
+  if (!tableId || !key || value === undefined || value === null) return;
   let config = getTableConfigLocalStorage(tableId);
   if (!config) config = {};
-  config[key] = value;
+  if (Array.isArray(key)) {
+    key.forEach((k: string, index: number) => {
+      if (value[index] !== undefined && value[index] !== null)
+        config[k] = value[index];
+    });
+  } else {
+    config[key] = value;
+  }
   localStorage.setItem(getTableConfigKey(tableId), JSON.stringify(config));
 }
 
@@ -226,6 +248,10 @@ export function getTableConfigLocalStorage(tableId: string, key?: string) {
     }
     return config;
   }
+}
+
+export function clearTableConfigLocalStorage(tableId: string) {
+  localStorage.removeItem(getTableConfigKey(tableId));
 }
 
 function rgbToString(rgb: Rgb, opacity: number) {
@@ -269,7 +295,7 @@ export function mapKeysToDisplayNames(data: any, displayNames: any): object {
 
 export async function getActions(
   objectType: string,
-  actionDataSource: TsDataSource
+  actionDataSource: TsDataSource,
 ): Promise<string[]> {
   const actionsList: string[] = [];
   const actions = await actionDataSource.getListPage({
@@ -293,15 +319,25 @@ export function formatTotalSize(totalSize: number) {
   return totalSize.toLocaleString() + " Rows";
 }
 
-export function copyPageColumnValues(data: any, fieldHeader: string, separator?: string) {
+export function copyPageColumnValues(
+  data: any,
+  fieldHeader: string,
+  separator?: string,
+) {
   const copySet = new Set<string>(
     data.flatMap((element) =>
       Array.isArray(
-        getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)
+        getFieldByName(element[fieldHeader].props.dataObject, fieldHeader),
       )
-        ? getFieldByName(element[fieldHeader].props.dataObject, fieldHeader).join(',')
-        : [getFieldByName(element[fieldHeader].props.dataObject, fieldHeader) + (separator || '')]
-    )
+        ? getFieldByName(
+            element[fieldHeader].props.dataObject,
+            fieldHeader,
+          ).join(",")
+        : [
+            getFieldByName(element[fieldHeader].props.dataObject, fieldHeader) +
+              (separator || ""),
+          ],
+    ),
   );
   const emptyStringsRemoval = Array.from(copySet).filter(Boolean);
 
@@ -309,39 +345,46 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
   copyToClipboard(copyList);
 }
 
-function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, fieldName: string) {
-  if (typeof value !== "string" || !value.includes(CELL_RENDERER_PROP_TAG_START)) return;
+async function addFieldsFromStringProp(
+  requestedFields: Set<string>,
+  value: unknown,
+  fieldName: string,
+  dataSource: TsDataSource,
+  objectType: string,
+) {
+  if (typeof value !== "string" || !value.includes("${")) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
 
   for (const match of matches) {
-    // Determine if the placeholder references the parent data object
-    const parentOperator = match.includes(CELL_RENDERER_PARENT_OPERATOR);
-
-    // Extract the key from the placeholder, removing operators and whitespace
     const relativeAttribute = match
-      .replace(CELL_RENDERER_PROP_TAG_START, "")
-      .replace(CELL_RENDERER_PROP_TAG_END, "")
+      .replace("${", "")
+      .replace("}", "")
       .replace(CELL_RENDERER_SPREAD_OPERATOR, "")
       .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
-      .replace(CELL_RENDERER_PARENT_OPERATOR, "")
       .trim();
 
-    /*
-      If the original fieldName is a relationship (e.g. "specimens.id"), we need to determine the
-      relationship name ("specimen") to correctly resolve the field reference in the context of the data object.
-      If the placeholder references the parent data object (indicated by the parent ~ operator),
-      we do not prefix with the relationship name, as it should be resolved from the parent context.
-    */
+    // Ensure we request the field for the original objectType and not the related objectType
     const relationship = getRelationshipNameByField(fieldName);
-    const prefixAttribute = relationship && !parentOperator;
-    const field = prefixAttribute ? `${relationship}.${relativeAttribute}` : relativeAttribute;
+    const isMany = await dataSource.isManyDataPointsByName(
+      objectType,
+      fieldName.split(".")[0],
+    );
+    const field =
+      relationship && !!isMany
+        ? `${relationship}.${relativeAttribute}`
+        : relativeAttribute;
     if (field) requestedFields.add(field);
   }
 }
 
 function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
-  if (typeof value !== "object" || value === null || !("and_" in (value as IFilter))) return;
+  if (
+    typeof value !== "object" ||
+    value === null ||
+    !("and_" in (value as IFilter))
+  )
+    return;
 
   const filter = value as IFilter;
   Object.keys(filter.and_ || {}).forEach((fieldSystemName) => {
@@ -349,8 +392,11 @@ function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
   });
 }
 
-
-export async function amalgamateRequestedFields(fieldMeta: IFieldMeta): Promise<string[]> {
+export async function amalgamateRequestedFields(
+  fieldMeta: IFieldMeta,
+  dataSource: TsDataSource,
+  objectType: string,
+): Promise<string[]> {
   const requestedFields = new Set<string>(fieldMeta?.order.active || []);
 
   const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
@@ -365,7 +411,13 @@ export async function amalgamateRequestedFields(fieldMeta: IFieldMeta): Promise<
     const props = cellRenderer?.props || {};
 
     for (const value of Object.values(props)) {
-      addFieldsFromStringProp(requestedFields, value, fieldName);
+      await addFieldsFromStringProp(
+        requestedFields,
+        value,
+        fieldName,
+        dataSource,
+        objectType,
+      );
       addFieldsFromFilterProp(requestedFields, value);
     }
   }
@@ -376,10 +428,10 @@ export async function amalgamateRequestedFields(fieldMeta: IFieldMeta): Promise<
 /**
  * Determines whether any rows in the dataset can be expanded based on their cell heights.
  * This is used to determine if the row height expand/collapse control should be displayed in table header.
- * 
+ *
  * A row is considered expandable if its calculated height (the maximum of all cell heights
  * in that row) exceeds the collapsed row maximum height threshold.
- * 
+ *
  * @param data - An array of row objects, each containing at minimum a `key` property for identification
  * @param cellHeights - A map of row IDs to their respective cell heights, where each entry contains
  *                      height values for the cells in that row
@@ -387,7 +439,7 @@ export async function amalgamateRequestedFields(fieldMeta: IFieldMeta): Promise<
  */
 export function hasExpandableRows(
   data: any[],
-  cellHeights: TCellHeights
+  cellHeights: TCellHeights,
 ): boolean {
   return (
     Array.isArray(data) &&
@@ -397,22 +449,22 @@ export function hasExpandableRows(
       if (!rowHeights) return false;
       const fullHeight = Math.max(
         DEFAULT_ROW_HEIGHT,
-        ...Object.values(rowHeights)
+        ...Object.values(rowHeights),
       );
       return fullHeight > COLLAPSED_ROW_MAX_HEIGHT;
     })
-  )
+  );
 }
 
 /**
- * Updates a specific attribute of a field within the FieldMeta object.
- * 
+ * Updates a specific attribute of a field within the IFieldMeta object.
+ *
  * @param fieldMeta - The field metadata object to be updated
  * @param dataKey - The key identifying the specific field within the metadata
  * @param attribute - The attribute name to be updated
  * @param value - The new value to assign to the attribute
  * @param dataWithDefaults - Optional flag to also update the dataWithDefaults target. Defaults to false
- * 
+ *
  * @remarks
  * This function modifies the `fieldMeta` object in place by updating the specified attribute
  * for the given data key. It updates the "data" target by default, and optionally updates
@@ -423,7 +475,7 @@ export function updateFieldMetaAttribute(
   dataKey: string,
   attribute: any,
   value: any,
-  dataWithDefaults?: boolean
+  dataWithDefaults?: boolean,
 ) {
   const updateTarget = (target: string) => {
     fieldMeta[target] = {
@@ -439,46 +491,470 @@ export function updateFieldMetaAttribute(
   if (dataWithDefaults) updateTarget("dataWithDefaults");
 }
 
+/**
+ * Compares two component configs for semantic equality.
+ *
+ * This comparison ignores derived/transient fields (currently `dataWithDefaults`)
+ * and normalises object key order recursively so differences in insertion order
+ * do not affect the result.
+ *
+ * @param a The first component config to compare.
+ * @param b The second component config to compare.
+ * @returns `true` if both configs are semantically equal after normalisation, otherwise `false`.
+ */
+export function configsAreEqual(
+  a: TDiffComparison,
+  b: TDiffComparison,
+): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  // Strip derived/transient fields and sort keys for a stable comparison
+  const normalise = (c: Partial<IComponentConfig>): string => {
+    const stripDerived = (obj: any): any => {
+      if (Array.isArray(obj)) return obj.map(stripDerived);
+      if (obj !== null && typeof obj === "object") {
+        const result: any = {};
+        // Sort keys so insertion order doesn't affect equality
+        Object.keys(obj)
+          .filter((k) => k !== "dataWithDefaults")
+          .sort()
+          .forEach((k) => { result[k] = stripDerived(obj[k]); });
+        return result;
+      }
+      return obj;
+    };
+    return JSON.stringify(stripDerived(c));
+  };
+  return normalise(a) === normalise(b);
+}
+
+export function validateAndCleanUserConfig(
+  config: Partial<IComponentConfig> | null,
+  baseConfig: Partial<IComponentConfig> | null,
+): {
+  cleanedConfig: Partial<IComponentConfig> | null;
+  removedColumns: string[];
+} {
+  if (!config || !baseConfig) {
+    return { cleanedConfig: config, removedColumns: [] };
+  }
+
+  const baseOrder = baseConfig?.fieldMeta?.order;
+  const limitVisibility = !!baseOrder?.limitVisibility;
+  // If limit visibility is disabled, allow full config without cleaning constraints
+  if (!limitVisibility) {
+    return { cleanedConfig: config, removedColumns: [] };
+  }
+
+  const allowedColumns = new Set<string>([
+    ...(baseOrder?.active || []),
+    ...(baseOrder?.inactive || []),
+  ]);
+
+  const nextConfig = structuredClone(config) as Partial<IComponentConfig>;
+  const currentOrder = nextConfig?.fieldMeta?.order;
+  if (!currentOrder) {
+    return { cleanedConfig: nextConfig, removedColumns: [] };
+  }
+
+  const originalActive = currentOrder.active || [];
+  const originalInactive = currentOrder.inactive || [];
+
+  const removedColumns = Array.from(
+    new Set(
+      [...originalActive, ...originalInactive].filter(
+        (column) => !allowedColumns.has(column),
+      ),
+    ),
+  );
+
+  if (removedColumns.length === 0) {
+    return { cleanedConfig: nextConfig, removedColumns: [] };
+  }
+
+  currentOrder.active = originalActive.filter((column) =>
+    allowedColumns.has(column),
+  );
+  currentOrder.inactive = originalInactive.filter((column) =>
+    allowedColumns.has(column),
+  );
+
+  if (
+    (nextConfig as any).defaultSortByAttribute &&
+    !allowedColumns.has((nextConfig as any).defaultSortByAttribute)
+  ) {
+    (nextConfig as any).defaultSortByAttribute = undefined;
+    (nextConfig as any).defaultSortByType = undefined;
+  }
+
+  return {
+    cleanedConfig: nextConfig,
+    removedColumns,
+  };
+}
+
+/**
+ * Computes the initial diff state for a component's table configuration.
+ *
+ * Determines whether a user has a customised config (diff) relative to the published
+ * component config, sourcing it from the database for logged-in users or from local
+ * storage for anonymous users. Also calculates the columns added/removed relative to
+ * the published config.
+ *
+ * The resolved `currentConfig` will be:
+ * 1. The published config — if there is no diff, or the user is in edit mode with a diff.
+ * 2. The diff config from local storage — if there is a diff and the user is not logged in.
+ * 3. The diff config from the database — if there is a diff and the user is logged in (non-edit mode).
+ *
+ * @param componentId - The ID of the component whose config state is being resolved
+ * @param isLoggedIn - Whether the user is currently authenticated
+ * @param objectType - The object type used to resolve attribute titles in config differences
+ * @param editMode - Optional flag indicating whether the table is in edit mode
+ * @param remoteDiff - Optional diff config sourced from the database, passed in to avoid redundant queries
+ * @returns The resolved diff state, including the current config, diff flag, and column differences
+ */
+export async function getInitialDiffState(
+  componentId: string,
+  isLoggedIn: boolean,
+  objectType: string,
+  baseConfig: Partial<IComponentConfig> | null,
+  editMode?: boolean,
+  remoteDiff?: Partial<IComponentConfig> | null,
+): Promise<IDiffState> {
+  // Check for a diff in local storage for anonymous users
+  const localDiff = getTableConfigLocalStorage(
+    `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${componentId}`,
+  ) as Partial<IComponentConfig> | null;
+
+  const switchConfigState = () => {
+    if (editMode) {
+      return baseConfig || null;
+    }
+    if (isLoggedIn) {
+      return remoteDiff || null;
+    }
+    return localDiff || null;
+  };
+
+  const configState = switchConfigState();
+  const { cleanedConfig, removedColumns } =
+    !editMode && !!configState
+      ? validateAndCleanUserConfig(configState, baseConfig)
+      : { cleanedConfig: configState, removedColumns: [] as string[] };
+
+  // Calculate the config differences for the reset confirmation display
+  // Return a configDifferences object with the columns to add and remove,
+  // represented as AttributeTitle components to show the source colour and provide on hover tooltips
+  const getConfigDifferences = (): IConfigDifferences => {
+    const resolvedConfig = cleanedConfig ?? baseConfig;
+    const currentColumns = resolvedConfig?.fieldMeta?.order?.active || [];
+    const publishedColumns = baseConfig?.fieldMeta?.order?.active || [];
+
+    return {
+      remove: currentColumns
+        .filter((col: string) => !publishedColumns.includes(col))
+        .map((col: string) => (
+          <AttributeTitle
+            attributeId={col}
+            dataSource={TOL_DS}
+            objectType={objectType}
+          />
+        )),
+      add: publishedColumns
+        .filter((col: string) => !currentColumns.includes(col))
+        .map((col: string) => (
+          <AttributeTitle
+            attributeId={col}
+            dataSource={TOL_DS}
+            objectType={objectType}
+          />
+        )),
+    };
+  };
+
+  return {
+    configDifferences: getConfigDifferences(),
+    hasDiff: editMode ? false : isLoggedIn ? !!remoteDiff : !!localDiff,
+    currentConfig: (cleanedConfig ??
+      baseConfig) as Partial<ITableConfigSave> | null,
+    isRedundantDiff:
+      !editMode && !!cleanedConfig && configsAreEqual(cleanedConfig, baseConfig),
+    removedColumns,
+  };
+}
+
+/**
+ * Resets a saved table-config diff for a component and reports whether the reset succeeded.
+ *
+ * For logged-in users, this deletes the remote diff entry. For anonymous users, this
+ * removes the corresponding local-storage diff entry. A success or error popup message
+ * is displayed based on the outcome.
+ *
+ * @param boardDataSource The data source used to perform remote diff deletion.
+ * @param diffState The current diff state, used to determine whether a diff exists.
+ * @param componentData The component containing diff metadata and component type.
+ * @param isLoggedIn Whether the current user is authenticated.
+ * @param userId The identifier of the authenticated user, used for remote diff deletion.
+ * @returns `true` if a diff was reset successfully, otherwise `false`.
+ */
+export async function handleSavedDiffReset(
+  boardDataSource: TsDataSource,
+  diffState: IDiffState,
+  componentData: IComponent,
+  isLoggedIn?: boolean,
+  userId?: string,
+): Promise<boolean> {
+  let isSuccessDiffReset = false;
+  const diffId = componentData?.config_diff?.id;
+  isLoggedIn && diffState.hasDiff && diffId
+    ? await deleteComponentDiff(boardDataSource, diffId, userId ?? "").then(
+        () => {
+          isSuccessDiffReset = true;
+        },
+      )
+    : diffState.hasDiff
+      ? (clearTableConfigLocalStorage(
+          `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${componentData.id}`,
+        ),
+        (isSuccessDiffReset = true))
+      : null;
+
+  if (isSuccessDiffReset) {
+    PopUpMessage({
+      type: MESSAGE_TYPE.SUCCESS,
+      message: BOARD_MESSAGE_TEXT(
+        componentData?.component_type || BOARD_ENTITIES.ENTITIES.COMPONENT,
+      ).DIFF.RESET_SUCCESS,
+    });
+    return isSuccessDiffReset;
+  }
+
+  PopUpMessage({
+    type: MESSAGE_TYPE.ERROR,
+    message: BOARD_MESSAGE_TEXT(
+      componentData?.component_type || BOARD_ENTITIES.ENTITIES.COMPONENT,
+    ).DIFF.RESET_ERROR,
+  });
+
+  return isSuccessDiffReset;
+}
+
+/**
+ * Builds the initial diff state for first render from component data.
+ *
+ * The returned state prefers the saved diff config when present, otherwise the
+ * base component config. If the saved diff is semantically identical to the base
+ * config, it is marked as redundant and `hasDiff` is set to `false`.
+ *
+ * @param componentData The component containing base config and optional saved diff config.
+ * @returns The initial diff state used by table config handlers and UI.
+ */
+export function handleFirstLoadDiffState(
+  componentData: IComponent,
+): IDiffState {
+  const diffConfig = componentData?.config_diff?.config ?? null;
+  const baseConfig = componentData?.config ?? null;
+  const { cleanedConfig, removedColumns } = validateAndCleanUserConfig(
+    diffConfig,
+    baseConfig,
+  );
+  const isRedundantDiff =
+    !!cleanedConfig && configsAreEqual(cleanedConfig, baseConfig);
+  return {
+    currentConfig:
+      (structuredClone(
+        cleanedConfig ?? baseConfig ?? null,
+      ) as Partial<ITableConfigSave>) ?? null,
+    hasDiff: !!cleanedConfig && !isRedundantDiff,
+    isRedundantDiff,
+    removedColumns,
+    configDifferences: { add: [], remove: [] },
+  };
+}
+
+/**
+ * Creates table-config change handlers that keep UI diff state and persisted config in sync.
+ *
+ * Each handler updates in-memory diff state immediately, then persists changes either
+ * to the server (logged-in users) or local storage (anonymous users). If the resulting
+ * config is equal to the base config, the stored diff is deleted rather than upserted.
+ *
+ * @param context The table-config handler context containing component identity, data source,
+ * auth/edit mode flags, base config, and diff-state refs.
+ * @returns An object with handlers for config save (`onConfigSave`), filter visibility
+ * (`onFilterVisibilityChange`), column resize (`onResizeColumn`), and page size
+ * (`onPageSizeChange`).
+ */
+export function createTableConfigHandlers({
+  id,
+  zone,
+  boardDataSource,
+  editMode,
+  isLoggedIn,
+  userId,
+  baseConfig,
+  componentData,
+  diffStateRef,
+  setDiffState,
+}: ITableConfigHandlerContext) {
+  const localStorageKey = `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${id}`;
+
+  // Debounce timer ref — shared across all handlers
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debounce = (fn: () => void, ms = 500) => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(fn, ms);
+  };
+
+  const setHasDiff = (value: boolean) =>
+    setDiffState((prev) => ({ ...prev, hasDiff: value }));
+
+  // If nextConfig is identical to the base, delete the stored diff instead of upserting
+  const persistOrDelete = (nextConfig: Partial<ITableConfigSave>) => {
+    if (configsAreEqual(nextConfig, baseConfig)) {
+      if (isLoggedIn) {
+        const diffId = componentData?.config_diff?.id;
+        if (diffId) {
+          deleteComponentDiff(boardDataSource, diffId, userId ?? "").catch(() => {});
+          componentData.config_diff = undefined;
+        }
+      } else {
+        clearTableConfigLocalStorage(localStorageKey);
+      }
+      setHasDiff(false);
+      return;
+    }
+    updateComponentConfigAndUpsert(
+      id,
+      nextConfig,
+      zone,
+      boardDataSource,
+      editMode,
+      setHasDiff,
+      userId,
+    );
+  };
+
+  const persistToLocalStorage = (keys: string | string[], values: any) => {
+    setTableConfigLocalStorage(localStorageKey, keys, values);
+    setHasDiff(true);
+  };
+
+  const onConfigSave = ({
+    fieldMeta,
+    defaultSortByAttribute,
+    defaultSortByType,
+  }: ITableDrawerSave) => {
+    const newFieldMeta = optimiseFieldMetaForSave(fieldMeta);
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      defaultSortByAttribute,
+      defaultSortByType,
+      fieldMeta: newFieldMeta,
+    };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    if (isLoggedIn) {
+      persistOrDelete(nextConfig);
+    } else {
+      persistToLocalStorage(
+        ["fieldMeta", "defaultSortByAttribute", "defaultSortByType"],
+        [newFieldMeta, defaultSortByAttribute, defaultSortByType],
+      );
+    }
+  };
+
+  const onFilterVisibilityChange = (visible: boolean) => {
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      filterVisibility: visible,
+    };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    debounce(() => persistOrDelete(nextConfig));
+  };
+
+  const onResizeColumn = (columnWidth: number, dataKey: string) => {
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      fieldMeta: diffStateRef.current.currentConfig?.fieldMeta
+        ? { ...diffStateRef.current.currentConfig.fieldMeta }
+        : undefined,
+    };
+    // Update the persisted 'data' field (not just dataWithDefaults which RemoteTable already updated)
+    updateFieldMetaAttribute(
+      nextConfig.fieldMeta!,
+      dataKey,
+      "width",
+      columnWidth,
+    );
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    debounce(() => persistOrDelete(nextConfig), 800);
+  };
+
+  const onPageSizeChange = (pageSize: number) => {
+    const nextConfig: Partial<ITableConfigSave> = {
+      ...diffStateRef.current.currentConfig,
+      pageSize,
+    };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
+    if (isLoggedIn) {
+      debounce(() => persistOrDelete(nextConfig));
+    } else {
+      persistToLocalStorage("pageSize", pageSize);
+    }
+  };
+
+  return {
+    onConfigSave,
+    onFilterVisibilityChange,
+    onResizeColumn,
+    onPageSizeChange,
+  };
+}
 
 export async function fetchActions(
-  user: User | null,
+  user: IUser | null,
   actionDataSource: TsDataSource,
   objectType: string,
 ): Promise<string[]> {
   if (!user) return [];
   const roleids = await getRoleIdsByNames(user.roles, actionDataSource);
-  return actionDataSource.getListPage({
-    objectType: ACTIONS.ROLE_ACTION,
-    filter: {
-      "and_": {
-        "role_id": {
-          "in_list": {
-            "value": roleids
+  return actionDataSource
+    .getListPage({
+      objectType: ACTIONS.ROLE_ACTION,
+      filter: {
+        and_: {
+          role_id: {
+            in_list: {
+              value: roleids,
+            },
           },
         },
+      },
+      requestedFields: ["action.name", "action.object_type"],
+    })
+    .then(async (res: TDataObjectListOrNull) => {
+      const data = await Promise.all(
+        res?.map(async (item: any) => {
+          const action = await item.fetchRelationships.action;
+          return action;
+        }) || [],
+      );
+      if (data.length === 0) {
+        return [];
       }
-    },
-    requestedFields: ["action.name", "action.object_type"],
-  }).then(async (res: TDataObjectListOrNull) => {
-    const data = await Promise.all(res?.map(async (item: any) => {
-      const action = await item.fetchRelationships.action;
-      return action;
-    }) || []);
-    if (data.length === 0) {
+      const actionNames: string[] = [];
+      for (const action of data) {
+        if (action.object_type == objectType) {
+          actionNames.push(action.name);
+        }
+      }
+      return actionNames;
+    })
+    .catch((error: any) => {
+      PopUpMessage({
+        type: "error",
+        message: `Error Fetching Actions: ${error}`,
+      });
       return [];
-    }
-    const actionNames: string[] = []
-    for (const action of data) {
-      if (action.object_type == objectType) {
-        actionNames.push(action.name);
-      }
-    }
-    return actionNames;
-  }).catch((error: any) => {
-    PopUpMessage({
-      type: "error",
-      message: `Error Fetching Actions: ${error}`,
     });
-    return [];
-  })
 }

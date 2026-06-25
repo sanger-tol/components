@@ -28,6 +28,7 @@ export interface IFieldMetaData {
 export interface IFieldMetaOrder {
   active: string[];
   inactive?: string[];
+  limitVisibility?: boolean;
 }
 export interface IFieldMeta {
   data?: IFieldMetaData; // original fields with specified options

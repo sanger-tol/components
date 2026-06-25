@@ -65,7 +65,6 @@ export function RemoteFilters(props: PRemoteFilters) {
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
 
-
   useEffect(() => {
     dataSource.getEntityMeta().then((em) => {
       setEntityMeta(em);
@@ -103,7 +102,7 @@ export function RemoteFilters(props: PRemoteFilters) {
                     dataSource={dataSource}
                     zone={zone}
                     setZone={setZone}
-                    delay={0}
+                    delay={800}
                   />
                 </div>
                 {ExtraElement && <ExtraElement attribute={attribute} />}

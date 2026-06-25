@@ -17,7 +17,7 @@ import {
   Dropzone,
   PopUpMessage,
   Button,
-  DropdownButtons,
+  DeprecatedDropdownButtons,
   Modal,
   TolLoader,
   VALIDATION_ENDPOINTS,
@@ -251,7 +251,7 @@ export function FileValidationUploadAndResults(
               />
             )}
             {(validating || validated) && (
-              <DropdownButtons
+              <DeprecatedDropdownButtons
                 mainButtonIcon={{ icon: "paper-plane", text: "Actions" }}
                 placement="leftStart"
                 menuStyle={{ marginRight: "5px" }}
@@ -270,7 +270,7 @@ export function FileValidationUploadAndResults(
               />
             )}
           </div>
-          <DropdownButtons
+          <DeprecatedDropdownButtons
             mainButtonIcon={{ icon: "bars", text: "More" }}
             placement="leftStart"
             menuStyle={{ marginRight: "5px" }}
