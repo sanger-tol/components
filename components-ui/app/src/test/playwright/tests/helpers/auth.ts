@@ -11,7 +11,7 @@ const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 const insertAuthToDB = async (userId, token, orcidId) => {
   await sql.unsafe(`
     INSERT INTO "user"
-    VALUES (${userId}, '${orcidId}');
+    VALUES (${userId}, '${orcidId}', 'Test User', 'test@example.com', 'Test Workplace');
     
     INSERT INTO role_binding
     VALUES (${randomInt()}, ${userId}, 2);
