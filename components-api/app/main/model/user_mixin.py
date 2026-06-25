@@ -20,5 +20,17 @@ class UserMixin:
         )
 
     @declared_attr
+    def name(self) -> Mapped[str | None]:
+        return mapped_column()
+
+    @declared_attr
+    def email(self) -> Mapped[str | None]:
+        return mapped_column()
+
+    @declared_attr
+    def workplace(self) -> Mapped[str | None]:
+        return mapped_column()
+
+    @declared_attr
     def tours_seen(self) -> Mapped[dict]:
         return mapped_column(JSONB, nullable=True, default=dict)

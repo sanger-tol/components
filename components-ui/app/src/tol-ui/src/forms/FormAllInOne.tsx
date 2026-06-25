@@ -20,7 +20,6 @@ import {
   FormCheckboxes,
   Button,
   createInitialDataSnapshot,
-  setInitialData,
   validateForm,
   UNSUPPORTED_FIELD_TYPE,
   FormMarkdown,
@@ -76,11 +75,12 @@ export function FormAllInOne(props: PFormAllInOne) {
   onUnsavedChangesRef.current = props.onUnsavedChanges;
 
   useEffect(() => {
-    initialSnapshotRef.current = createInitialDataSnapshot(
-      formConfig,
-      initialData
-    );
-    setInitialData(formConfig, setFormData, initialData);
+    const nextSnapshot = createInitialDataSnapshot(formConfig, initialData);
+    if (deepestEqual(nextSnapshot, initialSnapshotRef.current)) {
+      return;
+    }
+    initialSnapshotRef.current = nextSnapshot;
+    setFormData(nextSnapshot);
   }, [formConfig, initialData]);
 
   useEffect(() => {

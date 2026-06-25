@@ -24,4 +24,5 @@ export const URL_PATHS: { [key: string]: string } = {
   PAGE_NOT_FOUND: "/page-not-found",
   BOARD: "/board",
   MY_BOARDS: "/my-boards",
+  PROFILE: "/profile",
 } as const;

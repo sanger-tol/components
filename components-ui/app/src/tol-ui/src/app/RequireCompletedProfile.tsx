@@ -50,7 +50,11 @@ export function RequireCompletedProfile(props: PRequireCompletedProfile) {
   const location = useLocation();
   const history = useHistory();
 
+  // Stops infinite redirect loops if the redirect target is the current page
+  const isRedirectTarget = location.pathname === redirectTo;
+
   useEffect(() => {
+    if (isRedirectTarget) return;
     if (!isLoading && !hasCompletedProfile) {
       PopUpMessage({
         type: "info",
@@ -61,9 +65,16 @@ export function RequireCompletedProfile(props: PRequireCompletedProfile) {
         state: { from: location.pathname },
       });
     }
-  }, [isLoading, hasCompletedProfile, redirectTo, history, location.pathname]);
+  }, [
+    isRedirectTarget,
+    isLoading,
+    hasCompletedProfile,
+    redirectTo,
+    history,
+    location.pathname,
+  ]);
 
-  if (isLoading || !hasCompletedProfile)
+  if (!isRedirectTarget && (isLoading || !hasCompletedProfile))
     return <TolLoader content="Loading Content..." vertical size="md" />;
 
   return <>{children}</>;

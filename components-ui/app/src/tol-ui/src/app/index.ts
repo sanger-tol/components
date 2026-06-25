@@ -11,6 +11,7 @@ export * from "./PageNotFound";
 export * from "./ProfileDropdown";
 export * from "./RequireAuth";
 export * from "./RequireCompletedProfile";
+export * from "./RequireRole";
 export * from "./Route";
 export * from "./SmartApp";
 export * from "./utils";
