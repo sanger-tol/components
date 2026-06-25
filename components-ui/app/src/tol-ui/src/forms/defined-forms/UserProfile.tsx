@@ -19,6 +19,9 @@ import {
   useFormData,
   useAuth,
   LOCAL_DS,
+  USER,
+  PRE_DEFINED_FORM_TYPES,
+  FORM_MESSAGE_TEXT,
 } from "../..";
 import type {
   IUserProfileAdditionalConfigs,
@@ -26,9 +29,6 @@ import type {
   IUserProfileFormData,
   TUserProfileFormDataOrNull,
 } from "../..";
-
-// TODO: Generalise
-// TODO: Merge model configs
 
 export interface PUserProfile {
   /**
@@ -62,12 +62,12 @@ export function UserProfile(props: PUserProfile) {
     isLoading,
     meetsCondition: hasCompletedProfile,
   } = useFormData<TUserProfileFormDataOrNull>({
-    formName: "userProfile",
+    formName: PRE_DEFINED_FORM_TYPES.USER_PROFILE,
     dataSource: LOCAL_DS,
-    objectType: "user",
+    objectType: USER.USER,
     andFilter: { id: { eq: { value: user?.id } } },
-    successMessage: "Profile updated successfully.",
-    errorMessage: "Failed to update profile.",
+    successMessage: FORM_MESSAGE_TEXT.PROFILE_FORM.UPDATE_SUCCESS,
+    errorMessage: FORM_MESSAGE_TEXT.PROFILE_FORM.UPDATE_ERROR,
     enabledCondition: !!user?.id,
     isComplete: (data) => !!data?.email && !!data?.name,
   });
@@ -121,12 +121,12 @@ export function UserProfile(props: PUserProfile) {
 
   const components = [
     {
+      type: "full",
       component: isLoading ? (
         <TolLoader content="Loading profile..." vertical size="md" />
       ) : (
         ProfileForm
       ),
-      type: "full",
     },
   ];
 

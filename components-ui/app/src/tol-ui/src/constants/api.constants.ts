@@ -68,4 +68,5 @@ export const S3_ENDPOINTS = {
 
 export const USER = {
   ROLE: "role",
+  USER: "user",
 }
