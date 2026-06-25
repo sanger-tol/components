@@ -16,25 +16,34 @@ import {
   applyFieldMappings,
   applyReadOnlyFields,
   createMergedConfig,
-  useUserProfile,
+  useFormData,
+  useAuth,
+  LOCAL_DS,
 } from "../..";
-import type { IFieldMapping, IFormConfig, IUserProfileFormData } from "../..";
+import type {
+  IUserProfileAdditionalConfigs,
+  IFormConfig,
+  IUserProfileFormData,
+  TUserProfileFormDataOrNull,
+} from "../..";
 
 // TODO: Generalise
 // TODO: Merge model configs
 
-export interface IUserProfileAdditionalConfigs {
-  additionalConfig?: IFormConfig;
-  additionalConfigArrayPositions?: number[];
-  additionalFieldMappings?: IFieldMapping[];
-}
-
-export interface IUserProfile {
+export interface PUserProfile {
+  /**
+   * Optional base form configuration to use for the user profile form.
+   * If not provided, a default configuration will be used.
+   */
   baseConfig?: IFormConfig;
+  /**
+   * Optional additional configurations for the user profile form,
+   * including additional fields, their positions, and field mappings.
+   */
   additionalConfigs?: IUserProfileAdditionalConfigs;
 }
 
-export function UserProfile(props: IUserProfile) {
+export function UserProfile(props: PUserProfile) {
   const {
     additionalConfigs: {
       additionalConfig,
@@ -45,8 +54,23 @@ export function UserProfile(props: IUserProfile) {
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
 
-  const { profile, updateUserProfile, isLoading, hasCompletedProfile } =
-    useUserProfile();
+  const { user } = useAuth();
+
+  const {
+    formData: profile,
+    updateFormData: updateUserProfile,
+    isLoading,
+    meetsCondition: hasCompletedProfile,
+  } = useFormData<TUserProfileFormDataOrNull>({
+    formName: "userProfile",
+    dataSource: LOCAL_DS,
+    objectType: "user",
+    andFilter: { id: { eq: { value: user?.id } } },
+    successMessage: "Profile updated successfully.",
+    errorMessage: "Failed to update profile.",
+    enabledCondition: !!user?.id,
+    isComplete: (data) => !!data?.email && !!data?.name,
+  });
   const history = useHistory();
   const location = useLocation<{ from?: string }>();
 
@@ -68,8 +92,6 @@ export function UserProfile(props: IUserProfile) {
   const handleSubmit = (formData: object, isValid: boolean) => {
     if (!isValid) return;
 
-    // Return users sent here by RequireCompletedProfile to where they came from
-    // only after the mutation succeeds and the cache is updated.
     const from = location.state?.from;
     updateUserProfile(formData as IUserProfileFormData, {
       onSuccess: () => {
@@ -79,7 +101,7 @@ export function UserProfile(props: IUserProfile) {
   };
 
   const ProfileForm = (
-    <div style={{ padding: "15px", border: "1px solid var(--tol-grey-subtle)", borderRadius: "5px" }}>
+    <div className="tol-profile-form-container">
       <h3>{`${hasCompletedProfile ? "Edit" : "Create"} Your Profile`}</h3>
       {!hasCompletedProfile && (
         <p>You must create a profile before you can access all features.</p>

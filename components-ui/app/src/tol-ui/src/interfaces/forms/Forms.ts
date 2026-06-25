@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { TMessageType, PButton, TsDataSource, PIcon } from "..";
+import { TMessageType, PButton, TsDataSource, PIcon } from "../..";
 
 export interface IWaitingUpload {
   message: string | React.ReactNode;

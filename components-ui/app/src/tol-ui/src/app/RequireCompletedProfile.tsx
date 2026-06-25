@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { TolLoader, PopUpMessage, useUserProfile } from "..";
+import { TolLoader, PopUpMessage, useFormData, useAuth, LOCAL_DS } from "..";
+import type { TUserProfileFormDataOrNull } from "..";
 
 export interface PRequireCompletedProfile {
   /**
@@ -36,7 +37,16 @@ export interface PRequireCompletedProfile {
  */
 export function RequireCompletedProfile(props: PRequireCompletedProfile) {
   const { redirectTo = "/profile", children } = props;
-  const { hasCompletedProfile, isLoading } = useUserProfile();
+  const { user } = useAuth();
+  const { meetsCondition: hasCompletedProfile, isLoading } =
+    useFormData<TUserProfileFormDataOrNull>({
+      formName: "userProfile",
+      dataSource: LOCAL_DS,
+      objectType: "user",
+      andFilter: { id: { eq: { value: user?.id } } },
+      enabledCondition: !!user?.id,
+      isComplete: (data) => !!data?.email && !!data?.name,
+    });
   const location = useLocation();
   const history = useHistory();
 
@@ -53,7 +63,8 @@ export function RequireCompletedProfile(props: PRequireCompletedProfile) {
     }
   }, [isLoading, hasCompletedProfile, redirectTo, history, location.pathname]);
 
-  if (isLoading || !hasCompletedProfile) return <TolLoader content="Loading Content..." vertical size="md" />;
+  if (isLoading || !hasCompletedProfile)
+    return <TolLoader content="Loading Content..." vertical size="md" />;
 
   return <>{children}</>;
 }
