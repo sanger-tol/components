@@ -30,6 +30,46 @@ import type {
 
 
 /**
+ * Returns the sibling child entity id for a given child id and offset.
+ *
+ * @param id The current child entity identifier.
+ * @param parentEntity The parent entity containing ordered child ids.
+ * @param offset Relative index movement in the order array (e.g. `1` next, `-1` previous).
+ * @returns The sibling id at the offset position, or `undefined` if out of bounds or id is missing.
+ */
+export function getSiblingBoardEntityId(
+  id: string,
+  parentEntity: TParentBoardEntity,
+  offset: number
+): string | null {
+  const index = parentEntity.order.indexOf(id);
+  if (index === -1) return null;
+  const siblingIndex = index + offset;
+  if (siblingIndex >= 0 && siblingIndex < parentEntity.order.length) {
+    return parentEntity.order[siblingIndex];
+  }
+  return null;
+}
+
+/**
+ * Returns the sibling child entity for a given child id and offset.
+ *
+ * @param id The current child entity identifier.
+ * @param parentEntity The parent entity containing child entities and their order.
+ * @param offset Relative index movement in the order array (e.g. `1` next, `-1` previous).
+ * @returns The sibling entity at the offset position, or `undefined` if no sibling exists.
+ */
+export function getSiblingBoardEntity(
+  id: string,
+  parentEntity: TParentBoardEntity,
+  offset: number
+): TChildBoardEntity | null {
+  const siblingId = getSiblingBoardEntityId(id, parentEntity, offset);
+  if (!siblingId) return null;
+  return parentEntity.children[siblingId];
+}
+
+/**
  * Returns the prefix for a given board entity type.
  *
  * @param objectType The type of the board entity (e.g. 'board').

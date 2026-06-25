@@ -10,7 +10,7 @@ export const COLLAPSED_ROW_MAX_HEIGHT: number = 150;
 export const CELL_PADDING: number = 24;
 
 export const DEFAULT_COLUMN_WIDTH: number = 200;
-export const MIN_COLUMN_WIDTH: number = 120;
+export const MIN_COLUMN_WIDTH: number = 100;
 export const MAX_COLUMN_WIDTH: number = 500;
 export const ROW_TOOLS_COLUMN_MAX_WIDTH: number = 50;
 export const ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH: number = 34;

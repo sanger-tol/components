@@ -135,3 +135,36 @@ export type TDataObjectListOrNull = TDataObjectOrNull[] | null;
 
 export type TCursorSearchAfterOrNull = string[] | null;
 export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null
+
+/**
+ * A lookup value for a relationship path between object types.
+ */
+export type IRelationshipPathValue = {
+  /**
+   * The source object type for the relationship path.
+   */
+  source: string;
+  /**
+   * The target object type for the relationship path.
+   */
+  target: string;
+  /**
+   * The relationship path from the source to the target object type.
+   */
+  paths: string[];
+};
+
+/**
+ * A lookup table for relationship paths between object types.
+ */
+export type TRelationshipPaths = {
+  /**
+   * The source object type for the relationship path.
+   */
+  [sourceObjectType: string]: {
+    /**
+     * The target object type for the relationship path.
+     */
+    [targetObjectType: string]: IRelationshipPathValue;
+  };
+};

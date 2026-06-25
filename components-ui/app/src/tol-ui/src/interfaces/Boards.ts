@@ -77,12 +77,12 @@ export interface IBoard extends IBoardParentEntity<IView> {
 export type TBoardEntity = IBoard | IView | IZone | IComponent;
 
 /**
- * Possible parent entity types
+ * Possible parent entity types.
  */
 export type TParentBoardEntity = IBoard | IView | IZone;
 
 /**
- * Possible child entity types
+ * Possible child entity types.
  */
 export type TChildBoardEntity = IView | IZone | IComponent;
 
@@ -90,7 +90,7 @@ export type TBoardEntityType =
   (typeof BOARD_ENTITIES.ENTITIES)[keyof typeof BOARD_ENTITIES.ENTITIES];
 
 /**
- * Example of the board interface
+ * Example of the board interface.
  *
  * IBoard → IView → IZone → IComponent
  *
@@ -182,53 +182,9 @@ export interface IUseZoneMeta {
   setZone: (zone: IZone) => void;
 }
 
-// export type TChildrenKey =
-//   (typeof BOARD_CHILDREN_KEYS)[keyof typeof BOARD_CHILDREN_KEYS];
-
 export interface IDBDataSourceInstanceApiDetails {
   url: string;
   apiPath: string;
   apiDataPath: string;
   dataspace: string;
 }
-
-export interface IBoardParam {
-  /**
-   * The field name in the joining table that references the parent entity (e.g. 'view_id').
-   */
-  parentIdField: string;
-  /**
-   * The object type of the parent entity (e.g. 'view').
-   */
-  parentObjectType: string;
-  /**
-   * The relationship name to fetch the parent entity from the joining table entries (e.g. 'view' in zone_view).
-   */
-  parentRelationship: string;
-  /**
-   * The type of the joining table entries (e.g. 'zone_view').
-   */
-  joiningObjectType: string;
-  /**
-   * The field name in the joining table that references the child entity (e.g. 'zone_id').
-   */
-  childIdField: string;
-  /**
-   * The object type of the child entity (e.g. 'zone').
-   */
-  childObjectType: string;
-  /**
-   * The relationship name to fetch the child entity from the joining table entries (e.g. 'zone' in zone_view).
-   */
-  childRelationship: string;
-  /**
-   * The initialised key for the children entities on the board state (e.g. 'zones' for a view).
-   */
-  childrenKey: string;
-  /**
-   * Optional array to fetch specific fields from the joining object type.
-   */
-  joiningObjectRequestedFields: string[];
-}
-
-export type TBoardParams = Record<string, IBoardParam>;

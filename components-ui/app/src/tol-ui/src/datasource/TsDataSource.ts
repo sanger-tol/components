@@ -37,11 +37,14 @@ import {
   IJsonApiResponse,
   IJsonApiResponseData,
   IRelationshipPointer,
+  TRelationshipPaths,
+  isEmptyObject,
 } from "..";
 
 
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
+const relationshipPathsCache: TRelationshipPaths = {};
 
 export class TsDataSource {
   private client: any;
@@ -277,7 +280,7 @@ export class TsDataSource {
     return !(expiry && now < expiry);
   }
 
-  private fetchAndSaveConfig(resource: string, key: string): Promise<object> {
+  private fetchAndSaveConfig(resource: string, key: string): Promise<Record<string, any>> {
     const anHourFromNow = new Date();
     anHourFromNow.setHours(anHourFromNow.getHours() + 1);
     if (!configPromises[key]) {
@@ -301,7 +304,7 @@ export class TsDataSource {
   }
 
   @retry(3)
-  public getConfig(resource: string): Promise<object> {
+  public getConfig(resource: string): Promise<Record<string, any>> {
     const key = this.getLocalStorageKey(resource);
     const savedConfig = this.getSavedConfig(key);
 
@@ -312,12 +315,43 @@ export class TsDataSource {
     }
   }
 
-  public async attributeMetadata(): Promise<object> {
-    return this.getConfig("_config/attribute_metadata");
+  public async attributeMetadata(): Promise<IAttributes> {
+    return this.getConfig("_config/attribute_metadata") as Promise<IAttributes>;
   }
 
-  public async relationshipConfig(): Promise<object> {
-    return this.getConfig("_config/relationships");
+  public async relationshipConfig(): Promise<IRelationships> {
+    return this.getConfig("_config/relationships") as Promise<IRelationships>;
+  }
+
+  /**
+   * Generates a lookup table for relationship paths between object types
+   * using the relationship config from the current datasource instance.
+   * 
+   * @returns A lookup table for relationship paths between object types.
+   */
+  public async relationshipPaths(): Promise<TRelationshipPaths> {
+    if (!isEmptyObject(relationshipPathsCache)) return relationshipPathsCache;
+
+    const relationships = await this.relationshipConfig();
+
+    for (const [sourceObjectType, relations] of Object.entries(relationships)) {
+      const oneRelationships = Object.entries(relations.one ?? {});
+      if (oneRelationships.length === 0) continue;
+
+      const sourceLookup = (relationshipPathsCache[sourceObjectType] ??= {});
+
+      for (const [relationship, targetObjectType] of oneRelationships) {
+        const translator = (sourceLookup[targetObjectType] ??= {
+          source: sourceObjectType,
+          target: targetObjectType,
+          paths: [],
+        });
+
+        translator.paths.push(relationship);
+      }
+    }
+
+    return relationshipPathsCache;
   }
 
   private addIds(attributes: IAttributes) {

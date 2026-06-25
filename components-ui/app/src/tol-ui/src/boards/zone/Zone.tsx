@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FilterConfigDrawer,
   ComponentCreationModal,
@@ -17,8 +17,13 @@ import {
   TitleTooltip,
   BUTTONS,
   useBoardState,
+  generateTranslatorLookup,
+  getSiblingBoardEntity,
+  generateFilter,
+  isRelationship,
 } from "../..";
-import type { IZone, IView, PButton, PBoard } from "../..";
+import type { IZone, IView, PButton, PBoard, IFilter } from "../..";
+
 
 export interface PZone extends PBoard {
   id: string;
@@ -40,14 +45,59 @@ export function Zone(props: PZone) {
   } = props;
 
   const { editMode, layoutMode } = useBoard();
-  
+
   const [zone, setZone] = useBoardState<IView, IZone>(id, view, setView);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
   const [title, setTitle] = useState(zone?.title);
-  
+
   const { object_type, dataspace, filter } = zone;
+  const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const translatedFilter: IFilter = { and_: {} };
+
+      if (zoneAbove) {
+        const paths = await dataspace?.relationshipPaths();
+        const zoneAboveFilter = generateFilter(zoneAbove);
+        if (paths && translatedFilter.and_ && zoneAboveFilter) {
+          for (const [attribute, filter] of Object.entries(zoneAboveFilter.and_ || {})) {
+            if (
+              // Add the relationship prefix
+              object_type! in paths &&
+              zoneAbove.object_type! in paths[object_type!]
+            ) {
+              console.log("1")
+              const relationship = paths[object_type!][zoneAbove.object_type!].paths[0];
+              translatedFilter.and_[relationship + "." + attribute] = filter;
+            } else if (
+              // Remove any possible relationship prefix
+              zoneAbove.object_type! in paths &&
+              object_type! in paths[zoneAbove.object_type!]
+            ) {
+              console.log("2")
+              for (const path of paths[zoneAbove.object_type!][object_type!].paths) {
+                console.log("attribute: " + attribute)
+                console.log("path: " + path)
+                if (attribute.startsWith(path + ".")) {
+                  console.log("4")
+                  const newAttribute = attribute.replace(path + ".", "as");
+                  console.log("5")
+                  translatedFilter.and_[newAttribute] = filter;
+                }
+              }
+            }
+          }
+        }
+        console.log(translatedFilter);
+        zone.filter = translatedFilter;
+        setZone({ ...zone });
+      }
+    };
+    fetchData();
+  }, [zoneAbove]);
 
   const onAddComponent = () => {
     setOpen(true);
@@ -112,7 +162,7 @@ export function Zone(props: PZone) {
     //visible: editMode && !layoutMode,
     // TODO FUTURE: Implement translators
     visible: false,
-    onClick: () => {},
+    onClick: () => { },
   };
 
   const bar = (
