@@ -69,29 +69,40 @@ export function Zone(props: PZone) {
               object_type! in paths &&
               zoneAbove.object_type! in paths[object_type!]
             ) {
-              console.log("1")
-              const relationship = paths[object_type!][zoneAbove.object_type!].paths[0];
-              translatedFilter.and_[relationship + "." + attribute] = filter;
+              if (isRelationship(attribute)) {
+                translatedFilter.and_[attribute] = filter;
+              } else {
+                /**
+                 * Just use the first relationship path for the translation.
+                 * It might seem like the filter hasn't visually passed onto the second zone,
+                 * but this is because the relationship name might be different.
+                */
+                const relationship = paths[object_type!][zoneAbove.object_type!].paths[0];
+                translatedFilter.and_[relationship + "." + attribute] = filter;
+              }
             } else if (
               // Remove any possible relationship prefix
               zoneAbove.object_type! in paths &&
               object_type! in paths[zoneAbove.object_type!]
             ) {
-              console.log("2")
+              let matchingPath = false;
+              // Check if the attribute starts with any of the relationship paths
               for (const path of paths[zoneAbove.object_type!][object_type!].paths) {
-                console.log("attribute: " + attribute)
-                console.log("path: " + path)
                 if (attribute.startsWith(path + ".")) {
-                  console.log("4")
-                  const newAttribute = attribute.replace(path + ".", "as");
-                  console.log("5")
+                  const newAttribute = attribute.replace(path + ".", "");
                   translatedFilter.and_[newAttribute] = filter;
+                  matchingPath = true;
+                  break;
                 }
+              }
+              // Keep the attribute as is if no matching relationship path was found
+              if (!matchingPath && isRelationship(attribute)) {
+                translatedFilter.and_[attribute] = filter;
               }
             }
           }
         }
-        console.log(translatedFilter);
+        console.log(translatedFilter)
         zone.filter = translatedFilter;
         setZone({ ...zone });
       }
