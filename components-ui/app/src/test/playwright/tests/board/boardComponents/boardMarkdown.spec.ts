@@ -16,11 +16,12 @@ import {
   isInHeadlessMode
 } from "../../helpers";
 
-const BOARD_ID = createBoardId();
+let BOARD_ID: string;
 
 test.use({ headless: isInHeadlessMode });
 
 test.beforeEach(async ({ page }) => {
+  BOARD_ID = createBoardId();
   await setAuth(page);
   await setBoard(page, BOARD_ID);
   await enterEditMode(page);

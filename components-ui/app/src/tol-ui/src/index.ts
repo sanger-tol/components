@@ -66,7 +66,7 @@ export const CORE_CONFIG_DS = new TsDataSource({
 });
 export const LOCAL_DS = new TsDataSource({
   apiPath: API_PATHS.API_PATH,
-  apiDataPath: API_PATHS.ACTION,
+  apiDataPath: API_PATHS.LOCAL,
   dataspace: ''
 });
 export const ACTIONS_DS = LOCAL_DS;
