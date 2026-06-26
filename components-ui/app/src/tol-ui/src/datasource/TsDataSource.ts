@@ -342,16 +342,26 @@ export class TsDataSource {
 
       for (const [relationship, targetObjectType] of oneRelationships) {
         const translator = (sourceLookup[targetObjectType] ??= {
-          source: sourceObjectType,
-          target: targetObjectType,
           paths: [],
         });
 
         translator.paths.push(relationship);
       }
     }
-
     return relationshipPathsCache;
+  }
+
+  /**
+   * Determines whether a given field is available on relationships for an object type.
+   *
+   * @param field - The field name to check.
+   * @param objectType - The object type that owns the field.
+   * @returns `true` if the field has `available_on_relationships` set, otherwise `false`.
+   */
+  public async isAvailableOnRelationships(field: string, objectType: string): Promise<boolean> {
+    const attributeMetadata = await this.attributeMetadata();
+    const attributeDescriptor = attributeMetadata[objectType]?.[field.split(".").pop() ?? ""];
+    return attributeDescriptor.available_on_relationships ?? false;
   }
 
   private addIds(attributes: IAttributes) {

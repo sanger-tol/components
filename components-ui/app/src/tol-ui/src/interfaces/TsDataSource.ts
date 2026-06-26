@@ -141,14 +141,6 @@ export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNu
  */
 export type IRelationshipPathValue = {
   /**
-   * The source object type for the relationship path.
-   */
-  source: string;
-  /**
-   * The target object type for the relationship path.
-   */
-  target: string;
-  /**
    * The relationship path from the source to the target object type.
    */
   paths: string[];

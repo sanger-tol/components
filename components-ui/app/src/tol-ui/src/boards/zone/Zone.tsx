@@ -69,6 +69,9 @@ export function Zone(props: PZone) {
               object_type! in paths &&
               zoneAbove.object_type! in paths[object_type!]
             ) {
+              // Check if the attribute is available on relationships for the zone above's object type
+              const isAvailable = await dataspace?.isAvailableOnRelationships(attribute, zoneAbove.object_type!);
+              if (!isAvailable) continue;
               if (isRelationship(attribute)) {
                 translatedFilter.and_[attribute] = filter;
               } else {
@@ -85,6 +88,9 @@ export function Zone(props: PZone) {
               zoneAbove.object_type! in paths &&
               object_type! in paths[zoneAbove.object_type!]
             ) {
+              // Check if the attribute is available on relationships for the current zone's object type
+              const isAvailable = await dataspace?.isAvailableOnRelationships(attribute, object_type!);
+              if (!isAvailable) continue;
               let matchingPath = false;
               // Check if the attribute starts with any of the relationship paths
               for (const path of paths[zoneAbove.object_type!][object_type!].paths) {
