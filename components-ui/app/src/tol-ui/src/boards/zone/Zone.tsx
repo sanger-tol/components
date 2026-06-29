@@ -17,7 +17,6 @@ import {
   TitleTooltip,
   BUTTONS,
   useBoardState,
-  generateTranslatorLookup,
   getSiblingBoardEntity,
   generateFilter,
   isRelationship,
