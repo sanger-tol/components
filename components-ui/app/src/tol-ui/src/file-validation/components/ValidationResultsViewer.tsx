@@ -22,10 +22,7 @@ import {
   PIPELINE_DS,
   ValidationReport,
   useQueryData,
-  useTimeout,
-  VALIDATION_TIMEOUT_MS,
   getUserFromLocalStorage,
-  setValidationTimeout,
   DropdownButtons,
   useValidationPolicyModule,
   SubmissionMutateModal,
@@ -191,23 +188,56 @@ export function ValidationResultsViewer() {
     }
   }, [latestPipelineResults.data, stepName]);
 
-  // Set a timeout to do a pseudo check whether a prefect run has failed.
-  // This is less necessary now, because prefect emits errors on failure,
-  // But is useful for timing out when in development as Prefect won't send data to local DB.
-  useTimeout(
-    async () => {
-      await setValidationTimeout(
-        PIPELINE_DS,
-        getUserFromLocalStorage()?.id || "",
-        uploadId,
-      );
-      // Refetch after successful timeout
-      await latestPipelineResults.refetch();
+  // Sync status polling: start after 60 seconds of validation, then every 30 seconds for 5 minutes
+  // This checks if the prefect run has failed by syncing status and marking the pipeline as failed
+  useEffect(() => {
+    if (!timeoutEnabled) return;
+
+    const MAX_SYNC_DURATION = 300000; // 5 minutes
+    const INITIAL_DELAY = 60000; // 60 seconds
+    const POLL_INTERVAL = 30000; // 30 seconds
+
+    let startTime: number;
+    let initialDelayTimeout: ReturnType<typeof setTimeout>;
+    let pollInterval: ReturnType<typeof setInterval>;
+
+    const syncStatus = async () => {
+      if (!uploadId) return;
+
+      try {
+        await PIPELINE_DS.custom({
+          method: "POST",
+          resource: "run-pipeline/sync-status",
+          body: { data: { upload_ids: [uploadId] } },
+        });
+        // Refetch after successful sync
+        await latestPipelineResults.refetch();
+      } catch (error) {
+        console.error("Error syncing validation status:", error);
+      }
+    };
+
+    // Start initial delay before first sync
+    initialDelayTimeout = setTimeout(() => {
+      startTime = Date.now();
+      syncStatus(); // First sync immediately after initial delay
       setFailedPipeline(true);
-    },
-    VALIDATION_TIMEOUT_MS,
-    { enabled: timeoutEnabled, startOnMount: timeoutEnabled },
-  );
+
+      // Then poll every 30 seconds
+      pollInterval = setInterval(() => {
+        if (Date.now() - startTime >= MAX_SYNC_DURATION) {
+          clearInterval(pollInterval);
+          return;
+        }
+        syncStatus();
+      }, POLL_INTERVAL);
+    }, INITIAL_DELAY);
+
+    return () => {
+      clearTimeout(initialDelayTimeout);
+      clearInterval(pollInterval);
+    };
+  }, [timeoutEnabled, uploadId, latestPipelineResults]);
 
   // Create an action context if data and user is available
   const actionContext =

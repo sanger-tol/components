@@ -25,9 +25,6 @@ import {
   downloadFileFromS3,
   useQueryData,
   getUserFromLocalStorage,
-  setValidationTimeout,
-  useTimeout,
-  VALIDATION_TIMEOUT_MS,
   USER_SHOWN_FILE_TYPE_DEFAULTS,
   MAX_FILE_SIZE,
   DEFAULT_SHEET_NAME,
@@ -105,14 +102,6 @@ export function FileValidationUploadAndResults(
   const user = getUserFromLocalStorage();
   const queryClient = useQueryClient();
 
-  // Clear up any validations that have been going for more than 8 minutes
-  useEffect(() => {
-    async function cleanUpValidations() {
-      await setValidationTimeout(PIPELINE_DS, user?.id || "");
-    }
-    cleanUpValidations();
-  }, []);
-
   const fetchLatestPipelineResults = async () => {
     const data = await fetchCurrentPipelineResults(
       PIPELINE_DS,
@@ -170,16 +159,53 @@ export function FileValidationUploadAndResults(
     }
   }, [latestPipelineResults.refetch, setRefetchFn]);
 
-  const timeoutEnabled = validating && !!uploadId && !validated;
+  // Sync status polling: start after 60 seconds of upload, then every 30 seconds for 5 minutes
+  useEffect(() => {
+    if (!validating || !uploadId || validated) return;
 
-  useTimeout(
-    async () => {
-      await setValidationTimeout(PIPELINE_DS, user?.id || "", uploadId);
-      await latestPipelineResults.refetch();
-    },
-    VALIDATION_TIMEOUT_MS,
-    { enabled: timeoutEnabled, startOnMount: timeoutEnabled },
-  );
+    const MAX_SYNC_DURATION = 300000; // 5 minutes
+    const INITIAL_DELAY = 60000; // 60 seconds
+    const POLL_INTERVAL = 30000; // 30 seconds
+
+    let startTime: number;
+    let initialDelayTimeout: ReturnType<typeof setTimeout>;
+    let pollInterval: ReturnType<typeof setInterval>;
+
+    const syncStatus = async () => {
+      if (!uploadId) return;
+
+      try {
+        await PIPELINE_DS.custom({
+          method: "POST",
+          resource: "run-pipeline/sync-status",
+          body: { data: { upload_ids: [uploadId] } },
+        });
+        await latestPipelineResults.refetch();
+      } catch (error) {
+        console.error("Error syncing validation status:", error);
+      }
+    };
+
+    // Start initial delay before first sync
+    initialDelayTimeout = setTimeout(() => {
+      startTime = Date.now();
+      syncStatus(); // First sync immediately after initial delay
+
+      // Then poll every 30 seconds
+      pollInterval = setInterval(() => {
+        if (Date.now() - startTime >= MAX_SYNC_DURATION) {
+          clearInterval(pollInterval);
+          return;
+        }
+        syncStatus();
+      }, POLL_INTERVAL);
+    }, INITIAL_DELAY);
+
+    return () => {
+      clearTimeout(initialDelayTimeout);
+      clearInterval(pollInterval);
+    };
+  }, [validating, uploadId, validated, latestPipelineResults]);
 
   const handleValidation = async (file: IFileData) => {
     setIsInitialValidation(true);
@@ -499,9 +525,19 @@ export function FileValidationUploadAndResults(
       <PreviousUploadsModal
         openModal={openModal}
         setOpenModal={setOpenModal}
-        onEnter={async () =>
-          await setValidationTimeout(PIPELINE_DS, user?.id || "")
-        }
+        onEnter={async () => {
+          if (uploadId) {
+            try {
+              await PIPELINE_DS.custom({
+                method: "POST",
+                resource: "run-pipeline/sync-status",
+                body: { data: { upload_ids: [uploadId] } },
+              });
+            } catch (error) {
+              console.error("Error syncing validation status:", error);
+            }
+          }
+        }}
       />
       {HelpModal}
       {NameUploadModal}
