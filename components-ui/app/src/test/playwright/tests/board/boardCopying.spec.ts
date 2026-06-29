@@ -70,9 +70,9 @@ test("User can copy another users board", async ({ page }) => {
 
 
 test("User can copy another users view", async ({ page }) => {
-  setupBoardWithComponent(page);
+  await setupBoardWithComponent(page);
 
-  const copyBoardButton = page.getByText("Copy Current View");
+  const copyBoardButton = page.getByTestId("copy-view-id-button");
   await expect(copyBoardButton).toBeVisible();
   await copyBoardButton.click();
 
@@ -86,7 +86,7 @@ test("User can copy another users view", async ({ page }) => {
   await expect(addViewButton).toBeVisible();
   await addViewButton.click();
 
-  const importViewButton = page.getByText("Import View");
+  const importViewButton = page.getByTestId("board-import-view-button");
   await expect(importViewButton).toBeVisible();
   await importViewButton.click();
 
