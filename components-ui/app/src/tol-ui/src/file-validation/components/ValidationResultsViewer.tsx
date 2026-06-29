@@ -28,6 +28,9 @@ import {
   SubmissionMutateModal,
   IconTooltip,
   createPageActions,
+  MAX_SYNC_DURATION,
+  INITIAL_DELAY,
+  POLL_INTERVAL,
 } from "../..";
 
 import type {
@@ -192,10 +195,6 @@ export function ValidationResultsViewer() {
   // This checks if the prefect run has failed by syncing status and marking the pipeline as failed
   useEffect(() => {
     if (!timeoutEnabled) return;
-
-    const MAX_SYNC_DURATION = 300000; // 5 minutes
-    const INITIAL_DELAY = 60000; // 60 seconds
-    const POLL_INTERVAL = 30000; // 30 seconds
 
     let startTime: number;
     let initialDelayTimeout: ReturnType<typeof setTimeout>;

@@ -31,6 +31,9 @@ import {
   useValidationPolicyModule,
   createPageActions,
   PIPELINE_DS,
+  MAX_SYNC_DURATION,
+  INITIAL_DELAY,
+  POLL_INTERVAL,
 } from "..";
 
 import type {
@@ -162,10 +165,6 @@ export function FileValidationUploadAndResults(
   // Sync status polling: start after 60 seconds of upload, then every 30 seconds for 5 minutes
   useEffect(() => {
     if (!validating || !uploadId || validated) return;
-
-    const MAX_SYNC_DURATION = 300000; // 5 minutes
-    const INITIAL_DELAY = 60000; // 60 seconds
-    const POLL_INTERVAL = 30000; // 30 seconds
 
     let startTime: number;
     let initialDelayTimeout: ReturnType<typeof setTimeout>;
