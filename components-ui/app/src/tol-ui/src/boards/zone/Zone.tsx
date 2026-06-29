@@ -18,10 +18,9 @@ import {
   BUTTONS,
   useBoardState,
   getSiblingBoardEntity,
-  generateFilter,
-  isRelationship,
 } from "../..";
 import type { IZone, IView, PButton, PBoard, IFilter } from "../..";
+import { translateZoneAboveFilter } from "./utils";
 
 
 export interface PZone extends PBoard {
@@ -55,65 +54,16 @@ export function Zone(props: PZone) {
   const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;
 
   useEffect(() => {
-    const fetchData = async () => {
-      const translatedFilter: IFilter = { and_: {} };
-
-      if (zoneAbove) {
-        const paths = await dataspace?.relationshipPaths();
-        const zoneAboveFilter = generateFilter(zoneAbove);
-        if (paths && translatedFilter.and_ && zoneAboveFilter) {
-          for (const [attribute, filter] of Object.entries(zoneAboveFilter.and_ || {})) {
-            if (
-              // Add the relationship prefix
-              object_type! in paths &&
-              zoneAbove.object_type! in paths[object_type!]
-            ) {
-              // Check if the attribute is available on relationships for the zone above's object type
-              const isAvailableOnRelationships = await dataspace?.isAvailableOnRelationships(attribute, zoneAbove.object_type!);
-              if (!isAvailableOnRelationships) continue;
-              if (isRelationship(attribute)) {
-                translatedFilter.and_[attribute] = filter;
-              } else {
-                /**
-                 * Just use the first relationship path for the translation.
-                 * It might seem like the filter hasn't visually passed onto the second zone,
-                 * but this is because the relationship name might be different.
-                */
-                const relationship = paths[object_type!][zoneAbove.object_type!].paths[0];
-                translatedFilter.and_[relationship + "." + attribute] = filter;
-              }
-            } else if (
-              // Remove any possible relationship prefix
-              zoneAbove.object_type! in paths &&
-              object_type! in paths[zoneAbove.object_type!]
-            ) {
-              // Check if the attribute is available on relationships for the current zone's object type
-              const isAvailableOnRelationships = await dataspace?.isAvailableOnRelationships(attribute, object_type!);
-              if (!isAvailableOnRelationships) continue;
-              let matchingPath = false;
-              // Check if the attribute starts with any of the relationship paths
-              for (const path of paths[zoneAbove.object_type!][object_type!].paths) {
-                if (attribute.startsWith(path + ".")) {
-                  const newAttribute = attribute.replace(path + ".", "");
-                  translatedFilter.and_[newAttribute] = filter;
-                  matchingPath = true;
-                  break;
-                }
-              }
-              // Keep the attribute as is if no matching relationship path was found
-              if (!matchingPath && isRelationship(attribute)) {
-                translatedFilter.and_[attribute] = filter;
-              }
-            }
-          }
-        }
-        console.log(translatedFilter)
-        zone.filter = translatedFilter;
-        setZone({ ...zone });
-      }
-    };
-    fetchData();
+    updateTranslatedFilter();
   }, [zoneAbove]);
+
+  const updateTranslatedFilter = async () => {
+    if (zoneAbove) {
+      const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
+      zone.filter = translatedFilter;
+      setZone({ ...zone });
+    }
+  };
 
   const onAddComponent = () => {
     setOpen(true);
