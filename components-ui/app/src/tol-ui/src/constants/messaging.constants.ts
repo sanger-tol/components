@@ -81,5 +81,6 @@ export const FORM_MESSAGE_TEXT = {
   PROFILE_FORM: {
     UPDATE_SUCCESS: "Profile updated successfully.",
     UPDATE_ERROR: "Failed to update profile.",
+    PROFILE_REQUIRED: "You must have a completed profile to access this page.",
   },
 };

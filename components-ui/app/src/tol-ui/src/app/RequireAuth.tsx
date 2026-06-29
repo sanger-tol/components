@@ -10,7 +10,7 @@ import {
   setReturnUrlFromLocalStorage,
   tokenHasExpired,
 } from "..";
-import { useGlobalLoading } from "src/hooks/useGlobalLoading";
+import { useGlobalLoading } from "../hooks/useGlobalLoading";
 
 export interface PRequireAuth {
   /**

@@ -6,7 +6,18 @@ SPDX-License-Identifier: MIT
 
 import { useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { TolLoader, PopUpMessage, useFormData, useAuth, LOCAL_DS } from "..";
+import {
+  TolLoader,
+  PopUpMessage,
+  useFormData,
+  useAuth,
+  LOCAL_DS,
+  USER,
+  PRE_DEFINED_FORM_TYPES,
+  URL_PATHS,
+  FORM_MESSAGE_TEXT,
+  MESSAGE_TYPE,
+} from "..";
 import type { TUserProfileFormDataOrNull } from "..";
 
 export interface PRequireCompletedProfile {
@@ -36,17 +47,19 @@ export interface PRequireCompletedProfile {
  * loading indicator while profile state is resolving or redirecting.
  */
 export function RequireCompletedProfile(props: PRequireCompletedProfile) {
-  const { redirectTo = "/profile", children } = props;
+  const { redirectTo = URL_PATHS.PROFILE, children } = props;
   const { user } = useAuth();
+
   const { meetsCondition: hasCompletedProfile, isLoading } =
     useFormData<TUserProfileFormDataOrNull>({
-      formName: "userProfile",
+      formName: PRE_DEFINED_FORM_TYPES.USER_PROFILE,
       dataSource: LOCAL_DS,
-      objectType: "user",
+      objectType: USER.USER,
       andFilter: { id: { eq: { value: user?.id } } },
       enabledCondition: !!user?.id,
       isComplete: (data) => !!data?.email && !!data?.name,
     });
+
   const location = useLocation();
   const history = useHistory();
 
@@ -57,8 +70,8 @@ export function RequireCompletedProfile(props: PRequireCompletedProfile) {
     if (isRedirectTarget) return;
     if (!isLoading && !hasCompletedProfile) {
       PopUpMessage({
-        type: "info",
-        message: "You must have a completed profile to access this page.",
+        type: MESSAGE_TYPE.INFO,
+        message: FORM_MESSAGE_TEXT.PROFILE_FORM.PROFILE_REQUIRED,
       });
       history.replace({
         pathname: redirectTo,

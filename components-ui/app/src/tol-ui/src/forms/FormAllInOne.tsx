@@ -356,15 +356,9 @@ export function FormAllInOne(props: PFormAllInOne) {
               <div
                 key={`section-${section}`}
                 id={`section-${section}`}
-                style={{ marginBottom: "30px" }}
+                className="tol-form-wrapper-unique-sections-container"
               >
-                <div
-                  style={{
-                    width: "100%",
-                    marginBottom: "20px",
-                    borderBottom: "2px solid var(--tol-grey-subtle)",
-                  }}
-                >
+                <div className="tol-form-wrapper-unique-sections-header">
                   <h5>{normaliseCaps(section)}</h5>
                 </div>
                 {formConfig.fields
@@ -385,10 +379,9 @@ export function FormAllInOne(props: PFormAllInOne) {
                         <div
                           id={`${field.id}`}
                           key={`${field.id ?? formId}-${field.name}`}
-                          style={{ display: "block" }}
-                          className={
+                          className={`tol-form-wrapper-unique-sections-field ${
                             field.labelInline ? "tol-form-field-inline" : ""
-                          }
+                          }`}
                         >
                           {renderField(field)}
                         </div>
@@ -401,15 +394,9 @@ export function FormAllInOne(props: PFormAllInOne) {
               <div
                 key="section-misc"
                 id="section-misc"
-                style={{ marginBottom: "30px" }}
+                className="tol-form-wrapper-unique-sections-container"
               >
-                <div
-                  style={{
-                    width: "100%",
-                    marginBottom: "20px",
-                    borderBottom: "2px solid var(--tol-grey-subtle)",
-                  }}
-                >
+                <div className="tol-form-wrapper-unique-sections-header">
                   <h5>{normaliseCaps("Misc")}</h5>
                 </div>
                 {formConfig.fields
@@ -430,10 +417,9 @@ export function FormAllInOne(props: PFormAllInOne) {
                         <div
                           id={`${field.id}`}
                           key={`${field.id ?? formId}-${field.name}`}
-                          style={{ display: "block" }}
-                          className={
+                          className={`tol-form-wrapper-unique-sections-field ${
                             field.labelInline ? "tol-form-field-inline" : ""
-                          }
+                          }`}
                         >
                           {renderField(field)}
                         </div>
@@ -460,8 +446,7 @@ export function FormAllInOne(props: PFormAllInOne) {
                 <div
                   id={`${field.id}`}
                   key={`${field.id ?? formId}-${field.name}`}
-                  style={{ display: "block" }}
-                  className={field.labelInline ? "tol-form-field-inline" : ""}
+                  className={`tol-form-wrapper-unique-sections-field ${field.labelInline ? "tol-form-field-inline" : ""}`}
                 >
                   {renderField(field)}
                 </div>

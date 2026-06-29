@@ -5,15 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "../contexts";
 import {
   fetchFormData,
   upsertFormData,
   useQueryData,
   PopUpMessage,
-  TsDataSource,
-  IAndAttributes,
+  MESSAGE_TYPE,
+  useAuth,
 } from "..";
+import type { TsDataSource, IAndAttributes } from "..";
 
 export interface PUseFormData<T> {
   /**
@@ -81,6 +81,7 @@ export const useFormData = <T>(props: PUseFormData<T>) => {
         throw err;
       }),
     {
+      // If the `enabledCondition` is explicitly set to false, we disable the query.
       ...(enabledCondition === false ? { enabled: false } : {}),
       staleTime: Infinity,
       gcTime: Infinity,
@@ -94,10 +95,11 @@ export const useFormData = <T>(props: PUseFormData<T>) => {
     onSuccess: (saved) => {
       queryClient.setQueryData([formName, user?.id], saved);
       successMessage &&
-        PopUpMessage({ type: "success", message: successMessage });
+        PopUpMessage({ type: MESSAGE_TYPE.SUCCESS, message: successMessage });
     },
     onError: () => {
-      errorMessage && PopUpMessage({ type: "error", message: errorMessage });
+      errorMessage &&
+        PopUpMessage({ type: MESSAGE_TYPE.ERROR, message: errorMessage });
     },
   });
 
