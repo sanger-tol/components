@@ -79,7 +79,7 @@ export function ConfigDrawerTabs(props: PConfigDrawerTabs) {
             placeholder="Select columns to make them visible for users..."
             attribute={inactiveAttributes}
             setAttributes={setInactiveAttributes}
-            disabledValues={attributes}
+            disabledValues={attributes.length > 0 ? Object.fromEntries(attributes.map(attr => [attr, true])) : undefined}
             numPopulatedFields={0}
             populatedFieldType={"column"}
             additionalPopulatedFieldData={"."}
