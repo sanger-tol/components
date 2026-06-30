@@ -31,8 +31,50 @@ describe("onViewTitleSave function", () => {
       },
     };
 
-    const returned = await onViewTitleSave("View Title", "v_mock", board, mockDataSource);
-    expect(returned).toBeUndefined();
-    expect(mockDataSource.capturedRequests.length).toEqual(0);
+    const newBoard = await onViewTitleSave("View Title", "v_mock", board, mockDataSource);
+    expect(mockDataSource.capturedRequests.length).toBe(0);
+    expect(newBoard).toBeUndefined();
+  });
+
+  test("Title is correctly modified", async () => {
+    const board: IBoard = {
+      id: "b_mock",
+      order: ["v_mock1", "v_mock2"],
+      children: {
+        "v_mock1": {
+          title: "First View",
+          id: "v_mock1",
+          order: [],
+          children: {},
+        },
+        "v_mock2": {
+          title: "Second View",
+          id: "v_mock2",
+          order: [],
+          children: {},
+        }
+      },
+    };
+
+    const newBoard = await onViewTitleSave("New Title", "v_mock2", board, mockDataSource);
+    expect(mockDataSource.capturedRequests.length).toBe(1);
+    expect(newBoard).toEqual({
+      id: "b_mock",
+      order: ["v_mock1", "v_mock2"],
+      children: {
+        "v_mock1": {
+          title: "First View",
+          id: "v_mock1",
+          order: [],
+          children: {},
+        },
+        "v_mock2": {
+          title: "New Title",
+          id: "v_mock2",
+          order: [],
+          children: {},
+        }
+      }
+    } as IBoard);
   });
 });
