@@ -46,6 +46,7 @@ import type {
 export interface PFileValidationUploadAndResults {
   validationConfig: IValidationConfig;
   setReportOpen: Dispatch<SetStateAction<boolean>>;
+  setFailureModalOpen: Dispatch<SetStateAction<boolean>>;
   setSubmissionMutateModalOpen: Dispatch<SetStateAction<boolean>>;
   setCurrentActionId: Dispatch<SetStateAction<string>>;
   setForceTableUpdate?: Dispatch<SetStateAction<boolean>>;
@@ -67,6 +68,7 @@ export function FileValidationUploadAndResults(
 ) {
   const {
     setReportOpen,
+    setFailureModalOpen,
     setSubmissionMutateModalOpen,
     setCurrentActionId,
     setValidationData,
@@ -135,6 +137,7 @@ export function FileValidationUploadAndResults(
       if (data.completed || status?.isFailureStatus) {
         setForceTableUpdate?.((prev: boolean) => !prev);
         setSelectedRows?.([]);
+        if (status?.isFailureStatus) setFailureModalOpen(true);
       }
     }
 
