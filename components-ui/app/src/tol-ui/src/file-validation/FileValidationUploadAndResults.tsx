@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect, SetStateAction, Dispatch } from "react";
+import { useState, useEffect, useRef, SetStateAction, Dispatch } from "react";
 import { Input, InputGroup } from "rsuite";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -162,6 +162,9 @@ export function FileValidationUploadAndResults(
     }
   }, [latestPipelineResults.refetch, setRefetchFn]);
 
+  const refetchRef = useRef(latestPipelineResults.refetch);
+  refetchRef.current = latestPipelineResults.refetch;
+
   // Sync status polling: start after 60 seconds of upload, then every 30 seconds for 5 minutes
   useEffect(() => {
     if (!validating || !uploadId || validated) return;
@@ -179,7 +182,7 @@ export function FileValidationUploadAndResults(
           resource: "run-pipeline/sync-status",
           body: { data: { upload_ids: [uploadId] } },
         });
-        await latestPipelineResults.refetch();
+        await refetchRef.current();
       } catch (error) {
         console.error("Error syncing validation status:", error);
       }
@@ -204,7 +207,7 @@ export function FileValidationUploadAndResults(
       clearTimeout(initialDelayTimeout);
       clearInterval(pollInterval);
     };
-  }, [validating, uploadId, validated, latestPipelineResults]);
+  }, [validating, uploadId, validated]);
 
   const handleValidation = async (file: IFileData) => {
     setIsInitialValidation(true);
