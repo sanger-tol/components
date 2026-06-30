@@ -16,7 +16,7 @@ export * from "./EntityMeta";
 export * from "./Field";
 export * from "./FileValidation";
 export * from "./Filter";
-export * from "./Forms";
+export * from "./forms";
 export * from "./General";
 export * from "./GlobalLoading";
 export * from "./JsonApi";

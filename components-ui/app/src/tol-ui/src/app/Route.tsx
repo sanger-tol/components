@@ -9,9 +9,15 @@ import {
   Board,
   BoardContextProvider,
   IPageElement,
+  RequireAuth,
+  RequireCompletedProfile,
+  RequireRole,
   TNavBrand,
+  TPageAccess,
   TPageElements,
   TsDataSource,
+  accessRequiresAuth,
+  accessRequiresRole,
 } from "..";
 
 export interface PRoute {
@@ -39,6 +45,12 @@ export interface PRoute {
    * The brand to display in the loading screen.
    */
   brand?: TNavBrand;
+  /**
+   * The access level for this route. Drives the runtime guard chain: non-public
+   * access wraps the page in auth + completed-profile guards, and role-gated
+   * access additionally wraps it in a role guard.
+   */
+  access?: TPageAccess;
 }
 
 /**
@@ -53,6 +65,7 @@ export function Route(props: PRoute) {
     path,
     pageElements,
     brand,
+    access,
   } = props;
 
   let element: React.ReactNode;
@@ -75,6 +88,21 @@ export function Route(props: PRoute) {
         </BoardContextProvider>
       );
     }
+  }
+
+  // If the route requires auth, wrap it in the auth and profile guards
+  if (accessRequiresAuth(access)) {
+    const guarded = accessRequiresRole(access) ? (
+      <RequireRole access={access!}>{element}</RequireRole>
+    ) : (
+      element
+    );
+
+    element = (
+      <RequireAuth>
+        <RequireCompletedProfile>{guarded}</RequireCompletedProfile>
+      </RequireAuth>
+    );
   }
 
   return (

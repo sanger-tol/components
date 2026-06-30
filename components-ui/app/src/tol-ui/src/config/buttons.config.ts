@@ -85,6 +85,30 @@ export const BUTTONS: Record<string, PButton> = {
     tooltip: "Share",
     position: "right",
   },
+  NEXT: {
+    outline: true,
+    type: "primary",
+    text: "Next",
+    icon: "arrow-right",
+    tooltip: "Next",
+    position: "right",
+  },
+  PREVIOUS: {
+    outline: true,
+    type: "primary",
+    text: "Back",
+    icon: "arrow-left",
+    tooltip: "Previous",
+    position: "left",
+  },
+  SETTINGS: {
+    outline: true,
+    type: "primary",
+    icon: "gear",
+    text: "Settings",
+    tooltip: "Settings",
+    position: "right",
+  },
   TRANSLATORS: {
     outline: true,
     type: "primary",
@@ -105,5 +129,5 @@ export const BUTTONS: Record<string, PButton> = {
     icon: "paste",
     tooltip: "Paste",
     position: "right",
-  }
+  },
 };

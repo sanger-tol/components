@@ -60,8 +60,16 @@ export const getProfileDefaultNavConfig = (
   configurableBoards: boolean
 ): TNavConfig => {
   const config: TNavConfig = {
-    data: {},
-    order: [],
+    data: {
+      Profile: {
+        access: PAGE_ACCESS.AUTHENTICATED,
+        path: {
+          pageElementReference: "profile",
+          route: URL_PATHS.PROFILE,
+        },
+      },
+    },
+    order: ["Profile"],
   }
 
   if (configurableBoards) {

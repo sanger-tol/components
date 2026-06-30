@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Schema } from "rsuite";
 import {
   RSForm,
@@ -19,15 +19,21 @@ import {
   Dropzone,
   FormCheckboxes,
   Button,
-  IFormConfig,
-  PButton,
   createInitialDataSnapshot,
-  setInitialData,
   validateForm,
   UNSUPPORTED_FIELD_TYPE,
   FormMarkdown,
   FormDatetime,
   MultipleFormInput,
+  FormLabel,
+  deepestEqual,
+  normaliseCaps,
+} from "..";
+
+import type {
+  IFormConfig,
+  PButton,
+  PIcon,
   TFormField,
   ITextField,
   ICountryselectField,
@@ -40,8 +46,6 @@ import {
   IMultipleselectField,
   IMarkdownField,
   ICheckboxFormField,
-  PIcon,
-  FormLabel,
 } from "..";
 
 export interface PFormAllInOne {
@@ -55,7 +59,7 @@ export interface PFormAllInOne {
 }
 
 export function FormAllInOne(props: PFormAllInOne) {
-  const { formConfig, initialData, fluid, model, onValidate } = props;
+  const { formConfig, initialData, fluid = true, model, onValidate } = props;
 
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [formErrors, setFormErrors] = useState<Record<string, any>>({});
@@ -70,15 +74,13 @@ export function FormAllInOne(props: PFormAllInOne) {
   const defaultModel = Schema.Model({});
   onUnsavedChangesRef.current = props.onUnsavedChanges;
 
-  const deepEqual = (left: any, right: any) =>
-    JSON.stringify(left) === JSON.stringify(right);
-
   useEffect(() => {
-    initialSnapshotRef.current = createInitialDataSnapshot(
-      formConfig,
-      initialData
-    );
-    setInitialData(formConfig, setFormData, initialData);
+    const nextSnapshot = createInitialDataSnapshot(formConfig, initialData);
+    if (deepestEqual(nextSnapshot, initialSnapshotRef.current)) {
+      return;
+    }
+    initialSnapshotRef.current = nextSnapshot;
+    setFormData(nextSnapshot);
   }, [formConfig, initialData]);
 
   useEffect(() => {
@@ -96,7 +98,7 @@ export function FormAllInOne(props: PFormAllInOne) {
   }, []);
 
   useEffect(() => {
-    const hasChanges = modifiedFields && Object.keys(modifiedFields).length > 0;
+    const hasChanges = Object.keys(modifiedFields).length > 0;
     hasUnsavedChanges.current = hasChanges;
     if (onUnsavedChangesRef.current) {
       onUnsavedChangesRef.current(hasChanges);
@@ -107,7 +109,7 @@ export function FormAllInOne(props: PFormAllInOne) {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
     setModifiedFields((prev: any) => {
       const initialValue = initialSnapshotRef.current[name];
-      if (deepEqual(value, initialValue ?? null)) {
+      if (deepestEqual(value, initialValue ?? null)) {
         const { [name]: _, ...rest } = prev as any;
         return rest;
       }
@@ -141,6 +143,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             type={textField.type}
             readOnly={textField.readOnly}
             centered={textField.centered}
+            labelInline={textField.labelInline}
           />
         );
       case "countryselect":
@@ -222,7 +225,6 @@ export function FormAllInOne(props: PFormAllInOne) {
             generateMessages={dropzoneField.generateMessages}
             setResponse={dropzoneField.setResponse}
             errorText={errorText}
-            // icon={dropzoneField.icon}
           />
         );
       case "autocomplete":
@@ -327,6 +329,12 @@ export function FormAllInOne(props: PFormAllInOne) {
     }
   };
 
+  const uniqueSections = Array.from(
+    new Set(formConfig.fields.map((field) => field.section)),
+  )
+    .filter((section) => section !== undefined)
+    .map((section) => section as string);
+
   return (
     <div className="form-wrapper">
       <RSForm
@@ -334,30 +342,118 @@ export function FormAllInOne(props: PFormAllInOne) {
         ref={formRef}
         id={`form-${formId}`}
         onCheck={setFormErrors}
-        onSubmit={(e: any) => {
-          e.preventDefault();
+        onSubmit={(_formValue: any, event?: React.FormEvent) => {
+          event?.preventDefault();
           validateForm(formRef, toaster, formData, props.onSubmit);
+          setModifiedFields({});
         }}
         model={model || defaultModel}
         formValue={formData}
       >
-        {formConfig.fields.map((field: any) => (
-          <div key={`${formId}-${field.name}`}>
-            {field.multiple ? (
-              <MultipleFormInput
-                renderField={renderField}
-                field={field}
-                formData={formData}
-                setFormData={setFormData}
-                setModifiedFields={setModifiedFields}
-                minOne={field.minOne}
-                onChange={handleInputChange}
-              />
-            ) : (
-              renderField(field)
+        {uniqueSections.length > 0 ? (
+          <>
+            {uniqueSections.map((section) => (
+              <div
+                key={`section-${section}`}
+                id={`section-${section}`}
+                className="tol-form-wrapper-unique-sections-container"
+              >
+                <div className="tol-form-wrapper-unique-sections-header">
+                  <h5>{normaliseCaps(section)}</h5>
+                </div>
+                {formConfig.fields
+                  .filter((field) => field.section === section)
+                  .map((field: any) => (
+                    <div key={`${field.id ?? formId}-${field.name}`}>
+                      {field.multiple ? (
+                        <MultipleFormInput
+                          renderField={renderField}
+                          field={field}
+                          formData={formData}
+                          setFormData={setFormData}
+                          setModifiedFields={setModifiedFields}
+                          minOne={field.minOne}
+                          onChange={handleInputChange}
+                        />
+                      ) : (
+                        <div
+                          id={`${field.id}`}
+                          key={`${field.id ?? formId}-${field.name}`}
+                          className={`tol-form-wrapper-unique-sections-field ${
+                            field.labelInline ? "tol-form-field-inline" : ""
+                          }`}
+                        >
+                          {renderField(field)}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            ))}
+            {formConfig.fields.some((field) => !field.section) && (
+              <div
+                key="section-misc"
+                id="section-misc"
+                className="tol-form-wrapper-unique-sections-container"
+              >
+                <div className="tol-form-wrapper-unique-sections-header">
+                  <h5>{normaliseCaps("Misc")}</h5>
+                </div>
+                {formConfig.fields
+                  .filter((field) => !field.section)
+                  .map((field: any) => (
+                    <div key={`${formId}-${field.name}`}>
+                      {field.multiple ? (
+                        <MultipleFormInput
+                          renderField={renderField}
+                          field={field}
+                          formData={formData}
+                          setFormData={setFormData}
+                          setModifiedFields={setModifiedFields}
+                          minOne={field.minOne}
+                          onChange={handleInputChange}
+                        />
+                      ) : (
+                        <div
+                          id={`${field.id}`}
+                          key={`${field.id ?? formId}-${field.name}`}
+                          className={`tol-form-wrapper-unique-sections-field ${
+                            field.labelInline ? "tol-form-field-inline" : ""
+                          }`}
+                        >
+                          {renderField(field)}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
             )}
-          </div>
-        ))}
+          </>
+        ) : (
+          formConfig.fields.map((field: any) => (
+            <div key={`${formId}-${field.name}`}>
+              {field.multiple ? (
+                <MultipleFormInput
+                  renderField={renderField}
+                  field={field}
+                  formData={formData}
+                  setFormData={setFormData}
+                  setModifiedFields={setModifiedFields}
+                  minOne={field.minOne}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                <div
+                  id={`${field.id}`}
+                  key={`${field.id ?? formId}-${field.name}`}
+                  className={`tol-form-wrapper-unique-sections-field ${field.labelInline ? "tol-form-field-inline" : ""}`}
+                >
+                  {renderField(field)}
+                </div>
+              )}
+            </div>
+          ))
+        )}
         {formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
             {formConfig.buttonConfig.buttons.map(
@@ -369,20 +465,30 @@ export function FormAllInOne(props: PFormAllInOne) {
                   outline={button.outline}
                   active={button.active}
                   disabled={button.disabled}
+                  disabledTooltip={button.disabledTooltip}
                   loading={button.loading}
                   onClick={() => {
-                    if (modifiedFields && onValidate) {
-                      onValidate(
-                        validateForm(formRef, toaster, formData, props.onSubmit)
+                    let isValid = true;
+                    if (onValidate || props.onSubmit) {
+                      isValid = validateForm(
+                        formRef,
+                        toaster,
+                        formData,
+                        props.onSubmit,
                       );
+                      if (onValidate) {
+                        onValidate(isValid);
+                      }
                     }
-                    setModifiedFields({});
+                    if (isValid) {
+                      setModifiedFields({});
+                    }
                     if (button.onClick) {
                       button.onClick(formData);
                     }
                   }}
                 />
-              )
+              ),
             )}
           </div>
         )}

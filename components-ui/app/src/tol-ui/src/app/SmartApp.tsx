@@ -44,8 +44,9 @@ import {
   GlobalLoadingProvider,
   ACTIONS_DS,
   URL_PATHS,
+  UserProfile,
+  IUserProfileAdditionalConfigs,
 } from "..";
-
 
 export interface PSmartApp {
   /**
@@ -97,6 +98,14 @@ export interface PSmartApp {
    * An optional prefix for routing.
    */
   routePrefix?: string;
+  /**
+   * Optional configuration for the user profile form, including base and additional configs.
+   * If not provided, the default configuration will be used.
+   */
+  profileFormConfigs?: {
+    baseConfig?: any;
+    additionalConfigs?: IUserProfileAdditionalConfigs;
+  };
 }
 
 /**
@@ -112,15 +121,17 @@ export function SmartApp(props: PSmartApp) {
     register = false,
     configurableBoards = false,
     routePrefix,
+    profileFormConfigs,
   } = props;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
   const [globalLoading, setGlobalLoading] = useState(true);
   const [fetchedNavigation, setFetchedNavigation] = useState<TNavConfig>();
-  const [fetchedProfileNavigation, setFetchedProfileNavigation] = useState<TNavConfig>();
+  const [fetchedProfileNavigation, setFetchedProfileNavigation] =
+    useState<TNavConfig>();
 
-  const queryClient = new QueryClient();
+  const [queryClient] = useState(() => new QueryClient());
 
   // Combines the system defaults and incoming config
   const defaultNavigation = mergeNavConfigs(
@@ -145,44 +156,87 @@ export function SmartApp(props: PSmartApp) {
       return;
     }
 
-    configDataSource.getOne({
-      objectType: WEB_APP,
-      id,
-    }).then((obj: TDataObjectOrNull) => {
-      setFetchedNavigation(obj?.navigation);
-      setFetchedProfileNavigation(obj?.profile_navigation);
-
-      // If nav not found the object will be null
-      if (!obj) {
-        throw Error(`No configuration found for web app with id: ${id}`);
-      }
-    }).catch((error) => {
-      console.error(error);
-      PopUpMessage({
-        type: "warning",
-        message: "Failed to fetch navigation configuration. Only using defaults.",
+    configDataSource
+      .getOne({
+        objectType: WEB_APP,
+        id,
       })
-    }).finally(() => {
-      // Small delay as loading screen can feel abrupt if it disappears immediately
-      setTimeout(() => setGlobalLoading(false), 300);
-    });
+      .then((obj: TDataObjectOrNull) => {
+        setFetchedNavigation(obj?.navigation);
+        setFetchedProfileNavigation(obj?.profile_navigation);
+
+        // If nav not found the object will be null
+        if (!obj) {
+          throw Error(`No configuration found for web app with id: ${id}`);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        PopUpMessage({
+          type: "warning",
+          message:
+            "Failed to fetch navigation configuration. Only using defaults.",
+        });
+      })
+      .finally(() => {
+        // Small delay as loading screen can feel abrupt if it disappears immediately
+        setTimeout(() => setGlobalLoading(false), 300);
+      });
   }, [configDataSource, id]);
 
-  const navigation = mergeAndNormaliseNavConfig(fetchedNavigation, defaultNavigation, user, routePrefix);
-  const profileNavigation = mergeAndNormaliseNavConfig(fetchedProfileNavigation, defaultProfileNavigation, user, routePrefix);
+  const navigation = mergeAndNormaliseNavConfig(
+    fetchedNavigation,
+    defaultNavigation,
+    user,
+    routePrefix,
+  );
+  const profileNavigation = mergeAndNormaliseNavConfig(
+    fetchedProfileNavigation,
+    defaultProfileNavigation,
+    user,
+    routePrefix,
+  );
+
+  const routeNavigation = mergeAndNormaliseNavConfig(
+    fetchedNavigation,
+    defaultNavigation,
+    user,
+    routePrefix,
+    false,
+  );
+  const routeProfileNavigation = mergeAndNormaliseNavConfig(
+    fetchedProfileNavigation,
+    defaultProfileNavigation,
+    user,
+    routePrefix,
+    false,
+  );
 
   // Merging configs to collect all the routes
-  const mergedNavigation: TNavConfig = mergeNavConfigs(navigation, profileNavigation);
+  const mergedNavigation: TNavConfig = mergeNavConfigs(
+    routeNavigation,
+    routeProfileNavigation,
+  );
 
   // Always merge default page elements + incoming (incoming overrides defaults)
   const pageElements: TPageElements = {
     boardDetail: (
       <BoardContextProvider>
-        <Board boardDataSource={configDataSource} brand={brand} actionsDataSource={actionsDataSource} />
+        <Board
+          boardDataSource={configDataSource}
+          brand={brand}
+          actionsDataSource={actionsDataSource}
+        />
       </BoardContextProvider>
     ),
-    myBoards: <MyBoards boardDataSource={configDataSource} actionsDataSource={actionsDataSource} />,
+    myBoards: (
+      <MyBoards
+        boardDataSource={configDataSource}
+        actionsDataSource={actionsDataSource}
+      />
+    ),
     validationResultsDetail: <ValidationResultsViewer />,
+    profile: <UserProfile {...profileFormConfigs} />,
     callback: <Callback {...props} />,
     ...(props.pageElements ?? {}),
   };
@@ -237,7 +291,7 @@ export function SmartApp(props: PSmartApp) {
                           pageElements,
                           brand,
                           configDataSource,
-                          actionsDataSource
+                          actionsDataSource,
                         )}
                         <ReactRouter
                           path={URL_PATHS.PAGE_NOT_FOUND}
@@ -256,6 +310,6 @@ export function SmartApp(props: PSmartApp) {
           </GlobalLoadingProvider>
         </AuthProvider>
       </QueryClientProvider>
-    </div >
+    </div>
   );
 }

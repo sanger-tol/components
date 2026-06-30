@@ -67,6 +67,8 @@ export function DropdownButton(props: PDropdownButton) {
             key={index}
             onClick={button.onClick}
             disabled={button.disabled}
+            className={button.className}
+            data-testid={button.testid}
           >
             {button.icon && (
               <Icon
