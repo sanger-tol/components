@@ -1,0 +1,38 @@
+/*
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+import { beforeEach, describe, expect, test } from "vitest";
+import { MockDataSource } from "../mocks";
+import { onViewTitleSave } from "../../tol-ui/src";
+import type { IBoard } from "../../tol-ui/src";
+
+describe("onViewTitleSave function", () => {
+  let mockDataSource: MockDataSource;
+
+  beforeEach(() => {
+    // No data returned; we just want to check which requests are sent
+    mockDataSource = new MockDataSource({});
+  });
+
+  test("No difference in title results in no upsert", async () => {
+    const board: IBoard = {
+      id: "b_mock",
+      order: ["v_mock"],
+      children: {
+        "v_mock": {
+          title: "View Title",
+          id: "v_mock",
+          order: [],
+          children: {},
+        }
+      },
+    };
+
+    const returned = await onViewTitleSave("View Title", "v_mock", board, mockDataSource);
+    expect(returned).toBeUndefined();
+    expect(mockDataSource.capturedRequests.length).toEqual(0);
+  });
+});
