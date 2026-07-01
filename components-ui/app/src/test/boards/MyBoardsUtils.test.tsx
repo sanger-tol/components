@@ -9,7 +9,7 @@ import { MockDataSource } from "../mocks";
 import { BOARD_ENTITIES, getBoardDetails } from "../../tol-ui/src";
 
 describe("getBoardDetails function", () => {
-  test("", async () => {
+  test("The network response is interpreted correctly", async () => {
     const mockDataSource = new MockDataSource({
       onPost: () => ({data: [
         {
