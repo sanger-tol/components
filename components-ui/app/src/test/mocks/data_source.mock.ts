@@ -40,6 +40,6 @@ export class MockDataSource extends TsDataSource {
 
   public override async custom(request: ICustom) {
     this.capturedRequests.push(request);
-    return super.custom(request);
+    return await super.custom(request);
   }
 }
