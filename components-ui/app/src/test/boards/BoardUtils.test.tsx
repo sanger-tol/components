@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import { MockDataSource } from "../mocks";
-import { onViewTitleSave } from "../../tol-ui/src";
+import { onViewTitleSave, updateViewInUrl } from "../../tol-ui/src";
 import type { IBoard } from "../../tol-ui/src";
 
 describe("onViewTitleSave function", () => {
@@ -76,5 +76,13 @@ describe("onViewTitleSave function", () => {
         }
       }
     } as IBoard);
+  });
+});
+
+describe("updateViewInUrl function", () => {
+  test("The update occurs successfully", () => {
+    vi.stubGlobal("location", "?view=v_one");
+    updateViewInUrl("v_two");
+    expect(location.search).toBe("?view=v_two");
   });
 });
