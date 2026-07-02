@@ -90,14 +90,17 @@ export function Board(props: PBoard) {
     data: boardData,
     isSuccess,
     isError,
+    isLoading,
   } = useQueryData<IBoard>(
     [BOARD_ENTITIES.ENTITIES.BOARD, id],
     () => fetchBoardEntityAndChildren(boardDataSource, id!),
     { enabled: !!id },
   );
 
+  const isBoardNotFound = isSuccess && !boardData?.id;
+
   useEffect(() => {
-    if (!boardData || !isSuccess) return;
+    if (!isSuccess || !boardData?.id) return;
     setBoard(boardData as IBoard);
     setPrivilege(
       boardData.write_privilege
@@ -173,11 +176,11 @@ export function Board(props: PBoard) {
     );
   };
 
-  if (isError) {
+  if (isError || isBoardNotFound) {
     return <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />;
   }
 
-  if (!isSuccess && !boardData && !board) {
+  if (isLoading && !isSuccess && !boardData && !board) {
     return <LoadingContent overlayNav brand={brand} text="Finding Board..." />;
   }
 

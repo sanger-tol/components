@@ -24,5 +24,5 @@ export function ViewModeBoardTitle(props: PViewModeBoardTitle) {
   const { editable, text } = props;
 
   if (editable) return undefined;
-  return <h3 key="tol-board-title">{text}</h3>;
+  return <h3 key="tol-board-title" data-testid="view-mode-board-title">{text}</h3>;
 }

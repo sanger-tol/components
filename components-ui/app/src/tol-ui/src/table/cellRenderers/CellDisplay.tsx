@@ -11,16 +11,17 @@ import {
   Float,
   OldImage,
   Integer,
+  Priority,
   Link,
   LongText,
   getCellRendererPropValue,
   TrafficLightStatus,
-  PDataPoints,
   DataPointDefaultDisplay,
-  PDataPoint,
   Tag,
   ErrorBoundary,
+  Card,
 } from "../..";
+import type { PDataPoints, PDataPoint } from "../..";
 
 export interface PCellDisplay extends PDataPoint {
   /**
@@ -31,10 +32,12 @@ export interface PCellDisplay extends PDataPoint {
 
 const preDefinedElements = {
   boolean: Boolean,
+  card: Card,
   datetime: Datetime,
   float: Float,
   image: OldImage,
   integer: Integer,
+  priority: Priority,
   link: Link,
   longText: LongText,
   trafficLightStatus: TrafficLightStatus,
@@ -49,6 +52,7 @@ export function CellDisplay(props: PCellDisplay) {
     field,
     value,
     dataObject,
+    parentDataObject,
     renderer,
     customCellRenderers,
     isMany = false,
@@ -88,6 +92,7 @@ export function CellDisplay(props: PCellDisplay) {
             propValue,
             elementProps,
             dataObject,
+            parentDataObject,
           );
         });
       }

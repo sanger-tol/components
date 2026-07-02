@@ -13,6 +13,31 @@ export const cellRendererParams: IBoardCellRenderers = {
   boolean: {
     allowedDataTypes: ["bool"]
   },
+  card: {
+    rename: "Card",
+    params: {
+      content: {
+        type: "markdown",
+        rename: "Content",
+        description: "Markdown-formatted content"
+      },
+      successBackground: {
+        type: "condition",
+        rename: "Success Background",
+        description: "Condition for making the background the success colour"
+      },
+      warningBackground: {
+        type: "condition",
+        rename: "Warning Background",
+        description: "Condition for making the background the success colour"
+      },
+      errorBackground: {
+        type: "condition",
+        rename: "Error Background",
+        description: "Condition for making the background the success colour"
+      }
+    }
+  },
   datetime: {
     rename: "DateTime",
     allowedDataTypes: ["datetime"]
@@ -21,6 +46,7 @@ export const cellRendererParams: IBoardCellRenderers = {
     allowedDataTypes: ["float", "int"]
   },
   image: {
+    description: "Displays an image inside of a cell, which can be enlarged by clicking on it.",
     params: {
       value: {
         type: "string",
@@ -41,6 +67,7 @@ export const cellRendererParams: IBoardCellRenderers = {
     allowedDataTypes: ["int"]
   },
   link: {
+    description: "Shows a clickable hyperlink in the cell.",
     params: {
       url: {
         type: "string",
@@ -52,16 +79,52 @@ export const cellRendererParams: IBoardCellRenderers = {
       text: {
         type: "string",
         rename: "Text",
+        required: true,
         description: "The text to display for the link, if empty it will default to the current field value",
-        placeholder: "This is a link",
+        placeholder: "Click here",
       },
     }
   },
   longText: {
     rename: "Long Text",
-    allowedDataTypes: ["str", "float", "int"]
+    allowedDataTypes: ["str", "float", "int"],
+    description: (
+      "Shows a shortened version of the data. " +
+      "The longer version can be seen by hovering over the cell."
+    )
   },
   none: {},
+  priority: {
+    rename: "Priority",
+    description: "Show an icon representing priority.",
+    params: {
+      highest: {
+        type: "condition",
+        rename: "Highest",
+        description: "Condition for showing highest priority"
+      },
+      high: {
+        type: "condition",
+        rename: "High",
+        description: "Condition for showing high priority"
+      },
+      medium: {
+        type: "condition",
+        rename: "Medium",
+        description: "Condition for showing medium priority"
+      },
+      low: {
+        type: "condition",
+        rename: "Low",
+        description: "Condition for showing low priority"
+      },
+      lowest: {
+        type: "condition",
+        rename: "Lowest",
+        description: "Condition for showing lowest priority"
+      }
+    }
+  },
   relationship: {
     params: {
       relationshipId: {
@@ -74,6 +137,7 @@ export const cellRendererParams: IBoardCellRenderers = {
   },
   trafficLightStatus: {
     rename: "Traffic Light Status",
+    description: "Highlight the cell contents with colour to emphasise its status.",
     params: {
       success: {
         type: "condition",

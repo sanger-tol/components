@@ -12,6 +12,7 @@ import {
   TBoardPrivilege,
   TNavConfig,
   TPageOrDropdown,
+  TPageAccess,
   PAGE_ACCESS,
   IUser,
   deepCopy,
@@ -155,7 +156,8 @@ export function generateRoutePath(
 export function normaliseNavConfig(
   navigation: TNavConfig | undefined,
   user: IUser | null,
-  routePrefix: string = ""
+  routePrefix: string = "",
+  filterByAccess: boolean = true,
 ): TNavConfig {
   const source: TNavConfig = navigation ?? { data: {}, order: [] };
 
@@ -165,9 +167,12 @@ export function normaliseNavConfig(
   for (const displayName of Object.keys(source.data)) {
     const originalNavItem = source.data?.[displayName];
 
-    // Skip if no nav item or not accessible to this user
+    // Skip if no nav item, or (when filtering) not accessible to this user.
+    // Route generation passes `filterByAccess = false` so every defined page
+    // still gets a route and can run the runtime auth/profile/role guards,
+    // rather than being pruned and falling through to page-not-found.
     if (!originalNavItem || typeof originalNavItem !== "object") continue;
-    if (!isPageAccessible(user, originalNavItem)) continue;
+    if (filterByAccess && !isPageAccessible(user, originalNavItem)) continue;
 
     const navItem: TPageOrDropdown = deepCopy(originalNavItem);
 
@@ -178,7 +183,7 @@ export function normaliseNavConfig(
 
     // Recurse into dropdown children (do not build routes from dropdown names)
     if (isDropdown(navItem)) {
-      navItem.pages = normaliseNavConfig(navItem.pages, user, routePrefix);
+      navItem.pages = normaliseNavConfig(navItem.pages, user, routePrefix, filterByAccess);
     }
 
     // Add to result
@@ -231,10 +236,11 @@ export function mergeAndNormaliseNavConfig(
   defaultNavigation: TNavConfig,
   user: IUser | null,
   routePrefix: string = "",
+  filterByAccess: boolean = true,
 ): TNavConfig {
   // Combine system nav config with incoming config
   const combinedNavConfig = mergeNavConfigs(navigation, defaultNavigation);
-  return normaliseNavConfig(combinedNavConfig, user, routePrefix);
+  return normaliseNavConfig(combinedNavConfig, user, routePrefix, filterByAccess);
 }
 
 /**
@@ -394,6 +400,62 @@ export function isPageAccessible(user: IUser | null, page: TPageOrDropdown): boo
 }
 
 /**
+ * Determines whether a given page requires authentication and profile access.
+ * If a page is not public, it is assumed to require authentication and profile access.
+ * 
+ * @param page - The page or dropdown definition containing an `access` field that specifies the access policy.
+ * @returns `true` if the page requires authentication and profile access; otherwise `false`.
+ */
+export function pageRequiresAuthAndProfile(page: TPageOrDropdown): boolean {
+  return accessRequiresAuth(page.access);
+}
+
+/**
+ * Determines whether an access level requires an authenticated user.
+ *
+ * Any access level other than public (i.e. `authenticated`, `role_required`, or
+ * a list of roles) implies a logged-in user, and so gets the runtime auth and
+ * profile guards.
+ *
+ * @param access - The page's access level.
+ * @returns `true` if the access level requires authentication; otherwise `false`.
+ */
+export function accessRequiresAuth(access: TPageAccess | undefined): boolean {
+  return !!access && access !== PAGE_ACCESS.PUBLIC;
+}
+
+/**
+ * Determines whether an access level gates on roles, i.e. it requires either
+ * any role (`role_required`) or one of a specific set of roles (a role array).
+ *
+ * @param access - The page's access level.
+ * @returns `true` if the access level is role-gated; otherwise `false`.
+ */
+export function accessRequiresRole(access: TPageAccess | undefined): boolean {
+  return access === PAGE_ACCESS.ROLE_REQUIRED || Array.isArray(access);
+}
+
+/**
+ * Determines whether a user satisfies a role-based access level.
+ *
+ * Mirrors the role checks in {@link isPageAccessible}: `role_required` is met by
+ * any role, a role array is met by holding at least one of the listed roles, and
+ * non-role access levels have nothing to enforce.
+ *
+ * @param user - The current user; expected to contain a `roles` array.
+ * @param access - The page's access level.
+ * @returns `true` if the user meets the role requirement; otherwise `false`.
+ */
+export function userMeetsRoleRequirement(
+  user: IUser | null,
+  access: TPageAccess | undefined,
+): boolean {
+  if (access === PAGE_ACCESS.ROLE_REQUIRED) return (user?.roles?.length ?? 0) > 0;
+  if (Array.isArray(access)) return access.some((role) => user?.roles?.includes(role));
+  return true;
+}
+
+/**
  * Builds a flat list of React Router route nodes from a nested navigation configuration.
  *
  * @param navigation - Navigation configuration tree to traverse.
@@ -429,6 +491,7 @@ export function collectRoutes(
           boardDataSource,
           actionsDataSource,
           brand,
+          access: navItem.access,
         }),
       );
     }

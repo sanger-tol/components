@@ -14,6 +14,7 @@ import {
   IAllValidationData,
   IDropdownButtonConfig,
   IValidationConfig,
+  Modal,
   normaliseCaps,
   PIPELINE_DS,
   RemoteTable,
@@ -105,6 +106,7 @@ export function FileValidationHome(props: PFileValidationHome) {
 
   // Modals state
   const [reportOpen, setReportOpen] = useState<boolean>(false);
+  const [failureModalOpen, setFailureModalOpen] = useState<boolean>(false);
   const [submissionMutateModalOpen, setSubmissionMutateModalOpen] =
     useState<boolean>(false);
 
@@ -311,6 +313,7 @@ export function FileValidationHome(props: PFileValidationHome) {
               component: (
                 <FileValidationUploadAndResults
                   setReportOpen={setReportOpen}
+                  setFailureModalOpen={setFailureModalOpen}
                   setSubmissionMutateModalOpen={setSubmissionMutateModalOpen}
                   setCurrentActionId={setCurrentActionId}
                   setValidationData={setValidationData}
@@ -382,6 +385,26 @@ export function FileValidationHome(props: PFileValidationHome) {
         }
         open={reportOpen}
         setOpen={setReportOpen}
+      />
+      <Modal
+        open={failureModalOpen}
+        setOpen={setFailureModalOpen}
+        size="sm"
+        header={<h3>Validation Error</h3>}
+        children={
+          <div>
+            <h6>The system has encountered an error.</h6>
+            <p>Please see below for details:</p>
+            <p>{validationData?.failureMessage}</p>
+            <p>
+              Please fix the issue and try again. If issues persist, contact
+              <a href="mailto:treeoflifesamples@sanger.ac.uk">
+                treeoflifesamples@sanger.ac.uk
+              </a>{" "}
+              for further assistance.
+            </p>
+          </div>
+        }
       />
       <SubmissionMutateModal
         open={submissionMutateModalOpen}

@@ -27,7 +27,7 @@ import {
   useBoard,
 } from "..";
 import type {
-  FieldMeta,
+  IFieldMeta,
   IDropdownButtonConfig,
   IEntityMeta,
   IRemoteTarget,
@@ -52,7 +52,7 @@ export interface PColumnConfigDrawer extends IRemoteTarget {
   /**
    * Current table field metadata.
    */
-  fieldMeta: FieldMeta;
+  fieldMeta: IFieldMeta;
   /**
    * Whether to display source badges.
    */
@@ -136,7 +136,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       ) === "true"
   );
 
-  const [newFieldMeta, setNewFieldMeta] = useState<FieldMeta>();
+  const [newFieldMeta, setNewFieldMeta] = useState<IFieldMeta>(deepCopy(fieldMeta));
   const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
   const [inactiveAttributes, setInactiveAttributes] = useState<string[]>(fieldMeta.order.inactive || []);
   const [limitVisibility, setLimitVisibility] = useState<boolean>(!!fieldMeta.order.limitVisibility);

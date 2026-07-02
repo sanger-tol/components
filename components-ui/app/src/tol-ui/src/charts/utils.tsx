@@ -326,7 +326,11 @@ function getSortedAggData(aggs: TAggregationResult): IAggData {
   // Return this new data, but order the keys from smallest to largest
   return {
     keys: Array.from(keys).sort((a: any, b: any) => {
-      return a - b;
+      if (typeof a == "string") {
+        return a.localeCompare(b);
+      } else {
+        return a - b;
+      }
     }),
     aggs: sortedAggs,
   };

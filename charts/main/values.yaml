@@ -125,6 +125,12 @@ tolcore:
       REACT_APP_PORTAL_API_PATH: portal.api_path
       REACT_APP_PORTAL_API_DATA_PATH: portal.api_data_path
       REACT_APP_MATOMO_SITE_ID: ui.matomo_site_id
+      REACT_APP_AUTH_API_DATA_PATH: api.auth_data_path
+      REACT_APP_LOCAL_API_DATA_PATH: api.local_data_path
+      REACT_APP_ACTION_API_DATA_PATH: api.action_data_path
+      REACT_APP_PREFECT_API_PATH: api.prefect_api_path
+      REACT_APP_DATA_UPLOAD_API_PATH: api.data_upload_api_path
+      REACT_APP_BOARDS_API_DATA_PATH: api.boards_api_data_path
   backup:
     schedule: ""
     uri: ""

@@ -8,34 +8,26 @@ import { Page } from "@playwright/test";
 
 import { enterEditMode, exitEditMode } from ".";
 
+const createShortId = (prefix: string) => `${prefix}_${crypto.randomUUID().slice(0, 12)}`;
+
 /**
  * @returns A random Board ID
  */
-export const createBoardId = () => `b_${crypto.randomUUID()}`;
+export const createBoardId = () => createShortId("b");
 /**
  * @returns A random View ID
  */
-export const createViewId  = () => `v_${crypto.randomUUID()}`;
+export const createViewId = () => createShortId("v");
 /**
  * @returns A random Zone ID
  */
-export const createZoneId  = () => `z_${crypto.randomUUID()}`;
+export const createZoneId = () => createShortId("z");
+/**
+ * @returns A random Component ID
+ */
+export const createComponentId = () => createShortId("c");
 
-export const createBoard = async (page: Page, boardName: string) => {
-  // click the create new board button
-  await page.getByTestId("create-new-board-button").click();
-
-  // click the modal
-  await page.getByText("Create New Board").click();
-
-  // name the board
-  await page.getByRole("textbox").fill(boardName);
-
-  // save the board
-  await page.getByRole("button", { name: "Create" }).click();
-};
-
-export const createZone = async (page: Page, zoneName: string) => {
+export const createZone = async (page: Page) => {
   // enter edit mode
   await enterEditMode(page);
 
@@ -46,17 +38,19 @@ export const createZone = async (page: Page, zoneName: string) => {
   // choose the dataspace picker
   await page.getByTestId("dataspace-picker").click();
 
-  // select the dataspace
+  // select the dataspace;
   await page.locator("[data-key=\"tol_production\"]").click();
 
   // choose the object type picker
-  await page.getByTestId("object-type-picker").click();
+  const objectTypePicker = page.getByTestId("object-type-picker");
+  await objectTypePicker.waitFor({ state: "visible" });
+  await objectTypePicker.click();
 
   // select the object type
-  await page.getByText("Curation").click();
+  const curationOption = page.getByText("Curation", { exact: true });
+  await curationOption.waitFor({ state: "visible" });
+  await curationOption.click();
 
-  // name the zone
-  await page.getByRole("textbox").fill(zoneName);
 
   // click confirm add zone button
   const confirmZoneButton = await page.getByTestId("add-zone-button");
@@ -67,23 +61,30 @@ export const createZone = async (page: Page, zoneName: string) => {
   await exitEditMode(page);
 };
 
-/**
- * From the my-board page, delete the board with ID `boardId`
- * @param page The Playwright page handle
- * @param boardId The ID of the board to delete
- */
-export const deleteBoard = async (page: Page, boardId: string) => {
+export const deleteBoard = async ({ page, boardID }) => {
   await page.goto("/my-boards");
 
   // find the correct board row
-  const boardRow = await page.getByTestId(boardId);
+  const boardRow = await page.getByTestId(boardID);
 
   // click the dropdown button
   await boardRow.locator(".my-boards-dropdown-buttons").click();
 
   // click the delete button
-  await page.locator("span").filter({ hasText: /^Delete$/, visible: true }).click();
+  await page.locator("span").filter({ hasText: /^Delete$/, visible: true, exact: true }).click();
 
   // click the confirm button
   await page.getByTestId("confirm-delete-button").click();
+};
+
+export const addView = async (page: Page) => {
+  // click add view button
+  const addViewButton = await page.getByTestId("board-add-view-button");
+  await addViewButton.click();
+
+  const newViewButton = await page.getByText("New View");
+  await newViewButton.click();
+
+  // exit edit mode
+  await exitEditMode(page);
 };

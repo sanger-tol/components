@@ -10,7 +10,7 @@ import {
   ActionCheckModal,
   ActionModal,
   API_METHODS,
-  FieldMeta,
+  IFieldMeta,
   IRemoteTargetAndZone,
   PUtilityBar,
   IZone,
@@ -62,11 +62,11 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
   /**
    * Initial field metadata for columns; overridden by any saved configuration for this table `id`
    */
-  fields?: FieldMeta;
+  fields?: IFieldMeta;
   /**
    * Base field metadata set by the board owner (for determining allowed columns in non-edit mode)
    */
-  baseFieldMeta?: Partial<FieldMeta>;
+  baseFieldMeta?: Partial<IFieldMeta>;
   /**
    * Default sort attribute when no saved sort configuration exists
    */
@@ -277,7 +277,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(
+  const [fieldMeta, setFieldMeta] = useState<IFieldMeta>(
     initialiseFieldMeta(
       getTableConfigLocalStorage(id, "fieldMeta") || fields
     )

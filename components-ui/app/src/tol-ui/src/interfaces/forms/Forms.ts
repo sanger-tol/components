@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { TMessageType, PButton, TsDataSource, PIcon } from "..";
+import { TMessageType, PButton, TsDataSource, PIcon } from "../..";
 
 export interface IWaitingUpload {
   message: string | React.ReactNode;
@@ -61,6 +61,8 @@ export interface ITextField {
   required?: boolean;
   centered?: boolean;
   icon?: IFormLabelIcon;
+  labelInline?: boolean;
+  section?: string;
 }
 
 // "email" and "password" are controlled by the same form element in
@@ -78,6 +80,7 @@ export interface ICountryselectField {
   type: "countryselect";
   label?: string;
   icon?: IFormLabelIcon;
+  section?: string;
 }
 
 export interface IDatetimeField {
@@ -89,6 +92,7 @@ export interface IDatetimeField {
   hideMinutes?: (minute: number, date: Date) => boolean;
   format?: string;
   icon?: IFormLabelIcon;
+  section?: string;
 }
 
 export interface ILabelAndValueDataInstance {
@@ -107,6 +111,7 @@ export interface ISingleselectField {
   placeholder?: string;
   block?: boolean;
   icon?: IFormLabelIcon;
+  section?: string;
 }
 
 export interface ISingleselectcustomoptionField {
@@ -116,6 +121,7 @@ export interface ISingleselectcustomoptionField {
   label?: string;
   customOptionPlaceholder?: string;
   icon?: IFormLabelIcon;
+  section?: string;
 }
 
 export interface IDropzoneField {
@@ -134,6 +140,7 @@ export interface IDropzoneField {
   resetKey?: string | number;
   validating?: boolean;
   icon?: IFormLabelIcon;
+  section?: string;
 }
 
 export interface IAutocompleteField {
@@ -143,6 +150,7 @@ export interface IAutocompleteField {
   data: string[];
   dataSource?: TsDataSource; // Exists if this is a RemoteAutoComplete field
   icon?: IFormLabelIcon;
+  section?: string;
 }
 
 export interface IMultipleselectField {
@@ -174,6 +182,7 @@ export interface IMultipleselectField {
   onExiting?: any;
   groupBy?: string;
   icon?: IFormLabelIcon;
+  section?: string;
 }
 
 export interface IMarkdownField {
@@ -185,6 +194,7 @@ export interface IMarkdownField {
   height?: string | number;
   helpText?: string;
   icon?: IFormLabelIcon;
+  section?: string;
 }
 
 // This is named to avoid conflict with `ICheckboxField` from `ICheckboxConfig`,
@@ -198,6 +208,7 @@ export interface ICheckboxFormField {
   inline?: boolean;
   indeterminate?: boolean;
   defaultChecked?: string[];
+  section?: string;
 }
 
 export type TFormField =
@@ -224,8 +235,25 @@ export interface IFormConfig {
   buttonConfig?: IFormButtons;
 }
 
+export interface IFieldMapping {
+  sourceField: string;
+  targetField: string;
+  condition?: (value: any) => boolean;
+  transform?: (value: any) => any;
+  readOnlyWhenMapped?: boolean;
+}
+
 export interface IRemoteAutoCompleteData {
   [key: string]: object[];
 }
 
 export type TAutoCompleteValue = string | { value: string, id: string };
+
+export interface IUserProfileFormData {
+  name?: string;
+  email?: string;
+  workplace?: string;
+  [key: string]: any;
+}
+
+export type TUserProfileFormDataOrNull = IUserProfileFormData | null;

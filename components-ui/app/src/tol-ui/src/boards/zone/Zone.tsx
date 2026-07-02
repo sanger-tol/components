@@ -40,12 +40,14 @@ export function Zone(props: PZone) {
   } = props;
 
   const { editMode, layoutMode } = useBoard();
-
+  
   const [zone, setZone] = useBoardState<IView, IZone>(id, view, setView);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
   const [title, setTitle] = useState(zone?.title);
+  
+  const { object_type, dataspace, filter } = zone;
 
   const onAddComponent = () => {
     setOpen(true);
@@ -128,7 +130,15 @@ export function Zone(props: PZone) {
           },
           hideButtons: true,
         }}
-        description={<TitleTooltip {...zone} />}
+        description={
+          <TitleTooltip
+            title={title!}
+            objectType={object_type!}
+            dataSource={dataspace!}
+            filter={filter}
+            id={id}
+          />
+        }
         buttons={[
           deleteButton,
           addButton,

@@ -49,6 +49,8 @@ export function Visualisation(props: PVisualisation) {
     onDeleteComponent,
   } = props;
 
+  const { object_type, dataspace, filter } = zone;
+
   const { editMode, layoutMode } = useBoard();
 
   const [title, setTitle] = useState(props.title);
@@ -83,7 +85,11 @@ export function Visualisation(props: PVisualisation) {
 
   const Description = (
     <TitleTooltip
-      {...zone}
+      title={title}
+      objectType={object_type!}
+      dataSource={dataspace!}
+      filter={filter}
+      id={id}
     />
   );
 

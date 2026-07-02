@@ -5,22 +5,28 @@
  */
 
 .tol-tabs {
+  .rs-nav.rs-nav-vertical {
+     max-height: fit-content !important;
+  }
+
   .rs-nav-pills {
     @extend .tol-widget;
     padding: 4px !important;
     margin: 0 !important;
 
+    &:not(.rs-nav-vertical) .rs-nav-item:not(:first-child) {
+      margin-left: 4px;
+    }
+
     .rs-nav-item {
       color: var(--tol-text);
-
-      &:not(:first-child) {
-        margin-left: 4px;
-      }
 
       &.rs-nav-item-active {
         color: var(--tol-primary);
         background-color: var(--tol-primary-translucent);
         border: 1px solid var(--tol-primary-translucent);
+        font-weight: normal;
+        text-shadow: 0.5px 0 0 currentColor;
       }
 
       &.rs-nav-item-disabled {

@@ -12,6 +12,20 @@
     margin-top: 5px;
     margin-bottom: 10px;
   }
+
+  .tol-form-wrapper-unique-sections-container {
+    margin-bottom: 30px;
+
+    .tol-form-wrapper-unique-sections-header {
+      width: 100%;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--tol-grey-subtle);
+    }
+
+    .tol-form-wrapper-unique-sections-field {
+      display: block;
+    }
+  }
 }
 
 .tol-form-checkboxes-text {
@@ -19,10 +33,32 @@
   flex-direction: column;
 }
 
+.tol-form-field-inline {
+  margin-top: 20px !important;
+}
+
+.tol-form-field-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+
+  label {
+    margin-bottom: 0 !important;
+  }
+}
+
 .tol-form-label {
   display: flex;
   gap: 5px;
   align-items: center;
+
+  &.inline {
+    display: inline-flex;
+    width: 140px;
+    padding-right: 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }
 
 .tol-multiple-form-input-row {
@@ -39,4 +75,10 @@
 .tol-required {
   color: var(--tol-danger);
   margin: 0 0.2rem;
+}
+
+.tol-profile-form-container {
+  padding: 15px;
+  border: 1px solid var(--tol-grey-subtle);
+  border-radius: 5px;
 }

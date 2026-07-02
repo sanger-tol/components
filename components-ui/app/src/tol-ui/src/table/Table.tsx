@@ -13,7 +13,7 @@ import {
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  FieldMeta,
+  IFieldMeta,
   IDropdownButtonConfig,
   useStateFallback,
   IRemoteTargetAndZone,
@@ -39,8 +39,8 @@ import {
 export interface PTable extends IRemoteTargetAndZone {
   id: string;
   data: any;
-  fieldMeta: FieldMeta;
-  baseFieldMeta?: Partial<FieldMeta>;
+  fieldMeta: IFieldMeta;
+  baseFieldMeta?: Partial<IFieldMeta>;
   height: any;
   loading: boolean;
   resizeableColumns?: boolean;
@@ -143,7 +143,7 @@ export function Table(props: PTable) {
   const showConfigReset: boolean | undefined = props.showConfigReset;
   const resetConfigDifferences: IConfigDifferences | undefined =
     props.resetConfigDifferences;
-  const baseFieldMeta: Partial<FieldMeta> | undefined = props.baseFieldMeta;
+  const baseFieldMeta: Partial<IFieldMeta> | undefined = props.baseFieldMeta;
 
   const { editMode } = useBoard();
 

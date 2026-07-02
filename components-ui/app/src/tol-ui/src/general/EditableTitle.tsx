@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { InlineEdit as RSInlineEdit } from "rsuite";
-import { PopUpMessage } from "src/messaging";
+import { PopUpMessage } from "..";
 
 export interface PEditableTitle {
   /**

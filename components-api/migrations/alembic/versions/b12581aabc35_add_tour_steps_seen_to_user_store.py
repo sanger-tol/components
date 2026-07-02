@@ -1,4 +1,4 @@
-"""Add tour_steps_seen to user store
+"""Add tours_seen to user store
 
 Revision ID: b12581aabc35
 Revises: b39604352175
@@ -18,8 +18,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column('user', sa.Column('tour_steps_seen', JSONB, nullable=True))
+    op.add_column('user', sa.Column('tours_seen', JSONB, nullable=True))
 
 
 def downgrade() -> None:
-    op.drop_column('user', 'tour_steps_seen')
+    op.drop_column('user', 'tours_seen')

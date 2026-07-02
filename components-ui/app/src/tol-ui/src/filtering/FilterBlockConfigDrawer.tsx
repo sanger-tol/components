@@ -4,13 +4,13 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   AttributeSelector,
+  deepEqual,
   Drawer,
   SelectedAttributesContainer,
   IRemoteTarget,
-  deepCopy,
 } from "..";
 
 
@@ -36,24 +36,18 @@ export function FilterBlockConfigDrawer(props: PFilterBlockConfigDrawer) {
     filterBlockConfig,
   } = props;
 
-  const [newFilterBlockConfig, setNewFilterBlockConfig] = useState<string[]>();
+  const initialConfigRef = useRef<string[]>(filterBlockConfig || []);
   const [attributes, setAttributes] = useState<string[]>([]);
 
-  const hasPendingChanges = (
-    JSON.stringify(newFilterBlockConfig) !== JSON.stringify(filterBlockConfig) ||
-    JSON.stringify(attributes) !== JSON.stringify(newFilterBlockConfig)
-  );
+  const hasPendingChanges = !deepEqual(attributes, initialConfigRef.current);
 
   useEffect(() => {
     setAttributes(filterBlockConfig || []);
-    setNewFilterBlockConfig(deepCopy(filterBlockConfig));
+    initialConfigRef.current = filterBlockConfig || [];
   }, [open]);
 
   const onSave = () => {
     if (hasPendingChanges) {
-      if (!newFilterBlockConfig) {
-        setNewFilterBlockConfig([]);
-      }
       onConfigSave(attributes);
     }
   };

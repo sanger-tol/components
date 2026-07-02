@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import * as XLSX from "xlsx";
 import {
-  FieldMeta,
+  IFieldMeta,
   TsDataSource,
   TDataObjectListOrNull,
   getFieldByName,
@@ -102,7 +102,7 @@ export function downloadForTable(
   frozenObjectType: string,
   frozenFilter: IFilter,
   frozenRequestedFields: string[],
-  fieldMeta: FieldMeta,
+  fieldMeta: IFieldMeta,
   title: PEditableTitle | undefined,
   stopDownloadRef: any,
   setFetchCount: (count: any) => void,
@@ -170,13 +170,13 @@ export function prepareChartDataForExport(
 export async function dataObjectToSpreadsheetData(
   dataObjects: TDataObjectListOrNull,
   requestedFields: string[],
-  fieldMeta: FieldMeta
+  fieldMeta: IFieldMeta
 ) {
   const spreadsheetData: any[] = [];
   dataObjects?.forEach((obj) => {
     const flatData = {};
     requestedFields.forEach((field) => {
-      flatData[fieldMeta.dataWithDefaults?.[field].rename ?? field] =
+      flatData[`${fieldMeta.dataWithDefaults?.[field]?.rename} (${field})`] =
         Array.isArray(getFieldByName(obj, field))
           ? getFieldByName(obj, field).toString()
           : getFieldByName(obj, field);

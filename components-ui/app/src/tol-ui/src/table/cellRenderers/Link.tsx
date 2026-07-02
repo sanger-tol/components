@@ -19,8 +19,7 @@ export interface PLink extends PCellDisplay {
 }
 
 export function Link(props: PLink) {
-  const { url, text, newTab, buttonConfig } = props;
-  const t = text || url;
+  const { url, text = "", newTab, buttonConfig } = props;
 
   const isExternal = () => {
     return /^(https?:\/\/|www\.|[a-zA-Z0-9-]+\.[a-zA-Z]{2,})/.test(url);
@@ -39,7 +38,7 @@ export function Link(props: PLink) {
   if (buttonConfig) {
     return (
       <Button
-        text={t}
+        text={text}
         onClick={handleClick}
         {...buttonConfig}
       />
@@ -47,8 +46,8 @@ export function Link(props: PLink) {
   }
   
   return openInNewTab ? (
-    <a href={url} target="_blank" rel="noopener noreferrer">{t}</a>
+    <a href={url} target="_blank" rel="noopener noreferrer">{text}</a>
   ) : (
-    <a href={url}>{t}</a>
+    <a href={url}>{text}</a>
   );
 }

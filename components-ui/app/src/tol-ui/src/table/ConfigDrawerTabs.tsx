@@ -10,7 +10,7 @@ import {
   SelectedAttributesContainer,
   Tabs,
 } from "..";
-import type { FieldMeta, IRemoteTarget } from "..";
+import type { IFieldMeta, IRemoteTarget } from "..";
 
 interface PConfigDrawerTabs extends IRemoteTarget {
   attributes: string[];
@@ -18,7 +18,7 @@ interface PConfigDrawerTabs extends IRemoteTarget {
   inactiveAttributes: string[];
   setInactiveAttributes: Dispatch<SetStateAction<string[]>>;
   additionalIcons: Array<({ attributeId }: { attributeId: string }) => ReactElement>;
-  fieldMeta: FieldMeta;
+  fieldMeta: IFieldMeta;
   allAttributeKeys?: string[];
   customAttributeSelection?: string[];
 }
@@ -79,15 +79,11 @@ export function ConfigDrawerTabs(props: PConfigDrawerTabs) {
             placeholder="Select columns to make them visible for users..."
             attribute={inactiveAttributes}
             setAttributes={setInactiveAttributes}
-            disabledValues={null}
+            disabledValues={attributes.length > 0 ? Object.fromEntries(attributes.map(attr => [attr, true])) : undefined}
             numPopulatedFields={0}
             populatedFieldType={"column"}
             additionalPopulatedFieldData={"."}
-            customAttributeSelection={
-              allAttributeKeys
-                ? allAttributeKeys.filter((col) => !attributes.includes(col))
-                : undefined
-            }
+            customAttributeSelection={allAttributeKeys}
           />
           <SelectedAttributesContainer
             {...props}
