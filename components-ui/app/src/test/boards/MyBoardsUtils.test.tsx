@@ -11,36 +11,40 @@ import { BOARD_ENTITIES, getBoardDetails } from "../../tol-ui/src";
 describe("getBoardDetails function", () => {
   test("The network response is interpreted correctly", async () => {
     const mockDataSource = new MockDataSource({
-      onPost: () => ({data: [
-        {
-          objectType: BOARD_ENTITIES.ENTITIES.BOARD,
-          id: "b_1234567890",
-          type: BOARD_ENTITIES.ENTITIES.BOARD,
-          name: "First",
-          children: {},
-          order: [],
-          owner_email: "bob@example.com",
-        },
-        {
-          objectType: BOARD_ENTITIES.ENTITIES.BOARD,
-          id: "b_1234567891",
-          type: BOARD_ENTITIES.ENTITIES.BOARD,
-          name: "Second",
-          children: {},
-          order: [],
-          owner_email: "example@bob.com",
-        }
-      ]
-    })});
+      onPost: () => ({data: {
+        data: [
+          {
+            id: "b_mock1",
+            type: BOARD_ENTITIES.ENTITIES.BOARD,
+            attributes: {
+              title: "First",
+              children: {},
+              order: [],
+              owner_email: "bob@example.com",
+            }
+          },
+          {
+            id: "b_mock2",
+            type: BOARD_ENTITIES.ENTITIES.BOARD,
+            attributes: {
+              title: "Second",
+              children: {},
+              order: [],
+              owner_email: "example@bob.com"
+            }
+          }
+        ]
+      }})
+    });
 
     const boardDetails = await getBoardDetails(mockDataSource, "id", () => {});
     expect(boardDetails).toEqual([
       {
-        id: "b_1234567890",
+        id: "b_mock1",
         title: "First",
       },
       {
-        id: "b_1234567891",
+        id: "b_mock2",
         title: "Second",
       }
     ]);
