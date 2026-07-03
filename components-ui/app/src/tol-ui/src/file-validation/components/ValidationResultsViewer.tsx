@@ -31,6 +31,8 @@ import {
   MAX_SYNC_DURATION,
   INITIAL_DELAY,
   POLL_INTERVAL,
+  SYNC_STATUS_METHOD,
+  SYNC_STATUS_RESOURCE,
 } from "../..";
 
 import type {
@@ -205,8 +207,8 @@ export function ValidationResultsViewer() {
 
       try {
         await PIPELINE_DS.custom({
-          method: "POST",
-          resource: "run-pipeline/sync-status",
+          method: SYNC_STATUS_METHOD,
+          resource: SYNC_STATUS_RESOURCE,
           body: { data: { upload_ids: [uploadId] } },
         });
         // Refetch after successful sync
