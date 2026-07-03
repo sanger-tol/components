@@ -12,17 +12,13 @@ import {
 } from "../..";
 import type { IZone, IFilter, IFieldTranslationParams, TRelationshipPaths } from "../..";
 
+
 /**
- * Handles translation of one-to-many relationship filters.
- * Translates filter attributes from the zone above by adding the relationship path prefix.
+ * Translates an attribute filter from the zone above into a relationship-prefixed
+ * filter usable by the current zone when traversing from one-side to many-side.
  *
- * @param field - The field name to translate.
- * @param filterValue - The filter value for the field.
- * @param objectType - The current zone's object type.
- * @param zoneAboveObjectType - The zone above's object type.
- * @param paths - Relationship path lookup table.
- * @param dataspace - The dataspace for checking relationship availability.
- * @param translatedFilter - The filter object to update with translated attributes.
+ * @param params - Relationship translation inputs for the current and parent zones.
+ * @returns A promise that resolves when the translated filter has been updated.
  */
 async function handleOneToManyRelationship({
   field,
@@ -34,25 +30,19 @@ async function handleOneToManyRelationship({
   translatedFilter
 }: IFieldTranslationParams): Promise<void> {
   // Only translate if the attribute is used as a relationship
-  if (await dataspace?.isAvailableOnRelationships(field, zoneAboveObjectType)) return;
-
-  // Find the first relationship path to translate from
-  const relationship = paths[objectType][zoneAboveObjectType].paths[0];
-  translatedFilter.and_![relationship + RELATIONSHIP_SEPARATOR + field] = filterValue;
+  if (await dataspace?.isAvailableOnRelationships(field, zoneAboveObjectType)) {
+    // Find the first relationship path to translate from
+    const relationship = paths[objectType][zoneAboveObjectType].paths[0];
+    translatedFilter.and_![relationship + RELATIONSHIP_SEPARATOR + field] = filterValue;
+  }
 }
 
 /**
- * Handles translation of many-to-one relationship filters.
- * Translates filter attributes by either removing the relationship prefix
- * (if the related object type matches the current zone) or replacing it with
- * the appropriate relationship path.
+ * Translates a relationship-prefixed filter from the zone above into the field
+ * format expected by the current zone when traversing from many-side to one-side.
  *
- * @param field - The field name to translate (may include relationship prefix).
- * @param filterValue - The filter value for the field.
- * @param objectType - The current zone's object type.
- * @param zoneAboveObjectType - The zone above's object type.
- * @param paths - Relationship path lookup table.
- * @param translatedFilter - The filter object to update with translated attributes.
+ * @param params - Relationship translation inputs for the current and parent zones.
+ * @returns A promise that resolves when the translated filter has been updated.
  */
 async function handleManyToOneRelationship({
   field,
@@ -60,24 +50,31 @@ async function handleManyToOneRelationship({
   objectType,
   zoneAboveObjectType,
   paths,
+  dataspace,
   translatedFilter
 }: IFieldTranslationParams): Promise<void> {
+  // Find the related object type whose relationship path matches the field prefix
   const relatedObjectType = getRelationshipObjectType(field, zoneAboveObjectType, paths);
 
-  if (relatedObjectType === objectType) {
-    // If the relationship's object type matches the current zone's object type,
-    // we can remove the relationship prefix.
-    const newField = field.split(RELATIONSHIP_SEPARATOR).slice(-1)[0];
-    translatedFilter.and_![newField] = filterValue;
-  } else if (relatedObjectType) {
-    /**
-     * If the relationship's object type does not match the current zone's object type,
-     * we can translate the filter by removing the relationship prefix and adding
-     * the first relationship path to the attribute.
-     */
-    const newField = field.split(RELATIONSHIP_SEPARATOR).slice(-1)[0];
-    const relationship = paths[objectType][relatedObjectType].paths[0];
-    translatedFilter.and_![relationship + RELATIONSHIP_SEPARATOR + newField] = filterValue;
+  // Only translate attributes that are available on relationships
+  if (relatedObjectType && await dataspace?.isAvailableOnRelationships(field, relatedObjectType)) {
+    if (relatedObjectType === objectType) {
+      /*
+       * If the relationship's object type matches the current zone's object type,
+       * we can remove the relationship prefix.
+       */
+      const newField = field.split(RELATIONSHIP_SEPARATOR).slice(-1)[0];
+      translatedFilter.and_![newField] = filterValue;
+    } else if (relatedObjectType) {
+      /**
+       * If the relationship's object type does not match the current zone's object type,
+       * we can translate the filter by removing the relationship prefix and adding
+       * the first relationship path to the attribute.
+       */
+      const newField = field.split(RELATIONSHIP_SEPARATOR).slice(-1)[0];
+      const relationship = paths[objectType][relatedObjectType].paths[0];
+      translatedFilter.and_![relationship + RELATIONSHIP_SEPARATOR + newField] = filterValue;
+    }
   }
 }
 
@@ -107,7 +104,6 @@ export async function translateZoneAboveFilter(
      * }
      */
     const paths = await dataspace?.relationshipPaths();
-    console.log('paths', paths)
     const zoneAboveFilter = generateFilter(zoneAbove);
     if (paths && translatedFilter.and_ && zoneAboveFilter) {
       for (const [field, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
@@ -119,8 +115,8 @@ export async function translateZoneAboveFilter(
            * translate the filter by adding the first relationship path to the attribute.
            */
           isAttribute(field) &&
-          zoneAbove.object_type! in paths &&
-          object_type! in paths[zoneAbove.object_type!]
+          object_type! in paths &&
+          zoneAbove.object_type! in paths[object_type!]
         ) {
           await handleOneToManyRelationship({
             field,
@@ -144,8 +140,8 @@ export async function translateZoneAboveFilter(
            *    the first relationship path to the attribute.
            */
           isRelationship(field) &&
-          object_type! in paths &&
-          zoneAbove.object_type! in paths[object_type!]
+          (zoneAbove.object_type! in paths ||
+            object_type! in paths[zoneAbove.object_type!])
         ) {
           await handleManyToOneRelationship({
             field,
@@ -153,6 +149,7 @@ export async function translateZoneAboveFilter(
             objectType: object_type!,
             zoneAboveObjectType: zoneAbove.object_type!,
             paths,
+            dataspace,
             translatedFilter
           });
         }

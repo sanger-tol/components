@@ -30,6 +30,7 @@ import {
   MESSAGE_TYPE,
   BOARD_MESSAGE_TEXT,
   updateComponentConfigAndUpsert,
+  isRelationship,
 } from "..";
 import type {
   TsDataSource,
