@@ -8,7 +8,9 @@ SPDX-License-Identifier: MIT
  * The sizing parameters to pass to react-grid-layout
  * for each size of visualisation/component.
  * 
- * The sizes are not capitalised so that they match `widget_type` from `IComponent`
+ * Component sizes are on the left; their breakpoints are on the right
+ * (both are called sm, md and lg but mean different things).
+ * The sizes are not capitalised so that they match `widget_type` from `IComponent`.
  */
 export const VISUALISATION_BREAKPOINTS = {
   sm: { lg: { w: 1, h: 10 }, md: { w: 1, h: 10 }, sm: { w: 1, h: 10 } },
