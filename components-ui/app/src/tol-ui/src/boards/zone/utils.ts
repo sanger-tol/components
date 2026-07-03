@@ -15,7 +15,6 @@ import type { IZone, IFilter, IFieldTranslationParams, TRelationshipPaths } from
 /**
  * Handles translation of one-to-many relationship filters.
  * Translates filter attributes from the zone above by adding the relationship path prefix.
- * Because all paths are flattened, every relationship is exactly one hop away.
  *
  * @param field - The field name to translate.
  * @param filterValue - The filter value for the field.
@@ -24,11 +23,6 @@ import type { IZone, IFilter, IFieldTranslationParams, TRelationshipPaths } from
  * @param paths - Relationship path lookup table.
  * @param dataspace - The dataspace for checking relationship availability.
  * @param translatedFilter - The filter object to update with translated attributes.
- *
- * @example
- * // Zone above: sample (many-side), current zone: specimen (one-side)
- * // Field `tolid` (attribute on sample) is translated to `specimen.tolid` in the specimen zone.
- * // { tolid: "mTadTad1" } -> { "specimen.tolid": "mTadTad1" }
  */
 async function handleOneToManyRelationship({
   field,
@@ -52,7 +46,6 @@ async function handleOneToManyRelationship({
  * Translates filter attributes by either removing the relationship prefix
  * (if the related object type matches the current zone) or replacing it with
  * the appropriate relationship path.
- * Because all paths are flattened, every relationship is exactly one hop away.
  *
  * @param field - The field name to translate (may include relationship prefix).
  * @param filterValue - The filter value for the field.
@@ -60,20 +53,6 @@ async function handleOneToManyRelationship({
  * @param zoneAboveObjectType - The zone above's object type.
  * @param paths - Relationship path lookup table.
  * @param translatedFilter - The filter object to update with translated attributes.
- *
- * @example
- * // Case 1: related object type matches the current zone — strip the relationship prefix.
- * // Zone above: specimen (one-side), current zone: sample (many-side)
- * // Field `specimen.tolid` is translated to `tolid` because the current zone is `sample`,
- * // which is directly related to `specimen`.
- * // { "specimen.tolid": "mTadTad1" } -> { tolid: "mTadTad1" }
- *
- * @example
- * // Case 2: related object type does not match the current zone — replace the prefix.
- * // Zone above: specimen (one-side), current zone: sample (many-side)
- * // Field `species.name` from the specimen zone is translated to `species.name` in the
- * // sample zone, because both specimen and sample are one hop away from species.
- * // { "species.name": "Tad" } -> { "species.name": "Tad" }
  */
 async function handleManyToOneRelationship({
   field,
@@ -119,16 +98,11 @@ export async function translateZoneAboveFilter(
 
   if (zoneAbove) {
     /**
-     * Paths are formatted from many-side to one-side and are flattened,
-     * meaning all relationships are exactly one hop away.
+     * Paths are formatted from many-side to one-side.
      * For instance:
      * {
-     *   "sample": {
-     *     "specimen": { paths: ["specimen"] },
-     *     "species":  { paths: ["species"] }
-     *   },
-     *   "specimen": {
-     *     "species": { paths: ["species"] }
+     *   "sequencing_request": {
+     *     "tolid": { ... }
      *   }
      * }
      */
@@ -191,12 +165,10 @@ export async function translateZoneAboveFilter(
 /**
  * Finds the related object type whose relationship path matches a field prefix.
  *
- * @param field - Field key to inspect (for example, `specimen.tolid` or `species.name`).
- * @param objectType - Current object type used as the lookup root in `paths` (for example, `sample`).
+ * @param field - Field key to inspect (for example, `species.name`).
+ * @param objectType - Current object type used as the lookup root in `paths`.
  * @param paths - Relationship path lookup table keyed by source and target object types.
- *   All relationships are one hop away (flattened).
- * @returns The matched related object type (for example, `specimen` or `species`),
- *   or `null` when no relationship prefix matches.
+ * @returns The matched related object type, or `null` when no relationship prefix matches.
  */
 function getRelationshipObjectType(
   field: string,
