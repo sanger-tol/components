@@ -5,17 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 /**
- * Sync status polling configuration constants
+ * Sync status polling timing configuration constants
  */
 
-// API Endpoint Configuration
-/** HTTP method for sync status API calls */
-export const SYNC_STATUS_METHOD = "POST";
-
-/** API resource endpoint for syncing validation status */
-export const SYNC_STATUS_RESOURCE = "run-pipeline/sync-status";
-
-// Polling Timing Configuration
 /** Maximum duration to continue polling for sync status updates (5 minutes) */
 export const MAX_SYNC_DURATION = 300000; // 5 minutes
 

@@ -18,6 +18,7 @@ import {
   Icon,
   Button,
   VALIDATION_ENDPOINTS,
+  API_METHODS,
   BUTTON_TIMEOUT,
   PIPELINE_DS,
   ValidationReport,
@@ -31,8 +32,6 @@ import {
   MAX_SYNC_DURATION,
   INITIAL_DELAY,
   POLL_INTERVAL,
-  SYNC_STATUS_METHOD,
-  SYNC_STATUS_RESOURCE,
 } from "../..";
 
 import type {
@@ -207,8 +206,8 @@ export function ValidationResultsViewer() {
 
       try {
         await PIPELINE_DS.custom({
-          method: SYNC_STATUS_METHOD,
-          resource: SYNC_STATUS_RESOURCE,
+          method: API_METHODS.POST,
+          resource: VALIDATION_ENDPOINTS.SYNC_STATUS,
           body: { data: { upload_ids: [uploadId] } },
         });
         // Refetch after successful sync

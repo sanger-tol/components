@@ -7,6 +7,6 @@ SPDX-License-Identifier: MIT
 export * from "./components";
 export * from "./utils";
 export * from "./validation-policy";
-export * from "./constants/api";
+export * from "./constants/syncStatusConstants";
 export * from "./FileValidationUploadAndResults";
 export * from "./FileValidationHome"
