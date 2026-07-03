@@ -58,10 +58,6 @@ interface Rgb {
   b: number;
 }
 
-export function isRelationship(key: string) {
-  return key.includes(".");
-}
-
 const sourceColours = {
   sts: colours[0],
   benchling: colours[1],
@@ -330,13 +326,13 @@ export function copyPageColumnValues(
         getFieldByName(element[fieldHeader].props.dataObject, fieldHeader),
       )
         ? getFieldByName(
-            element[fieldHeader].props.dataObject,
-            fieldHeader,
-          ).join(",")
+          element[fieldHeader].props.dataObject,
+          fieldHeader,
+        ).join(",")
         : [
-            getFieldByName(element[fieldHeader].props.dataObject, fieldHeader) +
-              (separator || ""),
-          ],
+          getFieldByName(element[fieldHeader].props.dataObject, fieldHeader) +
+          (separator || ""),
+        ],
     ),
   );
   const emptyStringsRemoval = Array.from(copySet).filter(Boolean);
@@ -708,14 +704,14 @@ export async function handleSavedDiffReset(
   const diffId = componentData?.config_diff?.id;
   isLoggedIn && diffState.hasDiff && diffId
     ? await deleteComponentDiff(boardDataSource, diffId, userId ?? "").then(
-        () => {
-          isSuccessDiffReset = true;
-        },
-      )
+      () => {
+        isSuccessDiffReset = true;
+      },
+    )
     : diffState.hasDiff
       ? (clearTableConfigLocalStorage(
-          `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${componentData.id}`,
-        ),
+        `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${componentData.id}`,
+      ),
         (isSuccessDiffReset = true))
       : null;
 
@@ -815,7 +811,7 @@ export function createTableConfigHandlers({
       if (isLoggedIn) {
         const diffId = componentData?.config_diff?.id;
         if (diffId) {
-          deleteComponentDiff(boardDataSource, diffId, userId ?? "").catch(() => {});
+          deleteComponentDiff(boardDataSource, diffId, userId ?? "").catch(() => { });
           componentData.config_diff = undefined;
         }
       } else {

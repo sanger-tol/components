@@ -6,3 +6,4 @@ SPDX-License-Identifier: MIT
 
 export * from "./DataObject"
 export * from "./TsDataSource"
+export * from "./utils"

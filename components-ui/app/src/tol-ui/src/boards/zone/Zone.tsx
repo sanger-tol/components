@@ -58,10 +58,12 @@ export function Zone(props: PZone) {
   }, [zoneAbove]);
 
   const updateTranslatedFilter = async () => {
-    if (zoneAbove) {
-      const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
-      zone.filter = translatedFilter;
-      setZone({ ...zone });
+    if (zone.object_type === "sequencing_request") {
+      if (zoneAbove) {
+        const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
+        zone.filter = translatedFilter;
+        setZone({ ...zone });
+      }
     }
   };
 

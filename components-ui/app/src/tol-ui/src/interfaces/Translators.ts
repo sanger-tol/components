@@ -19,9 +19,9 @@ export interface IFieldTranslationParams {
    */
   field: string;
   /**
-   * The filter associated with the attribute to be translated.
+   * The filter value associated with the attribute to be translated.
    */
-  filter: IFilterOperators;
+  filterValue: IFilterOperators;
   /**
    * The object type of the current zone.
    */

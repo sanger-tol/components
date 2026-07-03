@@ -6,82 +6,99 @@ SPDX-License-Identifier: MIT
 
 import {
   generateFilter,
+  isAttribute,
   isRelationship,
-  RELATIONSHIP_SEPARATOR
+  RELATIONSHIP_SEPARATOR,
 } from "../..";
-import type { IZone, IFilter, IFieldTranslationParams } from "../..";
-
+import type { IZone, IFilter, IFieldTranslationParams, TRelationshipPaths } from "../..";
 
 /**
- * Adds a relationship prefix to an attribute when current zone is above the zone being filtered.
- * 
- * @param params - An object containing the parameters needed for the translation.
- * @returns A promise that resolves when the translation is complete.
+ * Handles translation of one-to-many relationship filters.
+ * Translates filter attributes from the zone above by adding the relationship path prefix.
+ * Because all paths are flattened, every relationship is exactly one hop away.
+ *
+ * @param field - The field name to translate.
+ * @param filterValue - The filter value for the field.
+ * @param objectType - The current zone's object type.
+ * @param zoneAboveObjectType - The zone above's object type.
+ * @param paths - Relationship path lookup table.
+ * @param dataspace - The dataspace for checking relationship availability.
+ * @param translatedFilter - The filter object to update with translated attributes.
+ *
+ * @example
+ * // Zone above: sample (many-side), current zone: specimen (one-side)
+ * // Field `tolid` (attribute on sample) is translated to `specimen.tolid` in the specimen zone.
+ * // { tolid: "mTadTad1" } -> { "specimen.tolid": "mTadTad1" }
  */
-async function handleAddRelationshipPrefix({
+async function handleOneToManyRelationship({
   field,
-  filter,
+  filterValue,
   objectType,
   zoneAboveObjectType,
   paths,
   dataspace,
   translatedFilter
 }: IFieldTranslationParams): Promise<void> {
-  
-  const isAvailableOnRelationships = await dataspace?.isAvailableOnRelationships(
-    field,
-    zoneAboveObjectType
-  );
-  if (!isAvailableOnRelationships) return;
+  // Only translate if the attribute is used as a relationship
+  if (await dataspace?.isAvailableOnRelationships(field, zoneAboveObjectType)) return;
 
-  if (isRelationship(field)) {
-    translatedFilter.and_![field] = filter;
-  } else {
-    /**
-     * Just use the first relationship path for the translation.
-     * It might seem like the filter hasn't visually passed onto the second zone,
-     * but this is because the relationship name might be different.
-    */
-    const relationship = paths[objectType][zoneAboveObjectType].paths[0];
-    translatedFilter.and_![relationship + RELATIONSHIP_SEPARATOR + field] = filter;
-  }
+  // Find the first relationship path to translate from
+  const relationship = paths[objectType][zoneAboveObjectType].paths[0];
+  translatedFilter.and_![relationship + RELATIONSHIP_SEPARATOR + field] = filterValue;
 }
 
 /**
- * Removes a relationship prefix from an attribute when current zone is below the zone being filtered.
- * 
- * @param params - An object containing the parameters needed for the translation.
- * @returns A promise that resolves when the translation is complete.
+ * Handles translation of many-to-one relationship filters.
+ * Translates filter attributes by either removing the relationship prefix
+ * (if the related object type matches the current zone) or replacing it with
+ * the appropriate relationship path.
+ * Because all paths are flattened, every relationship is exactly one hop away.
+ *
+ * @param field - The field name to translate (may include relationship prefix).
+ * @param filterValue - The filter value for the field.
+ * @param objectType - The current zone's object type.
+ * @param zoneAboveObjectType - The zone above's object type.
+ * @param paths - Relationship path lookup table.
+ * @param translatedFilter - The filter object to update with translated attributes.
+ *
+ * @example
+ * // Case 1: related object type matches the current zone — strip the relationship prefix.
+ * // Zone above: specimen (one-side), current zone: sample (many-side)
+ * // Field `specimen.tolid` is translated to `tolid` because the current zone is `sample`,
+ * // which is directly related to `specimen`.
+ * // { "specimen.tolid": "mTadTad1" } -> { tolid: "mTadTad1" }
+ *
+ * @example
+ * // Case 2: related object type does not match the current zone — replace the prefix.
+ * // Zone above: specimen (one-side), current zone: sample (many-side)
+ * // Field `species.name` from the specimen zone is translated to `species.name` in the
+ * // sample zone, because both specimen and sample are one hop away from species.
+ * // { "species.name": "Tad" } -> { "species.name": "Tad" }
  */
-async function handleRemoveRelationshipPrefix({
+async function handleManyToOneRelationship({
   field,
-  filter,
+  filterValue,
   objectType,
   zoneAboveObjectType,
   paths,
-  dataspace,
   translatedFilter
 }: IFieldTranslationParams): Promise<void> {
-  
-  const isAvailableOnRelationships = await dataspace?.isAvailableOnRelationships(
-    field,
-    objectType
-  );
-  if (!isAvailableOnRelationships) return;
+  const relatedObjectType = getRelationshipObjectType(field, zoneAboveObjectType, paths);
 
-  let matchingPath = false;
-  // Check if the attribute starts with any of the relationship paths
-  for (const path of paths[zoneAboveObjectType][objectType].paths) {
-    if (field.startsWith(path + RELATIONSHIP_SEPARATOR)) {
-      const newField = field.replace(path + RELATIONSHIP_SEPARATOR, "");
-      translatedFilter.and_![newField] = filter;
-      matchingPath = true;
-      break;
-    }
-  }
-  // Keep the attribute as is if no matching relationship path was found
-  if (!matchingPath && isRelationship(field)) {
-    translatedFilter.and_![field] = filter;
+  if (relatedObjectType === objectType) {
+    // If the relationship's object type matches the current zone's object type,
+    // we can remove the relationship prefix.
+    const newField = field.split(RELATIONSHIP_SEPARATOR).slice(-1)[0];
+    translatedFilter.and_![newField] = filterValue;
+  } else if (relatedObjectType) {
+    /**
+     * If the relationship's object type does not match the current zone's object type,
+     * we can translate the filter by removing the relationship prefix and adding
+     * the first relationship path to the attribute.
+     */
+    const newField = field.split(RELATIONSHIP_SEPARATOR).slice(-1)[0];
+    const relationship = paths[objectType][relatedObjectType].paths[0];
+    translatedFilter.and_![relationship + RELATIONSHIP_SEPARATOR + newField] = filterValue;
   }
 }
 
@@ -101,18 +118,39 @@ export async function translateZoneAboveFilter(
   const { object_type, dataspace } = currentZone;
 
   if (zoneAbove) {
+    /**
+     * Paths are formatted from many-side to one-side and are flattened,
+     * meaning all relationships are exactly one hop away.
+     * For instance:
+     * {
+     *   "sample": {
+     *     "specimen": { paths: ["specimen"] },
+     *     "species":  { paths: ["species"] }
+     *   },
+     *   "specimen": {
+     *     "species": { paths: ["species"] }
+     *   }
+     * }
+     */
     const paths = await dataspace?.relationshipPaths();
+    console.log('paths', paths)
     const zoneAboveFilter = generateFilter(zoneAbove);
     if (paths && translatedFilter.and_ && zoneAboveFilter) {
-      for (const [field, filter] of Object.entries(zoneAboveFilter.and_ || {})) {
+      for (const [field, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
         if (
-          // Add the relationship prefix
-          object_type! in paths &&
-          zoneAbove.object_type! in paths[object_type!]
+          /**
+           * If the field is an attribute, the current zone's object type
+           * is on the one-side of the relationship, and the zone above's
+           * object type is on the many-side of the relationship - we can
+           * translate the filter by adding the first relationship path to the attribute.
+           */
+          isAttribute(field) &&
+          zoneAbove.object_type! in paths &&
+          object_type! in paths[zoneAbove.object_type!]
         ) {
-          await handleAddRelationshipPrefix({
+          await handleOneToManyRelationship({
             field,
-            filter,
+            filterValue,
             objectType: object_type!,
             zoneAboveObjectType: zoneAbove.object_type!,
             paths,
@@ -120,17 +158,27 @@ export async function translateZoneAboveFilter(
             translatedFilter
           });
         } else if (
-          // Remove any possible relationship prefix
-          zoneAbove.object_type! in paths &&
-          object_type! in paths[zoneAbove.object_type!]
+          /**
+           * If the field is a relationship, the current zone's object type
+           * is on the many-side of the relationship, and the zone above's
+           * object type is on the one-side of the relationship - we can
+           * can do either of the following:
+           * 1. If the relationship's object type matches the current zone's object type,
+           *    we can remove the relationship prefix.
+           * 2. If the relationship's object type does not match the current zone's object type,
+           *    we can translate the filter by removing the relationship prefix and adding
+           *    the first relationship path to the attribute.
+           */
+          isRelationship(field) &&
+          object_type! in paths &&
+          zoneAbove.object_type! in paths[object_type!]
         ) {
-          await handleRemoveRelationshipPrefix({
+          await handleManyToOneRelationship({
             field,
-            filter,
+            filterValue,
             objectType: object_type!,
             zoneAboveObjectType: zoneAbove.object_type!,
             paths,
-            dataspace,
             translatedFilter
           });
         }
@@ -138,4 +186,27 @@ export async function translateZoneAboveFilter(
     }
   }
   return translatedFilter;
+}
+
+/**
+ * Finds the related object type whose relationship path matches a field prefix.
+ *
+ * @param field - Field key to inspect (for example, `specimen.tolid` or `species.name`).
+ * @param objectType - Current object type used as the lookup root in `paths` (for example, `sample`).
+ * @param paths - Relationship path lookup table keyed by source and target object types.
+ *   All relationships are one hop away (flattened).
+ * @returns The matched related object type (for example, `specimen` or `species`),
+ *   or `null` when no relationship prefix matches.
+ */
+function getRelationshipObjectType(
+  field: string,
+  objectType: string,
+  paths: TRelationshipPaths
+): string | null {
+  for (const [relatedObjectType, relationship] of Object.entries(paths[objectType] || {})) {
+    if (relationship.paths.some(path => field.startsWith(path + RELATIONSHIP_SEPARATOR))) {
+      return relatedObjectType;
+    }
+  }
+  return null;
 }
