@@ -24,7 +24,22 @@ test("Cannot edit others' boards", async ({ page }) => {
   // Add a new user and give them a board in the DB
   // This is not the same user as our browser session
   const { userId } = await addUserToDB();
-  const otherUserBoard = await createBoardForUser(String(userId));
+  const { boardId: otherUserBoard } = await createBoardForUser(String(userId));
   await page.goto(`/board/${otherUserBoard}`);
   await expect(page.getByTestId("board-enter-edit-mode-button")).not.toBeVisible();
+});
+
+test("Warden can edit other peoples boards", async ({ page }) => {
+  // Sets a user session up for the browser
+  const browserUserBoard = createBoardId();
+  await setAuth(page, ['warden']);
+  await setBoard(page, browserUserBoard);
+  await expect(page.getByTestId("board-enter-edit-mode-button")).toBeVisible();
+
+  // Add a new user and give them a board in the DB
+  // This is not the same user as our browser session
+  const { userId } = await addUserToDB();
+  const { boardId: otherUserBoard } = await createBoardForUser(String(userId));
+  await page.goto(`/board/${otherUserBoard}`);
+  await expect(page.getByTestId("board-enter-edit-mode-button")).toBeVisible();
 });
