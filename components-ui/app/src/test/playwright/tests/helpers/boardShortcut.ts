@@ -9,6 +9,19 @@ import { createBoardId, createViewId, createZoneId, createComponentId } from "."
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
+export interface InsertComponentToBoardOptions {
+  userId: string;
+  componentTitle: string;
+  zoneId: string;
+  componentType?: string;
+  datasourceInstanceId?: string;
+  filter?: Record<string, unknown>;
+  config?: Record<string, unknown>;
+  widgetType?: string;
+  objectType?: string;
+  order?: number;
+}
+
 const insertBoardToDB = async (
   userId: string,
   boardId: string,
@@ -63,26 +76,20 @@ export const createBoardForUser = async (userId: string) => {
 
 /**
  * Inserts a component into the database for the given user ID and zone ID
- * @param userId The ID of the owner user of this new component
- * @param componentTitle The title of the new component
- * @param zoneId The ID of the zone to insert this component into
- * @param componentType The type of the new component (default: "table")
- * @param datasourceInstanceId The ID of the datasource instance to use (default: "tol_production")
- * @param filter The filter object for the new component (default: {})
- * @param config The config object for the new component (default: {})
- * @param widgetType The widget type for the new component (default: "lg")
- * @param objectType The object type for the new component (default: "curation")
  */
-export const InsertComponentToBoard = async (
-  userId: string,
-  componentTitle: string,
-  zoneId: string,
-  componentType: string = "table",
-  datasourceInstanceId: string = "tol_production",
-  filter: object = {},
-  config: object = {},
-  widgetType: string = "lg",
-  objectType: string = "curation",
+export const insertComponentToBoard = async (
+  {
+    userId,
+    componentTitle,
+    zoneId,
+    componentType = "table",
+    datasourceInstanceId = "tol_production",
+    filter = {},
+    config = {},
+    widgetType = "lg",
+    objectType = "curation",
+    order = 1,
+  }: InsertComponentToBoardOptions
 ) => {
   try {
     const componentId = createComponentId();
@@ -101,7 +108,7 @@ export const InsertComponentToBoard = async (
         '${datasourceInstanceId}'
       );
       INSERT INTO "component_zone"
-      VALUES (${randomInt()}, '1', '${componentId}', '${zoneId}');
+      VALUES (${randomInt()}, '${order}', '${componentId}', '${zoneId}');
     `).simple();
   }
   catch (e) {
