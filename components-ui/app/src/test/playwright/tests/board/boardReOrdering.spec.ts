@@ -9,10 +9,24 @@ import {
   isInHeadlessMode,
   createBoardForUser,
   insertComponentToBoard,
+  insertZoneToBoard,
 } from "../helpers";
 
 
 test.use({ headless: isInHeadlessMode });
+
+const insertTableComponents = async (userId: string, zoneId: string, iterations: number) => {
+  for (let i = 1; i <= iterations; i++) {
+    await insertComponentToBoard(
+      {
+        userId: String(userId),
+        componentTitle: `Test Table ${i}`,
+        zoneId,
+        order: i
+      }
+    );
+  }
+};
 
 test.beforeEach(async ({ page }) => {
   await setAuth(page);
@@ -21,24 +35,22 @@ test.beforeEach(async ({ page }) => {
   });
   const userId = JSON.parse(user || '{}').id;
 
-  const { boardId, zoneId } = await createBoardForUser(String(userId));
-  await insertComponentToBoard(
-    {
-      userId: String(userId),
-      componentTitle: "Test Table 1",
-      zoneId,
-      order: 1
-    }
-  );
+  const { boardId, zoneId, viewId } = await createBoardForUser({
+    userId: String(userId),
+    zoneTitle: "Test Zone",
+  });
 
-  await insertComponentToBoard(
-    {
-      userId: String(userId),
-      componentTitle: "Test Table 2",
-      zoneId,
-      order: 2,
-    }
-  );
+  const secondZoneId = await insertZoneToBoard({
+    userId: String(userId),
+    viewId,
+    title: "Zone 2",
+    objectType: "curation",
+    order: 2,
+  });
+
+  await insertTableComponents(String(userId), zoneId, 2);
+  await insertTableComponents(String(userId), secondZoneId!, 2);
+
   await page.goto(`/board/${boardId}`);
   await enterEditMode(page);
 });
@@ -73,4 +85,8 @@ test("Can re-order components", async ({ page }) => {
   // Assuming table 2 is where table 1 was initially
   await expect((await table2.boundingBox())?.x).toBe(initialXPosition);
   await expect((await table2.boundingBox())?.y).toBe(initialYPosition);
+});
+
+test("Can re-order zones", async ({ page }) => {
+  await page.getByTestId("board-layout-mode-button").click();
 });
