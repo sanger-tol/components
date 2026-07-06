@@ -41,7 +41,7 @@ test("manage dashboard", async ({ page }) => {
 
 test("shows personal table configuration notices outside edit mode", async ({ page }) => {
   await addComponent(page, 0, "table", "large");
-  sleep(500); // Wait for 500ms to ensure the modal has closed before trying to click exit edit mode button
+  await page.getByTestId("component-creation-modal").waitFor({ state: "hidden", timeout: 5000 });
   await exitEditMode(page);
 
   await clickUtilityBarButton(page, "table-config-button", 0);
