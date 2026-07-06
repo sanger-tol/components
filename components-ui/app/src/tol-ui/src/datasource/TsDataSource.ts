@@ -7,36 +7,39 @@ SPDX-License-Identifier: MIT
 import { retry } from "../services/http/retry";
 import { clearExpiredToken } from "../services/auth/clearExpiredToken";
 import {
-  IEntityMeta,
+  API_METHODS,
+  API_OPERATIONS,
+  deepCopy,
+  httpClient,
+  normaliseCaps,
+} from "..";
+import type {
+  IAttributeDescriptor,
   IAttributes,
-  IRelationships,
+  TClient,
   IConfigPromises,
-  IEntityMetaPromises,
+  ICustom,
   IDataSource,
+  IEntityMeta,
+  IEntityMetaPromises,
+  IGetAttributeDescriptor,
+  IGetByIds,
+  IGetList,
+  IGetListCursor,
+  IGetListPage,
   IGetOne,
   IGetToOneRelation,
-  IUpsert,
-  IGetByIds,
-  IGetListPage,
-  ICustom,
-  ISourceDataObject,
-  TDataObjectOrNull,
-  TDataObjectListOrNull,
-  httpClient,
-  deepCopy,
-  API_METHODS,
-  IGetListCursor,
-  TCursorObjectOrNull,
-  normaliseCaps,
-  IGetList,
-  IGetAttributeDescriptor,
-  IAttributeDescriptor,
-  API_OPERATIONS,
   IIncludedLookup,
   IJsonApiData,
   IJsonApiResponse,
   IJsonApiResponseData,
   IRelationshipPointer,
+  IRelationships,
+  ISourceDataObject,
+  IUpsert,
+  TCursorObjectOrNull,
+  TDataObjectListOrNull,
+  TDataObjectOrNull,
 } from "..";
 
 
@@ -44,7 +47,7 @@ const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
 export class TsDataSource {
-  private client: any;
+  private client: TClient;
   private url: string | undefined;
   private apiPath: string | undefined;
   private apiDataPath: string | undefined;

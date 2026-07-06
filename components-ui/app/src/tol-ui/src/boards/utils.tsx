@@ -78,30 +78,6 @@ export function deriveBoardChildObjectType(parentObjectType: string): TBoardEnti
 }
 
 /**
- * Recursively defines all children of a parent board entity.
- *
- * @param entity The parent board entity whose children should be defined.
- * @param objectType The type of the parent board entity.
- * @returns A record containing all defined child entities.
- */
-export function defineChildrenEntities(
-  entity: Partial<TParentBoardEntity>,
-  objectType: string
-): Record<string, TChildBoardEntity> {
-  return Object.entries(entity.children!).reduce(
-    (acc, [childId, childEntity]) => {
-      const childObjectType = deriveBoardChildObjectType(objectType);
-      acc[childId] = defineBoardEntity(
-        childEntity,
-        childObjectType!,
-      ) as TChildBoardEntity;
-      return acc;
-    },
-    {} as TBoardChildren<TChildBoardEntity>,
-  )
-}
-
-/**
  * Defines a board entity (view, zone, or component) by adding it to its parent entity and setting default
  * values for certain properties based on the entity type.
  *
@@ -148,6 +124,30 @@ export function defineBoardEntity(
 
   // Return the defined board entity with defaults and necessary properties for it to be added to the parent entity
   return entity;
+}
+
+/**
+ * Recursively defines all children of a parent board entity.
+ *
+ * @param entity The parent board entity whose children should be defined.
+ * @param objectType The type of the parent board entity.
+ * @returns A record containing all defined child entities.
+ */
+export function defineChildrenEntities(
+  entity: Partial<TParentBoardEntity>,
+  objectType: string
+): Record<string, TChildBoardEntity> {
+  return Object.entries(entity.children!).reduce(
+    (acc, [childId, childEntity]) => {
+      const childObjectType = deriveBoardChildObjectType(objectType);
+      acc[childId] = defineBoardEntity(
+        childEntity,
+        childObjectType!,
+      ) as TChildBoardEntity;
+      return acc;
+    },
+    {} as TBoardChildren<TChildBoardEntity>,
+  )
 }
 
 /**

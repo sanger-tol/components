@@ -4,23 +4,24 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useRef, useEffect, cloneElement } from "react";
-import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
+import { cloneElement, useState, useRef, useEffect } from "react";
+import { WidthProvider, Responsive } from "react-grid-layout";
+import type { Layout, Layouts } from "react-grid-layout";
+
 import {
+  ACTIONS_DS,
+  BOARD_ENTITIES,
+  deleteBoardEntity,
   generateLayout,
-  IZone,
+  getWidgetOrder,
+  patchReorderBoardEntity,
+  removeBoardEntityInParent,
   TsDataSource,
   useBoard,
   useEffectUpdate,
   Visualisation,
-  BOARD_ENTITIES,
-  ACTIONS_DS,
-  patchReorderBoardEntity,
-  getWidgetOrder,
-  removeBoardEntityInParent,
-  deleteBoardEntity,
 } from "../..";
-
+import type { IZone } from "../..";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -47,7 +48,7 @@ export function Visualisations(props: PVisualisations) {
    * newLayout is used to store the layout when the user is dragging
    * widgets, and is emptied once a user saves
    */
-  const [newLayout, setNewLayout] = useState(undefined);
+  const [newLayout, setNewLayout] = useState<Layout[]>();
   const internalLayouts = useRef(generateLayout(zone));
 
   useEffect(() => {
@@ -99,7 +100,7 @@ export function Visualisations(props: PVisualisations) {
         isResizable={false}
         compactType="vertical"
         rowHeight={5}
-        onLayoutChange={(l: any) => setNewLayout(l)}
+        onLayoutChange={(l: Layout[]) => setNewLayout(l)}
         onBreakpointChange={onBreakpointChange}
       >
         {zone.order.map((componentId) => {
