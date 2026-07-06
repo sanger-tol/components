@@ -32,7 +32,7 @@ test("Cannot edit others' boards", async ({ page }) => {
 test("Warden can edit other peoples boards", async ({ page }) => {
   // Sets a user session up for the browser
   const browserUserBoard = createBoardId();
-  await setAuth(page, ['warden']);
+  await setAuth(page, ["warden"]);
   await setBoard(page, browserUserBoard);
   await expect(page.getByTestId("board-enter-edit-mode-button")).toBeVisible();
 
