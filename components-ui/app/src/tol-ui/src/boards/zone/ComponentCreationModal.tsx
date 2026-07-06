@@ -90,6 +90,7 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
       actionButton={PlusButton}
       overflow={false}
       className={"dashboard-component-modal-full"}
+      testid="component-creation-modal"
     >
       <>
         <h4>Add New Component</h4>
