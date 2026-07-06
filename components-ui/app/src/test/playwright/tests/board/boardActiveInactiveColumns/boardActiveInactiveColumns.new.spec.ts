@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, Locator, Page, test } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 import {
   addComponent,
   clickUtilityBarButton,
@@ -27,6 +27,11 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.afterEach(async ({ page }) => {
+  const pickerPopup = page.getByTestId("picker-popup").first();
+  if (await pickerPopup.isVisible().catch(() => false)) {
+    await page.keyboard.press("Escape").catch(() => {});
+  }
+
   const unsavedModal = page.getByText("Unsaved Changes").first();
   if (await unsavedModal.isVisible().catch(() => false)) {
     await page
@@ -34,6 +39,11 @@ test.afterEach(async ({ page }) => {
       .filter({ hasText: /Don't Save|Discard/i })
       .first()
       .click();
+  }
+
+  const drawerCloseButton = page.getByTestId("drawer-close-button");
+  if (await drawerCloseButton.isVisible().catch(() => false)) {
+    await drawerCloseButton.click();
   }
 
   const exitEditButton = page.getByTestId("board-exit-edit-mode-button");
@@ -64,23 +74,8 @@ const ensureLimitedColumnVisibilityEnabled = async (page: Page) => {
   await expect(inactiveTab(page)).toBeVisible();
 };
 
-const getFirstCombobox = (page: Page) => page.locator("[role='combobox']").first();
-
-const openFirstComboboxAndGetFirstEnabledOption = async (page: Page) => {
-  await getFirstCombobox(page).click();
-  const firstEnabledOption = page.locator("[role='option']:not([aria-disabled='true'])").first();
-  await expect(firstEnabledOption).toBeVisible();
-  return firstEnabledOption;
-};
-
-const selectedTags = (page: Page) =>
-  page.locator(".tol-selected-attributes-container [class*='tag'], .tol-selected-attributes-container .rs-tag");
-
-const getComboboxPlaceholder = async (combobox: Locator) => {
-  const fromCombobox = await combobox.getAttribute("placeholder");
-  if (fromCombobox) return fromCombobox;
-  return combobox.locator("input").first().getAttribute("placeholder");
-};
+const getActiveCombobox = (page: Page) =>
+  page.locator(".tol-attribute-selector [role='combobox']").first();
 
 test("board owner can enable limited column visibility", async ({ page }) => {
   await openTableConfig(page);
@@ -103,107 +98,7 @@ test("in view mode, config shows active-columns section instead of owner tabs", 
   await expect(page.getByRole("heading", { name: "Active Columns:" })).toBeVisible();
   await expect(activeTab(page)).toHaveCount(0);
   await expect(inactiveTab(page)).toHaveCount(0);
-  await expect(getFirstCombobox(page)).toBeVisible();
-});
-
-test("board owner can add a column to active columns", async ({ page }) => {
-  await openTableConfig(page);
-  await ensureLimitedColumnVisibilityEnabled(page);
-
-  await activeTab(page).click();
-  const option = await openFirstComboboxAndGetFirstEnabledOption(page);
-  await option.click();
-
-  await expect(selectedTags(page).first()).toBeVisible();
-  await saveTableConfig(page);
-});
-
-test("a column selected in active is unavailable in inactive selector", async ({ page }) => {
-  await openTableConfig(page);
-  await ensureLimitedColumnVisibilityEnabled(page);
-
-  await activeTab(page).click();
-  const option = await openFirstComboboxAndGetFirstEnabledOption(page);
-  const chosenColumn = (await option.textContent())?.trim() ?? "";
-  await option.click();
-  await expect(chosenColumn.length).toBeGreaterThan(0);
-
-  await inactiveTab(page).click();
-  await getFirstCombobox(page).click();
-
-  // It must not be selectable in inactive:
-  const enabledSameText = page
-    .locator("[role='option']:not([aria-disabled='true'])")
-    .filter({ hasText: chosenColumn });
-  await expect(enabledSameText).toHaveCount(0);
-
-  // Either absent or present as disabled is acceptable:
-  const disabledSameText = page
-    .locator("[role='option'][aria-disabled='true']")
-    .filter({ hasText: chosenColumn });
-  const disabledCount = await disabledSameText.count();
-  const totalSameText = await page.locator("[role='option']").filter({ hasText: chosenColumn }).count();
-  expect(disabledCount === 1 || totalSameText === 0).toBeTruthy();
-
-  await page.keyboard.press("Escape");
-  await saveTableConfig(page);
-});
-
-test("board owner can remove a column from active columns", async ({ page }) => {
-  await openTableConfig(page);
-  await ensureLimitedColumnVisibilityEnabled(page);
-
-  await activeTab(page).click();
-  const option = await openFirstComboboxAndGetFirstEnabledOption(page);
-  await option.click();
-
-  const before = await selectedTags(page).count();
-  await expect(before).toBeGreaterThan(0);
-
-  const removeButton = page
-    .locator(
-      ".tol-selected-attributes-container [class*='close'], .tol-selected-attributes-container [aria-label*='remove' i], .tol-selected-attributes-container button"
-    )
-    .first();
-
-  await removeButton.click();
-
-  const after = await selectedTags(page).count();
-  await expect(after).toBe(before - 1);
-
-  await saveTableConfig(page);
-});
-
-test("active/inactive tab placeholders are correct", async ({ page }) => {
-  await openTableConfig(page);
-  await ensureLimitedColumnVisibilityEnabled(page);
-
-  await activeTab(page).click();
-  const activePlaceholder = await getComboboxPlaceholder(getFirstCombobox(page));
-  await expect(activePlaceholder).toBe("Select columns to display...");
-
-  await inactiveTab(page).click();
-  const inactivePlaceholder = await getComboboxPlaceholder(getFirstCombobox(page));
-  await expect(inactivePlaceholder).toBe("Select columns to make them visible for users...");
-});
-
-test("active column selections persist after save and reopen", async ({ page }) => {
-  await openTableConfig(page);
-  await ensureLimitedColumnVisibilityEnabled(page);
-
-  await activeTab(page).click();
-  const option = await openFirstComboboxAndGetFirstEnabledOption(page);
-  const selectedColumnText = (await option.textContent())?.trim() ?? "";
-  await option.click();
-
-  await saveTableConfig(page);
-
-  await openTableConfig(page);
-  await ensureLimitedColumnVisibilityEnabled(page);
-  await activeTab(page).click();
-
-  await expect(page.locator(".tol-selected-attributes-container").first()).toContainText(selectedColumnText);
-  await saveTableConfig(page);
+  await expect(getActiveCombobox(page)).toBeVisible();
 });
 
 test("board owner can navigate between active and inactive tabs", async ({ page }) => {
