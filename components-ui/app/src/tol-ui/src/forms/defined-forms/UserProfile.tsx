@@ -131,15 +131,15 @@ export function UserProfile(props: PUserProfile) {
     },
   ];
 
-  // return <Widgets components={components} />;
-  return (
-    <TextEditor
-      menuButtons={["bold", "italic", "underline", "strike"]}
-      keyboardShortcutElement={
-        <div>
-          Tip: Press <kbd>~</kbd> to add a reference
-        </div>
-      }
-    />
-  );
+  return <Widgets components={components} />;
+  // return (
+  //   <TextEditor
+  //     menuButtons={["bold", "italic", "underline", "strike"]}
+  //     keyboardShortcutElement={
+  //       <div>
+  //         Tip: Press <kbd>~</kbd> to add a reference
+  //       </div>
+  //     }
+  //   />
+  // );
 }
