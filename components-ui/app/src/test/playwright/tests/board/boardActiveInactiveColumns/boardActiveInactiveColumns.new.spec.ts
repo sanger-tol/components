@@ -26,6 +26,17 @@ test.beforeEach(async ({ page }) => {
   await addComponent(page, 0, "table", "large");
 });
 
+const tableDrawer = (page: Page) => page.getByTestId("drawer-wrapper").first();
+
+const closeTableConfig = async (page: Page) => {
+  const drawer = tableDrawer(page);
+  if (!(await drawer.isVisible().catch(() => false))) return;
+
+  // Prefer keyboard close for modal/drawer overlays.
+  await page.keyboard.press("Escape");
+  await expect(drawer).toBeHidden({ timeout: 5000 });
+};
+
 test.afterEach(async ({ page }) => {
   const pickerPopup = page.getByTestId("picker-popup").first();
   if (await pickerPopup.isVisible().catch(() => false)) {
@@ -41,10 +52,12 @@ test.afterEach(async ({ page }) => {
       .click();
   }
 
-  const drawerCloseButton = page.getByTestId("drawer-close-button");
+  const drawerCloseButton = page.locator(".rs-drawer-header button").first();
   if (await drawerCloseButton.isVisible().catch(() => false)) {
     await drawerCloseButton.click();
   }
+
+  await closeTableConfig(page); // close overlay before trying exit edit mode
 
   const exitEditButton = page.getByTestId("board-exit-edit-mode-button");
   if (await exitEditButton.isVisible().catch(() => false)) {
@@ -115,4 +128,30 @@ test("board owner can navigate between active and inactive tabs", async ({ page 
   await expect(activeTab(page)).toHaveAttribute("aria-selected", "true");
 
   await saveTableConfig(page);
+});
+
+test("inactive tab shows empty-state guidance when no inactive columns are selected", async ({ page }) => {
+  await openTableConfig(page);
+  await ensureLimitedColumnVisibilityEnabled(page);
+
+  await inactiveTab(page).click();
+  await expect(inactiveTab(page)).toHaveAttribute("aria-selected", "true");
+  await expect(
+    page.getByText(
+      "No inactive columns. Select columns to make them visible for users to add them to their tables."
+    )
+  ).toBeVisible();
+
+  await saveTableConfig(page);
+});
+
+test("limited column visibility remains enabled after saving and reopening config", async ({ page }) => {
+  await openTableConfig(page);
+  await ensureLimitedColumnVisibilityEnabled(page);
+  await saveTableConfig(page);
+
+  await openTableConfig(page);
+  await expect(activeTab(page)).toBeVisible();
+  await expect(inactiveTab(page)).toBeVisible();
+  await closeTableConfig(page); // replaces brittle .rs-drawer-header button click
 });
