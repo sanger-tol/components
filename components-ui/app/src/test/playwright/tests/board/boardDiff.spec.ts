@@ -164,3 +164,58 @@ test("viewer can select columns in personal view", async ({ page }) => {
   await page.keyboard.press("Escape");
   await closeDrawer(page);
 });
+
+test("table config opens in edit mode and can be reopened", async ({ page }) => {
+  await openTableConfig(page);
+  await expect(page.getByRole("heading", { name: "Table Configuration" })).toBeVisible();
+
+  await closeDrawer(page);
+  await expect(getDrawer(page)).toBeHidden();
+
+  await openTableConfig(page);
+  await expect(page.getByRole("heading", { name: "Table Configuration" })).toBeVisible();
+
+  await closeDrawer(page);
+});
+
+test("closeDrawer closes picker popup when attribute picker is open", async ({ page }) => {
+  await openTableConfig(page);
+
+  const combobox = getColumnSelector(page);
+  await expect(combobox).toBeVisible();
+  await combobox.click();
+
+  const pickerPopup = page.getByTestId("picker-popup").first();
+  await expect(pickerPopup).toBeVisible();
+
+  await closeDrawer(page);
+
+  await expect(getDrawer(page)).toBeHidden();
+  await expect(pickerPopup).toBeHidden();
+});
+
+test("viewer can reopen table config multiple times in personal view", async ({ page }) => {
+  await exitToViewMode(page);
+
+  for (let i = 0; i < 2; i++) {
+    await openTableConfig(page);
+    await expect(page.getByRole("heading", { name: "Table Configuration" })).toBeVisible();
+    await expect(getColumnSelector(page)).toBeVisible();
+    await closeDrawer(page);
+    await expect(getDrawer(page)).toBeHidden();
+  }
+});
+
+test("can re-enter edit mode after exiting to view mode", async ({ page }) => {
+  await exitToViewMode(page);
+
+  const enterEditButton = page.getByTestId("board-enter-edit-mode-button");
+  await expect(enterEditButton).toBeVisible();
+  await enterEditButton.click();
+
+  await expect(page.getByTestId("board-exit-edit-mode-button")).toBeVisible();
+
+  await openTableConfig(page);
+  await expect(page.getByRole("heading", { name: "Table Configuration" })).toBeVisible();
+  await closeDrawer(page);
+});
