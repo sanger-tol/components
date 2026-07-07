@@ -56,6 +56,7 @@ export * from "./utility-bar";
 export * from "./variables";
 export * from "./images";
 export * from "./json-editor";
+export * from "./text-editor";
 
 export const TOL_DS = new TsDataSource(env.TOL_DATA);
 export const PIPELINE_DS = new TsDataSource();

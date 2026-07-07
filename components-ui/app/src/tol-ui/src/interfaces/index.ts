@@ -31,6 +31,7 @@ export * from "./SocialViewer";
 export * from "./Table";
 export * from "./Tours";
 export * from "./Tabs";
+export * from "./TextEditor";
 export * from "./TsDataSource";
 export * from "./TsDocParser";
 export * from "./User";
