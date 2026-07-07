@@ -64,6 +64,7 @@ export const VALIDATION_ENDPOINTS = {
   UPLOAD: "local/upload",
   RUN_PIPELINE: "run-pipeline",
   REVALIDATE: "run-pipeline/revalidate",
+  SYNC_STATUS: "run-pipeline/sync-status",
   PIPELINE_STEPS: "local/pipeline_steps",
 } as const;
 
