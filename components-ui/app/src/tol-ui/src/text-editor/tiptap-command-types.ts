@@ -15,4 +15,4 @@ import type {} from "@tiptap/extension-list";
 import type {} from "@tiptap/extension-paragraph";
 import type {} from "@tiptap/extension-strike";
 import type {} from "@tiptap/extension-underline";
-import type {} from "@tiptap/extensions/undo-redo";
+import type {} from "@tiptap/extensions";
