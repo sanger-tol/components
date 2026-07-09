@@ -6,8 +6,10 @@ SPDX-License-Identifier: MIT
 
 import type { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
+import { Fragment, isValidElement } from "react";
 import { menuBarStateSelector, TEXT_EDITOR_BUTTONS, Button } from "../..";
 import type {
+  PButton,
   TTextEditorButtons,
   TTextEditorCustomButton,
   TTextEditorButton,
@@ -16,12 +18,15 @@ import type {
 /**
  * Renders the formatting toolbar for a Tiptap text editor.
  *
- * The toolbar reflects the current editor state, filters standard buttons by
+            return (
+              <Fragment key={buttonProps.key ?? index}>{buttonProps}</Fragment>
+            );
  * the optional `buttons` prop, appends custom buttons, and always includes undo
  * and redo controls. Nothing is rendered until an editor instance is available.
- *
- * @param editor - The Tiptap editor instance used to build and run toolbar actions.
- * @param buttons - Optional list of standard toolbar buttons to display.
+          const { key: buttonKey, ...buttonPropsWithoutKey } =
+            buttonProps as PButton & {
+              key?: string;
+            };
  * @param customButtons - Optional custom button definitions or factories to render before undo and redo.
  * @returns The editor toolbar, or null when the editor is not initialised.
  */
@@ -71,7 +76,21 @@ export function MenuBar({
             typeof customButton === "function"
               ? customButton(editor)
               : customButton;
-          return <Button key={buttonProps.id ?? index} {...buttonProps} />;
+
+          if (isValidElement(buttonProps)) {
+            return <Fragment key={buttonProps.key ?? index}>{buttonProps}</Fragment>;
+          }
+
+          const { key: buttonKey, ...buttonPropsWithoutKey } = buttonProps as PButton & {
+            key?: string;
+          };
+
+          return (
+            <Button
+              key={buttonKey ?? buttonPropsWithoutKey.id ?? index}
+              {...buttonPropsWithoutKey}
+            />
+          );
         })}
         <Button {...UNDO} />
         <Button {...REDO} />

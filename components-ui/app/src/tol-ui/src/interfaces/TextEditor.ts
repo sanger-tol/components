@@ -5,9 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import type { Editor } from "@tiptap/core";
+import type { ReactElement } from "react";
 import type { TEXT_EDITOR_STATE_KEYS, PButton } from "..";
 
-export type TTextEditorCustomButton = PButton | ((editor: Editor) => PButton);
+export type TTextEditorCustomButton =
+  | PButton
+  | ReactElement
+  | ((editor: Editor) => PButton | ReactElement);
 
 export type TTextEditorButton =
   | "bold"

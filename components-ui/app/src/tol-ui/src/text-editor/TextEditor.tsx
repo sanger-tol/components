@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useEditor, EditorContent, EditorContext } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
@@ -40,7 +40,11 @@ export interface PTextEditor {
   returnValueType?: "html" | "json" | "text";
   /**
    * An optional list of custom extensions to add to the Tiptap editor.
-   * Custom extensions can be used to add new formatting options or functionality
+   * Custom extensions can be used to add new formatting options or functionality.
+   *
+   * IMPORTANT: this array must be referentially stable (e.g. a module-level
+   * constant or wrapped in useMemo). Passing a new array or extension instance
+   * on every render rebuilds the editor, losing focus and selection.
    */
   customExtensions?: any[];
   /**
@@ -59,6 +63,12 @@ export interface PTextEditor {
    * An optional boolean to control whether the text editor is editable.
    */
   editable?: boolean;
+  /**
+   * An optional callback function that is called whenever the editor instance changes.
+   * Gives consumers access to the editor instance for advanced use cases,
+   * such as programmatically triggering actions or accessing the editor's state.
+   */
+  onEditorChange?: (editor: any) => void;
 }
 
 export function TextEditor(props: PTextEditor) {
@@ -71,9 +81,11 @@ export function TextEditor(props: PTextEditor) {
     keyboardShortcutElement,
     customExtensions,
     editable = true,
+    onEditorChange,
   } = props;
 
-  // Memoize the extensions array to avoid unnecessary re-renders
+  // Memoize the extensions array to avoid unnecessary editor rebuilds.
+  // Relies on customExtensions being referentially stable (see prop docs).
   const extensions = useMemo(
     () => [
       StarterKit,
@@ -106,8 +118,25 @@ export function TextEditor(props: PTextEditor) {
       },
       editable: editable,
     },
-    [extensions, editable],
+    [extensions],
   );
+
+  // Apply editable changes in place instead of rebuilding the editor
+  useEffect(() => {
+    if (editor && editor.isEditable !== editable) {
+      editor.setEditable(editable);
+    }
+  }, [editor, editable]);
+
+  const onEditorChangeRef = useRef(onEditorChange);
+  onEditorChangeRef.current = onEditorChange;
+
+  // Share the editor instance with the consumer only when it actually changes
+  useEffect(() => {
+    if (editor) {
+      onEditorChangeRef.current?.(editor);
+    }
+  }, [editor]);
 
   // Memoize the provider value to avoid unnecessary re-renders of the context provider
   const providerValue = useMemo(() => ({ editor }), [editor]);
