@@ -103,7 +103,7 @@ export function TextEditor(props: PTextEditor) {
       extensions: extensions,
       content: value,
       onUpdate: ({ editor }) => {
-        if (returnValueType === "html") {
+        if (returnValueType === "html" || returnValueType === undefined) {
           setValue(editor.getHTML());
         } else if (returnValueType === "json") {
           setValue(JSON.stringify(editor.getJSON()));
