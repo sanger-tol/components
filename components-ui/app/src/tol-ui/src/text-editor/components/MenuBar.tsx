@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import type { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
-import { menuBarStateSelector, TEXT_EDITOR_BUTTONS, Button, toggleReferencePicker } from "../..";
+import { menuBarStateSelector, TEXT_EDITOR_BUTTONS, Button } from "../..";
 import type {
   TTextEditorButtons,
   TTextEditorCustomButton,
@@ -41,8 +41,8 @@ export function MenuBar({
     selector: menuBarStateSelector ?? null,
   });
 
-  // If the editor is not initialized, return null to avoid rendering the menu bar
-  if (!editor) {
+  // If the editor or its state is not initialized, return null to avoid rendering the menu bar
+  if (!editor || !editorState) {
     return null;
   }
 
