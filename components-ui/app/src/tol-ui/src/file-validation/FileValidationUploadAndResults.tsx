@@ -21,6 +21,7 @@ import {
   Modal,
   TolLoader,
   VALIDATION_ENDPOINTS,
+  API_METHODS,
   DEFAULT_FILE_TYPE,
   downloadFileFromS3,
   useQueryData,
@@ -181,8 +182,8 @@ export function FileValidationUploadAndResults(
 
       try {
         await PIPELINE_DS.custom({
-          method: "POST",
-          resource: "run-pipeline/sync-status",
+          method: API_METHODS.POST,
+          resource: VALIDATION_ENDPOINTS.SYNC_STATUS,
           body: { data: { upload_ids: [uploadId] } },
         });
         await refetchRef.current();
@@ -534,8 +535,8 @@ export function FileValidationUploadAndResults(
           if (uploadId) {
             try {
               await PIPELINE_DS.custom({
-                method: "POST",
-                resource: "run-pipeline/sync-status",
+                method: API_METHODS.POST,
+                resource: VALIDATION_ENDPOINTS.SYNC_STATUS,
                 body: { data: { upload_ids: [uploadId] } },
               });
             } catch (error) {
