@@ -8,11 +8,22 @@ import type { Editor } from "@tiptap/core";
 import type { EditorStateSnapshot } from "@tiptap/react";
 import { TEXT_EDITOR_STATE_KEYS, TMenuBarState } from "../..";
 
+/**
+ * Builds the text editor menu bar state from a Tiptap editor snapshot.
+ *
+ * Returns boolean flags describing which formatting options are currently
+ * active and which editor commands can be run. If the editor has not been
+ * initialised, all menu bar state keys are returned as false.
+ *
+ * @param ctx - The current Tiptap editor state snapshot.
+ * @returns The active and enabled state for each menu bar control.
+ */
 export function menuBarStateSelector(
   ctx: EditorStateSnapshot<Editor>,
 ): TMenuBarState {
-  const editor = ctx.editor;
+  const editor: Editor = ctx.editor;
 
+  // If the editor is not initialized, return a default state with all keys set to false
   if (!editor) {
     return {
       ...Object.fromEntries(TEXT_EDITOR_STATE_KEYS.map((key) => [key, false])),
@@ -89,7 +100,7 @@ export function menuBarStateSelector(
         .can()
         .chain()
         .focus()
-        .toggleLink({ href: "https://example.com" })
+        .toggleLink({ href: "https://example.com" }) // This is a placeholder; the actual href will be set when the user adds a link
         .run() ?? false,
 
     // History

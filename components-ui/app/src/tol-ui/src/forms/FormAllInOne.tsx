@@ -467,6 +467,7 @@ export function FormAllInOne(props: PFormAllInOne) {
                   disabled={button.disabled}
                   disabledTooltip={button.disabledTooltip}
                   loading={button.loading}
+                  icon={button.icon}
                   onClick={() => {
                     let isValid = true;
                     if (onValidate || props.onSubmit) {

@@ -77,20 +77,6 @@
     }
   }
 
-  &__reference {
-    padding: 0.1rem 0.35rem;
-    border-radius: 4px;
-    background-color: var(--tol-primary-translucent);
-    color: var(--tol-primary);
-    font-size: 0.9em;
-    white-space: nowrap;
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
   &__footer {
     padding: 0.4rem 0.75rem;
     border-top: 1px solid var(--tol-grey);
@@ -107,50 +93,6 @@
       color: var(--tol-text);
       font-size: 11px;
     }
-  }
-}
-
-// Appended to document.body so the menu is not clipped by the editor's overflow
-.tol-text-editor__reference-menu-wrapper {
-  position: absolute;
-  z-index: 1050;
-}
-
-.tol-text-editor__reference-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 220px;
-  max-height: 220px;
-  overflow-y: auto;
-  padding: 0.25rem;
-  border: 1px solid var(--tol-grey);
-  border-radius: 6px;
-  background-color: var(--tol-bg);
-  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
-
-  &-item {
-    display: block;
-    width: 100%;
-    padding: 0.35rem 0.5rem;
-    border: none;
-    border-radius: 4px;
-    background: none;
-    color: var(--tol-text);
-    text-align: left;
-    font-size: 13px;
-    cursor: pointer;
-
-    &--selected {
-      background-color: var(--tol-primary-translucent);
-    }
-  }
-
-  &-empty {
-    padding: 0.35rem 0.5rem;
-    font-size: 13px;
-    color: var(--tol-text);
-    opacity: 0.65;
   }
 }
 

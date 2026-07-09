@@ -22,7 +22,6 @@ import {
   USER,
   PRE_DEFINED_FORM_TYPES,
   FORM_MESSAGE_TEXT,
-  TextEditor,
 } from "../..";
 import type {
   IUserProfileAdditionalConfigs,
@@ -132,14 +131,4 @@ export function UserProfile(props: PUserProfile) {
   ];
 
   return <Widgets components={components} />;
-  // return (
-  //   <TextEditor
-  //     menuButtons={["bold", "italic", "underline", "strike"]}
-  //     keyboardShortcutElement={
-  //       <div>
-  //         Tip: Press <kbd>~</kbd> to add a reference
-  //       </div>
-  //     }
-  //   />
-  // );
 }
