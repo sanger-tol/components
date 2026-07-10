@@ -62,11 +62,11 @@ export const PIPELINE_DS = new TsDataSource();
 export const CORE_CONFIG_DS = new TsDataSource({
   ...env.TOL_DATA,
   apiDataPath: API_PATHS.BOARDS,
-  dataspace: '',
+  dataspace: "",
 });
 export const LOCAL_DS = new TsDataSource({
   apiPath: API_PATHS.API_PATH,
   apiDataPath: API_PATHS.LOCAL,
-  dataspace: ''
+  dataspace: ""
 });
 export const ACTIONS_DS = LOCAL_DS;

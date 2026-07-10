@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 /**
- * Sync status polling configuration constants
+ * Sync status polling timing configuration constants
  */
 
 /** Maximum duration to continue polling for sync status updates (5 minutes) */

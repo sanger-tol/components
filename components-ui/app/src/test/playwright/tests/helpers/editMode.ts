@@ -19,6 +19,7 @@ export const enterEditMode = async (page: Page) => {
  */
 export const exitEditMode = async (page: Page) => {
   // click the exit edit mode button
+  await page.getByTestId("board-exit-edit-mode-button").waitFor({ state: "visible", timeout: 5000 });
   await page.getByTestId("board-exit-edit-mode-button").click();
   
   // This might force the view down a bit, so scroll back to the top

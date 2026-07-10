@@ -8,8 +8,23 @@ import type {
   IEntityMeta,
   IFilter,
   IJsonApiDataExtra,
+  TApiMethod,
 } from "..";
 
+export interface IClientRequestConfig {
+  baseURL: string;
+  params?: any;
+}
+
+export interface IClientMethods {
+  get: (url: string, config: IClientRequestConfig) => any;
+  post: (url: string, body: any, config: IClientRequestConfig) => any;
+  put: (url: string, body: any, config: IClientRequestConfig) => any;
+  patch: (url: string, body: any, config: IClientRequestConfig) => any;
+  delete: (url: string, config: IClientRequestConfig) => any;
+}
+
+export type TClient = () => IClientMethods;
 
 export interface IConfigPromises {
   [baseURL: string]: Promise<object>;
@@ -31,7 +46,7 @@ export interface IDataSource {
   // An optional data source instance id to uniquely identify this data source in the db
   dataSourceInstanceId?: string;
   // To allow for testing with mock clients
-  client?: any;
+  client?: TClient;
 }
 
 export interface IGetOne {
@@ -94,7 +109,7 @@ export interface IGetListCursor {
 }
 
 export interface ICustom {
-  method: string;
+  method: TApiMethod;
   resource: string;
   body?: any;
   params?: any;

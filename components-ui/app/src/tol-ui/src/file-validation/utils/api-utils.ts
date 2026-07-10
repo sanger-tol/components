@@ -9,10 +9,7 @@ import {
   VALIDATION_ENDPOINTS,
   S3_ENDPOINTS,
   PIPELINE_DS,
-  VALIDATION_TIMEOUT_MS,
   PopUpMessage,
-  FILE_VALIDATION_STATUS,
-  VALIDATIONS,
   splitS3FilenameString, 
   normaliseValidationResult
 } from "../../";
@@ -397,60 +394,6 @@ export async function getStepsInPipeline(dataSource: TsDataSource, pipelineId: s
   pipelineStepsPromiseCache.set(pipelineId, stepPromise);
 
   return stepPromise;
-}
-
-/**
- * Checks for and marks long-running incomplete uploads as timed out in the database.
- *
- * Fetches all active uploads for the given user that have exceeded the `VALIDATION_TIMEOUT_MS`.
- * It then constructs a payload to update these uploads (plus an optional current pipeline ID)
- * to a "validation_timeout" status with a relevant failure message.
- *
- * @param dataSource - The datasource used to query and update upload records.
- * @param userId - The ID of the user whose uploads should be checked.
- * @param currentPipelineId - (Optional) ID of a specific pipeline run to include in the timeout check.
- * @returns A promise that resolves when the update operation is complete.
- */
-
-export async function setValidationTimeout(
-  dataSource: TsDataSource,
-  userId: string,
-  currentPipelineId?: string,
-): Promise<void> {
-  if (!userId) return;
-  const res = await dataSource.getListPage({
-    objectType: VALIDATION_ENDPOINTS.UPLOAD,
-    filter: {
-      and_: {
-        user_id: { eq: { value: userId } },
-        completed: { eq: { value: false } },
-        date_started: {
-          lt: { value: new Date(Date.now() - VALIDATION_TIMEOUT_MS) },
-        },
-        failure_message: { eq: { value: null } },
-      },
-    },
-  });
-
-  const ids = res?.map((upload: TDataObjectOrNull) => upload?.id || "");
-  if (currentPipelineId) ids?.push(currentPipelineId);
-
-  if (!ids || ids.length === 0) return;
-
-  const data = ids?.map((id: string) => ({
-    id: id,
-    type: VALIDATIONS.UPLOAD,
-    attributes: {
-      failure_message: "Validation timed out.",
-      validation_status: FILE_VALIDATION_STATUS.TIMEOUT,
-      completed: true,
-    },
-  }));
-
-  await dataSource.upsert({
-    objectType: VALIDATION_ENDPOINTS.UPLOAD,
-    payload: data,
-  });
 }
 
 /**

@@ -4,17 +4,23 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import type { Dispatch, SetStateAction } from "react";
+import type { Layout, Layouts } from "react-grid-layout";
+
 import {
   BOARD_ENTITIES,
   COMPONENT_TYPES,
   defineBoardEntity,
+  upsertBoardEntity,
+  TsDataSource,
+  VISUALISATION_BREAKPOINTS,
+} from "../..";
+import type {
   IComponent,
   IComponentConfig,
   IFilter,
   IZone,
-  upsertBoardEntity,
-  TDataObjectListOrNull,
-  TsDataSource,
+  TDataObjectListOrNull
 } from "../..";
 
 /**
@@ -31,7 +37,7 @@ export async function updateComponentConfigAndUpsert(
   zone: IZone,
   boardDataSource: TsDataSource,
   editMode: boolean,
-  setHasDiff?: (hasDiff: boolean) => void,
+  setHasDiff?: Dispatch<SetStateAction<boolean>>,
   userId?: string | undefined,
 ) {
   const component = zone.children?.[componentId];
@@ -73,7 +79,7 @@ export async function updateComponentConfigAndUpsert(
       setHasDiff?.(true);
     })
     .catch((error) => {
-      console.error("Error upserting board diff:", error);
+      console.error("Error upserting board diff: ", error);
     });
 }
 
@@ -108,7 +114,12 @@ export function defineZoneWithComponentList(
   ) as IZone;
 }
 
-export function getWidgetOrder(layout: any) {
+/**
+ * Determines the order of widgets from a react grid layout
+ * @param layout The React Grid layout
+ * @returns A sorted array of component IDs
+ */
+export function getWidgetOrder(layout: Layout[]): string[] {
   // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
   layout.sort((a, b) => a.y - b.y || a.x - b.x);
 
@@ -116,48 +127,67 @@ export function getWidgetOrder(layout: any) {
   return layout.map((item) => item.i);
 }
 
-export function generateLayout(zone: IZone) {
-  // left hand side are the component types, right are the breakpoints
-  const types = {
-    sm: { lg: { w: 1, h: 10 }, md: { w: 1, h: 10 }, sm: { w: 1, h: 10 } },
-    md: { lg: { w: 2, h: 30 }, md: { w: 2, h: 30 }, sm: { w: 1, h: 30 } },
-    lg: { lg: { w: 4, h: 40 }, md: { w: 2, h: 40 }, sm: { w: 1, h: 40 } },
-  };
+/**
+ * Generates a react-grid-layout layout that determines the position and sizing of all of the
+ * components in the provided zone.
+ * 
+ * @param zone The zone containing the components to process
+ * @returns The layout describing where the components should be rendered to on the screen
+ */
+export function generateLayout(zone: IZone): Layouts {
+  // The layout we're building up
+  const layout: Layouts = { lg: [], md: [], sm: [] };
 
-  const layout = { lg: [], md: [], sm: [] };
-  const y = { lg: 0, md: 0, sm: 0 };
-  const x = { lg: 0, md: 0, sm: 0 };
+  // The current position in the grid we're working at for this component.
+  // A component will have a different position depending on the size it's being renderered at
+  // (which is different per screen size), so they're tracked separately.
+  const currentPosition = {
+    lg: { x: 0, y: 0 },
+    md: { x: 0, y: 0 },
+    sm: { x: 0, y: 0 },
+  };
 
   zone.order.forEach((componentId) => {
     const component = zone.children?.[componentId];
-
     const size = component.widget_type || "sm";
-    ["lg", "md", "sm"].forEach((breakpoint) => {
+
+    // As mentioned above, we need to calculate the component's position separately
+    // for each size
+    Object.keys(VISUALISATION_BREAKPOINTS).forEach((breakpoint) => {
+      // Determine the width and height of this component.
+      // Filter Block components are treated exceptionally,
+      // as they always fill the available width but its height changes depending on the size.
       let w: number, h: number;
       if (component.component_type === COMPONENT_TYPES.FILTER_BLOCK) {
-        w = types.lg[breakpoint].w;
+        w = VISUALISATION_BREAKPOINTS.lg[breakpoint].w;
         h = breakpoint === "lg" ? 9 : breakpoint === "md" ? 15 : 26;
       } else {
-        ({ w, h } = types[size][breakpoint]);
-      }
-      // if the widget won't fit on the current row, move it to the next row
-      if (
-        x[breakpoint] + w >
-        (breakpoint === "lg" ? 4 : breakpoint === "md" ? 2 : 1)
-      ) {
-        y[breakpoint] += h;
-        x[breakpoint] = 0;
+        ({ w, h } = VISUALISATION_BREAKPOINTS[size][breakpoint]);
       }
 
+      // If the widget won't fit on the current row, start a new row
+      if (
+        currentPosition[breakpoint].x + w >
+        (breakpoint === "lg" ? 4 : breakpoint === "md" ? 2 : 1)
+      ) {
+        currentPosition[breakpoint].y += h;
+        currentPosition[breakpoint].x = 0;
+      }
+
+      // Now we know its size, may have adjusted `y` because of adding a new row,
+      // and already have the `x` position from the last iteration,
+      // this component can be added to the layout.
       layout[breakpoint].push({
         i: component.id,
-        x: x[breakpoint],
-        y: y[breakpoint],
+        ...currentPosition[breakpoint], // `x` and `y`
         w,
         h,
       });
-      x[breakpoint] += w;
+
+      // Increase the x position we're keeping track of with the width of this new component
+      currentPosition[breakpoint].x += w;
     });
   });
+
   return layout;
 }
