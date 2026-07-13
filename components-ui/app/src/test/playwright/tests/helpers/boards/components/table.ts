@@ -5,7 +5,7 @@
 import type { Page } from "@playwright/test";
 
 import { clickUtilityBarButton } from "../../utility-bar";
-import { selectFromDropdown } from "../../components/dropdowns";
+import { selectFromDropdown } from "../..";
 
 /**
  * Configures the `tableIndex`th table with the given config,
