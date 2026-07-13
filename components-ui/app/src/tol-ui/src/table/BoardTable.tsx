@@ -228,8 +228,9 @@ export function BoardTable(props: PBoardTable) {
       hasDiff: !editMode && !!componentData?.config_diff?.config,
     }));
 
-    setResetKey((k) => k + 1);
-  }, [editMode, componentData?.config, componentData?.config_diff?.config]);
+  // Only fires on edit mode changes, not on every config mutation.
+  // RemoteTable syncs its state in-place via configSyncKey — no remount needed.
+  }, [editMode]);
 
   // Create handlers for changing table config, including column resize, page size, etc.
   const {
@@ -282,6 +283,7 @@ export function BoardTable(props: PBoardTable) {
       <RemoteTable
         key={resetKey}
         {...props}
+        configSyncKey={editMode ? "edit" : "view"}
         resizeableColumns={isLoggedIn}
         onReset={onReset}
         showConfigReset={

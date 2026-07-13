@@ -78,12 +78,10 @@ export function DataColumn(props: PDataColumn) {
       MAX_COLUMN_WIDTH
     );
 
-    // ensure width change to trigger re-render
-    // rerender fails visually without this
     const lastWidth = lastWidths.get(columnKey);
 
-    // also considers empty of first time or no change
-    if (!lastWidth || lastWidth === clampedWidth) clampedWidth -= 1;
+    // Skip noop updates — avoids redundant state churn and visible table refreshes
+    if (lastWidth === clampedWidth) return;
 
     lastWidths.set(columnKey, clampedWidth);
     props.onResize?.(clampedWidth, dataKey);

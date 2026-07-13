@@ -216,6 +216,12 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Test ID used to identify this table in Playwright tests
    */
   testid?: string;
+  /**
+   * When this value changes, RemoteTable re-syncs its internal config state from
+   * the current props without remounting. Use this for transitions (e.g. entering
+   * or exiting board edit mode) that should not flash a full loading placeholder.
+   */
+  configSyncKey?: string;
 }
 
 /**
@@ -329,6 +335,28 @@ export function RemoteTable(props: PRemoteTable) {
   );
   const resolvedShowConfigReset = showConfigReset ?? localHasDiff;
 
+  // Incremented when a configSyncKey change triggers an in-place re-fetch,
+  // so renderTable fires even when page/sort/filter haven't changed.
+  const [configSyncTrigger, setConfigSyncTrigger] = useState(0);
+
+  useEffectUpdate(() => {
+    // Re-sync config state in-place when the parent signals a mode transition.
+    // We preserve prev.dataWithDefaults (server-enriched column metadata) so the
+    // table stays visible throughout — only a loading spinner overlay appears.
+    const nextBase = initialiseFieldMeta(props.fields);
+    setFieldMeta((prev) => ({
+      ...prev,
+      order: nextBase.order,
+      data: nextBase.data,
+    }));
+    setSortByAttribute(props.defaultSortByAttribute ?? nextBase?.order?.active?.[0]);
+    setSortByType(props.defaultSortByType ?? "asc");
+    if (props.filterVisibility !== undefined) setFilterVisibility(props.filterVisibility);
+    if (props.pageSize !== undefined) setPageSize(props.pageSize);
+    setPage(1);
+    setConfigSyncTrigger((n) => n + 1);
+  }, [props.configSyncKey]);
+
   useEffect(() => {
     setTableLoading(id, editMode && (loading || fullLoad));
   }, [id, editMode, loading, fullLoad, setTableLoading]);
@@ -352,7 +380,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   useEffectUpdate(() => {
     renderTable();
-  }, [page, sortByAttribute, sortByType, filter, forceUpdate]);
+  }, [page, sortByAttribute, sortByType, filter, forceUpdate, configSyncTrigger]);
 
   useEffectUpdate(() => {
     if (fullLoad) {
