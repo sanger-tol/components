@@ -2,7 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, Page, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import {
   addComponent,
   setBoard,
@@ -34,34 +35,32 @@ test.afterEach(async ({ page }) => {
 /**
  * Adds text to an empty Text component
  * @param page The Playwright page handle
- * @param componentIndex Out of all the Text components on the screen, which is it? Zero-indexed
+ * @param textComponent Playwright locator handle to the text component to add to
  */
-const addTextToMarkdownComponent = async (page: Page, componentIndex: number) => {
+const addTextToTextComponent = async (page: Page, textComponent: Locator) => {
   // get the markdown editor textarea
-  const markdownEditor = page.locator(".tol-markdown-viewer textarea");
+  const markdownEditor = textComponent.locator(".tol-markdown-viewer textarea");
 
   // click into the markdown editor and type text to simulate real user input
   await markdownEditor.click();
   await page.keyboard.type("Test Text", { delay: 10 });
-  await sleep(1000);
+  await sleep(1_000);
   await expect(markdownEditor).toHaveValue("Test Text");
 
   // click the preview button
-  await clickUtilityBarButton(page, "preview-markdown", componentIndex);
+  await clickUtilityBarButton(textComponent, "preview-markdown");
 
   // Check the text is in both of the expected places
-  await expect(page.locator("[data-testid=\"board-component-text\"] textarea")).toHaveText("Test Text");
-  await expect(page.locator("[data-testid=\"board-component-text\"] p")).toHaveText("Test Text");
-};
+  await expect(textComponent.locator("textarea")).toHaveText("Test Text");
+  await expect(textComponent.locator("p")).toHaveText("Test Text");
 
-const saveMarkDownComponent = async ({ page }) => {
-  await clickUtilityBarButton(page, "save-markdown", 0);
-}
+  // save
+  await clickUtilityBarButton(textComponent, "save-markdown");
+};
 
 test("manage dashboard", async ({ page }) => {
   await addComponent(page, 0, "text", "Small");
-  await addTextToMarkdownComponent(page, 0);
-  await saveMarkDownComponent({ page });
+  await addTextToTextComponent(page, page.getByTestId("board-component-markdown"));
   await deleteComponent(page, "text", 0);
   await expect(page.locator(".tol-markdown-viewer")).not.toBeVisible();
 });

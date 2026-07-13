@@ -2,18 +2,18 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { Page } from "@playwright/test";
+import type { Locator } from "@playwright/test";
 
 /**
- * Clicks the `testIdIndex`th utility bar button with test ID `testId`,
+ * Clicks the utility bar button with the testid `testId` on the provided component,
  * including those inside condensed utility bars.
  * @param page The Playwright page handle
+ * @param component Playwright locator handle to the component containing the utility bar
  * @param testId Test ID of the target button
- * @param testIdIndex Out of all elements with this test ID, which one is it? Zero-indexed
  */
-export const clickUtilityBarButton = async (page: Page, testId: string, testIdIndex: number) => {
+export const clickUtilityBarButton = async (component: Locator, testId: string) => {
   // First, try to open the condensed utility bar if it exists
-  const condensedUtilityBarButton = page.getByTestId("condensed-utility-bar-button");
+  const condensedUtilityBarButton = component.getByTestId("condensed-utility-bar-button");
   const isCondensed = await condensedUtilityBarButton
     .waitFor({ state: "visible", timeout: 500 })
     .then(() => true)
@@ -24,7 +24,7 @@ export const clickUtilityBarButton = async (page: Page, testId: string, testIdIn
   }
 
   // Either way, the target utility bar button is visible and thus available to be clicked
-  const targetButton = page.getByTestId(testId).nth(testIdIndex);
+  const targetButton = component.getByTestId(testId);
   await targetButton.waitFor({ state: "attached", timeout: 10_000 });
   await targetButton.click({ force: true, timeout: 10_000 });
 }

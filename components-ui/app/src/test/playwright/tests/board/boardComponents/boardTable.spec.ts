@@ -43,7 +43,7 @@ test("shows personal table configuration notices outside edit mode", async ({ pa
   await page.getByTestId("component-creation-modal").waitFor({ state: "hidden", timeout: 5000 });
   await exitEditMode(page);
 
-  await clickUtilityBarButton(page, "table-config-button", 0);
+  await clickUtilityBarButton(page.getByTestId("board-component-table"), "table-config-button");
 
   await expect(
     page.getByText("Please be aware that you are editing a version of this table for yourself. If you want to edit the table for all board viewers please switch to edit mode."),
