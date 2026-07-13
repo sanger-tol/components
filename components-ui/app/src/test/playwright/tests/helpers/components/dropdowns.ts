@@ -4,6 +4,11 @@
 
 import type { Locator } from "@playwright/test";
 
+/**
+ * Selects the requested values from a dropdown
+ * @param dropdown Playwright locator handle to the dropdown
+ * @param values The values to select
+ */
 export const selectFromDropdown = async (dropdown: Locator, values: string[]) => {
   // Open the dropdown
   await dropdown.click();
