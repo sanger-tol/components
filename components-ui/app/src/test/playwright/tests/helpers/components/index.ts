@@ -4,3 +4,4 @@
 
 export * from "./componentSetup";
 export * from "./componentUpdates";
+export * from "./table";
