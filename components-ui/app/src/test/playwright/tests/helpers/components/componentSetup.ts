@@ -4,8 +4,6 @@
 
 import { expect, Page } from "@playwright/test";
 import { clickUtilityBarButton } from "../utility-bar";
-import { enterEditMode } from "..";
-
 
 /**
  * Adds the specified component to the specified zone.
