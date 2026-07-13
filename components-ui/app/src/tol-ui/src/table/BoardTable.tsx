@@ -59,6 +59,7 @@ export function BoardTable(props: PBoardTable) {
   const [removedColumnsForModal, setRemovedColumnsForModal] = useState<ReactNode[]>([]);
   const [columnsRemaining, setColumnsRemaining] = useState<number>(0);
   const diffStateRef = useRef(diffState);
+  const previousEditModeRef = useRef(editMode);
   useEffect(() => {
     diffStateRef.current = diffState;
   }, [diffState]);
@@ -217,6 +218,13 @@ export function BoardTable(props: PBoardTable) {
     // between the current config and the default config (if exiting edit mode).
     // Force remount of RemoteTable to clear its internal state.
 
+    const isModeTransition = previousEditModeRef.current !== editMode;
+    if (!isModeTransition) {
+      return;
+    }
+
+    previousEditModeRef.current = editMode;
+
     const nextConfig = editMode
       ? (componentData?.config ?? null)
       : componentData?.config_diff?.config || componentData?.config;
@@ -228,9 +236,8 @@ export function BoardTable(props: PBoardTable) {
       hasDiff: !editMode && !!componentData?.config_diff?.config,
     }));
 
-  // Only fires on edit mode changes, not on every config mutation.
-  // RemoteTable syncs its state in-place via configSyncKey — no remount needed.
-  }, [editMode]);
+    setResetKey((k) => k + 1);
+  }, [editMode, componentData?.config, componentData?.config_diff?.config]);
 
   // Create handlers for changing table config, including column resize, page size, etc.
   const {
