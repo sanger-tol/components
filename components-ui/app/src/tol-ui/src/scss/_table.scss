@@ -79,8 +79,9 @@
       position: relative;
 
       .rs-table {
-        border-radius: 6px;
+        border-radius: var(--tol-border-radius-md);
         border: 1px solid var(--tol-grey);
+        box-shadow: var(--tol-shadow-subtle);
 
         position: absolute;
         top: 0;
@@ -253,18 +254,6 @@
   .tol-table-full {
     @extend .tol-table;
     height: 100%;
-  }
-
-  // link box (e.g. relationship)
-  .link-box {
-    border-radius: 6px;
-    background-color: var(--tol-primary-translucent);
-    padding: 5px 10px;
-    border: 1px solid var(--tol-primary-translucent);
-  }
-
-  .link-box.clickable {
-    cursor: pointer;
   }
 
   // expander cellRenderer

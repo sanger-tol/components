@@ -10,7 +10,7 @@
   box-shadow: unset;
 
   .rs-drawer-content {
-    border-radius: 6px;
+    border-radius: var(--tol-border-radius-lg);
     box-shadow: var(--rs-drawer-shadow);
 
     .rs-drawer-header {
@@ -33,6 +33,7 @@
 
     .rs-drawer-footer {
       border-top: 1px solid var(--rs-border-primary);
+      border-radius: 0 0 var(--tol-border-radius-lg) var(--tol-border-radius-lg);
       margin: 0;
       padding: 16px;
     }
@@ -76,7 +77,6 @@
 
 .tol-config-drawer-column-container {
   overflow: auto;
-  padding: 5px 10px 5px 0;
 }
 
 .tol-config-drawer-column-title {

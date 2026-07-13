@@ -23,25 +23,6 @@
   padding-right: 0;
 }
 
-.tol-text-filter {
-
-  .rs-input,
-  .rs-input-group,
-  .rs-picker-toggle {
-    border-radius: 0;
-  }
-}
-
-.tol-date-filter,
-.tol-multi-filter {
-
-  .rs-input,
-  .rs-input-group,
-  .rs-picker-toggle {
-    border-radius: 6px 0 0 6px;
-  }
-}
-
 .tol-text-filter,
 .tol-date-filter,
 .tol-multi-filter {
@@ -65,7 +46,6 @@
   .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default {
     background-color: var(--tol-bg) !important;
     border: 1px solid var(--tol-grey) !important;
-    border-right: none !important;
     color: var(--tol-primary);
     height: 36px;
     width: 20px;
@@ -121,7 +101,6 @@
 
   .tol-in-list-button {
     position: absolute;
-    border-radius: 6px 0 0 6px;
   }
 }
 
@@ -136,15 +115,6 @@
   .rs-input-group.rs-input-group-inside {
     width: calc(100% - 38px) !important;
     margin-left: 20px;
-  }
-
-  .rs-btn {
-    border-radius: 6px 0px 0px 6px;
-  }
-
-  .rs-input,
-  .rs-input-group {
-    border-radius: 0;
   }
 }
 
@@ -163,7 +133,6 @@
   padding: 0;
   height: 18px;
   width: 18px;
-  border-radius: 0;
   background-color: var(--tol-bg) !important;
   border-color: var(--tol-grey) !important;
   color: var(--tol-grey);
@@ -174,17 +143,6 @@
 
   --bs-btn-line-height: 0px !important;
   --bs-btn-font-size: 14px !important;
-}
-
-.tol-filter-button.negate {
-  border-bottom-right-radius: 6px;
-  border-left: none;
-  border-top: none;
-}
-
-.tol-filter-button.exists {
-  border-top-right-radius: 6px;
-  border-left: none;
 }
 
 .tol-filter-button.negate:hover,
