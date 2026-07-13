@@ -5,6 +5,7 @@
 import type { Page } from "@playwright/test";
 
 import { clickUtilityBarButton } from "../../utility-bar";
+import { selectFromDropdown } from "../../components/dropdowns";
 
 /**
  * Configures the `tableIndex`th table with the given config,
@@ -28,17 +29,7 @@ export const configureTable = async (
 
   // Add the default sort attribute if one was provided
   if (defaultSort) {
-    // Click the dropdown
-    await page.getByTestId("default-sort-dropdown").click();
-
-    // Search for the attribute
-    await page.locator(".rs-search-box-input").fill(defaultSort);
-
-    // Select it
-    await page.locator(".rs-check-item").first().click();
-
-    // Hide the dropdown
-    await page.getByTestId("default-sort-dropdown").click();
+    await selectFromDropdown(page.getByTestId("default-sort-dropdown"), [defaultSort]);
   }
 
   // Toggle the Limit Column Visibility toggle if requested
@@ -48,19 +39,7 @@ export const configureTable = async (
 
   // Add the active columns if they were provided
   if (activeColumns) {
-    // Click the dropdown
-    await page.getByTestId("active-columns-dropdown").click();
-  
-    for (const columnName of activeColumns) {
-      // Search for the attribute
-      await page.locator(".rs-search-box-input").fill(columnName);
-
-      // Select it
-      await page.locator(".rs-check-item").first().click();
-    }
-
-    // Hide the dropdown
-    await page.getByTestId("active-columns-dropdown").click();
+    await selectFromDropdown(page.getByTestId("active-columns-dropdown"), activeColumns);
   }
 
   // Save the table
