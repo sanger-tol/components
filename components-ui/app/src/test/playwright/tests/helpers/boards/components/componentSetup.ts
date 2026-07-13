@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, Page } from "@playwright/test";
-import { clickUtilityBarButton } from "../utility-bar";
+import { clickUtilityBarButton } from "../../utility-bar";
 
 /**
  * Adds the specified component to the specified zone.

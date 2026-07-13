@@ -4,7 +4,7 @@
 
 import type { Page } from "@playwright/test";
 
-import { clickUtilityBarButton } from "../utility-bar";
+import { clickUtilityBarButton } from "../../utility-bar";
 
 /**
  * Configures the `tableIndex`th table with the given config,
