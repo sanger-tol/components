@@ -99,6 +99,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Move Zone Up",
     visible: layoutMode,
+    testid: "move-zone-up-button",
   };
 
   const downButton: PButton = {
@@ -111,6 +112,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Move Zone Down",
     visible: layoutMode,
+    testid: "move-zone-down-button",
   };
 
   const filtersButton: PButton = {

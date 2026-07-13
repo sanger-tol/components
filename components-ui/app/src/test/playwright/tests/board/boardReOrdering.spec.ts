@@ -37,7 +37,7 @@ test.beforeEach(async ({ page }) => {
 
   const { boardId, zoneId, viewId } = await createBoardForUser({
     userId: String(userId),
-    zoneTitle: "Test Zone",
+    zoneTitle: "Zone 1",
   });
 
   const secondZoneId = await insertZoneToBoard({
@@ -89,4 +89,15 @@ test("Can re-order components", async ({ page }) => {
 
 test("Can re-order zones", async ({ page }) => {
   await page.getByTestId("board-layout-mode-button").click();
+  const zones = page.getByTestId("zone-container");
+  // This locator filters for only zone editable titles, still using a data-test-id
+  const zoneTitles = page.locator('[data-testid="zone-utility-bar"] .tol-editable-title');
+  const zone1 = zones.filter({ has: page.getByText("Zone 1", { exact: true }) }).first();
+
+  await expect(zoneTitles).toHaveText(["Zone 1", "Zone 2"]);
+
+  await zone1.getByTestId("move-zone-down-button").click();
+  await page.getByText("Save Layouts").click();
+
+  await expect(zoneTitles).toHaveText(["Zone 2", "Zone 1"]);
 });
