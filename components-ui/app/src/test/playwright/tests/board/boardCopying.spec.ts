@@ -28,7 +28,9 @@ const setupBoardWithComponent = async (page) => {
   // Add a new user and give them a board in the DB
   // This is not the same user as our browser session
   const { userId } = await addUserToDB();
-  const { boardId, zoneId } = await createBoardForUser(String(userId));
+  const { boardId, zoneId } = await createBoardForUser({
+    userId: String(userId),
+  });
 
   await insertComponentToBoard(
     {
