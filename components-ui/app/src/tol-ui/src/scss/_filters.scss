@@ -86,17 +86,13 @@
 
   .rs-input-group.rs-input-group-inside:not(.rs-picker-input-group) {
     display: inline-block !important;
-    width: calc(100% - 38px) !important;
+    width: calc(100% - 18px) !important;
   }
 
   .rs-picker.rs-picker-daterange,
   .rs-picker.rs-picker-check {
     display: inline-block !important;
     width: calc(100% - 18px) !important;
-  }
-
-  .rs-input-group:not(.rs-picker-input-group) {
-    margin-left: 20px;
   }
 
   .tol-in-list-button {
@@ -110,11 +106,12 @@
   // re-position dropdown toggle inline with input
   .rs-dropdown {
     position: absolute;
+    z-index: 1;
+    margin: 3px 0 0 2px;
   }
 
-  .rs-input-group.rs-input-group-inside {
-    width: calc(100% - 38px) !important;
-    margin-left: 20px;
+  .rs-input {
+    padding-left: 20px;
   }
 }
 

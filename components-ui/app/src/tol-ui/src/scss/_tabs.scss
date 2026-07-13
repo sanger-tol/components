@@ -20,11 +20,13 @@
 
     .rs-nav-item {
       color: var(--tol-text);
+      border-radius: var(--tol-border-radius);
 
       &.rs-nav-item-active {
         color: var(--tol-primary);
         background-color: var(--tol-primary-translucent);
         border: 1px solid var(--tol-primary-translucent);
+        border-radius: var(--tol-border-radius);
         font-weight: normal;
         text-shadow: 0.5px 0 0 currentColor;
       }
@@ -58,7 +60,6 @@
 .tol-tabs-nav {
   overflow: auto;
   display: flex;
-  border-radius: 6px;
   margin-right: 6px;
 
   // Ensure shadows are visible top and bottom of the tabs
@@ -72,6 +73,16 @@
   .tol-view-tab:has(.tol-editable-title) {
     margin: 0;
     padding: 0;
+  }
+
+  .tol-view-tab {
+    border-radius: var(--tol-border-radius) !important;
+
+    &:hover,
+    &:focus,
+    &:active {
+      border-radius: var(--tol-border-radius) !important;
+    }
   }
 
   .tol-tabs-nav-tab {

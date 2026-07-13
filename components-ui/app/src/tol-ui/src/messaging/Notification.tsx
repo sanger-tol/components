@@ -21,7 +21,7 @@ function InternalNotification(props: PNotification, ref: React.Ref<HTMLDivElemen
   const { children, closable, type, header, onClose, ...rest } = props;
 
   return (
-    <div ref={ref} style={{ marginBottom: "4px" }}>
+    <div ref={ref}>
       <RSNotification
         closable={closable}
         type={type}

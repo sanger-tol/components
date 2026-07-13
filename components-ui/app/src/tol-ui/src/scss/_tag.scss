@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 .tol-tag {
   background-color: var(--tol-grey-translucent);
   color: var(--tol-emphasis);
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius-sm);
   padding: 3px;
   margin: 2px;
   float: left;

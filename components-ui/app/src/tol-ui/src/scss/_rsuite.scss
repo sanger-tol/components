@@ -92,6 +92,7 @@
   .rs-dropdown-menu {
     border: 1px solid var(--tol-grey);
     background: var(--tol-bg) !important;
+    border-radius: var(--tol-border-radius);
   }
 
   .rs-dropdown-item-focus {
@@ -182,7 +183,7 @@
     }
 
     .rs-modal-content {
-      border-radius: var(--tol-border-radius-lg) !important;
+      border-radius: var(--tol-border-radius) !important;
 
       .rs-modal-body {
         margin-top: 0;
@@ -205,7 +206,7 @@
   .rs-popover {
     background-color: var(--tol-tooltip-colour);
     color: var(--tol-light);
-    border-radius: var(--tol-border-radius-sm);
+    border-radius: var(--tol-border-radius);
     max-width: 300px;
     max-width: 40%;
   }
@@ -222,22 +223,27 @@
 
   .rs-popover[class*="placement-left"]>.rs-popover-arrow::after {
     border-left-color: var(--tol-tooltip-colour);
-    border-radius: var(--tol-border-radius-md);
+    border-radius: var(--tol-border-radius);
   }
 
   .rs-popover[class*="placement-top"]>.rs-popover-arrow::after {
     border-top-color: var(--tol-tooltip-colour);
-    border-radius: var(--tol-border-radius-md);
+    border-radius: var(--tol-border-radius);
   }
 
   .rs-popover[class*="placement-right"]>.rs-popover-arrow::after {
     border-right-color: var(--tol-tooltip-colour);
-    border-radius: var(--tol-border-radius-md);
+    border-radius: var(--tol-border-radius);
   }
 
   .rs-popover[class*="placement-bottom"]>.rs-popover-arrow::after {
     border-bottom-color: var(--tol-tooltip-colour);
-    border-radius: var(--tol-border-radius-md);
+    border-radius: var(--tol-border-radius);
+  }
+
+  // Arrow positioned incorrectly so hiding for now
+  .rs-popover-arrow {
+    display: none;
   }
 }
 
@@ -420,6 +426,7 @@
 .rs-picker-popup {
   background-color: var(--tol-grey-subtle) !important;
   border: var(--tol-grey) 1px solid !important;
+  border-radius: var(--tol-border-radius) !important;
 }
 
 // dropdown icons

@@ -6,10 +6,11 @@
 
 button,
 .btn,
+.rs-btn,
 input[type="button"],
 input[type="submit"] {
   font-size: 14px;
-  border-radius: var(--tol-border-radius-circle) !important;
+  border-radius: var(--tol-border-radius) !important;
 }
 
 // This is used to generate the classes for the different types of icon buttons

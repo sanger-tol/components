@@ -79,7 +79,7 @@
       position: relative;
 
       .rs-table {
-        border-radius: var(--tol-border-radius-md);
+        border-radius: var(--tol-border-radius);
         border: 1px solid var(--tol-grey);
         box-shadow: var(--tol-shadow-subtle);
 
@@ -388,7 +388,7 @@
 .tol-attribute-tooltip-stats-box {
   margin-top: 0;
   padding: 3px 12px 14px;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius-sm);
   background: var(--tol-grey-translucent);
   border: 1px solid var(--tol-grey);
 }
@@ -473,7 +473,7 @@ span.rs-dropdown-toggle-icon {
     color: var(--tol-text);
     background-color: var(--tol-bg-dark) !important;
     overflow: auto;
-    border-radius: 6px !important;
+    border-radius: var(--tol-border-radius-sm) !important;
   }
 }
 
@@ -498,7 +498,7 @@ span.rs-dropdown-toggle-icon {
 
 .tol-table-row-counter {
   z-index: 2;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
   background-color: var(--tol-grey-translucent);
   position: absolute;
   bottom: 6px;

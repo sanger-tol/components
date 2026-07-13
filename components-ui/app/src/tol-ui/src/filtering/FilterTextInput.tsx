@@ -5,12 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Input, InputGroup, Dropdown } from "rsuite";
+import { Input, InputGroup } from "rsuite";
 import { Button as BSButton } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
 import {
   Button,
+  DropdownButton,
   stopPropagation,
   IFilterInput,
   setFilterInput,
@@ -226,17 +227,12 @@ export function FilterTextInput(props: PFilterTextInput) {
       onClick={stopPropagation}
     >
       {isNumber && (
-        <Dropdown title={operator} noCaret>
-          {operators.map((op, i) => {
-            if (op !== operator) {
-              return (
-                <Dropdown.Item key={i} onClick={() => onOperator(op)}>
-                  {op}
-                </Dropdown.Item>
-              );
-            }
-          })}
-        </Dropdown>
+        <DropdownButton
+          toggle={{ text: operator, outline: true, disabled, position: "none" }}
+          buttons={operators
+            .filter((op) => op !== operator)
+            .map((op) => ({ text: op, onClick: () => onOperator(op) }))}
+        />
       )}
       {!isNumber && values.length <= 1 && (
         <BSButton
