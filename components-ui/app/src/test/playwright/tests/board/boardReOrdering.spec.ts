@@ -89,7 +89,6 @@ test("Can re-order components", async ({ page }) => {
 
 test("Can re-order zones", async ({ page }) => {
   await page.getByTestId("board-layout-mode-button").click();
-  const zones = page.getByTestId("zone-container");
   // This locator filters for only zone editable titles, still using a data-test-id
   const zoneTitles = page.locator('[data-testid="zone-utility-bar"] .tol-editable-title');
 
