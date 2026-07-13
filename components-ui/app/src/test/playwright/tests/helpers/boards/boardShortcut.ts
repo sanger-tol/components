@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import sql from "../../db";
+import sql from "../../../db";
 globalThis.crypto ??= require("node:crypto").webcrypto
 
 import { createBoardId, createViewId, createZoneId, createComponentId } from ".";

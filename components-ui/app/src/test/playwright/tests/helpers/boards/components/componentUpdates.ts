@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { Page } from "@playwright/test";
-import { clickUtilityBarButton } from "../utility-bar";
+import { clickUtilityBarButton } from "../../utility-bar";
 
 /**
  * Deletes the `componentIndex`th component of type `componentType` on the current board
