@@ -9,22 +9,55 @@ import { createBoardId, createViewId, createZoneId, createComponentId } from "."
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
+export interface InsertComponentToBoardOptions {
+  userId: string;
+  componentTitle: string;
+  zoneId: string;
+  componentType?: string;
+  datasourceInstanceId?: string;
+  filter?: object;
+  config?: object;
+  widgetType?: string;
+  objectType?: string;
+  order?: number;
+}
+
+export interface InsertZoneToBoardOptions {
+  userId: string;
+  viewId: string;
+  objectType: string;
+  datasourceInstanceId?: string;
+  title?: string;
+  filter?: object;
+  order?: number;
+}
+
+export interface createBoardForUserOptions {
+  userId: string;
+  viewTitle?: string;
+  zoneTitle?: string;
+  boardTitle?: string;
+}
+
 const insertBoardToDB = async (
   userId: string,
   boardId: string,
   viewID: string = createViewId(),
-  zoneID: string = createZoneId()
+  zoneID: string = createZoneId(),
+  viewTitle: string,
+  zoneTitle: string,
+  boardTitle: string,
 ) => {
   try {
     await sql.unsafe(`
       INSERT INTO "board"
-      VALUES ('${boardId}', '${boardId}', '{"and_":{}}', ${userId});
+      VALUES ('${boardId}', '${boardTitle}', '{"and_":{}}', ${userId});
       INSERT INTO "view"
-      VALUES ('${viewID}', '${randomInt()}', '{"and_":{}}', ${userId});
+      VALUES ('${viewID}', '${viewTitle}', '{"and_":{}}', ${userId});
       INSERT INTO "view_board"
       VALUES (${randomInt()}, '1', '${viewID}', '${boardId}');
       INSERT INTO "zone"
-      VALUES ('${zoneID}', '${randomInt()}', 'curation', '{"and_":{}}', ${userId}, 'tol_production');
+      VALUES ('${zoneID}', '${zoneTitle}', 'curation', '{"and_":{}}', ${userId}, 'tol_production');
       INSERT INTO "zone_view"
       VALUES (${randomInt()}, '1', '${zoneID}', '${viewID}');
     `).simple();
@@ -53,36 +86,45 @@ export const setBoard = async (page, boardId) => {
  * Adds a new board into the database for the given user ID
  * @param userId The ID of the owner user of this new board
  */
-export const createBoardForUser = async (userId: string) => {
+export const createBoardForUser = async (
+  {
+    userId,
+    viewTitle = `${randomInt()}`,
+    zoneTitle = `${randomInt()}`,
+    boardTitle = `${randomInt()}`
+  }: createBoardForUserOptions
+) => {
   const boardId = createBoardId();
   const viewId = createViewId();
   const zoneId = createZoneId();
-  await insertBoardToDB(userId, boardId, viewId, zoneId);
+  await insertBoardToDB(
+    userId,
+    boardId,
+    viewId,
+    zoneId,
+    viewTitle,
+    zoneTitle,
+    boardTitle
+  );
   return {boardId, viewId, zoneId};
 }
 
 /**
  * Inserts a component into the database for the given user ID and zone ID
- * @param userId The ID of the owner user of this new component
- * @param componentTitle The title of the new component
- * @param zoneId The ID of the zone to insert this component into
- * @param componentType The type of the new component (default: "table")
- * @param datasourceInstanceId The ID of the datasource instance to use (default: "tol_production")
- * @param filter The filter object for the new component (default: {})
- * @param config The config object for the new component (default: {})
- * @param widgetType The widget type for the new component (default: "lg")
- * @param objectType The object type for the new component (default: "curation")
  */
-export const InsertComponentToBoard = async (
-  userId: string,
-  componentTitle: string,
-  zoneId: string,
-  componentType: string = "table",
-  datasourceInstanceId: string = "tol_production",
-  filter: object = {},
-  config: object = {},
-  widgetType: string = "lg",
-  objectType: string = "curation",
+export const insertComponentToBoard = async (
+  {
+    userId,
+    componentTitle,
+    zoneId,
+    componentType = "table",
+    datasourceInstanceId = "tol_production",
+    filter = {},
+    config = {},
+    widgetType = "lg",
+    objectType = "curation",
+    order = 1,
+  }: InsertComponentToBoardOptions
 ) => {
   try {
     const componentId = createComponentId();
@@ -101,8 +143,34 @@ export const InsertComponentToBoard = async (
         '${datasourceInstanceId}'
       );
       INSERT INTO "component_zone"
-      VALUES (${randomInt()}, '1', '${componentId}', '${zoneId}');
+      VALUES (${randomInt()}, '${order}', '${componentId}', '${zoneId}');
     `).simple();
+  }
+  catch (e) {
+    console.log(e)
+  };
+}
+
+export const insertZoneToBoard = async (
+  {
+    userId,
+    viewId,
+    title = 'Test Zone',
+    objectType = "curation",
+    filter = {},
+    order = 1,
+    datasourceInstanceId = "tol_production",
+  }: InsertZoneToBoardOptions
+) => {
+  try {
+    const zoneId = createZoneId();
+    await sql.unsafe(`
+      INSERT INTO "zone"
+      VALUES ('${zoneId}', '${title}', '${objectType}', '${JSON.stringify(filter)}', ${userId}, '${datasourceInstanceId}');
+      INSERT INTO "zone_view"
+      VALUES (${randomInt()}, '${order}', '${zoneId}', '${viewId}');
+    `).simple();
+    return zoneId;
   }
   catch (e) {
     console.log(e)

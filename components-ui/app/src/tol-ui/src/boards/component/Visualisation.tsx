@@ -148,7 +148,7 @@ export function Visualisation(props: PVisualisation) {
 
   if (layoutMode) {
     return (
-      <div className="tol-draggable-widget">
+      <div className="tol-draggable-widget" data-testid={`draggable-${title}`}>
         <div className="tol-draggable-widget-content">
           {Visualisation}
         </div>

@@ -8,7 +8,7 @@ import {
   addUserToDB,
   createBoardForUser,
   isInHeadlessMode,
-  InsertComponentToBoard,
+  insertComponentToBoard,
   setBoard,
   createBoardId,
   enterEditMode,
@@ -28,12 +28,16 @@ const setupBoardWithComponent = async (page) => {
   // Add a new user and give them a board in the DB
   // This is not the same user as our browser session
   const { userId } = await addUserToDB();
-  const { boardId, zoneId } = await createBoardForUser(String(userId));
+  const { boardId, zoneId } = await createBoardForUser({
+    userId: String(userId),
+  });
 
-  await InsertComponentToBoard(
-    String(userId),
-    "Test Table",
-    zoneId
+  await insertComponentToBoard(
+    {
+      userId: String(userId),
+      componentTitle: "Test Table",
+      zoneId,
+    }
   );
 
   await page.goto(`/board/${boardId}`);
