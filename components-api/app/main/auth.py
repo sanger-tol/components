@@ -32,6 +32,7 @@ def get_auth_inspector(
 
     return auth_inspector
 
+
 def get_boards_auth_inspector(
     ctx_getter: CtxGetter = default_ctx_getter
 ) -> AuthInspector:
@@ -71,6 +72,7 @@ def get_boards_auth_inspector(
         return {'user.id': {'eq': {'value': ctx.user_id}}}
 
     return auth_inspector
+
 
 def get_local_auth_inspector(
     ctx_getter: CtxGetter = default_ctx_getter

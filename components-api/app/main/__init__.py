@@ -34,8 +34,8 @@ from tol.status import StatusDataSource
 
 from .auth import (
     get_auth_inspector,
-    get_local_auth_inspector,
-    get_boards_auth_inspector
+    get_boards_auth_inspector,
+    get_local_auth_inspector
 )
 from .model import Base, MODELS, UserMixin
 from .playwright_ds import PlaywrightTestDataSource
@@ -169,10 +169,13 @@ def application():
     )
 
     # Data endpoints
-    blueprint_data_local = data_blueprint(sql_datasource, auth_inspector=get_local_auth_inspector())
+    blueprint_data_local = data_blueprint(
+        sql_datasource,
+        auth_inspector=get_local_auth_inspector()
+    )
     app.register_blueprint(blueprint_data_local, name='local',
                            url_prefix=os.getenv('API_PATH') + '/local')
-    
+
     # status board
     status_ds = StatusDataSource({})
     core_data_object(status_ds)
