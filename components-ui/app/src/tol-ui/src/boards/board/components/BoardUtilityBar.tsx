@@ -110,6 +110,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     });
   };
 
+  // Clears all filters to ensure filter state is consistent when switching modes
   const clearAllFilters = () => {
     resetAllBoardFilters(board);
     setBoard({ ...board });
