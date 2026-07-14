@@ -123,11 +123,10 @@ export function Zone(props: PZone) {
     visible: editMode && !layoutMode,
   };
 
-  const translatorsButton: PButton = {
+  const translatorButton: PButton = {
     ...BUTTONS.TRANSLATORS,
     //visible: editMode && !layoutMode,
     // TODO FUTURE: Implement translators
-    visible: false,
     onClick: () => { },
   };
 
@@ -161,7 +160,7 @@ export function Zone(props: PZone) {
           filtersButton,
           downButton,
           upButton,
-          translatorsButton,
+          translatorButton,
         ]}
       />
       <div id="component-modal">

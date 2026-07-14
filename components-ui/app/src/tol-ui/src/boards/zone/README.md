@@ -1,4 +1,4 @@
-# Zone Filter Translation
+# Zone Filter Translation (Currently only 1 hop relationships)
 
 Filter translation keeps user intent consistent when moving between zones with different object types.
 
