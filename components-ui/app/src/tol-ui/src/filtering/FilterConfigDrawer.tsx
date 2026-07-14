@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Toggle } from "rsuite"
+import { Toggle, Input } from "rsuite"
 import { useEffect, useRef, useState } from "react";
 import {
   IconTooltip,
@@ -24,6 +24,8 @@ import {
   IDBBoardEntityFilter,
   upsertBoardEntity,
   deepEqual,
+  isEmptyObject,
+  JsonEditor,
 } from ".."
 
 
@@ -64,12 +66,19 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const [attributes, setAttributes] = useState<string[]>(
     Object.keys(savedFilters?.and_ || {})
   );
+
+  // Only apply filter to the current component
   const [passThrough, setPassThrough] = useState<boolean>(false);
   const initialPassThroughRef = useRef(
     boardObjectType === "zone"
       ? false
       : zone.children?.[id]?.filterPassThrough || false,
   );
+
+  const [includeIncomingFilters, setIncludeIncomingFilters] = useState<boolean>(true);
+  const [advancedTranslations, setAdvancedTranslations] = useState<boolean>(false);
+  const [translationsText, setTranslationsText] = useState<string>("");
+
   // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone
   const [currentFilterZone, setCurrentFilterZone] = useState<IZone>(
     defineZoneWithComponentList(
@@ -122,7 +131,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const [disabledFilterValues, setDisabledFilterValues] = useState(
     removeCurrentEntityFiltersForDisabledFilters(
       generateFilter(currentFilterZone, undefined, true)?.and_!,
-        savedFilters?.and_!,
+      savedFilters?.and_!,
     ),
   );
 
@@ -184,6 +193,78 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     <Icon icon="close" onClick={() => { removeFilter(attribute) }} className="remove-filter-button" />
   );
 
+  const filterPassThroughToggle = (
+    <div className="tol-toggle-option">
+      <Toggle
+        key="tol-pass-through-toggle"
+        onClick={() => {
+          setPassThrough(!passThrough);
+          setZone({ ...zone });
+        }}
+        checked={passThrough}
+      />
+      <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+        Apply these filters only to this Component.
+      </span>
+      <IconTooltip
+        contents={
+          "Toggling this on means this filter does not affect other components in the heirarchy. Filters from above are still applied."
+        }
+      />
+      <hr style={{ marginTop: 24 }} />
+    </div>
+  )
+
+  const incomingFiltersToggle = (
+    <>
+      <div className="tol-toggle-option">
+        <Toggle
+          key="tol-incoming-filters-toggle"
+          onClick={() => {
+            setIncludeIncomingFilters(!includeIncomingFilters);
+          }}
+          checked={includeIncomingFilters}
+        />
+        <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+          Use incoming filters.
+        </span>
+        <IconTooltip
+          contents={
+            "Toggling this off means you will not use any incoming filters from the Zone above."
+          }
+        />
+      </div>
+      <div className="tol-toggle-option">
+        <Toggle
+          key="tol-advanced-translations-toggle"
+          onClick={() => {
+            setAdvancedTranslations(!advancedTranslations);
+          }}
+          checked={advancedTranslations}
+        />
+        <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+          Use advanced translations.
+        </span>
+        <IconTooltip
+          contents={
+            "Toggling this allows you to specify a mapping of custom translations. These are prioritised over automatic translations."
+          }
+        />
+        {advancedTranslations && (
+          <Input
+            className="tol-filter-translations-input"
+            as="textarea"
+            rows={translationsText ? 6 : 1}
+            placeholder={`{"incomingField": "currentField"}`}
+            value={translationsText}
+            onChange={setTranslationsText}
+          />
+        )}
+        <hr style={{ marginTop: 24 }} />
+      </div>
+    </>
+  )
+
   return (
     <div>
       <Drawer
@@ -194,6 +275,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         hasPendingChanges={hasPendingChanges}
         onSaveTestId="apply-filter-button"
       >
+        {boardObjectType === "zone" ? incomingFiltersToggle : filterPassThroughToggle}
         <AttributeSelector
           {...props}
           displaySource
@@ -212,27 +294,6 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           tooltipContent={FILTER_ALREADY_EXISTS}
           onClean={onClean}
         />
-        {boardObjectType !== "zone" &&
-          <div className="tol-pass-through-toggle">
-            <Toggle
-              key="recommended-tick-filter"
-              onClick={() => {
-                setPassThrough(!passThrough);
-                setZone({ ...zone });
-              }}
-              checked={passThrough}
-            />
-            <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
-              Apply filters only to this Component.
-            </span>
-            <IconTooltip
-              contents={
-                "This filter does not affect other components in the heirarchy. Filters from above are still applied."
-              }
-            />
-            <hr style={{ marginTop: 24 }} />
-          </div>
-        }
         <RemoteFilters
           {...props}
           utilityBarConfig={undefined}

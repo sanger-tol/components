@@ -297,12 +297,16 @@
   }
 }
 
-.tol-pass-through-toggle {
+.tol-toggle-option {
   margin-bottom: 26px;
 
   .rs-toggle {
     margin-right: 10px;
   }
+}
+
+.tol-filter-translations-input {
+  margin-top: 10px;
 }
 
 .tol-read-only-filters {

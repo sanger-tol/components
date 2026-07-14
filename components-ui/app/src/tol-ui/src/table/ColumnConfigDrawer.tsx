@@ -300,7 +300,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       {sortByAttribute && SortByButtons}
       {canManageColumnVisibility && (
         <div className="tol-config-drawer-column-title tol-section-spacing-top">
-          <div className="tol-pass-through-toggle">
+          <div className="tol-toggle-option">
             <Toggle
               onClick={() => {
                 setLimitVisibility(!limitVisibility);
