@@ -226,7 +226,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           checked={includeIncomingFilters}
         />
         <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
-          Use incoming filters.
+          Include incoming filters.
         </span>
         <IconTooltip
           contents={
@@ -234,34 +234,36 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           }
         />
       </div>
-      <div className="tol-toggle-option">
-        <Toggle
-          key="tol-advanced-translations-toggle"
-          onClick={() => {
-            setAdvancedTranslations(!advancedTranslations);
-          }}
-          checked={advancedTranslations}
-        />
-        <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
-          Use advanced translations.
-        </span>
-        <IconTooltip
-          contents={
-            "Toggling this allows you to specify a mapping of custom translations. These are prioritised over automatic translations."
-          }
-        />
-        {advancedTranslations && (
-          <Input
-            className="tol-filter-translations-input"
-            as="textarea"
-            rows={translationsText ? 6 : 1}
-            placeholder={`{"incomingField": "currentField"}`}
-            value={translationsText}
-            onChange={setTranslationsText}
+      {includeIncomingFilters && (
+        <div className="tol-toggle-option">
+          <Toggle
+            key="tol-advanced-translations-toggle"
+            onClick={() => {
+              setAdvancedTranslations(!advancedTranslations);
+            }}
+            checked={advancedTranslations}
           />
-        )}
-        <hr style={{ marginTop: 24 }} />
-      </div>
+          <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+            Use advanced translations.
+          </span>
+          <IconTooltip
+            contents={
+              "Toggling this allows you to specify a mapping of custom translations. These are prioritised over automatic translations."
+            }
+          />
+          {advancedTranslations && (
+            <Input
+              className="tol-filter-translations-input"
+              as="textarea"
+              rows={translationsText ? 6 : 1}
+              placeholder={`{"incomingField": "currentField"}`}
+              value={translationsText}
+              onChange={setTranslationsText}
+            />
+          )}
+        </div>
+      )}
+      <hr style={{ marginTop: 24 }} />
     </>
   )
 
