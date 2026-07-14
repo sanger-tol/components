@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 
 - Refer to the BOARD EPIC on JIRA for full tickets/changes in this release.
 - [TOLP-9811](https://jira.sanger.ac.uk/browse/TOLP-9811)
+- Fixed bug: Inconsistent filters on mode changes
 
 ## tol-ui `3.5.8`
 
