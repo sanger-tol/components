@@ -12,6 +12,7 @@ import {
   deepCopy,
   httpClient,
   normaliseCaps,
+  isEmptyObject,
 } from "..";
 import type {
   IAttributeDescriptor,
@@ -34,6 +35,7 @@ import type {
   IJsonApiResponse,
   IJsonApiResponseData,
   IRelationshipPointer,
+  TRelationshipPaths,
   IRelationships,
   ISourceDataObject,
   IUpsert,
@@ -45,6 +47,7 @@ import type {
 
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
+const relationshipPathsCache: TRelationshipPaths = {};
 
 export class TsDataSource {
   private client: TClient;
@@ -280,7 +283,7 @@ export class TsDataSource {
     return !(expiry && now < expiry);
   }
 
-  private fetchAndSaveConfig(resource: string, key: string): Promise<object> {
+  private fetchAndSaveConfig(resource: string, key: string): Promise<Record<string, any>> {
     const anHourFromNow = new Date();
     anHourFromNow.setHours(anHourFromNow.getHours() + 1);
     if (!configPromises[key]) {
@@ -304,7 +307,7 @@ export class TsDataSource {
   }
 
   @retry(3)
-  public getConfig(resource: string): Promise<object> {
+  public getConfig(resource: string): Promise<Record<string, any>> {
     const key = this.getLocalStorageKey(resource);
     const savedConfig = this.getSavedConfig(key);
 
@@ -315,12 +318,54 @@ export class TsDataSource {
     }
   }
 
-  public async attributeMetadata(): Promise<object> {
-    return this.getConfig("_config/attribute_metadata");
+  public async attributeMetadata(): Promise<IAttributes> {
+    return this.getConfig("_config/attribute_metadata") as Promise<IAttributes>;
   }
 
-  public async relationshipConfig(): Promise<object> {
-    return this.getConfig("_config/relationships");
+  public async relationshipConfig(): Promise<IRelationships> {
+    return this.getConfig("_config/relationships") as Promise<IRelationships>;
+  }
+
+  /**
+   * Generates a lookup table for relationship paths between object types
+   * using the relationship config from the current datasource instance.
+   * 
+   * @returns A lookup table for relationship paths between object types.
+   */
+  public async relationshipPaths(): Promise<TRelationshipPaths> {
+    if (!isEmptyObject(relationshipPathsCache)) return relationshipPathsCache;
+
+    const relationships = await this.relationshipConfig();
+
+    for (const [sourceObjectType, relations] of Object.entries(relationships)) {
+      const oneRelationships = Object.entries(relations.one ?? {});
+      if (oneRelationships.length === 0) continue;
+
+      const sourceLookup = (relationshipPathsCache[sourceObjectType] ??= {});
+
+      for (const [relationship, targetObjectType] of oneRelationships) {
+        const translator = (sourceLookup[targetObjectType] ??= {
+          paths: new Set<string>(),
+        });
+
+        translator.paths.add(relationship);
+      }
+    }
+    return relationshipPathsCache;
+  }
+
+  /**
+   * Determines whether a given field is available on relationships for an object type.
+   *
+   * @param field - The field name to check.
+   * @param objectType - The object type that owns the field.
+   * @returns `true` if the field has `available_on_relationships` set, otherwise `false`.
+   */
+  public async isAvailableOnRelationships(field: string, objectType: string): Promise<boolean> {
+    const attributeMetadata = await this.attributeMetadata();
+    const attribute = field.split(".").pop() ?? ""
+    const attributeDescriptor = attributeMetadata[objectType]?.[attribute];
+    return attributeDescriptor?.available_on_relationships ?? false;
   }
 
   private addIds(attributes: IAttributes) {
@@ -707,102 +752,32 @@ export class TsDataSource {
 
     return false;
   }
-}
 
+  /**
+   * Finds the related object type whose relationship name matches a field prefix,
+   * using the relationship config. Checks both `one` and `many` relationships.
+   *
+   * @param field - Field key to inspect (for example, `gap_species.name`).
+   * @param objectType - Object type used as the lookup root in the relationship config.
+   * @returns The matched related object type, or `null` when no relationship prefix matches.
+   */
+  public async getObjectTypeByField(
+    field: string,
+    objectType: string
+  ): Promise<string | null> {
+    const relationshipConfig = await this.relationshipConfig();
+    const objectRelationships = relationshipConfig[objectType];
 
-export function getFieldByName(object: TDataObjectOrNull, field: string): any {
-  if (field.includes(".")) {
-    const [relationship, ...rest] = field.split(".");
-    const relationshipObject = object?.relationships?.[relationship];
-    if (relationshipObject) {
-      if (Array.isArray(relationshipObject)) {
-        return relationshipObject.map((item) =>
-          getFieldByName(item, rest.join("."))
-        );
+    for (const [relationshipName, relatedObjectType] of Object.entries(objectRelationships?.one ?? {})) {
+      if (field.startsWith(relationshipName + ".")) {
+        return relatedObjectType;
       }
-      return getFieldByName(relationshipObject, rest.join("."));
     }
-  }
-  return object?.[field];
-}
-
-/**
- * Filters a list of data objects so only the first occurrence of each `id` is kept.
- *
- * @param items - List of data objects (or null list) to filter.
- * @returns A list containing unique objects by `id`.
- */
-function filterUniqueById(items: TDataObjectListOrNull): TDataObjectListOrNull {
-  if (!items) return [null] as TDataObjectListOrNull;
-
-  const seenIds = new Set<string>();
-
-  return items.filter((item) => {
-    if (!item?.id) return false;
-    if (seenIds.has(item.id)) return false;
-    seenIds.add(item.id);
-    return true;
-  }) as TDataObjectListOrNull;
-}
-
-/**
- * Resolves and returns the child data object(s) reached by following a dot-delimited relationship path.
- *
- * - If `field` contains dots (e.g., `"author.address.city"`), each segment is treated as a relationship name
- *   to traverse via `object.relationships[segment]`.
- * - Relationship values may be either a single object or an array of objects; arrays are recursively mapped and
- *   flattened into a single list.
- * - If `field` does not contain a dot, the current `object` is returned as a single-item list (even if `object` is `null`).
- *
- * @param object - The starting data object from which to traverse relationships.
- * @param field - Dot-delimited relationship path to traverse. If no dot is present, no traversal occurs.
- * @returns A list of resolved child objects, or `null` if any relationship segment is missing/undefined along the path.
- */
-export function getChildObjectsByName(object: TDataObjectOrNull, field: string): TDataObjectListOrNull {
-  if (field.includes(".")) {
-    const [relationship, ...rest] = field.split(".");
-    const relationshipObject = object?.relationships?.[relationship];
-    if (relationshipObject) {
-      // If the relationship is an array, we need to recursively resolve the rest of the path for each item and flatten the results
-      if (Array.isArray(relationshipObject)) {
-        const objects = relationshipObject.flatMap(
-          (item) => getChildObjectsByName(item, rest.join(".")) ?? []
-        );
-        return filterUniqueById(objects as TDataObjectListOrNull);
+    for (const [relationshipName, relatedObjectType] of Object.entries(objectRelationships?.many ?? {})) {
+      if (field.startsWith(relationshipName + ".")) {
+        return relatedObjectType;
       }
-      // If it's a single object, just resolve the rest of the path for that object
-      return getChildObjectsByName(relationshipObject, rest.join("."));
     }
-    // If any relationship segment is missing/undefined, return null
-    return [null] as TDataObjectListOrNull;
+    return null;
   }
-  // if the field does not include a dot, we assume it's a field on the current object
-  return [object] as TDataObjectListOrNull;
-}
-
-/**
- * Extracts the attribute name from a field path by returning the last segment.
- * @param field - A dot-separated field path (e.g., "user.profile.name")
- * @returns The last segment of the field path (e.g., "name")
- * @example
- * getAttributeNameByField("user.profile.name") // returns "name"
- * getAttributeNameByField("id") // returns "id"
- */
-export function getAttributeNameByField(field: string): string {
-  return field.split(".").slice(-1)[0];
-}
-
-/**
- * Extracts the relationship name from a field path by removing the last segment.
- * @param field - A field path that may contain dot-separated segments (e.g., "relationship.field")
- * @returns The relationship name (all segments except the last one joined by dots), or an empty string if the field contains no dots
- * @example
- * getRelationshipNameByField("user.profile.name") // returns "user.profile"
- * getRelationshipNameByField("name") // returns ""
- */
-export function getRelationshipNameByField(field: string): string {
-  if (field.includes(".")) {
-    return field.split(".").slice(0, -1).join(".");
-  }
-  return "";
 }

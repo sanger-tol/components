@@ -15,6 +15,7 @@ import {
   TDataObjectListOrNull,
   TPlateData,
   getFieldByName,
+  RELATIONSHIP_SEPARATOR,
 } from "..";
 
 export function formatPath(name: string) {
@@ -66,8 +67,8 @@ export function normaliseCaps(name: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
   if (prefix && name === "id") return normaliseCaps(prefix) + " ID";
-  // replace relationship '.' with underscore ready to split
-  name = name.replace(/\./g, "_");
+  // replace relationship separator with underscore ready to split
+  name = name.split(RELATIONSHIP_SEPARATOR).join("_");
   const words = name.split("_");
   for (let count = 0; count < words.length; count++) {
     words[count] = normaliseWords(words[count]);

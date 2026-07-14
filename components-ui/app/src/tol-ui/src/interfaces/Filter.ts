@@ -12,7 +12,7 @@ export interface IFilterOperatorOptions {
   negate?: boolean;
 }
 
-interface IFilterOperators {
+export interface IFilterOperators {
   // I would love to set this key as TFilterOperatorType instead, but that can't be used as an
   // object key. Thus, instead, in code where this is used, `as TFilterOperatorType` must be used.
   [operator: string]: IFilterOperatorOptions;
