@@ -17,3 +17,10 @@ export const ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH: number = 34;
 
 export const TABLE_CONFIG_DIFF_AUTH_VS_NO_AUTH_NOTICE_DISMISSED_KEY: string =
   "tol_table_config_diff_logged_in_out_sessions_notice_dismissed";
+
+// Error messages for table field metadata
+export const TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND = (field: string, objectType: string): string =>
+  `Attribute metadata not found for field: ${field} in ${objectType}`;
+
+export const TABLE_ERROR_FIELD_METADATA_NOT_FOUND = (field: string): string =>
+  `Field metadata not found for attribute: ${field}`;
