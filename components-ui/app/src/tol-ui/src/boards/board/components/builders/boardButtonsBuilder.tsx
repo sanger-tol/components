@@ -29,17 +29,17 @@ export interface IBoardButtonsBuilder {
    */
   editMode: boolean;
   /**
-   * Set edit mode state.
+   * Callback for when the edit mode button is clicked.
    */
-  setEditMode: (value: boolean) => void;
+  onEditModeClick: () => void;
   /**
    * Whether the board is in layout mode.
    */
   layoutMode: boolean;
   /**
-   * Set layout mode state.
+   * Callback for when the layout mode button is clicked.
    */
-  setLayoutMode: (value: boolean) => void;
+  onLayoutModeClick: () => void;
   /**
    * True if a table is loading.
    */
@@ -68,8 +68,8 @@ export interface IBoardButtonsBuilder {
 export function boardButtonsBuilder({
   activeViewId,
   privilege,
-  editMode, setEditMode,
-  layoutMode, setLayoutMode,
+  editMode, onEditModeClick,
+  layoutMode, onLayoutModeClick,
   tableLoading,
   boardTitle,
   newBoardCopyTitle, setNewBoardCopyTitle,
@@ -79,7 +79,7 @@ export function boardButtonsBuilder({
     ...(editMode ? BOARD_BUTTONS.EDIT_MODE_EXIT : BOARD_BUTTONS.EDIT_MODE_ENTER),
     visible: (privilege === PRIVILEGE.BOARD.WRITABLE && !layoutMode) || false,
     disabled: editMode && tableLoading,
-    onClick: () => setEditMode(!editMode),
+    onClick: onEditModeClick,
     testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
     tooltip:
       editMode && tableLoading
@@ -90,7 +90,7 @@ export function boardButtonsBuilder({
   const layoutOrExitButton: PButton = {
     ...(layoutMode ? BOARD_BUTTONS.LAYOUT_MODE_EXIT : BOARD_BUTTONS.LAYOUT_MODE_ENTER),
     visible: (privilege === PRIVILEGE.BOARD.WRITABLE && editMode) || false,
-    onClick: () => setLayoutMode(!layoutMode),
+    onClick: onLayoutModeClick,
     testid: "board-layout-mode-button",
     tooltip: "",
   };

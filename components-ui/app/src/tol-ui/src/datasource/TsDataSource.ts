@@ -752,4 +752,32 @@ export class TsDataSource {
 
     return false;
   }
+
+  /**
+   * Finds the related object type whose relationship name matches a field prefix,
+   * using the relationship config. Checks both `one` and `many` relationships.
+   *
+   * @param field - Field key to inspect (for example, `gap_species.name`).
+   * @param objectType - Object type used as the lookup root in the relationship config.
+   * @returns The matched related object type, or `null` when no relationship prefix matches.
+   */
+  public async getObjectTypeByField(
+    field: string,
+    objectType: string
+  ): Promise<string | null> {
+    const relationshipConfig = await this.relationshipConfig();
+    const objectRelationships = relationshipConfig[objectType];
+
+    for (const [relationshipName, relatedObjectType] of Object.entries(objectRelationships?.one ?? {})) {
+      if (field.startsWith(relationshipName + ".")) {
+        return relatedObjectType;
+      }
+    }
+    for (const [relationshipName, relatedObjectType] of Object.entries(objectRelationships?.many ?? {})) {
+      if (field.startsWith(relationshipName + ".")) {
+        return relatedObjectType;
+      }
+    }
+    return null;
+  }
 }

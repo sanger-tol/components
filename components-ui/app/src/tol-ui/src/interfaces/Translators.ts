@@ -17,7 +17,7 @@ export interface IFieldTranslationParams {
    * The attribute (field) to be translated.
    * e.g. "species.scientific_name"
    */
-  field: string;
+  incomingField: string;
   /**
    * The filter value associated with the attribute to be translated.
    */
