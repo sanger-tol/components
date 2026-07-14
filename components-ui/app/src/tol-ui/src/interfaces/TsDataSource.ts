@@ -161,7 +161,7 @@ export type IRelationshipPathValue = {
   /**
    * The relationship path from the source to the target object type.
    */
-  paths: string[];
+  paths: Set<string>;
 };
 
 /**

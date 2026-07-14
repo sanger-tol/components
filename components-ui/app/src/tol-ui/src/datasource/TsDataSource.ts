@@ -345,10 +345,10 @@ export class TsDataSource {
 
       for (const [relationship, targetObjectType] of oneRelationships) {
         const translator = (sourceLookup[targetObjectType] ??= {
-          paths: [],
+          paths: new Set<string>(),
         });
 
-        translator.paths.push(relationship);
+        translator.paths.add(relationship);
       }
     }
     return relationshipPathsCache;

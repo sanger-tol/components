@@ -20,7 +20,7 @@ import type { IZone, IFilter, IFieldTranslationParams } from "../..";
  * @param params - Relationship translation inputs for the current and parent zones.
  * @returns A promise that resolves when the translated filter has been updated.
  */
-async function handleOneToManyRelationship({
+async function addRelationshipPrefix({
   incomingField,
   filterValue,
   objectType,
@@ -32,7 +32,8 @@ async function handleOneToManyRelationship({
   // Only translate if the attribute is used as a relationship
   if (await dataspace?.isAvailableOnRelationships(incomingField, zoneAboveObjectType)) {
     // Find the first relationship path to translate from
-    const relationship = paths[objectType][zoneAboveObjectType].paths[0];
+    const relationship = paths[objectType][zoneAboveObjectType].paths.values().next().value;
+    if (!relationship) return;
     translatedFilter.and_![relationship + RELATIONSHIP_SEPARATOR + incomingField] = filterValue;
   }
 }
@@ -44,7 +45,7 @@ async function handleOneToManyRelationship({
  * @param params - Relationship translation inputs for the current and parent zones.
  * @returns A promise that resolves when the translated filter has been updated.
  */
-async function handleManyToOneRelationship({
+async function removeOrChangeRelationshipPrefix({
   incomingField,
   filterValue,
   objectType,
@@ -55,7 +56,6 @@ async function handleManyToOneRelationship({
 }: IFieldTranslationParams): Promise<void> {
   // Find the related object type whose relationship path matches the field prefix
   const relatedObjectType = await dataspace?.getObjectTypeByField(incomingField, zoneAboveObjectType);
-  console.log(relatedObjectType)
 
   // Only translate attributes that are available on relationships
   if (relatedObjectType && await dataspace?.isAvailableOnRelationships(incomingField, relatedObjectType)) {
@@ -73,7 +73,8 @@ async function handleManyToOneRelationship({
        * the first relationship path to the attribute.
        */
       const newField = incomingField.split(RELATIONSHIP_SEPARATOR).slice(-1)[0];
-      const relationship = paths[objectType][relatedObjectType].paths[0];
+      const relationship = paths[objectType][relatedObjectType].paths.values().next().value;
+      if (!relationship) return;
       translatedFilter.and_![relationship + RELATIONSHIP_SEPARATOR + newField] = filterValue;
     }
   }
@@ -119,7 +120,7 @@ export async function translateZoneAboveFilter(
           object_type! in paths &&
           zoneAbove.object_type! in paths[object_type!]
         ) {
-          await handleOneToManyRelationship({
+          await addRelationshipPrefix({
             incomingField,
             filterValue,
             objectType: object_type!,
@@ -144,7 +145,7 @@ export async function translateZoneAboveFilter(
           (zoneAbove.object_type! in paths ||
             object_type! in paths[zoneAbove.object_type!])
         ) {
-          await handleManyToOneRelationship({
+          await removeOrChangeRelationshipPrefix({
             incomingField,
             filterValue,
             objectType: object_type!,
