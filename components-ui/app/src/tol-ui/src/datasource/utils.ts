@@ -18,16 +18,16 @@ import {
  * @returns The resolved value, a mapped array of values for to-many relationships, or `undefined` if no value is found.
  */
 export function getFieldByName(object: TDataObjectOrNull, field: string): any {
-  if (field.includes(".")) {
-    const [relationship, ...rest] = field.split(".");
+  if (isRelationship(field)) {
+    const [relationship, ...rest] = field.split(RELATIONSHIP_SEPARATOR);
     const relationshipObject = object?.relationships?.[relationship];
     if (relationshipObject) {
       if (Array.isArray(relationshipObject)) {
         return relationshipObject.map((item) =>
-          getFieldByName(item, rest.join("."))
+          getFieldByName(item, rest.join(RELATIONSHIP_SEPARATOR))
         );
       }
-      return getFieldByName(relationshipObject, rest.join("."));
+      return getFieldByName(relationshipObject, rest.join(RELATIONSHIP_SEPARATOR));
     }
   }
   return object?.[field];
@@ -66,19 +66,19 @@ function filterUniqueById(items: TDataObjectListOrNull): TDataObjectListOrNull {
  * @returns A list of resolved child objects, or `null` if any relationship segment is missing/undefined along the path.
  */
 export function getChildObjectsByName(object: TDataObjectOrNull, field: string): TDataObjectListOrNull {
-  if (field.includes(".")) {
-    const [relationship, ...rest] = field.split(".");
+  if (isRelationship(field)) {
+    const [relationship, ...rest] = field.split(RELATIONSHIP_SEPARATOR);
     const relationshipObject = object?.relationships?.[relationship];
     if (relationshipObject) {
       // If the relationship is an array, we need to recursively resolve the rest of the path for each item and flatten the results
       if (Array.isArray(relationshipObject)) {
         const objects = relationshipObject.flatMap(
-          (item) => getChildObjectsByName(item, rest.join(".")) ?? []
+          (item) => getChildObjectsByName(item, rest.join(RELATIONSHIP_SEPARATOR)) ?? []
         );
         return filterUniqueById(objects as TDataObjectListOrNull);
       }
       // If it's a single object, just resolve the rest of the path for that object
-      return getChildObjectsByName(relationshipObject, rest.join("."));
+      return getChildObjectsByName(relationshipObject, rest.join(RELATIONSHIP_SEPARATOR));
     }
     // If any relationship segment is missing/undefined, return null
     return [null] as TDataObjectListOrNull;
@@ -96,7 +96,7 @@ export function getChildObjectsByName(object: TDataObjectOrNull, field: string):
  * getAttributeNameByField("id") // returns "id"
  */
 export function getAttributeNameByField(field: string): string {
-  return field.split(".").slice(-1)[0];
+  return field.split(RELATIONSHIP_SEPARATOR).slice(-1)[0];
 }
 
 /**
@@ -108,8 +108,8 @@ export function getAttributeNameByField(field: string): string {
  * getRelationshipNameByField("name") // returns ""
  */
 export function getRelationshipNameByField(field: string): string {
-  if (field.includes(".")) {
-    return field.split(".").slice(0, -1).join(".");
+  if (isRelationship(field)) {
+    return field.split(RELATIONSHIP_SEPARATOR).slice(0, -1).join(RELATIONSHIP_SEPARATOR);
   }
   return "";
 }
