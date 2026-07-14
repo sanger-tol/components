@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-#tol-smart-app-background:has(.tol-board) > .tol-board-backing-fade {
+#tol-smart-app-background:has(.tol-board)>.tol-board-backing-fade {
   position: fixed;
   top: 0;
   left: 0;
   height: 140px;
   width: 100%;
   background: color-mix(in srgb, var(--tol-bg-dark) 70%, transparent);
-  z-index: 5;
+  z-index: 12;
   backdrop-filter: blur(10px);
 }
 
@@ -172,17 +172,20 @@
   position: sticky;
   top: calc(var(--tol-navbar-height) + 20px);
   z-index: 15;
-  box-shadow: 0 8px 20px 4px
-    rgba(0, 0, 0, calc(0.35 * var(--tol-bar-scroll, 0))) !important;
+  box-shadow: 0 8px 20px 4px rgba(0, 0, 0, calc(0.35 * var(--tol-bar-scroll, 0))) !important;
 
   @media (prefers-color-scheme: dark) {
-    box-shadow: 0 8px 20px 6px
-      rgba(0, 0, 0, calc(0.7 * var(--tol-bar-scroll, 0))) !important;
+    box-shadow: 0 8px 20px 6px rgba(0, 0, 0, calc(0.7 * var(--tol-bar-scroll, 0))) !important;
   }
 
   // Large header for view mode
   h3 {
     margin-bottom: 0;
+  }
+
+  // Line break for top and bottom bars
+  hr {
+    margin: 0.4rem -0.5rem;
   }
 
   .tol-tabs-nav {
@@ -230,7 +233,7 @@
   box-shadow: unset;
 }
 
-.tol-board-bar > div div.tol-utility-bar {
+.tol-board-bar>div div.tol-utility-bar {
   margin-bottom: 0;
 }
 
