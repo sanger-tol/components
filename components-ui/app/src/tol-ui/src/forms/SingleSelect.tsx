@@ -7,63 +7,38 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
 
-import type { TLabelAndValueData } from "..";
+import type { ISingleselectField, TLabelAndValueData } from "..";
 
-export interface PSingleSelect {
-  /**
-   * The options to display in the dropdown
-   */
+export interface PSingleSelect
+  extends Omit<Partial<ISingleselectField>, "data"> {
   data: string[] | TLabelAndValueData;
-  /**
-   * The text to display when no option has been chosen
-   */
-  placeholder?: string;
-  /**
-   * The option currently selected
-   */
   value: string;
-  /**
-   * Runs when the user selects an option, giving its value
-   */
   onChange: (value: string) => void;
-  /**
-   * Whether to display this component as a block (fill the width)
-   */
-  block?: boolean;
-  /**
-   * Whether to disable this component
-   */
   disabled?: boolean;
-  /**
-   * Whether the component is in a loading state
-   * (and so shouldn't be interacted with yet)
-   */
   loading?: boolean;
-  /**
-   * Additional CSS class name(s)
-   */
   className?: string;
-  /**
-   * Test ID to use for Playwright tests
-   */
   testid?: string;
-  /**
-   * The default option to be selected
-   */
   defaultValue?: string;
-  /**
-   * Whether to show the 'x' button that clears the selection option
-   * such that nothing is selected
-   */
   cleanable?: boolean;
-  /**
-   * Whether to display the search bar
-   */
   searchable?: boolean;
 }
 
 export const SingleSelect = (props: PSingleSelect) => {
-  const { testid } = props;
+  const {
+    testid,
+    onChange,
+    id: _id,
+    type: _type,
+    label: _label,
+    helpText: _helpText,
+    icon: _icon,
+    labelInline: _labelInline,
+    centered: _centered,
+    section: _section,
+    multiple: _multiple,
+    minOne: _minOne,
+    ...selectPickerProps
+  } = props;
   const [data, setData] = useState([{}]);
 
   useEffect(() => {
@@ -76,9 +51,10 @@ export const SingleSelect = (props: PSingleSelect) => {
 
   return (
     <SelectPicker
-      {...props}
+      {...selectPickerProps}
       data={data}
       data-testid={testid}
+      onChange={(value) => onChange(value ?? "")}
     />
   );
 };

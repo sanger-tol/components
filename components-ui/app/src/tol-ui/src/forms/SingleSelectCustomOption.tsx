@@ -11,34 +11,29 @@ when 'other' is selected, allowing for custom response
 
 import { useState, useEffect } from "react";
 import {
-  RSForm,
   SingleSelect,
   FormTextField,
-  FormLabel,
-  IFormLabelIcon,
+  FormComponentWrapper,
+  ISingleselectcustomoptionField,
 } from "..";
 
-export interface PSingleSelectCustomOption {
+export interface PSingleSelectCustomOption
+  extends Omit<ISingleselectcustomoptionField, "type"> {
   id: string;
   value: string;
-  setValue: Function;
+  setValue: (value: string) => void;
   errorText?: string;
-  data: string[];
-  label?: string;
-  customOptionPlaceholder?: string;
-  icon?: IFormLabelIcon;
 }
 
 export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
   const {
     id,
+    name,
     value,
     setValue,
     data,
     label,
     customOptionPlaceholder,
-    errorText,
-    icon,
   } = props;
 
   const [selectedOption, setSelectedOption] = useState("");
@@ -84,13 +79,7 @@ export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
   };
 
   return (
-    <>
-      <RSForm.Group
-        controlId={`form${
-          label ? label.replace(/\s+/, "") : "OtherOptionSelect"
-        }`}
-      >
-        <FormLabel label={label || "Select an option:"} icon={icon} />
+    <FormComponentWrapper {...props} label={label || "Select an option:"}>
         <SingleSelect
           data={data}
           placeholder="Please Select..."
@@ -110,10 +99,6 @@ export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
             onChange={handleCustomValueChange}
           />
         )}
-        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
-          {errorText}
-        </RSForm.ErrorMessage>
-      </RSForm.Group>
-    </>
+    </FormComponentWrapper>
   );
 }

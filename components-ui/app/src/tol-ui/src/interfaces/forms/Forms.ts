@@ -57,6 +57,7 @@ export interface IFormLabelIcon extends PIcon {
 }
 
 export interface IFormComponent {
+  id?: string;
   name: string;
   type: TFormField["type"];
   label?: string;
@@ -64,9 +65,12 @@ export interface IFormComponent {
   placeholder?: string;
   readOnly?: boolean;
   required?: boolean;
+  centered?: boolean;
   icon?: IFormLabelIcon;
   labelInline?: boolean;
   section?: string;
+  multiple?: boolean;
+  minOne?: boolean;
 }
 
 export interface ITextField extends IFormComponent {
@@ -175,8 +179,6 @@ export interface IMarkdownField extends IFormComponent {
 
 export interface ITextAreaField extends IFormComponent {
   type: "textarea";
-  value: string;
-  setValue: (value: string) => void;
   menuButtons: TTextEditorButtons;
   errorText?: string;
   returnValueType?: "html" | "json" | "text";

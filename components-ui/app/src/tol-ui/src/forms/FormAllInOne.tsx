@@ -25,16 +25,15 @@ import {
   FormMarkdown,
   FormDatetime,
   MultipleFormInput,
-  FormLabel,
   deepestEqual,
   normaliseCaps,
-  TextEditor,
+  FormComponentWrapper,
+  FormTextArea,
 } from "..";
 
 import type {
   IFormConfig,
   PButton,
-  PIcon,
   TFormField,
   ITextField,
   ICountryselectField,
@@ -135,24 +134,17 @@ export function FormAllInOne(props: PFormAllInOne) {
         return (
           <FormTextField
             id={formId}
-            name={textField.name}
-            label={textField.label}
-            accepter={textField.accepter}
-            helpText={textField.helpText}
-            placeholder={textField.placeholder}
+            {...textField}
             value={formData[textField.name] ?? ""}
             onChange={(value: any) => handleInputChange(textField.name, value)}
-            type={textField.type}
-            readOnly={textField.readOnly}
-            centered={textField.centered}
-            labelInline={textField.labelInline}
+            errorText={errorText}
           />
         );
       case "countryselect":
         const countryselectField = field as ICountryselectField;
         return (
           <CountrySelect
-            label={countryselectField.label}
+            {...countryselectField}
             value={formData[countryselectField.name] ?? ""}
             setValue={(value: any) => handleInputChange(field.name, value)}
             errorText={errorText}
@@ -162,42 +154,30 @@ export function FormAllInOne(props: PFormAllInOne) {
         const datetimeField = field as IDatetimeField;
         return (
           <FormDatetime
-            name={datetimeField.name}
-            label={datetimeField.label}
+            {...datetimeField}
             value={formData[datetimeField.name] ?? ""}
             onChange={(value: any) =>
               handleInputChange(datetimeField.name, value)
             }
-            helpText={datetimeField.helpText}
             errorText={errorText}
-            placeholder={datetimeField.placeholder}
-            hideMinutes={datetimeField.hideMinutes}
           />
         );
       case "singleselect":
         const singleselectField = field as ISingleselectField;
         return (
-          <RSForm.Group controlId={`${formId}-${singleselectField.name}`}>
-            <FormLabel
-              label={singleselectField.label}
-              icon={singleselectField.icon}
-            />
+          <FormComponentWrapper
+            id={formId}
+            {...singleselectField}
+            errorText={errorText}
+          >
             <SingleSelect
-              data={singleselectField.data}
-              placeholder={singleselectField.placeholder}
+              {...singleselectField}
               value={formData[singleselectField.name] ?? ""}
               onChange={(value: any) =>
                 handleInputChange(singleselectField.name, value)
               }
-              block={singleselectField.block}
             />
-            <RSForm.ErrorMessage
-              show={Boolean(errorText)}
-              placement="bottomStart"
-            >
-              {errorText}
-            </RSForm.ErrorMessage>
-          </RSForm.Group>
+          </FormComponentWrapper>
         );
       case "singleselectcustomoption":
         const singleselectcustomoptionField =
@@ -205,27 +185,19 @@ export function FormAllInOne(props: PFormAllInOne) {
         return (
           <SingleSelectCustomOption
             id={formId}
+            {...singleselectcustomoptionField}
             value={formData[singleselectcustomoptionField.name] ?? ""}
             setValue={(value: any) =>
               handleInputChange(singleselectcustomoptionField.name, value)
             }
             errorText={errorText}
-            data={singleselectcustomoptionField.data}
-            label={singleselectcustomoptionField.label}
-            customOptionPlaceholder={
-              singleselectcustomoptionField.customOptionPlaceholder
-            }
           />
         );
       case "dropzone":
         const dropzoneField = field as IDropzoneField;
         return (
           <Dropzone
-            resource={dropzoneField.resource}
-            dataSource={dropzoneField.dataSource}
-            fileType={dropzoneField.fileType}
-            generateMessages={dropzoneField.generateMessages}
-            setResponse={dropzoneField.setResponse}
+            {...dropzoneField}
             errorText={errorText}
           />
         );
@@ -239,13 +211,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             PRemoteAutoComplete;
           return (
             <RemoteAutoComplete
-              dataSource={remoteAutocompleteField.dataSource}
-              objectType={remoteAutocompleteField.objectType}
-              displayFields={remoteAutocompleteField.displayFields}
-              displayFieldsTitle={remoteAutocompleteField.displayFieldsTitle}
-              searchBy={remoteAutocompleteField.searchBy}
-              label={remoteAutocompleteField.label}
-              data={remoteAutocompleteField.data}
+              {...remoteAutocompleteField}
               value={formData[remoteAutocompleteField.name] ?? ""}
               onChange={(value: any) =>
                 handleInputChange(remoteAutocompleteField.name, value)
@@ -256,13 +222,12 @@ export function FormAllInOne(props: PFormAllInOne) {
         } else {
           return (
             <AutoComplete
-              label={autocompleteField.label}
-              data={autocompleteField.data}
+              {...autocompleteField}
               value={formData[autocompleteField.name] ?? ""}
               onChange={(value: any) =>
                 handleInputChange(autocompleteField.name, value)
               }
-              icon={autocompleteField.icon as PIcon}
+              errorText={errorText}
             />
           );
         }
@@ -270,58 +235,36 @@ export function FormAllInOne(props: PFormAllInOne) {
         const multipleselectField = field as IMultipleselectField;
         return (
           <MultipleSelect
-            block={multipleselectField.block}
-            data={multipleselectField.data}
-            label={multipleselectField.label}
-            value={formData[multipleselectField.name] || []}
+            {...multipleselectField}
+            value={formData[multipleselectField.name] ?? []}
             setValue={(value: any) =>
               handleInputChange(multipleselectField.name, value)
             }
             errorText={errorText}
-            placeholder={multipleselectField.placeholder}
-            disabled={multipleselectField.disabled}
-            loading={multipleselectField.loading}
-            open={multipleselectField.open}
-            onOpen={multipleselectField.onOpen}
-            onEntering={multipleselectField.onEntering}
-            onClose={multipleselectField.onClose}
-            onClick={multipleselectField.onClick}
-            renderMenuItem={multipleselectField.renderMenuItem}
-            renderValue={multipleselectField.renderValue}
-            noSearch={multipleselectField.noSearch}
           />
         );
       case "markdown":
         const markdownField = field as IMarkdownField;
         return (
           <FormMarkdown
+            {...markdownField}
             value={formData[markdownField.name] ?? ""}
             onChange={(value: any) =>
               handleInputChange(markdownField.name, value)
             }
-            preview={markdownField.preview}
-            label={markdownField.label}
-            removeCommands={markdownField.removeCommands}
-            height={markdownField.height}
-            helpText={markdownField.helpText}
             errorText={errorText}
           />
         );
       case "textarea":
         const textareaField = field as ITextAreaField;
         return (
-          <TextEditor
+          <FormTextArea
+            {...textareaField}
             value={formData[textareaField.name] ?? ""}
             setValue={(value: any) =>
               handleInputChange(textareaField.name, value)
             }
-            menuButtons={textareaField.menuButtons}
-            returnValueType={textareaField.returnValueType}
-            customExtensions={textareaField.customExtensions}
-            customButtons={textareaField.customButtons}
-            keyboardShortcutElement={textareaField.keyboardShortcutElement}
-            editable={textareaField.editable}
-            onEditorChange={textareaField.onEditorChange}
+            errorText={errorText}
           />
         );
       case "checkbox":
@@ -329,17 +272,12 @@ export function FormAllInOne(props: PFormAllInOne) {
         return (
           <FormCheckboxes
             id={`${formId}-${checkboxField.name}-checkbox`}
-            label={checkboxField.label}
-            checkboxConfig={checkboxField.checkboxConfig}
+            {...checkboxField}
             checkedItems={formData[checkboxField.name] ?? []}
             setCheckedItems={(value: any) =>
               handleInputChange(checkboxField.name, value)
             }
             errorText={errorText}
-            hidden={checkboxField.hidden}
-            inline={checkboxField.inline}
-            indeterminate={checkboxField.indeterminate}
-            defaultChecked={checkboxField.defaultChecked}
           />
         );
       default:

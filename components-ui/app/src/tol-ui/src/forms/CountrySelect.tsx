@@ -8,28 +8,25 @@ import { useMemo } from "react";
 import countryList from "react-select-country-list";
 import {
   SingleSelect,
-  RSForm,
-  FormLabel,
-  IFormLabelIcon
+  FormComponentWrapper,
+  ICountryselectField,
 } from "..";
 
-export interface PCountrySelect {
-  label?: string;
+export interface PCountrySelect
+  extends Omit<ICountryselectField, "type"> {
   value: string;
-  setValue: any;
+  setValue: (value: string) => void;
   errorText?: string;
-  icon?: IFormLabelIcon;
 }
 
 export function CountrySelect(props: PCountrySelect) {
-  const { label, value, setValue, errorText, icon } = props;
+  const { name, label, value, setValue } = props;
 
   const countryOptions = useMemo(() => countryList().getData(), []);
   const countryItems = countryOptions.map((item: any) => item.label);
 
   return (
-    <RSForm.Group controlId="formCountrySelector">
-      <FormLabel label={label || "Nationality:"} icon={icon} />
+    <FormComponentWrapper {...props} id={name} label={label || "Nationality:"}>
       <SingleSelect
         data={countryItems}
         placeholder="Please Select..."
@@ -37,7 +34,6 @@ export function CountrySelect(props: PCountrySelect) {
         onChange={setValue}
         block
       />
-      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
-    </RSForm.Group>
+    </FormComponentWrapper>
   );
 }

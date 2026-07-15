@@ -6,22 +6,29 @@ SPDX-License-Identifier: MIT
 
 import { FormComponentWrapper, ITextField, RSForm } from "..";
 
-export interface PFormTextField extends Omit<ITextField, "type" | "label"> {
+export interface PFormTextField extends Omit<ITextField, "type"> {
   id: string;
-  label: string;
   value?: string;
   onChange?: (value: string) => void;
   type?: "text" | "email" | "password";
-  centered?: boolean;
+  errorText?: string;
 }
 
 export function FormTextField(props: PFormTextField) {
-  const { centered } = props;
+  const {
+    centered,
+    label,
+    helpText,
+    icon,
+    labelInline,
+    errorText,
+    ...controlProps
+  } = props;
 
   return (
     <FormComponentWrapper {...props}>
       <RSForm.Control
-        {...props}
+        {...controlProps}
         style={centered ? { textAlign: "center" } : {}}
       />
     </FormComponentWrapper>

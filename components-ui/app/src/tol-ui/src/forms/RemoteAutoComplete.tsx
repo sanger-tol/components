@@ -10,21 +10,19 @@ import {
   PAutoComplete,
   IRemoteTarget,
   IRemoteAutoCompleteData,
+  TAutoCompleteValue,
 } from "..";
 
 export interface PRemoteAutoComplete extends PAutoComplete, IRemoteTarget {
-  label: string;
-  data: string[];
   value: string;
-  onChange?: any;
+  onChange?: (value: TAutoCompleteValue) => void;
   displayFields?: string[];
   displayFieldsTitle?: boolean;
   searchBy: string;
-  errorText?: string;
 }
 
 export function RemoteAutoComplete(props: PRemoteAutoComplete) {
-  const { onChange, dataSource, objectType, displayFields = [], displayFieldsTitle, searchBy } = props;
+  const { onChange, dataSource, objectType, displayFields = [], searchBy } = props;
   const [filteredData, setFilteredData] = useState<IRemoteAutoCompleteData>({});
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -91,14 +89,12 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
   return (
     <div>
       <AutoComplete
+        {...props}
         onChange={handleChange}
-        label={props.label}
         data={Object.keys(filteredData)}
         value={props.value}
-        displayFields={filteredData}
-        displayFieldsTitle={displayFieldsTitle}
         loading={loading}
-        errorText={props.errorText}
+        displayFields={filteredData}
       />
     </div>
   );

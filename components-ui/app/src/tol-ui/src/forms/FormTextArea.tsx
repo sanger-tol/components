@@ -5,41 +5,22 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  FormLabel,
-  IFormLabelIcon,
+  FormComponentWrapper,
   ITextAreaField,
-  RSForm,
   TextEditor,
 } from "..";
 
-export interface PFormTextArea extends ITextAreaField {}
+export interface PFormTextArea extends Omit<ITextAreaField, "type"> {
+  value: string;
+  setValue: (value: string) => void;
+}
 
 export function FormTextArea(props: PFormTextArea) {
-  const {
-    name,
-    value,
-    setValue,
-    menuButtons,
-    returnValueType,
-    customExtensions,
-    customButtons,
-    label,
-    helpText,
-    errorText,
-    icon,
-    labelInline,
-    readOnly,
-    required,
-    centered,
-    placeholder,
-  } = props;
+  const { name } = props;
 
   return (
-    <RSForm.Group>
-      <FormLabel />
+    <FormComponentWrapper {...props} id={name}>
       <TextEditor {...props} />
-      <RSForm.HelpText>{helpText}</RSForm.HelpText>
-      <RSForm.ErrorMessage>{errorText}</RSForm.ErrorMessage>
-    </RSForm.Group>
+    </FormComponentWrapper>
   );
 }

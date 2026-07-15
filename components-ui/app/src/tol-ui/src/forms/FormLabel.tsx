@@ -4,11 +4,9 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { RSForm, IFormLabelIcon, Icon } from "..";
+import { RSForm, IFormComponent, Icon } from "..";
 
-export interface PFormLabel {
-  label?: string;
-  icon?: IFormLabelIcon;
+export interface PFormLabel extends Pick<IFormComponent, "label" | "icon"> {
   inline?: boolean;
 }
 

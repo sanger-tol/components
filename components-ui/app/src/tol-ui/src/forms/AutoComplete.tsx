@@ -6,43 +6,36 @@ SPDX-License-Identifier: MIT
 
 import { AutoComplete as RSAutoComplete } from "rsuite";
 import {
-  RSForm,
+  FormComponentWrapper,
   normaliseCaps,
   Loader,
-  IFormLabelIcon,
-  FormLabel,
+  IAutocompleteField,
   TAutoCompleteValue
 } from "..";
 
-export interface PAutoComplete {
-  label: string;
-  data: string[];
+export interface PAutoComplete extends Omit<IAutocompleteField, "type"> {
   value: TAutoCompleteValue;
-  onChange?: any;
+  onChange?: (value: TAutoCompleteValue) => void;
   displayFields?: object;
   displayFieldsTitle?: boolean;
   loading?: boolean;
   errorText?: string;
-  icon?: IFormLabelIcon;
 }
 
 export function AutoComplete(props: PAutoComplete) {
   const {
-    label,
+    name,
     data,
     value,
     onChange,
     displayFields,
     displayFieldsTitle,
     loading,
-    errorText,
-    icon,
   } = props;
 
 
   return (
-    <RSForm.Group controlId={label}>
-      <FormLabel label={label} icon={icon} />
+    <FormComponentWrapper {...props} id={name}>
       <RSAutoComplete
         data={data}
         value={typeof value === "string" ? value : value?.value}
@@ -80,9 +73,6 @@ export function AutoComplete(props: PAutoComplete) {
           );
         }}
       />
-      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
-        {errorText}
-      </RSForm.ErrorMessage>
-    </RSForm.Group>
+    </FormComponentWrapper>
   );
 }
