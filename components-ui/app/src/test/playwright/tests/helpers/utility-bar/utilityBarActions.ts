@@ -7,7 +7,6 @@ import type { Locator } from "@playwright/test";
 /**
  * Clicks the utility bar button with the testid `testId` on the provided component,
  * including those inside condensed utility bars.
- * @param page The Playwright page handle
  * @param component Playwright locator handle to the component containing the utility bar
  * @param testId Test ID of the target button
  */

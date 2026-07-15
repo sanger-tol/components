@@ -61,6 +61,6 @@ const addTextToTextComponent = async (page: Page, textComponent: Locator) => {
 test("manage dashboard", async ({ page }) => {
   await addComponent(page, 0, "text", "Small");
   await addTextToTextComponent(page, page.getByTestId("board-component-markdown"));
-  await deleteComponent(page, "text", 0);
+  await deleteComponent(page, page.getByTestId("board-component-markdown"), "text");
   await expect(page.locator(".tol-markdown-viewer")).not.toBeVisible();
 });

@@ -37,8 +37,8 @@ const filterStatisticsComponent = async (page: Page) => {
 
   await addComponentFilter(
     page,
+    page.getByTestId("board-component-statistics"),
     "statistics",
-    0,
     "grit_project",
     "in_list",
     "ToL Rapid Curation"
@@ -56,6 +56,6 @@ test("manage dashboard", async ({ page }) => {
 
   await filterStatisticsComponent(page);
 
-  await deleteComponent(page, "statistics", 0);
+  await deleteComponent(page, page.getByTestId("board-component-statistics"), "statistics");
   await expect(page.locator(".tol-count")).not.toBeVisible();
 });

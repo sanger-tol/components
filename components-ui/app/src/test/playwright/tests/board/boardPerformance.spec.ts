@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 
-import { addComponent, enterEditMode } from "../helpers";
+import { addComponent, clickUtilityBarButton, enterEditMode } from "../helpers";
 
 test("big table", async ({ page }) => {
   await enterEditMode(page);
   await addComponent(page, 0, "table");
-  await clickUtilityBarButton(page, "table-config-button", 0);
+  await clickUtilityBarButton(page.getByTestId("board-component-table"), "table-config-button");
 });
