@@ -260,7 +260,8 @@ export function RemoteTable(props: PRemoteTable) {
     fields,
     defaultSortByAttribute = getTableConfigLocalStorage(id, "defaultSortByAttribute"),
     defaultSortByType = getTableConfigLocalStorage(id, "defaultSortByType"),
-    filterVisibility: propFilterVisibility = getTableConfigLocalStorage(id, "filterVisibility"),
+    filterVisibility: initialFilterVisibility = getTableConfigLocalStorage(id, "filterVisibility"),
+    pageSize: initialPageSize,
     onPageSizeChange,
     onToggleFilterVisibility,
     noDownload,
@@ -273,7 +274,10 @@ export function RemoteTable(props: PRemoteTable) {
     forceUpdate,
     onReset: propOnReset,
     showConfigReset,
-    testid
+    testid,
+    configSyncKey,
+    selectedRows: controlledSelectedRows,
+    setSelectedRows: setControlledSelectedRows,
   } = props;
 
   const runActionDatasource = new TsDataSource({
@@ -292,7 +296,7 @@ export function RemoteTable(props: PRemoteTable) {
   // pagination
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(
-    getTableConfigLocalStorage(id, "pageSize") || props.pageSize || 50
+    getTableConfigLocalStorage(id, "pageSize") || initialPageSize || 50
   );
   const [totalSize, setTotalSize] = useState<number>(0);
 
@@ -304,7 +308,7 @@ export function RemoteTable(props: PRemoteTable) {
   const [sortByType, setSortByType] = useState<string | undefined>(
     defaultSortByType ?? "asc"
   );
-  const [filterVisibility, setFilterVisibility] = useState<boolean>(propFilterVisibility ?? true);
+  const [filterVisibility, setFilterVisibility] = useState<boolean>(initialFilterVisibility ?? true);
 
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
@@ -314,8 +318,8 @@ export function RemoteTable(props: PRemoteTable) {
 
   // row selection
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
-    props.selectedRows,
-    props.setSelectedRows,
+    controlledSelectedRows,
+    setControlledSelectedRows,
     []
   );
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
@@ -343,19 +347,19 @@ export function RemoteTable(props: PRemoteTable) {
     // Re-sync config state in-place when the parent signals a mode transition.
     // We preserve prev.dataWithDefaults (server-enriched column metadata) so the
     // table stays visible throughout — only a loading spinner overlay appears.
-    const nextBase = initialiseFieldMeta(props.fields);
+    const nextBase = initialiseFieldMeta(fields);
     setFieldMeta((prev) => ({
       ...prev,
       order: nextBase.order,
       data: nextBase.data,
     }));
-    setSortByAttribute(props.defaultSortByAttribute ?? nextBase?.order?.active?.[0]);
-    setSortByType(props.defaultSortByType ?? "asc");
-    if (props.filterVisibility !== undefined) setFilterVisibility(props.filterVisibility);
-    if (props.pageSize !== undefined) setPageSize(props.pageSize);
+    setSortByAttribute(defaultSortByAttribute ?? nextBase?.order?.active?.[0]);
+    setSortByType(defaultSortByType ?? "asc");
+    if (initialFilterVisibility !== undefined) setFilterVisibility(initialFilterVisibility);
+    if (initialPageSize !== undefined) setPageSize(initialPageSize);
     setPage(1);
     setConfigSyncTrigger((n) => n + 1);
-  }, [props.configSyncKey]);
+  }, [configSyncKey]);
 
   useEffect(() => {
     setTableLoading(id, editMode && (loading || fullLoad));

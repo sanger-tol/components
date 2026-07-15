@@ -218,6 +218,7 @@ export function BoardTable(props: PBoardTable) {
     // between the current config and the default config (if exiting edit mode).
     // Force remount of RemoteTable to clear its internal state.
 
+    // Only recompute state when edit mode actually flips, not on other effect reruns.
     const isModeTransition = previousEditModeRef.current !== editMode;
     if (!isModeTransition) {
       return;

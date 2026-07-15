@@ -80,7 +80,7 @@ export function DataColumn(props: PDataColumn) {
 
     const lastWidth = lastWidths.get(columnKey);
 
-    // Skip noop updates — avoids redundant state churn and visible table refreshes
+    // Ignore updates that would not actually change anything.
     if (lastWidth === clampedWidth) return;
 
     lastWidths.set(columnKey, clampedWidth);
