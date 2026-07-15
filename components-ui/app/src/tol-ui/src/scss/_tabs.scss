@@ -61,6 +61,7 @@
   overflow: auto;
   display: flex;
   margin-right: 6px;
+  border-radius: var(--tol-border-radius);
 
   // Ensure shadows are visible top and bottom of the tabs
   padding: 6px 0;

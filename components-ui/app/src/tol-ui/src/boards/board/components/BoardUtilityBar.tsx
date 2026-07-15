@@ -172,6 +172,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
           }
         />
       </div>
+      {editMode && <hr />}
       {(board?.order?.length > 1 || editMode) && (
         <UtilityBar
           id="tol-board-views-utility-bar"

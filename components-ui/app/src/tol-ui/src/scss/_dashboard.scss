@@ -11,7 +11,7 @@
   height: 128px;
   width: 100%;
   background: color-mix(in srgb, var(--tol-bg-dark) 70%, transparent);
-  z-index: 5;
+  z-index: 12;
   backdrop-filter: blur(10px);
 }
 
@@ -172,12 +172,17 @@
   position: sticky;
   top: calc(var(--tol-navbar-height) + 20px);
   z-index: 15;
-  box-shadow: 0 8px 20px 4px
-    rgba(0, 0, 0, calc(0.35 * var(--tol-bar-scroll, 0))) !important;
+  box-shadow: 0 8px 20px 4px rgba(0, 0, 0, calc(0.35 * var(--tol-bar-scroll, 0)))
+    !important;
 
   @media (prefers-color-scheme: dark) {
-    box-shadow: 0 8px 20px 6px
-      rgba(0, 0, 0, calc(0.7 * var(--tol-bar-scroll, 0))) !important;
+    box-shadow: 0 8px 20px 6px rgba(0, 0, 0, calc(0.7 * var(--tol-bar-scroll, 0)))
+      !important;
+  }
+
+  // Line break for top and bottom bars
+  hr {
+    margin: 0.4rem -0.5rem;
   }
 
   // Large header for view mode
