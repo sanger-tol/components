@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button } from "react-bootstrap";
-import { HoverOverlay } from "..";
+import { HoverOverlay, Icon } from "..";
 
 
 interface Props {
@@ -14,10 +14,13 @@ interface Props {
   exists: boolean;
   onExists: any;
   disabled?: boolean;
+  inList?: boolean;
+  onInList?: any;
+  showInListButton?: boolean;
 }
 
 export function FilterToggle(props: Props) {
-  const { negate, onNegate, exists, onExists, disabled = false } = props;
+  const { negate, onNegate, exists, onExists, disabled = false, inList = false, onInList, showInListButton = false } = props;
 
   const existsButton = (
     <Button
@@ -41,6 +44,17 @@ export function FilterToggle(props: Props) {
     </Button>
   );
 
+  const inListButton = (
+    <Button
+      disabled={disabled}
+      active={inList}
+      className="tol-filter-button in-list"
+      onClick={() => onInList && onInList(inList)}
+    >
+      <Icon icon="list" size="xs" className="icon" />
+    </Button>
+  );
+
   return (
     <div className="tol-filter-button-group">
       {!disabled ? (
@@ -59,6 +73,16 @@ export function FilterToggle(props: Props) {
         </HoverOverlay>
       ) : (
         negateButton
+      )}
+      {showInListButton && !disabled ? (
+        <HoverOverlay
+          contents="Filter by a list of values."
+          followCursor
+        >
+          {inListButton}
+        </HoverOverlay>
+      ) : (
+        showInListButton && inListButton
       )}
     </div>
   );

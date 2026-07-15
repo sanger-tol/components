@@ -355,7 +355,7 @@
   justify-content: space-between;
   gap: 6px;
   padding: 4px 6px;
-  border-radius: 4px;
+  border-radius: var(--tol-border-radius);
   color: var(--tol-light);
   font-weight: normal;
   font-size: 12px;
@@ -388,9 +388,8 @@
 .tol-attribute-tooltip-stats-box {
   margin-top: 0;
   padding: 3px 12px 14px;
-  border-radius: var(--tol-border-radius-sm);
+  border-radius: var(--tol-border-radius);
   background: var(--tol-grey-translucent);
-  border: 1px solid var(--tol-grey);
 }
 
 .tol-field-dropdown {
@@ -473,7 +472,7 @@ span.rs-dropdown-toggle-icon {
     color: var(--tol-text);
     background-color: var(--tol-bg-dark) !important;
     overflow: auto;
-    border-radius: var(--tol-border-radius-sm) !important;
+    border-radius: var(--tol-border-radius) !important;
   }
 }
 

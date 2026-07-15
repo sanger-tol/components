@@ -160,6 +160,11 @@
     border-top: 1px solid var(--tol-grey);
   }
 
+  // calendar date cell rounding
+  .rs-calendar-table-cell-content {
+    border-radius: var(--tol-border-radius) !important;
+  }
+
   .rs-picker-toggle .rs-picker-toggle-placeholder {
     font-size: 1rem;
   }
@@ -214,11 +219,10 @@
   }
 
   // tooltip
-  --tol-tooltip-colour: var(--tol-dark);
+  --tol-tooltip-colour: var(--tol-bg-dark);
 
   .rs-popover {
     background-color: var(--tol-tooltip-colour);
-    color: var(--tol-light);
     border-radius: var(--tol-border-radius);
     max-width: 300px;
     max-width: 40%;

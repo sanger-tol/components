@@ -42,7 +42,6 @@
     padding-right: 12px;
   }
 
-  .tol-in-list-button,
   .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default {
     background-color: var(--tol-bg) !important;
     border: 1px solid var(--tol-grey) !important;
@@ -63,22 +62,6 @@
     border: 1px solid var(--tol-primary) !important;
   }
 
-  .tol-in-list-button:hover {
-    border-color: var(--tol-primary) !important;
-    background-color: var(--tol-primary) !important;
-
-    svg {
-      fill: white;
-      color: white;
-    }
-
-    padding-right: 12px;
-  }
-
-  .tol-in-list-button.btn {
-    color: var(--tol-grey) !important;
-  }
-
   .rs-dropdown-item-focus {
     background-color: var(--tol-grey) !important;
     color: var(--tol-primary) !important;
@@ -86,57 +69,73 @@
 
   .rs-input-group.rs-input-group-inside:not(.rs-picker-input-group) {
     display: inline-block !important;
-    width: calc(100% - 18px) !important;
+    width: 100% !important;
   }
 
   .rs-picker.rs-picker-daterange,
   .rs-picker.rs-picker-check {
     display: inline-block !important;
-    width: calc(100% - 18px) !important;
-  }
-
-  .tol-in-list-button {
-    position: absolute;
+    width: 100% !important;
   }
 }
 
 .tol-num-filter {
   @extend .tol-text-filter;
+  position: relative;
 
   // re-position dropdown toggle inline with input
   .rs-dropdown {
     position: absolute;
     z-index: 1;
-    margin: 3px 0 0 2px;
+    margin-left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  // Keep open operator menus above buttons in other filter rows
+  .rs-dropdown.rs-dropdown-open {
+    z-index: 1002;
   }
 
   .rs-input {
-    padding-left: 20px;
+    padding-left: 26px;
+  }
+
+  // Remove button backing for the operator buttons
+  .tol-filter-operator {
+    background-color: unset !important;
+    border: unset !important;
+    box-shadow: unset !important;
+    height: var(--tol-button-size-sm) !important;
+    width: var(--tol-button-size-sm) !important;
+    min-width: var(--tol-button-size-sm) !important;
   }
 }
 
 // filter buttons
 .tol-filter-button-group {
   float: right;
-  width: 18px;
-  height: 36px;
-  margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2px;
+  margin: 1px 0 0 0;
   padding: 0;
 }
 
 .tol-filter-button {
-  float: right;
+  float: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
   padding: 0;
-  height: 18px;
-  width: 18px;
+  height: var(--tol-button-size-sm);
+  width: var(--tol-button-size-sm);
   background-color: var(--tol-bg) !important;
   border-color: var(--tol-grey) !important;
   color: var(--tol-grey);
-
-  .icon {
-    margin: -1px !important;
-  }
 
   --bs-btn-line-height: 0px !important;
   --bs-btn-font-size: 14px !important;
@@ -158,8 +157,17 @@
   color: white !important;
 }
 
+.tol-filter-button.in-list:hover,
+.tol-filter-button.in-list.btn.active {
+  @extend .tol-filter-button;
+  border-color: var(--tol-primary) !important;
+  background-color: var(--tol-primary) !important;
+  color: white !important;
+}
+
 .tol-filter-button.negate:disabled,
-.tol-filter-button.exists:disabled {
+.tol-filter-button.exists:disabled,
+.tol-filter-button.in-list:disabled {
   @extend .tol-filter-button;
   background-color: var(--tol-grey-subtle) !important;
   border-color: var(--tol-grey) !important;
@@ -169,16 +177,11 @@
 }
 
 .tol-filter-button.negate.active:disabled,
-.tol-filter-button.exists.active:disabled {
+.tol-filter-button.exists.active:disabled,
+.tol-filter-button.in-list.active:disabled {
   @extend .tol-filter-button;
   border-color: var(--tol-grey) !important;
   color: var(--tol-grey-subtle) !important;
-  cursor: not-allowed;
-  pointer-events: all !important;
-}
-
-.tol-in-list-button:disabled {
-  background-color: var(--tol-grey-subtle) !important;
   cursor: not-allowed;
   pointer-events: all !important;
 }
@@ -287,7 +290,6 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-bottom: 20px;
 
   .remove-filter-button {
     margin-left: 10px;

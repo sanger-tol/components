@@ -6,9 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { Input, InputGroup } from "rsuite";
-import { Button as BSButton } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faList } from "@fortawesome/free-solid-svg-icons";
 import {
   Button,
   DropdownButton,
@@ -20,6 +17,7 @@ import {
   FilterToggle,
   MultipleSelect,
   Modal,
+  PButton,
 } from "..";
 
 
@@ -221,6 +219,14 @@ export function FilterTextInput(props: PFilterTextInput) {
     />
   );
 
+  const operatorButton: PButton = {
+    text: operator,
+    outline: true,
+    disabled,
+    position: "none",
+    className: "tol-filter-operator",
+  };
+
   return (
     <div
       className={isNumber ? "tol-num-filter" : "tol-text-filter"}
@@ -228,20 +234,11 @@ export function FilterTextInput(props: PFilterTextInput) {
     >
       {isNumber && (
         <DropdownButton
-          toggle={{ text: operator, outline: true, disabled, position: "none" }}
+          toggle={operatorButton}
           buttons={operators
             .filter((op) => op !== operator)
             .map((op) => ({ text: op, onClick: () => onOperator(op) }))}
         />
-      )}
-      {!isNumber && values.length <= 1 && (
-        <BSButton
-          className="tol-in-list-button"
-          disabled={disabled}
-          onClick={onOpenInListModal}
-        >
-          <FontAwesomeIcon icon={faList} size="sm" />
-        </BSButton>
       )}
       {!isNumber && values.length > 1 ? (
         <span className="tol-multi-filter">
@@ -270,6 +267,9 @@ export function FilterTextInput(props: PFilterTextInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
+        showInListButton={!isNumber}
+        onInList={onOpenInListModal}
+        disabled={disabled}
       />
       <Modal
         size="md"
