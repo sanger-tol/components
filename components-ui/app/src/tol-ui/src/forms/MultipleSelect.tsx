@@ -14,7 +14,8 @@ import {
 
 
 export interface PMultipleSelect
-  extends Omit<IMultipleselectField, "type"> {
+  extends Omit<IMultipleselectField, "type" | "name"> {
+  name?: string;
   value: string[];
   setValue: (value: string[]) => void;
   errorText?: string;
@@ -43,7 +44,6 @@ export function MultipleSelect(props: PMultipleSelect) {
     renderValue,
     noSearch,
     noSelectAll,
-    label,
     disabledItemValues,
     searchBy,
     caretAs,
@@ -55,10 +55,9 @@ export function MultipleSelect(props: PMultipleSelect) {
   } = props;
   const block = isPropDefined(props.block);
 
-  const formattedData: IData[] =
-    data.length > 0 && typeof data[0] === "string"
-      ? data.map((i) => ({ label: i, value: i }))
-      : data;
+  const formattedData: IData[] = data.map((item) =>
+    typeof item === "string" ? { label: item, value: item } : item,
+  );
 
   const allValues = formattedData.map((item) => item.value);
 

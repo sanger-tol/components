@@ -13,9 +13,11 @@ import {
   TAutoCompleteValue
 } from "..";
 
-export interface PAutoComplete extends Omit<IAutocompleteField, "type"> {
+export interface PAutoComplete
+  extends Omit<IAutocompleteField, "type" | "name" | "dataSource"> {
+  name?: string;
   value: TAutoCompleteValue;
-  onChange?: (value: TAutoCompleteValue) => void;
+  onChange?: (value: string) => void;
   displayFields?: object;
   displayFieldsTitle?: boolean;
   loading?: boolean;

@@ -8,7 +8,9 @@ import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
 import { FormComponentWrapper, IMarkdownField } from "..";
 
-export interface PFormMarkdown extends Omit<IMarkdownField, "type"> {
+export interface PFormMarkdown
+  extends Omit<IMarkdownField, "type" | "name"> {
+  name?: string;
   value: string;
   onChange: (value: string) => void;
   errorText?: string;

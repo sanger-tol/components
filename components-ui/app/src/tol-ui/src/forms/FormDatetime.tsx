@@ -7,7 +7,8 @@ SPDX-License-Identifier: MIT
 import { DatePicker } from "rsuite";
 import { FormComponentWrapper, IDatetimeField } from "..";
 
-export interface PFormDatetime extends Omit<IDatetimeField, "type"> {
+export interface PFormDatetime extends Omit<IDatetimeField, "type" | "name"> {
+  name?: string;
   value: Date | string | null;
   onChange: (value: Date | null) => void;
   errorText?: string;

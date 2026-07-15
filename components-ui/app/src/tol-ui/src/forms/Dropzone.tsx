@@ -22,7 +22,8 @@ import {
   USER_SHOWN_FILE_TYPE_DEFAULTS,
 } from "..";
 
-export interface PDropzone extends Omit<IDropzoneField, "type"> {
+export interface PDropzone extends Omit<IDropzoneField, "type" | "name"> {
+  name?: string;
   errorText?: string;
   allowedSize?: string;
   allowedFileTypes?: string;

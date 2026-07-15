@@ -25,9 +25,9 @@ export function menuBarStateSelector(
 
   // If the editor is not initialized, return a default state with all keys set to false
   if (!editor) {
-    return {
-      ...Object.fromEntries(TEXT_EDITOR_STATE_KEYS.map((key) => [key, false])),
-    };
+    return Object.fromEntries(
+      TEXT_EDITOR_STATE_KEYS.map((key) => [key, false]),
+    ) as TMenuBarState;
   }
 
   return {

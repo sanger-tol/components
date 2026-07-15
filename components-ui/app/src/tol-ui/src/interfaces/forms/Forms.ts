@@ -238,7 +238,7 @@ export interface IRemoteAutoCompleteData {
   [key: string]: object[];
 }
 
-export type TAutoCompleteValue = string | { value: string; id: string };
+export type TAutoCompleteValue = string | { value: string; id?: string };
 
 export interface IUserProfileFormData {
   name?: string;

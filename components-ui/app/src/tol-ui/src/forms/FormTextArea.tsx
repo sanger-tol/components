@@ -10,7 +10,9 @@ import {
   TextEditor,
 } from "..";
 
-export interface PFormTextArea extends Omit<ITextAreaField, "type"> {
+export interface PFormTextArea
+  extends Omit<ITextAreaField, "type" | "name"> {
+  name?: string;
   value: string;
   setValue: (value: string) => void;
 }

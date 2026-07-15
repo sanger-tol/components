@@ -18,8 +18,9 @@ import {
 } from "..";
 
 export interface PSingleSelectCustomOption
-  extends Omit<ISingleselectcustomoptionField, "type"> {
+  extends Omit<ISingleselectcustomoptionField, "type" | "name"> {
   id: string;
+  name?: string;
   value: string;
   setValue: (value: string) => void;
   errorText?: string;
@@ -28,7 +29,6 @@ export interface PSingleSelectCustomOption
 export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
   const {
     id,
-    name,
     value,
     setValue,
     data,

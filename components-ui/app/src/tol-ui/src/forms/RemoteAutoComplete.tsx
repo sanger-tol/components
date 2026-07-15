@@ -13,7 +13,9 @@ import {
   TAutoCompleteValue,
 } from "..";
 
-export interface PRemoteAutoComplete extends PAutoComplete, IRemoteTarget {
+export interface PRemoteAutoComplete
+  extends Omit<PAutoComplete, "onChange">,
+    IRemoteTarget {
   value: string;
   onChange?: (value: TAutoCompleteValue) => void;
   displayFields?: string[];

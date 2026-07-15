@@ -13,7 +13,8 @@ import {
 } from "..";
 
 export interface PCountrySelect
-  extends Omit<ICountryselectField, "type"> {
+  extends Omit<ICountryselectField, "type" | "name"> {
+  name?: string;
   value: string;
   setValue: (value: string) => void;
   errorText?: string;
