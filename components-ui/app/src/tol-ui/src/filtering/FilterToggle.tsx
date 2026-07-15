@@ -8,7 +8,7 @@ import { Button } from "react-bootstrap";
 import { HoverOverlay, Icon } from "..";
 
 
-interface Props {
+export interface PFilterToggle {
   negate: boolean;
   onNegate: any;
   exists: boolean;
@@ -19,7 +19,7 @@ interface Props {
   showInListButton?: boolean;
 }
 
-export function FilterToggle(props: Props) {
+export function FilterToggle(props: PFilterToggle) {
   const { negate, onNegate, exists, onExists, disabled = false, inList = false, onInList, showInListButton = false } = props;
 
   const existsButton = (

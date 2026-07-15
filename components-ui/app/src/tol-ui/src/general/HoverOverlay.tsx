@@ -38,7 +38,7 @@ export function HoverOverlay(props: PHoverOverlay) {
       // @ts-ignore
       placement={placement}
       controlId="control-id-hover-enterable"
-      trigger={["hover", "click"]}
+      trigger="hover"
       speaker={RenderTooltip()}
       enterable={followCursor ? false : true}
       followCursor={followCursor ? true : false}
