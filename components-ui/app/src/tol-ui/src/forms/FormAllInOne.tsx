@@ -28,6 +28,7 @@ import {
   FormLabel,
   deepestEqual,
   normaliseCaps,
+  TextEditor,
 } from "..";
 
 import type {
@@ -46,6 +47,7 @@ import type {
   IMultipleselectField,
   IMarkdownField,
   ICheckboxFormField,
+  ITextAreaField,
 } from "..";
 
 export interface PFormAllInOne {
@@ -303,6 +305,23 @@ export function FormAllInOne(props: PFormAllInOne) {
             height={markdownField.height}
             helpText={markdownField.helpText}
             errorText={errorText}
+          />
+        );
+      case "textarea":
+        const textareaField = field as ITextAreaField;
+        return (
+          <TextEditor
+            value={formData[textareaField.name] ?? ""}
+            setValue={(value: any) =>
+              handleInputChange(textareaField.name, value)
+            }
+            menuButtons={textareaField.menuButtons}
+            returnValueType={textareaField.returnValueType}
+            customExtensions={textareaField.customExtensions}
+            customButtons={textareaField.customButtons}
+            keyboardShortcutElement={textareaField.keyboardShortcutElement}
+            editable={textareaField.editable}
+            onEditorChange={textareaField.onEditorChange}
           />
         );
       case "checkbox":
