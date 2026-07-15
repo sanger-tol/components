@@ -122,7 +122,7 @@ export function DownloadModal(props: PDownloadModal) {
     totalSize,
   } = props;
 
-  const sourceToUse = source || "portal";
+  const sourceToUse = source || "tol_production";
 
   // Spreadsheet progress state lives here so it survives the modal being closed/unmounted
   const [fetchCount, setFetchCount] = useState<number>(0);

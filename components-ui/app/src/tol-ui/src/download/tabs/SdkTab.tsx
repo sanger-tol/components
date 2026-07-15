@@ -25,7 +25,7 @@ export function SdkTab(props: PSdkTab) {
     filter,
     objectType
   } = props;
-  const sourceToUse = source || "portal";
+  const sourceToUse = source || "tol_production";
 
   const SDKText = generateSdkScript(sourceToUse, filter, objectType)
 

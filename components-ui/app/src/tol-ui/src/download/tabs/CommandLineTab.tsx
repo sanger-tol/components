@@ -27,7 +27,7 @@ export function CommandLineTab(props: PCommandLineTab) {
     objectType,
     requestedFields
   } = props;
-  const sourceToUse = source || "portal";
+  const sourceToUse = source || "tol_production";
 
   const CLICommand = generateCLICommand(sourceToUse, filter, objectType, requestedFields)
 

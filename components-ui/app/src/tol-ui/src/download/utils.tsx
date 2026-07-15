@@ -32,14 +32,13 @@ const stringifyFilter = (filter: any) => {
 };
 
 export function generateSdkScript(source: string, filter: IFilter, objectType: string) {
-  return `from tol.core import DataSourceFilter
-from tol.sources.${source} import ${source}
+  return `from tol.core import DataSourceFilter, DataSourceUtils
 
-src = ${source}()
+ds = DataSourceUtils.get_datasource('${source || "tol_production"}')
 f = DataSourceFilter(
     and_ = ${stringifyFilter(filter?.and_)}
 )
-objs = src.get_list('${objectType}', object_filters=f) 
+objs = ds.get_list('${objectType}', object_filters=f)
   `;
 }
 
@@ -51,7 +50,7 @@ export function generateCLICommand(
 ) {
   return `
 tol data \
---source=${source || "portal"} \
+--dataspace=${source || "tol_production"} \
 --operation=list \
 --type=${objectType} \
 --filter='${JSON.stringify(filter) || '{"and":{}}'}' \
