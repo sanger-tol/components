@@ -204,6 +204,8 @@
     display: flex;
     align-items: center;
     gap: 3px;
+    position: relative;
+    z-index: 2;
 
     .tol-board-bar-profile-bubble {
       margin-left: auto;
@@ -220,6 +222,8 @@
 
   .tol-views-bar {
     margin-top: 10px;
+    position: relative;
+    z-index: 1;
 
     .tol-edit-mode & {
       margin-top: 6px;
