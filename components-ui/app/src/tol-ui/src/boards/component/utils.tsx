@@ -160,7 +160,7 @@ export function generateLayout(zone: IZone): Layouts {
       let w: number, h: number;
       if (component.component_type === COMPONENT_TYPES.FILTER_BLOCK) {
         w = VISUALISATION_BREAKPOINTS.lg[breakpoint].w;
-        h = breakpoint === "lg" ? 9 : breakpoint === "md" ? 15 : 26;
+        h = breakpoint === "lg" ? 10 : breakpoint === "md" ? 15 : 27;
       } else {
         ({ w, h } = VISUALISATION_BREAKPOINTS[size][breakpoint]);
       }

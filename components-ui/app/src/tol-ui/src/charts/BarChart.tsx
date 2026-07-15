@@ -21,6 +21,7 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import {
+  CHART_TAG_POINT_STYLE,
   UtilityBar,
   getChartColour,
   initialiseDatasets,
@@ -243,10 +244,11 @@ export function BarChart(props: Props) {
         animation: false,
         usePointStyle: true,
         backgroundColor: "black",
+        cornerRadius: 16,
         callbacks: {
           labelPointStyle: () => {
             return {
-              pointStyle: "rectRounded",
+              pointStyle: CHART_TAG_POINT_STYLE,
               rotation: 0,
             };
           },
