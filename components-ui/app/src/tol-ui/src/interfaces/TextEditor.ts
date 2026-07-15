@@ -42,6 +42,6 @@ export type TTextEditorButton =
 export type TTextEditorButtons = TTextEditorButton[];
 
 export type TMenuBarState = Record<
-  (typeof TEXT_EDITOR_STATE_KEYS[number]),
+  (typeof TEXT_EDITOR_STATE_KEYS)[number],
   boolean
 >;

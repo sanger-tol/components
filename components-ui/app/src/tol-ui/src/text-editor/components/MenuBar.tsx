@@ -17,16 +17,8 @@ import type {
 
 /**
  * Renders the formatting toolbar for a Tiptap text editor.
- *
-            return (
-              <Fragment key={buttonProps.key ?? index}>{buttonProps}</Fragment>
-            );
  * the optional `buttons` prop, appends custom buttons, and always includes undo
  * and redo controls. Nothing is rendered until an editor instance is available.
-          const { key: buttonKey, ...buttonPropsWithoutKey } =
-            buttonProps as PButton & {
-              key?: string;
-            };
  * @param customButtons - Optional custom button definitions or factories to render before undo and redo.
  * @returns The editor toolbar, or null when the editor is not initialised.
  */
@@ -39,7 +31,6 @@ export function MenuBar({
   buttons?: TTextEditorButtons;
   customButtons?: TTextEditorCustomButton[];
 }) {
-
   // Use the menuBarStateSelector to get the current state of the editor
   const editorState = useEditorState({
     editor,
@@ -78,12 +69,15 @@ export function MenuBar({
               : customButton;
 
           if (isValidElement(buttonProps)) {
-            return <Fragment key={buttonProps.key ?? index}>{buttonProps}</Fragment>;
+            return (
+              <Fragment key={buttonProps.key ?? index}>{buttonProps}</Fragment>
+            );
           }
 
-          const { key: buttonKey, ...buttonPropsWithoutKey } = buttonProps as PButton & {
-            key?: string;
-          };
+          const { key: buttonKey, ...buttonPropsWithoutKey } =
+            buttonProps as PButton & {
+              key?: string;
+            };
 
           return (
             <Button

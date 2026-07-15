@@ -51,4 +51,4 @@ export const TEXT_EDITOR_STATE_KEYS = [
   "canLink",
   "canUndo",
   "canRedo",
-];
+] as const;
