@@ -31,6 +31,8 @@ import {
   BOARD_MESSAGE_TEXT,
   updateComponentConfigAndUpsert,
   isRelationship,
+  TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
+  TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
 } from "..";
 import type {
   TsDataSource,
@@ -50,8 +52,6 @@ import type {
   ITableDrawerSave,
   ITableConfigHandlerContext,
   TDiffComparison,
-  TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
-  TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
 } from "..";
 
 interface Rgb {
