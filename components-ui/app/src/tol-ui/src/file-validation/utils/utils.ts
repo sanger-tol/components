@@ -508,7 +508,7 @@ export function createPageActions(
   uploadStatus: TFileValidationStatusPolicy | undefined,
   actionContext: TValidationActionContext | null,
   allActions: TFileValidationActionMap,
-  setCurrentActionId: Dispatch<SetStateAction<string>>,
+  setCurrentActionId: (actionId: TFileValidationActionId) => void,
   uploadId: string,
   queryClient: any,
   refetch?: () => Promise<any>,
