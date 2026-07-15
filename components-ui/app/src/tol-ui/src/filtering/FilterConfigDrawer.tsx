@@ -180,8 +180,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   };
 
   // Element to be passed to each remote filter to allow for individual removal of filters
-  const removeCross = ({ attribute }: { attribute: string }) => (
-    <Icon icon="close" onClick={() => { removeFilter(attribute) }} className="remove-filter-button" />
+  const RemoveCross = ({ attribute }: { attribute: string }) => (
+    <Icon icon="close" onClick={() => { removeFilter(attribute) }} className="tol-remove-filter-button" />
   );
 
   return (
@@ -240,7 +240,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           setZone={setCurrentFilterZone}
           componentId={id}
           attributes={attributes}
-          ExtraElement={removeCross}
+          ExtraElement={RemoveCross}
           className={"tol-filter-config-remote-filter"}
         />
       </Drawer>

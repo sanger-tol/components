@@ -283,24 +283,29 @@
 
 .tol-filter-config-remote-filter {
   display: block;
-  min-width: max-content;
+  min-width: 0;
   flex: unset;
+  width: 100%;
 }
 
 .tol-remote-filters-container {
   display: flex;
   gap: 8px;
   align-items: center;
+  width: 100%;
 
-  .remove-filter-button {
+  .tol-remove-filter-button {
     margin-left: 10px;
     cursor: pointer;
+    flex-shrink: 0;
   }
-  .remove-filter-button:hover {
+
+  .tol-remove-filter-button:hover {
     color: var(--tol-danger);
   }
 }
 
 .tol-remote-filters-filter {
   flex: 1;
+  min-width: 0;
 }
