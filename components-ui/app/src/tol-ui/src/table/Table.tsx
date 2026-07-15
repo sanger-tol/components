@@ -471,7 +471,7 @@ export function Table(props: PTable) {
                   wordWrap
                   rowKey={"key"}
                   data={data}
-                  headerHeight={!noFilter && filterVisibility ? 100 : 42}
+                  headerHeight={!noFilter && filterVisibility ? 85 : 42}
                   loading={loading}
                   sortColumn={sortByAttribute}
                   sortType={sortByType}

@@ -188,6 +188,12 @@
 
   --bs-btn-line-height: 0px !important;
   --bs-btn-font-size: 14px !important;
+
+  // Deal with positioning for text only 'icons'
+  .icon:not(.tol-icon) {
+    position: relative;
+    top: -1.5px;
+  }
 }
 
 .tol-filter-button.negate:hover,
