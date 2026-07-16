@@ -8,80 +8,83 @@ import {
   isInHeadlessMode,
   insertComponentToBoard,
   insertZoneToBoard,
-  createBoardForUser
+  createBoardForUser,
+  createTableConfig,
 } from "../../helpers";
-import { 
-  SPECIES_TABLE_CONFIG,
-  SAMPLE_TABLE_CONFIG
-} from "./boardTranslators.config";
+import { TRANSLATOR_TEST_INPUTS } from "./boardTranslatorConfigs.config";
 
 
 test.use({ headless: isInHeadlessMode });
-test.beforeEach(async ({ page }) => {
-  await setAuth(page);
-  const user = await page.evaluate(() => {
-    return localStorage.getItem("user");
+TRANSLATOR_TEST_INPUTS.forEach(({ zoneObjectTypes, TableFields }) => {
+  test.describe(() => {
+    test.beforeEach(async ({ page }) => {
+      await setAuth(page);
+      const user = await page.evaluate(() => {
+        return localStorage.getItem("user");
+      });
+      const userId = JSON.parse(user || '{}').id;
+
+      // Create a board with initial species zone
+      const { boardId, zoneId, viewId } = await createBoardForUser({
+        userId: String(userId),
+        zoneTitle: `Zone for ${zoneObjectTypes[0]}`,
+        zoneObjectType: zoneObjectTypes[0],
+      });
+      // Remove the first zone as its created in the above function
+      const ZoneObjectTypesWithoutFirst = [...zoneObjectTypes];
+      ZoneObjectTypesWithoutFirst.shift();
+
+      // Create additional zones for the remaining zoneObjectTypes
+      let zoneIds: string[] = [zoneId];
+      for (const zoneObjectType of ZoneObjectTypesWithoutFirst || []) {
+        const returnedZoneId = await insertZoneToBoard({
+          userId: String(userId),
+          viewId,
+          title: `Zone for ${zoneObjectType}`,
+          objectType: zoneObjectType,
+          // The order already has a zone at index 1 so start with +2
+          order: zoneObjectTypes.indexOf(zoneObjectType) + 2,
+        });
+        if (returnedZoneId) {
+          zoneIds.push(returnedZoneId);
+        }
+      }
+
+      // For each new zone, insert a table component with the corresponding TableFields
+      for (const [index, newZoneId] of zoneIds.entries()) {
+        const field = TableFields[zoneObjectTypes[index]];
+        await insertComponentToBoard(
+          {
+            userId: String(userId),
+            componentTitle: `${newZoneId} Table`,
+            zoneId: newZoneId,
+            order: index + 1,
+            config: createTableConfig({ activeOrder: field }),
+            objectType: zoneObjectTypes[index]
+          }
+        );
+      }
+
+      await page.goto(`/board/${boardId}`);
+    });
+
+    test(`${zoneObjectTypes.join(" -> ")}`, async ({ page }) => {
+      const filterString = "ABC";
+      const firstRowCounter = page.getByTestId("table-row-counter").nth(1);
+      const initialSampleRow = (await firstRowCounter.textContent())?.trim();
+      const firstFilterInput = page.getByTestId("Scientific Name-filter-input").first();
+      await firstFilterInput.fill(filterString);
+
+      await expect
+        .poll(async () => (await firstRowCounter.textContent())?.trim(), {
+          timeout: 15000,
+          message: "Expected sample row counter to update after filtering by species scientific name",
+        })
+        .not.toEqual(initialSampleRow);
+
+      const secondFilterInput = await page.getByTestId("Scientific Name-filter-input").nth(1);
+      expect(await secondFilterInput.inputValue()).toEqual(filterString);
+    });
+
   });
-  const userId = JSON.parse(user || '{}').id;
-
-  // Create a board with initial species zone
-  const { boardId, zoneId, viewId } = await createBoardForUser({
-    userId: String(userId),
-    zoneTitle: "Zone 1",
-    zoneObjectType: "species",
-  });
-
-  // Add another zone for sample
-  const secondZoneId = await insertZoneToBoard({
-    userId: String(userId),
-    viewId,
-    title: "Zone 2",
-    objectType: "sample",
-    order: 2,
-  });
-
-  // Add a table to the species (first) zone
-  await insertComponentToBoard(
-    {
-      userId: String(userId),
-      componentTitle: `Test Table 1`,
-      zoneId,
-      order: 1,
-      config: SPECIES_TABLE_CONFIG,
-      objectType: "species"
-    }
-  );
-
-  // Add a table to the sample (second) zone
-  await insertComponentToBoard(
-    {
-      userId: String(userId),
-      componentTitle: `Test Table 2`,
-      zoneId: secondZoneId!,
-      order: 1,
-      config: SAMPLE_TABLE_CONFIG,
-      objectType: "sample"
-    }
-  );
-
-  await page.goto(`/board/${boardId}`);
-});
-
-test("Many-To-One translation", async ({ page }) => {
-  const filterString = "ABC";
-  const sampleRowCounter = page.getByTestId("table-row-counter").nth(1);
-  const initialSampleRow = (await sampleRowCounter.textContent())?.trim();
-  const speciesFilterInput = page.getByTestId("Scientific Name-filter-input").first();
-
-  await speciesFilterInput.fill(filterString);
-
-  await expect
-    .poll(async () => (await sampleRowCounter.textContent())?.trim(), {
-      timeout: 15000,
-      message: "Expected sample row counter to update after filtering by species scientific name",
-    })
-    .not.toEqual(initialSampleRow);
-
-  const newSampleRow = (await sampleRowCounter.textContent())?.trim();
-  expect(newSampleRow).not.toEqual(initialSampleRow);
 });
