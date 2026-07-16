@@ -36,7 +36,7 @@ function InternalMessage(props: PMessage, ref: React.Ref<HTMLDivElement>) {
   } = props;
 
   return (
-    <div ref={ref} style={{ ...styles, marginBottom: "4px" }}>
+    <div ref={ref} style={styles}>
       <RSMessage
         closable={closable}
         showIcon={showIcon}

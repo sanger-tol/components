@@ -36,7 +36,7 @@ export function AttributeTitle(props: PAttributeTitle) {
           {...props}
           element={
             <span
-              className="inline-source"
+              className="tol-inline-source"
               style={{
                 backgroundColor: getSourceColour(
                   fieldSource || "var(--tol-emphasis)"

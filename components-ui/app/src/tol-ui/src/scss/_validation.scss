@@ -157,7 +157,7 @@
   padding: 12px;
   margin-top: 10px;
   overflow: auto;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
   transition: padding-bottom 0.3s ease;
   justify-self: center;
 
@@ -217,7 +217,7 @@
 }
 
 .tol-validate-step-expanded-all-errors-container {
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
   margin-top: 8px;
   padding: 16px;
   background-color: var(--tol-grey-subtle);
@@ -281,7 +281,7 @@
     box-shadow:
       rgba(0, 0, 0, 0.19) 0px 10px 20px,
       rgba(0, 0, 0, 0.23) 0px 6px 6px;
-    border-radius: 6px;
+    border-radius: var(--tol-border-radius);
     min-height: 225px;
     margin-right: 10px;
 
@@ -510,7 +510,7 @@
   width: 100%;
   padding: 5px;
   color: white;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
   margin: 8px 0 5px 0;
   max-height: 30px;
   display: flex;

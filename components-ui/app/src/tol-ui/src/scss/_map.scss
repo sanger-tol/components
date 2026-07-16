@@ -7,7 +7,7 @@
 .tol-map {
   height: 100%;
   width: 100%;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
 
   .info.legend {
     background-color: var(--tol-bg);
@@ -33,7 +33,7 @@
 .map-selected {
   border: 3px solid var(--tol-primary);
   padding: 5px;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
 }
 
 .map-zoom-text {
@@ -44,5 +44,5 @@
   right: 10px;
   padding: 5px;
   z-index: 1000;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
 }

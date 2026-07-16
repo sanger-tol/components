@@ -35,6 +35,10 @@ export interface PDropdownButton {
  */
 export function DropdownButton(props: PDropdownButton) {
   const { toggle, buttons, testid } = props;
+
+  // Match Button behavior: do not render wrapper when toggle is hidden.
+  if (toggle.visible === false) return null;
+
   const { position = "none", ...toggleWithoutPosition } = toggle;
 
   const placement: DropdownProps["placement"] =

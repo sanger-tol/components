@@ -8,6 +8,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import {
+  CHART_TAG_POINT_STYLE,
   generateSunburstLabels,
   convertSunburstDatasets,
   resetItemClickedData,
@@ -128,6 +129,7 @@ export function Sunburst(props: PSunburst) {
         animation: false,
         usePointStyle: true,
         backgroundColor: "black",
+        cornerRadius: 16,
         callbacks: {
           title: (context: any) => {
             const dataPointIndex = context[0].dataIndex;
@@ -143,7 +145,7 @@ export function Sunburst(props: PSunburst) {
           },
           labelPointStyle: () => {
             return {
-              pointStyle: "rectRounded",
+              pointStyle: CHART_TAG_POINT_STYLE,
               rotation: 0,
             };
           },

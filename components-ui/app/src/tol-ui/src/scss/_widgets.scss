@@ -6,7 +6,7 @@
 
 .tol-widget {
   background-color: var(--tol-bg);
-  border-radius: 16px;
+  border-radius: var(--tol-border-radius-lg);
   box-sizing: border-box;
   box-shadow: 0 6px 18px rgba(black, 0.08), 0 2px 6px rgba(black, 0.05);
   padding: 8px;

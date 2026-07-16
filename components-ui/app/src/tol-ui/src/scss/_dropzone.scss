@@ -12,7 +12,7 @@
 
 .tol-dropzone {
   .rs-uploader-trigger-btn {
-    border-radius: 6px;
+    border-radius: var(--tol-border-radius);
   }
 
   .file-name {

@@ -216,6 +216,12 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Test ID used to identify this table in Playwright tests
    */
   testid?: string;
+  /**
+   * When this value changes, RemoteTable re-syncs its internal config state from
+   * the current props without remounting. Use this for transitions (e.g. entering
+   * or exiting board edit mode) that should not flash a full loading placeholder.
+   */
+  configSyncKey?: string;
 }
 
 /**
@@ -254,7 +260,8 @@ export function RemoteTable(props: PRemoteTable) {
     fields,
     defaultSortByAttribute = getTableConfigLocalStorage(id, "defaultSortByAttribute"),
     defaultSortByType = getTableConfigLocalStorage(id, "defaultSortByType"),
-    filterVisibility: propFilterVisibility = getTableConfigLocalStorage(id, "filterVisibility"),
+    filterVisibility: initialFilterVisibility = getTableConfigLocalStorage(id, "filterVisibility"),
+    pageSize: initialPageSize,
     onPageSizeChange,
     onToggleFilterVisibility,
     noDownload,
@@ -267,7 +274,10 @@ export function RemoteTable(props: PRemoteTable) {
     forceUpdate,
     onReset: propOnReset,
     showConfigReset,
-    testid
+    testid,
+    configSyncKey,
+    selectedRows: controlledSelectedRows,
+    setSelectedRows: setControlledSelectedRows,
   } = props;
 
   const runActionDatasource = new TsDataSource({
@@ -286,7 +296,7 @@ export function RemoteTable(props: PRemoteTable) {
   // pagination
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(
-    getTableConfigLocalStorage(id, "pageSize") || props.pageSize || 50
+    getTableConfigLocalStorage(id, "pageSize") || initialPageSize || 50
   );
   const [totalSize, setTotalSize] = useState<number>(0);
 
@@ -298,7 +308,7 @@ export function RemoteTable(props: PRemoteTable) {
   const [sortByType, setSortByType] = useState<string | undefined>(
     defaultSortByType ?? "asc"
   );
-  const [filterVisibility, setFilterVisibility] = useState<boolean>(propFilterVisibility ?? true);
+  const [filterVisibility, setFilterVisibility] = useState<boolean>(initialFilterVisibility ?? true);
 
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
@@ -308,8 +318,8 @@ export function RemoteTable(props: PRemoteTable) {
 
   // row selection
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
-    props.selectedRows,
-    props.setSelectedRows,
+    controlledSelectedRows,
+    setControlledSelectedRows,
     []
   );
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
@@ -328,6 +338,28 @@ export function RemoteTable(props: PRemoteTable) {
     showConfigReset === undefined ? !!getTableConfigLocalStorage(id) : false
   );
   const resolvedShowConfigReset = showConfigReset ?? localHasDiff;
+
+  // Incremented when a configSyncKey change triggers an in-place re-fetch,
+  // so renderTable fires even when page/sort/filter haven't changed.
+  const [configSyncTrigger, setConfigSyncTrigger] = useState(0);
+
+  useEffectUpdate(() => {
+    // Re-sync config state in-place when the parent signals a mode transition.
+    // We preserve prev.dataWithDefaults (server-enriched column metadata) so the
+    // table stays visible throughout — only a loading spinner overlay appears.
+    const nextBase = initialiseFieldMeta(fields);
+    setFieldMeta((prev) => ({
+      ...prev,
+      order: nextBase.order,
+      data: nextBase.data,
+    }));
+    setSortByAttribute(defaultSortByAttribute ?? nextBase?.order?.active?.[0]);
+    setSortByType(defaultSortByType ?? "asc");
+    if (initialFilterVisibility !== undefined) setFilterVisibility(initialFilterVisibility);
+    if (initialPageSize !== undefined) setPageSize(initialPageSize);
+    setPage(1);
+    setConfigSyncTrigger((n) => n + 1);
+  }, [configSyncKey]);
 
   useEffect(() => {
     setTableLoading(id, editMode && (loading || fullLoad));
@@ -352,7 +384,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   useEffectUpdate(() => {
     renderTable();
-  }, [page, sortByAttribute, sortByType, filter, forceUpdate]);
+  }, [page, sortByAttribute, sortByType, filter, forceUpdate, configSyncTrigger]);
 
   useEffectUpdate(() => {
     if (fullLoad) {
