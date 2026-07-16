@@ -8,7 +8,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Schema } from "rsuite";
 import {
   RSForm,
-  Toaster,
   CountrySelect,
   FormTextField,
   SingleSelectCustomOption,
@@ -71,7 +70,6 @@ export function FormAllInOne(props: PFormAllInOne) {
   const onUnsavedChangesRef = useRef(props.onUnsavedChanges);
 
   const formRef = useRef<any>(null);
-  const toaster = Toaster();
   const defaultModel = Schema.Model({});
   onUnsavedChangesRef.current = props.onUnsavedChanges;
 
@@ -301,7 +299,7 @@ export function FormAllInOne(props: PFormAllInOne) {
         onCheck={setFormErrors}
         onSubmit={(_formValue: any, event?: React.FormEvent) => {
           event?.preventDefault();
-          validateForm(formRef, toaster, formData, props.onSubmit);
+          validateForm(formRef, formData, props.onSubmit);
           setModifiedFields({});
         }}
         model={model || defaultModel}
@@ -430,7 +428,6 @@ export function FormAllInOne(props: PFormAllInOne) {
                     if (onValidate || props.onSubmit) {
                       isValid = validateForm(
                         formRef,
-                        toaster,
                         formData,
                         props.onSubmit,
                       );
