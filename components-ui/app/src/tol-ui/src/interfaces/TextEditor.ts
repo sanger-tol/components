@@ -45,3 +45,14 @@ export type TMenuBarState = Record<
   (typeof TEXT_EDITOR_STATE_KEYS)[number],
   boolean
 >;
+
+export interface ITextEditorButtons {
+  /**
+   * The Tiptap editor instance.
+   */
+  editor: Editor | null;
+  /**
+   * The editor state, which is derived from the editor instance.
+   */
+  editorState: TMenuBarState;
+}

@@ -5,12 +5,28 @@ SPDX-License-Identifier: MIT
 */
 
 import { FormComponentWrapper, ITextField, RSForm } from "..";
+import type { TTextFieldType } from "..";
 
 export interface PFormTextField extends Omit<ITextField, "type"> {
+  /**
+   * The unique identifier for the form field. This is used to associate the label with the input field.
+   */
   id: string;
+  /**
+   * The name of the form field. This is used to identify the field when submitting the form.
+   */
   value?: string;
+  /**
+   * The callback function that is called when the value of the form field changes.
+   */
   onChange?: (value: string) => void;
-  type?: "text" | "email" | "password";
+  /**
+   * The type of the form field. This can be "text", "email", or "password".
+   */
+  type?: TTextFieldType;
+  /**
+   * Error text to display when form fails validation. This will be displayed below the input field.
+   */
   errorText?: string;
 }
 

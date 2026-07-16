@@ -6,14 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { useMemo } from "react";
 import countryList from "react-select-country-list";
-import {
-  SingleSelect,
-  FormComponentWrapper,
-  ICountryselectField,
-} from "..";
+import { SingleSelect, FormComponentWrapper, TFormCountrySelectField } from "..";
 
-export interface PCountrySelect
-  extends Omit<ICountryselectField, "type" | "name"> {
+export interface PCountrySelect extends TFormCountrySelectField {
   name?: string;
   value: string;
   setValue: (value: string) => void;

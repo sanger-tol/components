@@ -6,11 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { Checkbox, CheckboxGroup } from "rsuite";
-import { FormComponentWrapper, ICheckboxFormField } from "..";
+import { FormComponentWrapper, TFormCheckboxFields } from "..";
 
-
-export interface PFormCheckboxes
-  extends Omit<ICheckboxFormField, "type" | "defaultChecked"> {
+export interface PFormCheckboxes extends TFormCheckboxFields {
   id: string;
   errorText?: string;
   checkedItems: string[];
@@ -62,7 +60,10 @@ export function FormCheckboxes(props: PFormCheckboxes) {
                   {field.children}
                   {field.subtext && (
                     <span className="rs-form-help-text">
-                      <span className="tol-danger-colour" style={{ marginLeft: "10px" }}>
+                      <span
+                        className="tol-danger-colour"
+                        style={{ marginLeft: "10px" }}
+                      >
                         *{" "}
                       </span>
                       {field.subtext}

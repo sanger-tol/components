@@ -10,18 +10,6 @@ The text editor is a rich text editing component built on [Tiptap](https://tipta
 
 In practice, it is used wherever the application needs formatted user input, with the content returned to the consumer as HTML, JSON or plain text.
 
-## Why this exists
-
-Plain text inputs are not enough for content that needs structure or emphasis.
-
-The text editor provides:
-
-- a consistent rich text experience across the application
-- a single place where formatting behavior and styling are defined
-- a controlled component model, so consumers own the content state
-
-Consumers pass in a value and a setter, and the editor reports every change back in the requested format.
-
 ## How it works
 
 The editor wraps a Tiptap instance configured with a standard set of extensions: StarterKit, Highlight, Superscript, Subscript and TextAlign.
@@ -68,12 +56,3 @@ Custom buttons:
 - each entry can be a button props object, a React element, or a function that receives the editor instance and returns either
 
 This allows features such as tables or mentions to be added by a consumer without changing the shared component.
-
-## Styling
-
-Styling hooks follow a single block convention:
-
-- `tol-text-editor` — outer container
-- `tol-text-editor__toolbar` and `tol-text-editor__toolbar-group` — menu bar
-- `tol-text-editor__body` and `tol-text-editor__content` — content area
-- `tol-text-editor__footer` — optional footer

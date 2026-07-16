@@ -13,24 +13,28 @@ import type {
   TTextEditorButtons,
   TTextEditorCustomButton,
   TTextEditorButton,
+  ITextEditorButtons,
 } from "../..";
 
-/**
- * Renders the formatting toolbar for a Tiptap text editor.
- * the optional `buttons` prop, appends custom buttons, and always includes undo
- * and redo controls. Nothing is rendered until an editor instance is available.
- * @param customButtons - Optional custom button definitions or factories to render before undo and redo.
- * @returns The editor toolbar, or null when the editor is not initialised.
- */
-export function MenuBar({
-  editor,
-  buttons,
-  customButtons,
-}: {
+export interface PMenuBar {
+  /**
+   * The Tiptap editor instance. The menu bar will not render until this is available.
+   */
   editor: Editor | null;
+  /**
+   * An optional array of button names to display in the menu bar.
+   */
   buttons?: TTextEditorButtons;
+  /**
+   * An optional array of custom button definitions or factories to render in the menu bar.
+   * Custom buttons will be rendered before the undo and redo buttons.
+   */
   customButtons?: TTextEditorCustomButton[];
-}) {
+}
+
+export function MenuBar(props: PMenuBar) {
+  const { editor, buttons, customButtons } = props;
+
   // Use the menuBarStateSelector to get the current state of the editor
   const editorState = useEditorState({
     editor,
@@ -44,8 +48,7 @@ export function MenuBar({
 
   // Get the toolbar buttons based on the current editor state
   const { UNDO, REDO, ...toolbarButtons } = TEXT_EDITOR_BUTTONS(
-    { editor },
-    editorState,
+    { editor, editorState } as ITextEditorButtons,
   );
 
   // Filter the toolbar buttons based on the provided buttons prop

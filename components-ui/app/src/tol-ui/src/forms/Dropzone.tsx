@@ -16,13 +16,13 @@ import {
   IMessage,
   IWaitingUpload,
   IFileData,
-  IDropzoneField,
+  TFormDropzoneField,
   FormComponentWrapper,
   MAX_FILE_SIZE,
   USER_SHOWN_FILE_TYPE_DEFAULTS,
 } from "..";
 
-export interface PDropzone extends Omit<IDropzoneField, "type" | "name"> {
+export interface PDropzone extends TFormDropzoneField {
   name?: string;
   errorText?: string;
   allowedSize?: string;
@@ -44,13 +44,13 @@ export function Dropzone(props: PDropzone) {
     validating = false,
     allowedSize = MAX_FILE_SIZE,
     allowedFileTypes = USER_SHOWN_FILE_TYPE_DEFAULTS, // This is more concise than the actual allowed file list,
-                                                      // found under the prop 'fileType'.
+    // found under the prop 'fileType'.
   } = props;
 
   const [fileList, setFileList] = useStateFallback<IFileData[]>(
     props.fileList,
     props.setFileList,
-    []
+    [],
   );
   const [validate, setValidate] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,7 +74,7 @@ export function Dropzone(props: PDropzone) {
     formData.set(
       "file",
       fileList[fileList.length - 1].blobFile,
-      fileList[fileList.length - 1].name
+      fileList[fileList.length - 1].name,
     );
 
     dataSource

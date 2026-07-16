@@ -5,17 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useRef } from "react";
-import {
-  AutoComplete,
-  PAutoComplete,
+import { AutoComplete } from "..";
+import type {
   IRemoteTarget,
   IRemoteAutoCompleteData,
   TAutoCompleteValue,
+  TFormRemoteAutoCompleteField,
 } from "..";
 
 export interface PRemoteAutoComplete
-  extends Omit<PAutoComplete, "onChange">,
-    IRemoteTarget {
+  extends TFormRemoteAutoCompleteField, IRemoteTarget {
   value: string;
   onChange?: (value: TAutoCompleteValue) => void;
   displayFields?: string[];
@@ -24,7 +23,13 @@ export interface PRemoteAutoComplete
 }
 
 export function RemoteAutoComplete(props: PRemoteAutoComplete) {
-  const { onChange, dataSource, objectType, displayFields = [], searchBy } = props;
+  const {
+    onChange,
+    dataSource,
+    objectType,
+    displayFields = [],
+    searchBy,
+  } = props;
   const [filteredData, setFilteredData] = useState<IRemoteAutoCompleteData>({});
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -66,9 +71,9 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
           if (item[searchBy] === value) {
             matchedId = item.id;
           }
-          newData[item[searchBy]] = displayFields.map(
-            (field: string) => ({ [field]: item[field] })
-          );
+          newData[item[searchBy]] = displayFields.map((field: string) => ({
+            [field]: item[field],
+          }));
         });
 
         // update the ref so we keep track of the matched ID
@@ -86,7 +91,6 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
       }
     }, 400);
   };
-
 
   return (
     <div>

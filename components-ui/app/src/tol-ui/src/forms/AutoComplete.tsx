@@ -9,12 +9,11 @@ import {
   FormComponentWrapper,
   normaliseCaps,
   Loader,
-  IAutocompleteField,
-  TAutoCompleteValue
+  TFormAutoCompleteField,
+  TAutoCompleteValue,
 } from "..";
 
-export interface PAutoComplete
-  extends Omit<IAutocompleteField, "type" | "name" | "dataSource"> {
+export interface PAutoComplete extends TFormAutoCompleteField {
   name?: string;
   value: TAutoCompleteValue;
   onChange?: (value: string) => void;
@@ -34,7 +33,6 @@ export function AutoComplete(props: PAutoComplete) {
     displayFieldsTitle,
     loading,
   } = props;
-
 
   return (
     <FormComponentWrapper {...props} id={name}>
@@ -69,7 +67,7 @@ export function AutoComplete(props: PAutoComplete) {
                       );
                     }
                     return <div key={index}>{value}</div>;
-                  }
+                  },
                 )}
             </>
           );

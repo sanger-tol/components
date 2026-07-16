@@ -7,10 +7,9 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
 
-import type { ISingleselectField, TLabelAndValueData } from "..";
+import type { TFormSingleSelectField, TLabelAndValueData } from "..";
 
-export interface PSingleSelect
-  extends Omit<Partial<ISingleselectField>, "data"> {
+export interface PSingleSelect extends TFormSingleSelectField {
   data: string[] | TLabelAndValueData;
   value: string;
   onChange: (value: string) => void;

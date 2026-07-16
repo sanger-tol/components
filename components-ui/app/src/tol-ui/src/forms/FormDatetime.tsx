@@ -5,9 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { DatePicker } from "rsuite";
-import { FormComponentWrapper, IDatetimeField } from "..";
+import { FormComponentWrapper, TFormDatetimeField } from "..";
 
-export interface PFormDatetime extends Omit<IDatetimeField, "type" | "name"> {
+export interface PFormDatetime extends TFormDatetimeField {
   name?: string;
   value: Date | string | null;
   onChange: (value: Date | null) => void;
@@ -26,11 +26,7 @@ export function FormDatetime(props: PFormDatetime) {
   } = props;
 
   return (
-    <FormComponentWrapper
-      {...props}
-      id={name}
-      label={label}
-    >
+    <FormComponentWrapper {...props} id={name} label={label}>
       <DatePicker
         value={value ? new Date(value) : null}
         onChange={onChange}

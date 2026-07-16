@@ -6,10 +6,9 @@ SPDX-License-Identifier: MIT
 
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
-import { FormComponentWrapper, IMarkdownField } from "..";
+import { FormComponentWrapper, TFormMarkdownField } from "..";
 
-export interface PFormMarkdown
-  extends Omit<IMarkdownField, "type" | "name"> {
+export interface PFormMarkdown extends TFormMarkdownField {
   name?: string;
   value: string;
   onChange: (value: string) => void;
@@ -28,7 +27,11 @@ export function FormMarkdown(props: PFormMarkdown) {
   } = props;
 
   return (
-    <FormComponentWrapper {...props} id={name} label={label || "Markdown Editor:"}>
+    <FormComponentWrapper
+      {...props}
+      id={name}
+      label={label || "Markdown Editor:"}
+    >
       <MDEditor
         id={label}
         value={value}

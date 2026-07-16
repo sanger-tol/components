@@ -9,12 +9,10 @@ import {
   isPropDefined,
   IData,
   FormComponentWrapper,
-  IMultipleselectField,
+  TFormMultipleSelectField,
 } from "..";
 
-
-export interface PMultipleSelect
-  extends Omit<IMultipleselectField, "type" | "name"> {
+export interface PMultipleSelect extends TFormMultipleSelectField {
   name?: string;
   value: string[];
   setValue: (value: string[]) => void;
@@ -51,7 +49,7 @@ export function MultipleSelect(props: PMultipleSelect) {
     className,
     menuClassName,
     groupBy,
-    renderMenu
+    renderMenu,
   } = props;
   const block = isPropDefined(props.block);
 

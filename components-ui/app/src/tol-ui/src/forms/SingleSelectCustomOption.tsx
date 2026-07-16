@@ -14,11 +14,10 @@ import {
   SingleSelect,
   FormTextField,
   FormComponentWrapper,
-  ISingleselectcustomoptionField,
+  TFormSingleSelectCustomOptionField,
 } from "..";
 
-export interface PSingleSelectCustomOption
-  extends Omit<ISingleselectcustomoptionField, "type" | "name"> {
+export interface PSingleSelectCustomOption extends TFormSingleSelectCustomOptionField {
   id: string;
   name?: string;
   value: string;
@@ -27,14 +26,7 @@ export interface PSingleSelectCustomOption
 }
 
 export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
-  const {
-    id,
-    value,
-    setValue,
-    data,
-    label,
-    customOptionPlaceholder,
-  } = props;
+  const { id, value, setValue, data, label, customOptionPlaceholder } = props;
 
   const [selectedOption, setSelectedOption] = useState("");
   const [customValue, setCustomValue] = useState("");
@@ -80,25 +72,25 @@ export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
 
   return (
     <FormComponentWrapper {...props} label={label || "Select an option:"}>
-        <SingleSelect
-          data={data}
-          placeholder="Please Select..."
-          value={selectedOption}
-          onChange={handleSelectChange}
-          block
+      <SingleSelect
+        data={data}
+        placeholder="Please Select..."
+        value={selectedOption}
+        onChange={handleSelectChange}
+        block
+      />
+      {showCustomBox && (
+        <FormTextField
+          id={`form-${id}-custom-${label}`}
+          name={`custom${label ? label.replace(/\s+/, "") : "FormTextField"}`}
+          label={`Other ${label || "Option"}`}
+          placeholder={`${
+            customOptionPlaceholder || "Please enter a custom option..."
+          }`}
+          value={customValue}
+          onChange={handleCustomValueChange}
         />
-        {showCustomBox && (
-          <FormTextField
-            id={`form-${id}-custom-${label}`}
-            name={`custom${label ? label.replace(/\s+/, "") : "FormTextField"}`}
-            label={`Other ${label || "Option"}`}
-            placeholder={`${
-              customOptionPlaceholder || "Please enter a custom option..."
-            }`}
-            value={customValue}
-            onChange={handleCustomValueChange}
-          />
-        )}
+      )}
     </FormComponentWrapper>
   );
 }

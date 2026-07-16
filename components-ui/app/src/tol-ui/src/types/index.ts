@@ -5,3 +5,4 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./tiptap-command-types";
+export * from "./forms";

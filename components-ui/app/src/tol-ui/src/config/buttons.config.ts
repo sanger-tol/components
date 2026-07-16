@@ -4,9 +4,8 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import type { PButton } from "..";
-import type { Editor } from "@tiptap/core";
-import type { TMenuBarState, TTextEditorButton } from "..";
+import type { ITextEditorButtons, PButton } from "..";
+import type { TTextEditorButton } from "..";
 
 export const BUTTONS: Record<string, PButton> = {
   ADD: {
@@ -134,14 +133,10 @@ export const BUTTONS: Record<string, PButton> = {
   },
 };
 
-export const TEXT_EDITOR_BUTTONS = (
-  {
-    editor,
-  }: {
-    editor: Editor | null;
-  },
-  editorState: TMenuBarState,
-): Record<Uppercase<TTextEditorButton>, PButton> => {
+export const TEXT_EDITOR_BUTTONS = ({
+  editor,
+  editorState,
+}: ITextEditorButtons): Record<Uppercase<TTextEditorButton>, PButton> => {
   if (!editor) {
     return {} as Record<Uppercase<TTextEditorButton>, PButton>;
   }
