@@ -33,6 +33,8 @@ import {
   isRelationship,
   TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
   TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
+  CELL_RENDERER_PROP_TAG_START,
+  CELL_RENDERER_PROP_TAG_END,
 } from "..";
 import type {
   TsDataSource,
@@ -351,29 +353,30 @@ async function addFieldsFromStringProp(
   requestedFields: Set<string>,
   value: unknown,
   fieldName: string,
-  dataSource: TsDataSource,
-  objectType: string,
 ) {
-  if (typeof value !== "string" || !value.includes("${")) return;
+  if (typeof value !== "string" || !value.includes(CELL_RENDERER_PROP_TAG_START)) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
 
   for (const match of matches) {
     const relativeAttribute = match
-      .replace("${", "")
-      .replace("}", "")
+      .replace(CELL_RENDERER_PROP_TAG_START, "")
+      .replace(CELL_RENDERER_PROP_TAG_END, "")
       .replace(CELL_RENDERER_SPREAD_OPERATOR, "")
       .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
       .trim();
 
-    // Ensure we request the field for the original objectType and not the related objectType
+    /**
+     * Ensure any fields used in a cellRenderer (referred to from the objectType the
+     * field is already on) have the relevant relationship prefix added to the field
+     * name so they are requested correctly from the API.
+     * 
+     * e.g. If the fieldName is "relationship.attribute" and the relativeAttribute is "attribute2",
+     *      the requested field should be "relationship.attribute2" rather than just "attribute2".
+     */
     const relationship = getRelationshipNameByField(fieldName);
-    const isMany = await dataSource.isManyDataPointsByName(
-      objectType,
-      fieldName.split(".")[0],
-    );
     const field =
-      relationship && !!isMany
+      relationship
         ? `${relationship}.${relativeAttribute}`
         : relativeAttribute;
     if (field) requestedFields.add(field);

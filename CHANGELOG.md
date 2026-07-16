@@ -6,9 +6,15 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.1`
+
+16-07-2026
+
+- Fix requestedFields for fields used in Cell Renderer params.
+
 ## tol-ui `4.0.0`
 
-18-06-2026
+16-07-2026
 
 - Refer to the BOARD EPIC on JIRA for full tickets/changes in this release.
 - [TOLP-9811](https://jira.sanger.ac.uk/browse/TOLP-9811)
