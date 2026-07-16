@@ -37,6 +37,7 @@ export interface createBoardForUserOptions {
   viewTitle?: string;
   zoneTitle?: string;
   boardTitle?: string;
+  zoneObjectType?: string;
 }
 
 const insertBoardToDB = async (
@@ -47,6 +48,7 @@ const insertBoardToDB = async (
   viewTitle: string,
   zoneTitle: string,
   boardTitle: string,
+  zoneObjectType: string,
 ) => {
   try {
     await sql.unsafe(`
@@ -57,7 +59,7 @@ const insertBoardToDB = async (
       INSERT INTO "view_board"
       VALUES (${randomInt()}, '1', '${viewID}', '${boardId}');
       INSERT INTO "zone"
-      VALUES ('${zoneID}', '${zoneTitle}', 'curation', '{"and_":{}}', ${userId}, 'tol_production');
+      VALUES ('${zoneID}', '${zoneTitle}', '${zoneObjectType}', '{"and_":{}}', ${userId}, 'tol_production');
       INSERT INTO "zone_view"
       VALUES (${randomInt()}, '1', '${zoneID}', '${viewID}');
     `).simple();
@@ -91,7 +93,8 @@ export const createBoardForUser = async (
     userId,
     viewTitle = `${randomInt()}`,
     zoneTitle = `${randomInt()}`,
-    boardTitle = `${randomInt()}`
+    boardTitle = `${randomInt()}`,
+    zoneObjectType = "curation",
   }: createBoardForUserOptions
 ) => {
   const boardId = createBoardId();
@@ -104,7 +107,8 @@ export const createBoardForUser = async (
     zoneId,
     viewTitle,
     zoneTitle,
-    boardTitle
+    boardTitle,
+    zoneObjectType
   );
   return {boardId, viewId, zoneId};
 }
