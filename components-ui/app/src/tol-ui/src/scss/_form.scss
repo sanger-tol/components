@@ -26,6 +26,11 @@
       display: block;
     }
   }
+
+  .tol-text-editor {
+    height: 200px;
+    width: 100%;
+  }
 }
 
 .tol-form-checkboxes-text {
@@ -40,7 +45,6 @@
 .tol-form-field-inline {
   display: flex;
   align-items: center;
-  gap: 0.5em;
 
   label {
     margin-bottom: 0 !important;
@@ -49,8 +53,8 @@
 
 .tol-form-label {
   display: flex;
-  gap: 5px;
   align-items: center;
+  gap: 5px;
 
   &.inline {
     display: inline-flex;
@@ -74,7 +78,6 @@
 
 .tol-required {
   color: var(--tol-danger);
-  margin: 0 0.2rem;
 }
 
 .tol-profile-form-container {

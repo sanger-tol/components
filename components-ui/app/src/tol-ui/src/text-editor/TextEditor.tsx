@@ -11,7 +11,7 @@ import Highlight from "@tiptap/extension-highlight";
 import Superscript from "@tiptap/extension-superscript";
 import Subscript from "@tiptap/extension-subscript";
 import TextAlign from "@tiptap/extension-text-align";
-import { MenuBar } from "..";
+import { DEFAULT_TEXT_EDITOR_BUTTONS, MenuBar } from "..";
 import type { TTextEditorButtons, TTextEditorCustomButton } from "..";
 
 export interface PTextEditor {
@@ -25,12 +25,12 @@ export interface PTextEditor {
   setValue: (value: string) => void;
   /**
    * The list of standard toolbar buttons to display in the text editor.
-   * If not provided, all standard buttons will be displayed.
+   * If not provided, a basic set will be shown.
    * The order of buttons in the array determines their order in the toolbar.
    * Valid button names are defined in the TTextEditorButton type.
    * See the TTextEditorButton type for a list of valid button names.
    */
-  menuButtons: TTextEditorButtons;
+  menuButtons?: TTextEditorButtons;
   /**
    * An optional string to specify the format of the value returned by the text editor.
    * - "html": The value will be returned as an HTML string.
@@ -69,19 +69,24 @@ export interface PTextEditor {
    * such as programmatically triggering actions or accessing the editor's state.
    */
   onEditorChange?: (editor: any) => void;
+  /**
+   * An optional string or number to specify the height of the text editor.
+   */
+  height?: string | number;
 }
 
 export function TextEditor(props: PTextEditor) {
   const {
     value,
     setValue,
-    menuButtons,
+    menuButtons = DEFAULT_TEXT_EDITOR_BUTTONS,
     customButtons,
     returnValueType = "json",
     keyboardShortcutElement,
     customExtensions,
     editable = true,
     onEditorChange,
+    height,
   } = props;
 
   // Memoize the extensions array to avoid unnecessary editor rebuilds.
@@ -143,7 +148,10 @@ export function TextEditor(props: PTextEditor) {
 
   return (
     <EditorContext.Provider value={providerValue}>
-      <div className="tol-text-editor">
+      <div
+        className="tol-text-editor"
+        style={height ? { height: height } : undefined}
+      >
         <MenuBar
           editor={editor}
           buttons={menuButtons}

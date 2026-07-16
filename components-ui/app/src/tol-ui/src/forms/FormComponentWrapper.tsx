@@ -7,8 +7,9 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import { FormLabel, IFormComponent, RSForm } from "..";
 
-export interface PFormComponentWrapper
-  extends Partial<Omit<IFormComponent, "type">> {
+export interface PFormComponentWrapper extends Partial<
+  Omit<IFormComponent, "type">
+> {
   id?: string;
   children: React.ReactNode;
   errorText?: string;
@@ -28,7 +29,9 @@ export function FormComponentWrapper(props: PFormComponentWrapper) {
     errorText,
     errorMessageClassName,
     as,
+    required,
   } = props;
+
   const ContentWrapper = as === "span" ? "span" : "div";
   const errorMessage = (
     <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
@@ -42,7 +45,12 @@ export function FormComponentWrapper(props: PFormComponentWrapper) {
       as={as}
     >
       <ContentWrapper className={labelInline ? "tol-form-field-inline" : ""}>
-        <FormLabel label={label} icon={icon} inline={labelInline} />
+        <FormLabel
+          label={label}
+          icon={icon}
+          inline={labelInline}
+          required={required}
+        />
         {children}
         {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
         {errorMessageClassName ? (

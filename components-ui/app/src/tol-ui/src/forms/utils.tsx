@@ -17,9 +17,6 @@ import {
 /**
  * Sets the initial data in a form to `data`
  *
- * @remarks
- * Designed for the `FormAllInOne` component.
- *
  * @param formConfig - The form config object used to define the form
  * @param setFormData - The state setter for a form data state
  * @param data - The data to be set as the initial data

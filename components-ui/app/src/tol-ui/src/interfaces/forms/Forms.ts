@@ -179,13 +179,14 @@ export interface IMarkdownField extends IFormComponent {
 
 export interface ITextAreaField extends IFormComponent {
   type: "textarea";
-  menuButtons: TTextEditorButtons;
+  menuButtons?: TTextEditorButtons;
   errorText?: string;
   returnValueType?: "html" | "json" | "text";
   customExtensions?: any[];
   customButtons?: any[];
   keyboardShortcutElement?: React.ReactNode;
   editable?: boolean;
+  height?: string | number;
   onEditorChange?: (editor: any) => void;
 }
 
