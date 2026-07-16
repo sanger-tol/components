@@ -9,5 +9,9 @@ import { addComponent, clickUtilityBarButton, enterEditMode } from "../helpers";
 test("big table", async ({ page }) => {
   await enterEditMode(page);
   await addComponent(page, 0, "table");
-  await clickUtilityBarButton(page.getByTestId("board-component-table"), "table-config-button");
+  await clickUtilityBarButton(
+    page,
+    page.getByTestId("board-component-table"),
+    "table-config-button"
+  );
 });

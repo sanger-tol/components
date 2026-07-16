@@ -48,14 +48,14 @@ const addTextToTextComponent = async (page: Page, textComponent: Locator) => {
   await expect(markdownEditor).toHaveValue("Test Text");
 
   // click the preview button
-  await clickUtilityBarButton(textComponent, "preview-markdown");
+  await clickUtilityBarButton(page, textComponent, "preview-markdown");
 
   // Check the text is in both of the expected places
   await expect(textComponent.locator("textarea")).toHaveText("Test Text");
   await expect(textComponent.locator("p")).toHaveText("Test Text");
 
   // save
-  await clickUtilityBarButton(textComponent, "save-markdown");
+  await clickUtilityBarButton(page, textComponent, "save-markdown");
 };
 
 test("manage dashboard", async ({ page }) => {

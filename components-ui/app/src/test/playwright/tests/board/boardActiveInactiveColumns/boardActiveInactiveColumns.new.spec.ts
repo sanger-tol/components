@@ -66,7 +66,7 @@ test.afterEach(async ({ page }) => {
 });
 
 const openTableConfig = async (page: Page) => {
-  await clickUtilityBarButton(page.getByTestId("board-component-table"), "table-config-button");
+  await clickUtilityBarButton(page, page.getByTestId("board-component-table"), "table-config-button");
   await expect(page.locator(".rs-drawer-wrapper")).toBeVisible();
 };
 

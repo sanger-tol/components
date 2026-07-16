@@ -43,7 +43,11 @@ const openTableConfig = async (page: Page) => {
   }
 
   await closePickerPopup(page);
-  await clickUtilityBarButton(page.getByTestId("board-component-table"), "table-config-button");
+  await clickUtilityBarButton(
+    page,
+    page.getByTestId("board-component-table"),
+    "table-config-button"
+  );
   await expect(drawer).toBeVisible();
 };
 const getColumnSelector = (page: Page) =>

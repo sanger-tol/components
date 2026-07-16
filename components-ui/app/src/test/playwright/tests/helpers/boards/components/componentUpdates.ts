@@ -18,7 +18,7 @@ export const deleteComponent = async (
   componentType: string,
 ) => {
   // Click the delete button in the utility bar of the target component
-  await clickUtilityBarButton(component, `delete-${componentType}-button`);
+  await clickUtilityBarButton(page, component, `delete-${componentType}-button`);
 
   // Click confirm in the confirmation pop-up
   await page.getByTestId("confirm-delete-button").click();

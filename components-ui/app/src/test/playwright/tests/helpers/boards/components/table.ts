@@ -25,7 +25,7 @@ export const configureTable = async (
   activeColumns?: string[],
 ) => {
   // Click the Configure Table button
-  await clickUtilityBarButton(table, "table-config-button");
+  await clickUtilityBarButton(page, table, "table-config-button");
   const configDrawer = page.locator(".tol-drawer");
 
   // Add the default sort attribute if one was provided

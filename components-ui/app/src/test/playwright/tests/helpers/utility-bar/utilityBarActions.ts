@@ -2,28 +2,34 @@
 //
 // SPDX-License-Identifier: MIT
 
-import type { Locator } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 /**
  * Clicks the utility bar button with the testid `testId` on the provided component,
  * including those inside condensed utility bars.
+ * @param page The Playwright page handle
  * @param component Playwright locator handle to the component containing the utility bar
  * @param testId Test ID of the target button
  */
-export const clickUtilityBarButton = async (component: Locator, testId: string) => {
-  // First, try to open the condensed utility bar if it exists
+export const clickUtilityBarButton = async (page: Page, component: Locator, testId: string) => {
+  // A utility bar button will either be in a utility bar at the top of a component,
+  // or it will be hidden in an rs-popover that appears when the condensed utility bar button
+  // is clicked.
+  // First check whether a condensed button exists on this component
   const condensedUtilityBarButton = component.getByTestId("condensed-utility-bar-button");
   const isCondensed = await condensedUtilityBarButton
     .waitFor({ state: "visible", timeout: 500 })
     .then(() => true)
     .catch(() => false);
 
+  // If it does, click it, then click the button in the popover
   if (isCondensed) {
-    await condensedUtilityBarButton.dispatchEvent("click");
+    await condensedUtilityBarButton.click();
+    const targetButton = page.locator("#control-id-clickable").getByTestId(testId);
+    await targetButton.waitFor({ state: "attached", timeout: 1_000 });
+    await targetButton.click();
+  } else {
+    // Just click the button in the utility bar
+    component.getByTestId(testId).click();
   }
-
-  // Either way, the target utility bar button is visible and thus available to be clicked
-  const targetButton = component.getByTestId(testId);
-  await targetButton.waitFor({ state: "attached", timeout: 10_000 });
-  await targetButton.click({ force: true, timeout: 10_000 });
 }

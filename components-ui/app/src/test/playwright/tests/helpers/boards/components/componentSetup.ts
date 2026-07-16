@@ -65,7 +65,7 @@ export const addComponentFilter = async (
   filterValue: string,
 ) => {
   // Click the filter button
-  await clickUtilityBarButton(component, `${componentType}-filter-button`);
+  await clickUtilityBarButton(page, component, `${componentType}-filter-button`);
 
   const filterDrawer = page.locator(".tol-drawer");
 
