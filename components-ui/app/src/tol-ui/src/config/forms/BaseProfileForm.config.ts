@@ -24,20 +24,14 @@ export const BASE_PROFILE_FORM_CONFIG = (
   fields: [
     {
       name: "name",
-<<<<<<< HEAD
       required: true,
-=======
->>>>>>> dev
       type: "text",
       label: "Name:",
       placeholder: "Enter your name here...",
     },
     {
       name: "email",
-<<<<<<< HEAD
       required: true,
-=======
->>>>>>> dev
       type: "email",
       label: "Email Address:",
       placeholder: "Enter your email here...",
