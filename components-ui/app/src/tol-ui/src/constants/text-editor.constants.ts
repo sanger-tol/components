@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import type { TTextEditorButtons } from "src/interfaces";
+import type { TTextEditorButtons } from "..";
 
 export const TEXT_EDITOR_STATE_KEYS = [
   "isBold",
