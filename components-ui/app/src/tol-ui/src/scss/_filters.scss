@@ -27,6 +27,7 @@
   display: flex;
   align-items: center;
   width: 100%;
+  gap: 1px;
 
   // reduce padding on dropdown items
   .rs-dropdown-item {
@@ -107,7 +108,6 @@
   .rs-dropdown {
     position: absolute;
     z-index: 1;
-    margin-left: 8px;
     top: 50%;
     transform: translateY(-50%);
   }
@@ -126,19 +126,17 @@
     background-color: unset !important;
     border: unset !important;
     box-shadow: unset !important;
-    height: var(--tol-button-size-sm) !important;
-    width: var(--tol-button-size-sm) !important;
-    min-width: var(--tol-button-size-sm) !important;
   }
 }
 
 // Filter buttons
 .tol-filter-button-group {
-  --tol-filter-toggle-size: calc(var(--tol-button-size-sm) - 1px);
+  --tol-filter-toggle-height: var(--tol-button-size-sm-height);
+  --tol-filter-toggle-width: var(--tol-button-size-sm-width);
 
   display: grid;
-  grid-template-columns: var(--tol-filter-toggle-size);
-  grid-template-rows: repeat(2, var(--tol-filter-toggle-size));
+  grid-template-columns: var(--tol-filter-toggle-width);
+  grid-template-rows: repeat(2, var(--tol-filter-toggle-height));
   justify-content: start;
   align-items: center;
   flex: 0 0 auto;
@@ -150,7 +148,7 @@
 }
 
 .tol-filter-button-group:has(> :nth-child(3)) {
-  grid-template-columns: repeat(2, var(--tol-filter-toggle-size));
+  grid-template-columns: repeat(2, var(--tol-filter-toggle-width));
 }
 
 .tol-filter-button-group > :nth-child(1) {
@@ -179,9 +177,9 @@
   justify-content: center;
   margin: 0;
   padding: 0;
-  height: var(--tol-filter-toggle-size);
-  width: var(--tol-filter-toggle-size);
-  min-width: var(--tol-filter-toggle-size);
+  height: var(--tol-filter-toggle-height);
+  width: var(--tol-filter-toggle-width);
+  min-width: var(--tol-filter-toggle-width);
   background-color: var(--tol-bg) !important;
   border-color: var(--tol-grey) !important;
   color: var(--tol-grey);

@@ -5,9 +5,6 @@
  */
 
 .form-wrapper {
-  padding: 10px 0;
-  padding-bottom: 5px;
-
   .rs-form-group {
     margin-top: 5px;
     margin-bottom: 10px;
@@ -30,6 +27,20 @@
   .tol-text-editor {
     height: 200px;
     width: 100%;
+  }
+
+  .tol-form-wrapper-unique-sections-container {
+    margin-bottom: 30px;
+
+    .tol-form-wrapper-unique-sections-header {
+      width: 100%;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--tol-grey-subtle);
+    }
+
+    .tol-form-wrapper-unique-sections-field {
+      display: block;
+    }
   }
 }
 
@@ -54,7 +65,6 @@
 .tol-form-label {
   display: flex;
   align-items: center;
-  gap: 5px;
 
   &.inline {
     display: inline-flex;
