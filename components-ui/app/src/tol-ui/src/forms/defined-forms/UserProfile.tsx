@@ -101,7 +101,7 @@ export function UserProfile(props: PUserProfile) {
   };
 
   const ProfileForm = (
-    <div className="tol-profile-form-container">
+    <>
       <h3>{`${hasCompletedProfile ? "Edit" : "Create"} Your Profile`}</h3>
       {!hasCompletedProfile && (
         <p>You must create a profile before you can access all features.</p>
@@ -116,7 +116,7 @@ export function UserProfile(props: PUserProfile) {
         }
         onSubmit={handleSubmit}
       />
-    </div>
+    </>
   );
 
   const components = [
