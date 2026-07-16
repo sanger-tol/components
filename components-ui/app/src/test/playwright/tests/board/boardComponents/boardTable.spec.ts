@@ -34,7 +34,7 @@ test.afterEach(async ({ page }) => {
   
 test("manage dashboard", async ({ page }) => {
   await addComponent(page, 0, "table", "large");
-  await deleteComponent(page, "table", 0);
+  await deleteComponent(page, page.getByTestId("board-component-table"), "table");
   await expect(page.locator(".tol-table")).not.toBeVisible({ timeout: 1000 });
 });
 
