@@ -399,8 +399,6 @@ function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
 
 export async function amalgamateRequestedFields(
   fieldMeta: IFieldMeta,
-  dataSource: TsDataSource,
-  objectType: string,
 ): Promise<string[]> {
   const requestedFields = new Set<string>(fieldMeta?.order.active || []);
 
@@ -420,8 +418,6 @@ export async function amalgamateRequestedFields(
         requestedFields,
         value,
         fieldName,
-        dataSource,
-        objectType,
       );
       addFieldsFromFilterProp(requestedFields, value);
     }
