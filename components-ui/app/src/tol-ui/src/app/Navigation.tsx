@@ -16,7 +16,6 @@ import {
   setUserToLocalStorage,
   tokenHasExpired,
   Login,
-  env,
   LoginIcon,
   RegisterIcon,
   PSmartApp,
@@ -25,6 +24,7 @@ import {
   collectNavigationItems,
   ProfileDropdown,
   TNavConfig,
+  API_PATHS
 } from "..";
 
 
@@ -63,11 +63,12 @@ function Navigation(props: PNavigation) {
     const navbar = document.getElementById("tol-navbar");
     if (navbar) {
       setNavbarOffset(navbar.offsetHeight);
+      document.documentElement.style.setProperty("--tol-navbar-height", navbar.offsetHeight + "px");
     }
   }, []);
 
   const revokeOicd = (token: string) => {
-    fetch(env.API_PATH + "/auth/logout", {
+    fetch(API_PATHS.API_PATH + "/auth/logout", {
       body: JSON.stringify({ token: token }),
       method: "POST",
       headers: { "Content-Type": "application/json" },

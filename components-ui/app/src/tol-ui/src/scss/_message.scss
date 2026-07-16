@@ -73,7 +73,10 @@ $tol-warning-message-dark: darken($tol-warning, 5%) !default;
     }
   }
 
-  .rs-message-content {
-    margin-right: 10px;
+  .rs-message {
+    border-radius: var(--tol-border-radius);
+    .rs-message-content {
+      margin-right: 10px;
+    }
   }
 }

@@ -10,7 +10,7 @@ import {
   deepCopy,
   ChartConfigDrawer,
   IChartConfig,
-  updateConfigAndUpsert,
+  updateComponentConfigAndUpsert,
   PVisualisation,
   NoAttributesPlaceholder,
   useBoard,
@@ -24,18 +24,18 @@ export function BoardChart(props: PVisualisation) {
 
   const { editMode } = useBoard();
 
-
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 
   const onConfigSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       { ...updatedConfig },
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode,
     )
     setForceUpdate(!forceUpdate);
   };

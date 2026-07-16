@@ -18,8 +18,7 @@
   overflow: auto;
 
   .tol-markdown-viewer {
-    border-radius: 6px;
-    padding-left: 8px;
+    border-radius: var(--tol-border-radius);
   }
 }
 
@@ -27,7 +26,7 @@
 pre:has(code) {
   background-color: var(--tol-grey-translucent) !important;
   border: 1px solid var(--tol-grey-subtle) !important;
-  border-radius: 6px !important;
+  border-radius: var(--tol-border-radius) !important;
 }
 
 .tol-form-markdown {
@@ -36,15 +35,4 @@ pre:has(code) {
 
 .tol-form-markdown-help-text {
   margin-top: -6px;
-}
-
-.tol-hide-extra-viewer-buttons {
-  display: block;
-  margin-top: 2px;
-  right: 15px;
-  height: 25px;
-  width: 100px;
-  background-color: var(--tol-bg);
-  position: absolute;
-  z-index: 50;
 }

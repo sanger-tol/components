@@ -6,21 +6,25 @@ SPDX-License-Identifier: MIT
 
 import { useContext } from "react";
 import { BoardContext, IBoardContextValue } from "..";
-
+import type { IBoard } from "..";
 
 export const useBoard = () => {
   const context = useContext<IBoardContextValue | undefined>(BoardContext);
 
   if (context === undefined) {
     return {
+      board: {} as IBoard,
+      setBoard: () => {},
       privilege: undefined,
       setPrivilege: () => {},
       editMode: false,
       setEditMode: () => {},
+      tableLoading: false,
+      setTableLoading: () => {},
       layoutMode: false,
-      setLayoutMode: () => {}
+      setLayoutMode: () => {},
     };
   }
 
   return context;
-}
+};

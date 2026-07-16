@@ -1,10 +1,30 @@
 /*
 SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
 SPDX-License-Identifier: MIT
 */
 
-import { IEntityMeta, IFilter, IJsonApiDataExtra } from "..";
+import type {
+  IEntityMeta,
+  IFilter,
+  IJsonApiDataExtra,
+  TApiMethod,
+} from "..";
 
+export interface IClientRequestConfig {
+  baseURL: string;
+  params?: any;
+}
+
+export interface IClientMethods {
+  get: (url: string, config: IClientRequestConfig) => any;
+  post: (url: string, body: any, config: IClientRequestConfig) => any;
+  put: (url: string, body: any, config: IClientRequestConfig) => any;
+  patch: (url: string, body: any, config: IClientRequestConfig) => any;
+  delete: (url: string, config: IClientRequestConfig) => any;
+}
+
+export type TClient = () => IClientMethods;
 
 export interface IConfigPromises {
   [baseURL: string]: Promise<object>;
@@ -26,7 +46,7 @@ export interface IDataSource {
   // An optional data source instance id to uniquely identify this data source in the db
   dataSourceInstanceId?: string;
   // To allow for testing with mock clients
-  client?: any;
+  client?: TClient;
 }
 
 export interface IGetOne {
@@ -89,7 +109,7 @@ export interface IGetListCursor {
 }
 
 export interface ICustom {
-  method: string;
+  method: TApiMethod;
   resource: string;
   body?: any;
   params?: any;
@@ -133,3 +153,28 @@ export type TDataObjectListOrNull = TDataObjectOrNull[] | null;
 
 export type TCursorSearchAfterOrNull = string[] | null;
 export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null
+
+/**
+ * A lookup value for a relationship path between object types.
+ */
+export type IRelationshipPathValue = {
+  /**
+   * The relationship path from the source to the target object type.
+   */
+  paths: Set<string>;
+};
+
+/**
+ * A lookup table for relationship paths between object types.
+ */
+export type TRelationshipPaths = {
+  /**
+   * The source object type for the relationship path.
+   */
+  [sourceObjectType: string]: {
+    /**
+     * The target object type for the relationship path.
+     */
+    [targetObjectType: string]: IRelationshipPathValue;
+  };
+};

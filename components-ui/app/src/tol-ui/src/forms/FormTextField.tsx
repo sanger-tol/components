@@ -21,10 +21,11 @@ export interface PFormTextField {
   required?: boolean;
   centered?: boolean;
   icon?: IFormLabelIcon;
+  labelInline?: boolean;
 }
 
 export function FormTextField(props: PFormTextField) {
-  const { id, name, centered, label, accepter, helpText, icon, ...rest } =
+  const { id, name, centered, label, accepter, helpText, icon, labelInline, ...rest } =
     props;
   let style = {};
 
@@ -32,9 +33,16 @@ export function FormTextField(props: PFormTextField) {
 
   return (
     <RSForm.Group controlId={`form-${id}-${capitaliseFirstLetter(name)}`}>
-      <FormLabel label={label} icon={icon} />
-      <RSForm.Control style={style} name={name} accepter={accepter} {...rest} />
-      {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
+      <div className={labelInline ? "tol-form-field-inline" : ""}>
+        <FormLabel label={label} icon={icon} inline={labelInline} />
+        <RSForm.Control
+          style={style}
+          name={name}
+          accepter={accepter}
+          {...rest}
+        />
+        {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
+      </div>
     </RSForm.Group>
   );
 }

@@ -7,5 +7,6 @@ SPDX-License-Identifier: MIT
 export * from "./builtin";
 export * from "./cellRenderers";
 export * from "./data_object.mock";
+export * from "./data_source.mock";
 export * from "./nav";
 export * from "./user.mock";

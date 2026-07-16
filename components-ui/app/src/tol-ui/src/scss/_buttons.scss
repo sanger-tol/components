@@ -4,8 +4,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-button.btn {
+button,
+.btn,
+.rs-btn,
+input[type="button"],
+input[type="submit"] {
   font-size: 14px;
+  border-radius: var(--tol-border-radius) !important;
 }
 
 // This is used to generate the classes for the different types of icon buttons
@@ -21,12 +26,10 @@ $types: (
 
 // Define sizes and their specific dimensions
 $sizes: (
-  "md": (
-    height: 30px,
+  "md": (height: 30px,
     min-width: 30px,
   ),
-  "lg": (
-    height: 36px,
+  "lg": (height: 36px,
     min-width: 36px,
   ),
 );
@@ -35,16 +38,20 @@ $sizes: (
 @each $type, $color in $types {
   @each $size, $dimensions in $sizes {
     .icon-button-#{$type}-#{$size} {
-      @if $size == "md" {
+      @if $size =="md" {
         padding: 5px;
-      } @else {
+      }
+
+      @else {
         padding: 10px;
       }
+
+      border-color: var(#{$color}-translucent) !important;
       border-style: solid !important;
       border-width: 1px;
-      border-color: var($color);
-      background-color: var($color) !important;
-      color: white;
+      background-color: var(#{$color}-translucent) !important;
+      color: var($color);
+      box-shadow: var(--tol-shadow-subtle);
 
       // Apply size-specific styles
       @each $property, $value in $dimensions {
@@ -54,23 +61,24 @@ $sizes: (
       // Override the :hover state
       &:hover,
       &:active {
-        border-color: var(#{$color}-light) !important;
-        color: white;
+        border-color: var($color) !important;
+        color: var($color);
       }
 
       &:focus {
-        color: white;
+        color: var($color);
       }
 
       // Override the rsuite button values for active and disabled
       &.rs-btn.rs-btn-active {
         background-color: var(#{$color}-dark) !important;
         border-color: var($color);
-        color: white !important;
+        color: var($color) !important;
       }
+
       &.rs-btn.rs-btn-disabled {
         background-color: var(--tol-grey-subtle) !important;
-        border-color: var(--tol-grey) !important;
+        border-color: var(--tol-grey-subtle) !important;
         color: var(--tol-bg) !important;
         fill: var(--tol-bg) !important;
         background-color: transparent;
@@ -79,10 +87,10 @@ $sizes: (
 
     .icon-button-#{$type}-#{$size}-outline {
       @extend .icon-button-#{$type}-#{$size};
-      background-color: transparent !important;
+      background-color: var(--tol-bg) !important;
       color: var($color) !important;
-      border-color: var(--tol-grey) !important;
       box-sizing: border-box;
+
       &:hover,
       &:active {
         border-color: var(#{$color}) !important;
@@ -94,19 +102,37 @@ $sizes: (
         border-color: var(#{$color}-dark) !important;
         border-width: 2px;
         color: var($color) !important;
-        @if $size == "md" {
+
+        @if $size =="md" {
           padding: 4px;
-        } @else {
+        }
+
+        @else {
           padding: 9px;
         }
       }
+
       &.rs-btn.rs-btn-disabled {
         background-color: var(--tol-grey-subtle) !important;
-        border-color: var(--tol-grey) !important;
+        border-color: var(--tol-grey-subtle) !important;
         color: var(--tol-bg) !important;
         fill: var(--tol-bg) !important;
         background-color: transparent;
       }
+    }
+  }
+}
+
+.tol-button-wrapper {
+  &-left  { float: left;  margin-right: 6px; }
+  &-right { float: right; margin-left: 6px;  }
+}
+
+// Adds a margin to the right of the icon in the dropdown button if there is text present
+.tol-button-dropdown {
+  .rs-dropdown-item-content:has(.tol-dropdown-text) {
+    .tol-dropdown-icon {
+      margin-right: 12px;
     }
   }
 }

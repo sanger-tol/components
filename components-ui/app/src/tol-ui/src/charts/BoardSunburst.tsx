@@ -10,7 +10,7 @@ import {
   deepCopy,
   SliceByDrawer,
   PButton,
-  updateConfigAndUpsert,
+  updateComponentConfigAndUpsert,
   useBoard,
   PVisualisation,
   mergeUtilityBarConfigs,
@@ -29,11 +29,12 @@ export function BoardSunburst(props: PVisualisation) {
 
   const onConfigSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       { ...updatedConfig },
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode,
     )
     setForceUpdate(!forceUpdate);
   };

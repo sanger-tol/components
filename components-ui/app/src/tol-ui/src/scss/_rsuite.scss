@@ -48,6 +48,16 @@
   --rs-btn-link-active-text: var(--tol-primary-hover);
 
   .rs-input,
+  .rs-input-group,
+  .rs-picker-toggle,
+  .rs-input-group-addon,
+  .rs-input-group-btn,
+  .rs-input-number-btn-group-vertical,
+  .rs-panel {
+    border-radius: var(--tol-border-radius) !important;
+  }
+
+  .rs-input,
   .rs-input-group {
     @include body-font;
   }
@@ -65,10 +75,12 @@
   .rs-inline-edit {
     .rs-plaintext {
       border: 1px solid transparent !important;
+      border-radius: var(--tol-border-radius);
       padding: 4px 6px;
     }
 
     input.rs-input {
+      border-radius: var(--tol-border-radius) !important;
       padding: 4px 6px;
     }
   }
@@ -77,8 +89,11 @@
     color: var(--tol-grey);
   }
 
-  .rs-inline-edit .rs-plaintext:hover {
+  .rs-inline-edit:not(.rs-inline-edit-disabled) .rs-plaintext:hover {
     border: 1px solid transparent !important;
+    border-radius: var(--tol-border-radius);
+    background-color: var(--tol-grey-subtle);
+    color: var(--tol-text);
   }
 
   .rs-picker-menu {
@@ -90,6 +105,7 @@
   .rs-dropdown-menu {
     border: 1px solid var(--tol-grey);
     background: var(--tol-bg) !important;
+    border-radius: var(--tol-border-radius);
   }
 
   .rs-dropdown-item-focus {
@@ -144,6 +160,11 @@
     border-top: 1px solid var(--tol-grey);
   }
 
+  // calendar date cell rounding
+  .rs-calendar-table-cell-content {
+    border-radius: var(--tol-border-radius) !important;
+  }
+
   .rs-picker-toggle .rs-picker-toggle-placeholder {
     font-size: 1rem;
   }
@@ -178,12 +199,16 @@
       outline: none !important;
       box-shadow: none !important;
     }
-  }
 
-  .rs-modal-body {
-    margin-top: 0;
-    margin-bottom: 12px;
-    padding-bottom: 0px;
+    .rs-modal-content {
+      border-radius: var(--tol-border-radius-lg) !important;
+
+      .rs-modal-body {
+        margin-top: 0;
+        margin-bottom: 12px;
+        padding-bottom: 0px;
+      }
+    }
   }
 
   // modal icon buttons
@@ -194,12 +219,11 @@
   }
 
   // tooltip
-  --tol-tooltip-colour: var(--tol-dark);
+  --tol-tooltip-colour: var(--tol-bg-dark);
 
   .rs-popover {
     background-color: var(--tol-tooltip-colour);
-    color: var(--tol-light);
-    border-radius: 6px;
+    border-radius: var(--tol-border-radius);
     max-width: 300px;
     max-width: 40%;
   }
@@ -214,33 +238,39 @@
     }
   }
 
-  .rs-popover[class*="placement-left"] > .rs-popover-arrow::after {
+  .rs-popover[class*="placement-left"]>.rs-popover-arrow::after {
     border-left-color: var(--tol-tooltip-colour);
-    border-radius: 6px;
+    border-radius: var(--tol-border-radius);
   }
 
-  .rs-popover[class*="placement-top"] > .rs-popover-arrow::after {
+  .rs-popover[class*="placement-top"]>.rs-popover-arrow::after {
     border-top-color: var(--tol-tooltip-colour);
-    border-radius: 6px;
+    border-radius: var(--tol-border-radius);
   }
 
-  .rs-popover[class*="placement-right"] > .rs-popover-arrow::after {
+  .rs-popover[class*="placement-right"]>.rs-popover-arrow::after {
     border-right-color: var(--tol-tooltip-colour);
-    border-radius: 6px;
+    border-radius: var(--tol-border-radius);
   }
 
-  .rs-popover[class*="placement-bottom"] > .rs-popover-arrow::after {
+  .rs-popover[class*="placement-bottom"]>.rs-popover-arrow::after {
     border-bottom-color: var(--tol-tooltip-colour);
-    border-radius: 6px;
+    border-radius: var(--tol-border-radius);
+  }
+
+  // Arrow positioned incorrectly so hiding for now
+  .rs-popover-arrow {
+    display: none;
   }
 }
 
 @media (prefers-color-scheme: dark) {
+
   .rs-calendar-table-header-cell-content,
   .rs-calendar-header-backward,
   .rs-calendar-header-forward,
   .rs-calendar-header-title,
-  .rs-calendar-table-cell-un-same-month > .rs-calendar-table-cell-content {
+  .rs-calendar-table-cell-un-same-month>.rs-calendar-table-cell-content {
     color: var(--tol-grey-light);
   }
 }
@@ -256,7 +286,6 @@
   .rs-modal-content {
     height: auto !important;
     overflow: hidden !important;
-    border-radius: 6px;
   }
 
   // temporary
@@ -291,7 +320,7 @@
   color: var(--tol-primary) !important;
 }
 
-.rs-form-control > .rs-input.rs-input:-webkit-autofill,
+.rs-form-control>.rs-input.rs-input:-webkit-autofill,
 .rs-input.rs-input:-webkit-autofill:hover,
 .rs-input.rs-input:-webkit-autofill:focus,
 .rs-input.rs-input:-webkit-autofill:active {
@@ -353,9 +382,7 @@
 }
 
 // checkboxes on pickers
-.rs-checkbox-disabled:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate)
-  .rs-checkbox-control
-  .rs-checkbox-inner::before {
+.rs-checkbox-disabled:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate) .rs-checkbox-control .rs-checkbox-inner::before {
   background-color: var(--rs-input-disabled-bg) !important;
   border-color: var(--rs-input-disabled-bg) !important;
 }
@@ -416,6 +443,7 @@
 .rs-picker-popup {
   background-color: var(--tol-grey-subtle) !important;
   border: var(--tol-grey) 1px solid !important;
+  border-radius: var(--tol-border-radius) !important;
 }
 
 // dropdown icons
@@ -442,6 +470,7 @@
       fill: var(--tol-success) !important;
     }
   }
+
   &[aria-label="Cancel"] {
     svg {
       fill: var(--tol-danger) !important;

@@ -6,11 +6,17 @@ SPDX-License-Identifier: MIT
 
 import "@testing-library/jest-dom";
 import { expect, test, vitest, describe } from "vitest";
+
 import {
-  TDataObjectOrNull,
-  TsDataSource,
+  HTTP_STATUS_CODES,
   getChildObjectsByName,
   getFieldByName,
+  TsDataSource,
+} from "../../tol-ui/src";
+import type {
+  IClientRequestConfig,
+  TClient,
+  TDataObjectOrNull,
 } from "../../tol-ui/src";
 
 const speciesMockData = {
@@ -302,10 +308,10 @@ const relationshipConfigMockData = {
   },
 };
 
-const mockClient = () => ({
+const mockClient: TClient = () => ({
   get(
     endpoint: string,
-    { baseURL, params }: { baseURL: string; params?: any },
+    { baseURL }: IClientRequestConfig,
   ) {
     if (
       endpoint === "/_config/attribute_metadata" &&
@@ -345,18 +351,18 @@ const mockClient = () => ({
     ) {
       return Promise.resolve({ data: relationshipConfigMockData });
     }
-    return Promise.reject({ response: { status: 404 } });
+    return Promise.reject({ response: { status: HTTP_STATUS_CODES.NOT_FOUND } });
   },
-  delete(endpoint: string, { baseURL }: { baseURL: string; params?: any }) {
+  delete(endpoint: string, { baseURL }: IClientRequestConfig) {
     if (
       endpoint === "/species/testSpeciesId" &&
       baseURL === "/test-data-path"
     ) {
       return Promise.resolve(null);
     }
-    return Promise.reject({ response: { status: 404 } });
+    return Promise.reject({ response: { status: HTTP_STATUS_CODES.NOT_FOUND } });
   },
-  post(endpoint: string, payload, config: { baseURL: string, params?: any }) {
+  post(endpoint: string, payload, config: IClientRequestConfig) {
     if (
       endpoint === "/species:upsert" &&
       config.baseURL === "/test-data-path"
@@ -379,8 +385,11 @@ const mockClient = () => ({
     ) {
       return Promise.resolve(speciesCursorMockData3);
     }
-    return Promise.reject({ response: { status: 404 } });
+    return Promise.reject({ response: { status: HTTP_STATUS_CODES.NOT_FOUND } });
   },
+  // Not used for these tests
+  put() {},
+  patch() {},
 });
 
 // need to adjust to account for the get config
@@ -505,12 +514,6 @@ describe("Testing relationshipConfig function", () => {
     expect(clientGetSpy).toHaveBeenCalledTimes(0);
   });
 });
-
-/*
-describe("Testing getEntityMeta function", () => {
-  // Add tests for getEntityMeta if needed
-});
-*/
 
 describe("Testing getOne function", () => {
   test("ID does not exist in promise", async () => {

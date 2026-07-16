@@ -6,10 +6,11 @@ SPDX-License-Identifier: MIT
 
 import { StaticMessage, TMessageType, getDuration } from "..";
 import { toaster } from "rsuite";
+import type { ReactNode } from "react";
 
 export interface PPopUpMessage {
   type: TMessageType;
-  message: string;
+  message: ReactNode;
   header?: boolean;
   onClose?: () => void;
   persist?: boolean;

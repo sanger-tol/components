@@ -15,6 +15,7 @@ import {
   TDataObjectListOrNull,
   TPlateData,
   getFieldByName,
+  RELATIONSHIP_SEPARATOR,
 } from "..";
 
 export function formatPath(name: string) {
@@ -66,8 +67,8 @@ export function normaliseCaps(name: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
   if (prefix && name === "id") return normaliseCaps(prefix) + " ID";
-  // replace relationship '.' with underscore ready to split
-  name = name.replace(/\./g, "_");
+  // replace relationship separator with underscore ready to split
+  name = name.split(RELATIONSHIP_SEPARATOR).join("_");
   const words = name.split("_");
   for (let count = 0; count < words.length; count++) {
     words[count] = normaliseWords(words[count]);
@@ -168,6 +169,10 @@ export function deepCopy(o?: object | any[]) {
   return JSON.parse(JSON.stringify(o));
 }
 
+export function deepEqual(left: any, right: any) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
 export function capitaliseFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -246,14 +251,17 @@ export function encodeImageSrc(url: string): string {
   return origin + path.split("/").map(s => encodeURIComponent(s)).join("/");
 }
 
-export function copyToClipboard(text: string): void {
+export function copyToClipboard(
+  copyText: string,
+  message: string = "Copied to clipboard",
+): void {
   if (navigator.clipboard) {
     navigator.clipboard
-      .writeText(text)
+      .writeText(copyText)
       .catch((err) => console.error("Failed to copy text: ", err));
     PopUpMessage({
       type: "success",
-      message: "Copied to clipboard",
+      message: message,
     });
   } else {
     console.warn("Clipboard API not available");
@@ -442,3 +450,29 @@ function normaliseDecimalNumber(value: number, iteration: number = 0) {
 export const isValidDate = (date: string) => {
   return !isNaN(Number(new Date(date)));
 };
+
+/**
+ * Performs a deep equality check between two values.
+ *
+ * Recursively compares objects and arrays by value rather than by reference.
+ * Handles `null`, primitives, arrays, and plain objects.
+ *
+ * @param a - The first value to compare.
+ * @param b - The second value to compare.
+ * @returns `true` if the two values are deeply equal, `false` otherwise.
+ */
+export function deepestEqual(a: any, b: any): boolean {
+  if (a === b) return true;
+  if (a == null || b == null) return a === b;
+  if (typeof a !== "object" || typeof b !== "object") return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  if (Array.isArray(a)) {
+    if (a.length !== b.length) return false;
+    return a.every((item, i) => deepestEqual(item, b[i]));
+  }
+  const keysA = Object.keys(a).sort();
+  const keysB = Object.keys(b).sort();
+  if (keysA.length !== keysB.length) return false;
+  if (keysA.some((key, i) => key !== keysB[i])) return false;
+  return keysA.every((key) => deepestEqual(a[key], b[key]));
+}

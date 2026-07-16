@@ -18,6 +18,7 @@ export function PageNotFound() {
       fullHeight
     >
       <Button
+        outline
         icon="home"
         text="Return Home"
         onClick={() => history.push("/")}

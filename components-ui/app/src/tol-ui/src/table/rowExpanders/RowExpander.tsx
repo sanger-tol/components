@@ -15,7 +15,7 @@ export type PRowExpander<Extra = Record<string, unknown>> = {
 } & Record<string, { props: PCellDisplay & Extra }>;
 
 export function RowExpander(rowData: PRowExpander) {
-  return; // TODO: implement row expanders
+  return; // TODO FUTURE: implement row expanders
   const key: string = Object.keys(rowData).find(k => k !== 'key')!;
   const value: any = rowData[key];
   const renderer = value.props.renderer;

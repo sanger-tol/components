@@ -4,17 +4,16 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   PButton,
   useBoard,
   PVisualisation,
   FilterBlockConfigDrawer,
-  updateConfigAndUpsert,
   RemoteFilters,
-  upsertComponent,
   mergeUtilityBarConfigs,
-  NoAttributesPlaceholder
+  NoAttributesPlaceholder,
+  updateComponentConfigAndUpsert,
 } from "..";
 
 
@@ -23,7 +22,13 @@ export interface PBoardFilterBlock extends PVisualisation {
 }
 
 export function BoardFilterBlock(props: PBoardFilterBlock) {
-  const { id, utilityBarConfig, boardDataSource, config, zone } = props;
+  const {
+    id,
+    utilityBarConfig,
+    boardDataSource,
+    config,
+    zone
+  } = props;
   const [open, setOpen] = useState(false);
   const [filterBlockConfig, setFilterBlockConfig] = useState<{ attributes: string[] }>(config);
   const { editMode } = useBoard();
@@ -39,20 +44,14 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
 
   const onConfigSave = (updatedConfig: string[]) => {
     setFilterBlockConfig({ attributes: updatedConfig });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       { attributes: updatedConfig },
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode,
     )
   };
-
-  useEffect(() => {
-    let attributes = {
-      filter: zone.components[id].data.filter
-    };
-    upsertComponent(boardDataSource, id, attributes);
-  }, [zone]);
 
   const Contents = () => {
     if (!filterBlockConfig.attributes || filterBlockConfig.attributes.length === 0) {

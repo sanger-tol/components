@@ -12,7 +12,7 @@ export interface IFilterOperatorOptions {
   negate?: boolean;
 }
 
-interface IFilterOperators {
+export interface IFilterOperators {
   // I would love to set this key as TFilterOperatorType instead, but that can't be used as an
   // object key. Thus, instead, in code where this is used, `as TFilterOperatorType` must be used.
   [operator: string]: IFilterOperatorOptions;
@@ -22,10 +22,15 @@ export interface IAndAttributes {
   [attribute: string]: IFilterOperators;
 }
 
-export interface IFilter { // TODO: check usages
+export interface IFilter {
   and_?: IAndAttributes;
 }
 
 export type TFilterOrUndefined = IFilter | undefined;
 
 export type TDescribedFilters = Record<string, string[]>;
+
+export type IDBBoardEntityFilter = {
+  filter: IFilter;
+  filter_pass_through?: boolean;
+}

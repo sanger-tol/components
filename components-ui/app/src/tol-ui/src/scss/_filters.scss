@@ -6,12 +6,10 @@
 
 :root {
   --rs-border-primary: var(--tol-grey);
-  //--rs-input-disabled-bg: var(--tol-grey-subtle);
 }
 
 .tol-table {
-
-  // dealing with dropdown overflow issue
+  // Dealing with dropdown overflow issue
   .rs-table-cell-content,
   .rs-table-cell,
   .rs-table-row-header {
@@ -23,28 +21,13 @@
   padding-right: 0;
 }
 
-.tol-text-filter {
-
-  .rs-input,
-  .rs-input-group,
-  .rs-picker-toggle {
-    border-radius: 0;
-  }
-}
-
-.tol-date-filter,
-.tol-multi-filter {
-
-  .rs-input,
-  .rs-input-group,
-  .rs-picker-toggle {
-    border-radius: 6px 0 0 6px;
-  }
-}
-
 .tol-text-filter,
 .tol-date-filter,
 .tol-multi-filter {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 1px;
 
   // reduce padding on dropdown items
   .rs-dropdown-item {
@@ -61,11 +44,9 @@
     padding-right: 12px;
   }
 
-  .tol-in-list-button,
   .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default {
     background-color: var(--tol-bg) !important;
     border: 1px solid var(--tol-grey) !important;
-    border-right: none !important;
     color: var(--tol-primary);
     height: 36px;
     width: 20px;
@@ -83,22 +64,6 @@
     border: 1px solid var(--tol-primary) !important;
   }
 
-  .tol-in-list-button:hover {
-    border-color: var(--tol-primary) !important;
-    background-color: var(--tol-primary) !important;
-
-    svg {
-      fill: white;
-      color: white;
-    }
-
-    padding-right: 12px;
-  }
-
-  .tol-in-list-button.btn {
-    color: var(--tol-grey) !important;
-  }
-
   .rs-dropdown-item-focus {
     background-color: var(--tol-grey) !important;
     color: var(--tol-primary) !important;
@@ -106,90 +71,131 @@
 
   .rs-input-group.rs-input-group-inside:not(.rs-picker-input-group) {
     display: inline-block !important;
-    width: calc(100% - 38px) !important;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100% !important;
   }
 
   .rs-picker.rs-picker-daterange,
   .rs-picker.rs-picker-check {
     display: inline-block !important;
-    width: calc(100% - 18px) !important;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100% !important;
+  }
+}
+
+// Multi-select uses an extra rs-form-group wrapper; make that wrapper flex-grow.
+.tol-multi-filter {
+  .rs-form-group {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    margin-bottom: 0;
   }
 
-  .rs-input-group:not(.rs-picker-input-group) {
-    margin-left: 20px;
-  }
-
-  .tol-in-list-button {
-    position: absolute;
-    border-radius: 6px 0 0 6px;
+  .rs-form-group > span {
+    display: block;
+    width: 100%;
   }
 }
 
 .tol-num-filter {
   @extend .tol-text-filter;
+  position: relative;
 
   // re-position dropdown toggle inline with input
   .rs-dropdown {
     position: absolute;
+    z-index: 1;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
-  .rs-input-group.rs-input-group-inside {
-    width: calc(100% - 38px) !important;
-    margin-left: 20px;
+  // Keep open operator menus above buttons in other filter rows
+  .rs-dropdown.rs-dropdown-open {
+    z-index: 1002;
   }
 
-  .rs-btn {
-    border-radius: 6px 0px 0px 6px;
+  .rs-input {
+    padding-left: 26px;
   }
 
-  .rs-input,
-  .rs-input-group {
-    border-radius: 0;
+  // Remove button backing for the operator buttons
+  .tol-filter-operator {
+    background-color: unset !important;
+    border: unset !important;
+    box-shadow: unset !important;
   }
 }
 
-// filter buttons
+// Filter buttons
 .tol-filter-button-group {
-  float: right;
-  width: 18px;
-  height: 36px;
+  --tol-filter-toggle-height: var(--tol-button-size-sm-height);
+  --tol-filter-toggle-width: var(--tol-button-size-sm-width);
+
+  display: grid;
+  grid-template-columns: var(--tol-filter-toggle-width);
+  grid-template-rows: repeat(2, var(--tol-filter-toggle-height));
+  justify-content: start;
+  align-items: center;
+  flex: 0 0 auto;
+  margin-left: auto;
+  row-gap: 1px;
+  column-gap: 1px;
   margin: 0;
   padding: 0;
+}
+
+.tol-filter-button-group:has(> :nth-child(3)) {
+  grid-template-columns: repeat(2, var(--tol-filter-toggle-width));
+}
+
+.tol-filter-button-group > :nth-child(1) {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.tol-filter-button-group > :nth-child(2) {
+  grid-row: 2;
+  grid-column: 1;
+}
+
+.tol-filter-button-group > :nth-child(3) {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.tol-filter-button-group > * {
+  margin: 0;
 }
 
 .tol-filter-button {
-  float: right;
+  float: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0;
   padding: 0;
-  height: 18px;
-  width: 18px;
-  border-radius: 0;
+  height: var(--tol-filter-toggle-height);
+  width: var(--tol-filter-toggle-width);
+  min-width: var(--tol-filter-toggle-width);
   background-color: var(--tol-bg) !important;
   border-color: var(--tol-grey) !important;
   color: var(--tol-grey);
 
-  .icon {
-    margin: -1px !important;
-  }
-
   --bs-btn-line-height: 0px !important;
   --bs-btn-font-size: 14px !important;
-}
 
-.tol-filter-button.negate {
-  border-bottom-right-radius: 6px;
-  border-left: none;
-  border-top: none;
-}
-
-.tol-filter-button.exists {
-  border-top-right-radius: 6px;
-  border-left: none;
+  // Deal with positioning for text only 'icons'
+  .icon:not(.tol-icon) {
+    position: relative;
+    top: -1.5px;
+  }
 }
 
 .tol-filter-button.negate:hover,
 .tol-filter-button.negate.btn.active {
-  @extend .tol-filter-button;
   border-color: var(--tol-danger) !important;
   background-color: var(--tol-danger) !important;
   color: white !important;
@@ -197,15 +203,21 @@
 
 .tol-filter-button.exists:hover,
 .tol-filter-button.exists.btn.active {
-  @extend .tol-filter-button;
   border-color: var(--tol-success) !important;
   background-color: var(--tol-success) !important;
   color: white !important;
 }
 
+.tol-filter-button.in-list:hover,
+.tol-filter-button.in-list.btn.active {
+  border-color: var(--tol-primary) !important;
+  background-color: var(--tol-primary) !important;
+  color: white !important;
+}
+
 .tol-filter-button.negate:disabled,
-.tol-filter-button.exists:disabled {
-  @extend .tol-filter-button;
+.tol-filter-button.exists:disabled,
+.tol-filter-button.in-list:disabled {
   background-color: var(--tol-grey-subtle) !important;
   border-color: var(--tol-grey) !important;
   color: var(--tol-grey) !important;
@@ -213,40 +225,35 @@
   pointer-events: all !important;
 }
 
-.tol-filter-button.negate.active:disabled,
-.tol-filter-button.exists.active:disabled {
-  @extend .tol-filter-button;
+.tol-filter-button.negate.active:disabled {
   border-color: var(--tol-grey) !important;
+  background-color: var(--tol-danger) !important;
   color: var(--tol-grey-subtle) !important;
   cursor: not-allowed;
   pointer-events: all !important;
-}
-
-.tol-in-list-button:disabled {
-  background-color: var(--tol-grey-subtle) !important;
-  cursor: not-allowed;
-  pointer-events: all !important;
-}
-
-.tol-filter-button.negate.active:disabled {
   filter: none !important;
-  background-color: var(--tol-danger) !important;
 }
 
 .tol-filter-button.exists.active:disabled {
-  filter: none !important;
+  border-color: var(--tol-grey) !important;
   background-color: var(--tol-success) !important;
+  color: var(--tol-grey-subtle) !important;
+  cursor: not-allowed;
+  pointer-events: all !important;
+  filter: none !important;
 }
 
-// boolean filters
+.tol-filter-button.in-list.active:disabled {
+  border-color: var(--tol-grey) !important;
+  background-color: var(--tol-primary) !important;
+  color: var(--tol-grey-subtle) !important;
+  cursor: not-allowed;
+  pointer-events: all !important;
+  filter: none !important;
+}
+
+// Status styles for checkboxes, selects, and tables
 .rs-checkbox-checker:has(.tol-status) {
-
-  // slim down statuses
-  .tol-status .alert {
-    padding: 2px 10px;
-    margin: 2px;
-  }
-
   .rs-checkbox-wrapper {
     top: 15px;
   }
@@ -260,13 +267,19 @@
   padding-top: 4px;
 }
 
-// statuses in the filters and table
+// Consolidated status alert styling
+.rs-checkbox-checker:has(.tol-status),
 .tol-boolean-filter:has(.tol-status),
 .rs-table-cell:has(.tol-status) {
   .tol-status .alert {
     padding: 2px 10px;
     margin: 2px;
   }
+}
+
+// Additional table cell status styling
+.tol-boolean-filter:has(.tol-status),
+.rs-table-cell:has(.tol-status) {
 
   .rs-picker-toggle.rs-btn.rs-btn-default {
     padding: 2px;
@@ -292,12 +305,12 @@
 .tol-filters {
   .filter {
     margin: 4px 0 12px 0;
-    display: inline-block;
-    width: calc(100% - 22px);
+    display: block;
+    width: 100%;
   }
 }
 
-.pass-through-toggle {
+.tol-pass-through-toggle {
   margin-bottom: 26px;
 
   .rs-toggle {
@@ -325,24 +338,30 @@
 
 .tol-filter-config-remote-filter {
   display: block;
-  min-width: max-content;
+  min-width: 0;
+  flex: unset;
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
 .tol-remote-filters-container {
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-bottom: 20px;
+  width: 100%;
 
-  .remove-filter-button {
+  .tol-remove-filter-button {
     margin-left: 10px;
     cursor: pointer;
+    flex-shrink: 0;
   }
-  .remove-filter-button:hover {
+
+  .tol-remove-filter-button:hover {
     color: var(--tol-danger);
   }
 }
 
 .tol-remote-filters-filter {
   flex: 1;
+  min-width: 0;
 }

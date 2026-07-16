@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TNavConfig } from "..";
+import { PAGE_ACCESS, TNavConfig, URL_PATHS } from "..";
 
 /**
  * Builds the system-default navigation configuration.
@@ -18,14 +18,14 @@ export const getSystemDefaultNavConfig = (
   const config: TNavConfig = {
     data: {
       "File Validation Results": {
-        access: "authenticated",
+        access: PAGE_ACCESS.AUTHENTICATED,
         path: {
           pageElementReference: "validationResultsDetail",
           route: "/file-validation/results/:uploadId",
         },
       },
       "Callback": {
-        access: "public",
+        access: PAGE_ACCESS.PUBLIC,
         path: {
           pageElementReference: "callback",
           route: "/callback",
@@ -38,10 +38,10 @@ export const getSystemDefaultNavConfig = (
 
   if (configurableBoards) {
     config.data["Boards"] = {
-      access: "public",
+      access: PAGE_ACCESS.PUBLIC,
       path: {
         pageElementReference: "boardDetail",
-        route: "/board/:boardId",
+        route: `${URL_PATHS.BOARD}/:boardId`,
       },
     }
   }
@@ -60,16 +60,24 @@ export const getProfileDefaultNavConfig = (
   configurableBoards: boolean
 ): TNavConfig => {
   const config: TNavConfig = {
-    data: {},
-    order: [],
+    data: {
+      Profile: {
+        access: PAGE_ACCESS.AUTHENTICATED,
+        path: {
+          pageElementReference: "profile",
+          route: URL_PATHS.PROFILE,
+        },
+      },
+    },
+    order: ["Profile"],
   }
 
   if (configurableBoards) {
     config.data["My Boards"] = {
-      access: "role_required",
+      access: PAGE_ACCESS.ROLE_REQUIRED,
       path: {
         pageElementReference: "myBoards",
-        route: "/my-boards",
+        route: URL_PATHS.MY_BOARDS,
       },
     }
     config.order.push("My Boards");

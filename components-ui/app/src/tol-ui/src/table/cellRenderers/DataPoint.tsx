@@ -53,7 +53,7 @@ export function DataPoint(props: PDataPoint) {
   const [loading, setLoading] = useState(false);
   const [hasChanged, setHasChanged] = useState(false);
 
-  // TODO: Make sure that string and date upserts have a role binding
+  // TODO FUTURE: Make sure that string and date upserts have a role binding
   const canEdit = (
     actsAs === "status" //|| typeof value === "string" || value instanceof Date
   );

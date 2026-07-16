@@ -4,15 +4,19 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { createContext, ReactNode, useState } from "react";
-import { TBoardPrivilegeOrUndefined } from "..";
+import { createContext, ReactNode, useCallback, useState } from "react";
+import { IBoard, TBoardPrivilegeOrUndefined } from "..";
 
 
 export interface IBoardContextValue {
+  board: IBoard;
+  setBoard: (board: IBoard) => void;
   privilege: TBoardPrivilegeOrUndefined;
   setPrivilege: (privilege: TBoardPrivilegeOrUndefined) => void;
   editMode: boolean;
   setEditMode: (editMode: boolean) => void;
+  tableLoading: boolean;
+  setTableLoading: (id: string, loading: boolean) => void;
   layoutMode: boolean;
   setLayoutMode: (layoutMode: boolean) => void;
 }
@@ -20,19 +24,36 @@ export interface IBoardContextValue {
 export const BoardContext = createContext<IBoardContextValue | undefined>(undefined);
 
 export function BoardContextProvider({ children }: { children: ReactNode }) {
+  const [board, setBoard] = useState<IBoard>({} as IBoard);
   const [privilege, setPrivilege] = useState<TBoardPrivilegeOrUndefined>(undefined);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [tableLoadingById, setTableLoadingById] = useState<Record<string, boolean>>({});
   const [layoutMode, setLayoutMode] = useState<boolean>(false);
+  const tableLoading = Object.values(tableLoadingById).some(Boolean);
+
+  const setTableLoading = useCallback((id: string, loading: boolean) => {
+    setTableLoadingById((current) => {
+      if (current[id] === loading) return current;
+      return {
+        ...current,
+        [id]: loading,
+      };
+    });
+  }, []);
 
   return (
     <BoardContext.Provider
       value={{
+        board,
+        setBoard,
         privilege,
         setPrivilege,
         editMode,
         setEditMode,
+        tableLoading,
+        setTableLoading,
         layoutMode,
-        setLayoutMode
+        setLayoutMode,
       }}
     >
       {children}

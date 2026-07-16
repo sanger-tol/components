@@ -5,12 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Input, InputGroup, Dropdown } from "rsuite";
-import { Button as BSButton } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faList } from "@fortawesome/free-solid-svg-icons";
+import { Input, InputGroup } from "rsuite";
 import {
   Button,
+  DropdownButton,
   stopPropagation,
   IFilterInput,
   setFilterInput,
@@ -19,6 +17,7 @@ import {
   FilterToggle,
   MultipleSelect,
   Modal,
+  PButton,
 } from "..";
 
 
@@ -220,32 +219,26 @@ export function FilterTextInput(props: PFilterTextInput) {
     />
   );
 
+  const operatorButton: PButton = {
+    text: operator,
+    outline: true,
+    disabled,
+    position: "none",
+    className: "tol-filter-operator",
+  };
+
   return (
     <div
       className={isNumber ? "tol-num-filter" : "tol-text-filter"}
       onClick={stopPropagation}
     >
       {isNumber && (
-        <Dropdown title={operator} noCaret>
-          {operators.map((op, i) => {
-            if (op !== operator) {
-              return (
-                <Dropdown.Item key={i} onClick={() => onOperator(op)}>
-                  {op}
-                </Dropdown.Item>
-              );
-            }
-          })}
-        </Dropdown>
-      )}
-      {!isNumber && values.length <= 1 && (
-        <BSButton
-          className="tol-in-list-button"
-          disabled={disabled}
-          onClick={onOpenInListModal}
-        >
-          <FontAwesomeIcon icon={faList} size="sm" />
-        </BSButton>
+        <DropdownButton
+          toggle={operatorButton}
+          buttons={operators
+            .filter((op) => op !== operator)
+            .map((op) => ({ text: op, onClick: () => onOperator(op) }))}
+        />
       )}
       {!isNumber && values.length > 1 ? (
         <span className="tol-multi-filter">
@@ -274,6 +267,9 @@ export function FilterTextInput(props: PFilterTextInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
+        showInListButton={!isNumber}
+        onInList={onOpenInListModal}
+        disabled={disabled}
       />
       <Modal
         size="md"

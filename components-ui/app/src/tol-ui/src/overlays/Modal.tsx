@@ -22,6 +22,7 @@ export interface PModal {
   onClose?: () => void;
   onEnter?: () => void;
   onExited?: () => void;
+  testid?: string;
 }
 
 export function Modal(props: PModal) {
@@ -40,6 +41,7 @@ export function Modal(props: PModal) {
     onClose,
     onEnter,
     onExited,
+    testid,
   } = props;
 
   const handleClose = () => {
@@ -59,6 +61,7 @@ export function Modal(props: PModal) {
         onEnter={onEnter}
         onExited={onExited}
         backdrop={hasPendingChanges ? "static" : true}
+        data-testid={testid}
       >
         <RSModal.Header closeButton={false}>{header}</RSModal.Header>
         <RSModal.Body>{children}</RSModal.Body>

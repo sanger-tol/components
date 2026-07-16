@@ -22,10 +22,19 @@ export interface PSelectedAttributesContainer extends IRemoteTarget {
   setAttributes: (attributes: string[]) => void;
   additionalIcons?: any[];
   fieldMeta?: IFieldMeta; // temporary addition for table renames
+  emptyMessage?: string;
 }
 
 export function SelectedAttributesContainer(props: PSelectedAttributesContainer) {
-  const { objectType, dataSource, attributes, setAttributes, additionalIcons, fieldMeta } = props;
+  const {
+    objectType,
+    dataSource,
+    attributes,
+    setAttributes,
+    additionalIcons,
+    fieldMeta,
+    emptyMessage,
+  } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   const [objectAttributes, setObjectAttributes] = useState<IAttributeDetails>(
@@ -149,7 +158,7 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
       </div>
       {(attributes.length === 0 && fieldMeta) && (
         <p>
-          <i>No active columns. Select columns to display...</i>
+          <i>{emptyMessage || "No active columns. Select columns to display..."}</i>
         </p>
       )}
     </div>

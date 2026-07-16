@@ -13,3 +13,4 @@ export * from "./TitleTooltip";
 export * from "./view";
 export * from "./utils";
 export * from "./zone";
+export * from "./NewTitleModal";

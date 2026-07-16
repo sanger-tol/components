@@ -2,9 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-FROM node:23-slim
-
-RUN apt-get update && apt-get upgrade -y && apt-get install -y curl
+FROM mcr.microsoft.com/playwright:v1.59.1-noble
 
 WORKDIR /usr/src/app
 
@@ -13,8 +11,6 @@ COPY package.json .
 RUN npm i
 
 COPY playwright.config.ts .
-
-RUN npx playwright install --with-deps
 
 COPY . .
 

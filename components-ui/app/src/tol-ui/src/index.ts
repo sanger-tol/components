@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 // Direct package pass-throughs
+import { TsDataSource, env, API_PATHS } from ".";
 import {
   Container,
   Row,
@@ -28,6 +29,7 @@ export * from "./app";
 export * from "./attributes";
 export * from "./autodoc";
 export * from "./boards";
+export * from "./buttons";
 export * from "./charts";
 export * from "./config";
 export * from "./constants";
@@ -55,19 +57,16 @@ export * from "./variables";
 export * from "./images";
 export * from "./json-editor";
 
-import { TsDataSource, env, BOARDS_API_DATA_PATH } from ".";
-import { LOCAL_API_DATA_PATH } from "./constants";
-
 export const TOL_DS = new TsDataSource(env.TOL_DATA);
 export const PIPELINE_DS = new TsDataSource();
 export const CORE_CONFIG_DS = new TsDataSource({
   ...env.TOL_DATA,
-  apiDataPath: BOARDS_API_DATA_PATH,
-  dataspace: '',
+  apiDataPath: API_PATHS.BOARDS,
+  dataspace: "",
 });
 export const LOCAL_DS = new TsDataSource({
-  apiPath: env.API_PATH,
-  apiDataPath: LOCAL_API_DATA_PATH,
-  dataspace: ''
+  apiPath: API_PATHS.API_PATH,
+  apiDataPath: API_PATHS.LOCAL,
+  dataspace: ""
 });
 export const ACTIONS_DS = LOCAL_DS;

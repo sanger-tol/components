@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useEffect, useState } from "react";
+import { Key, ReactNode, useEffect, useState } from "react";
 import {
   ACTIONS,
   ActionCheckModal,
@@ -15,7 +15,7 @@ import {
   PUtilityBar,
   IZone,
   IDropdownButtonConfig,
-  ACTION_API_DATA_PATH,
+  API_PATHS,
   Placeholder,
   Table,
   PopUpMessage,
@@ -25,6 +25,7 @@ import {
   filterHasUpdated,
   generateFilter,
   getTableConfigLocalStorage,
+  clearTableConfigLocalStorage,
   resetFiltersBelow,
   setTableConfigLocalStorage,
   addFieldMetaDefaults,
@@ -37,16 +38,18 @@ import {
   ITableDrawerSave,
   ITableConfigSave,
   optimiseFieldMetaForSave,
-  env,
   amalgamateRequestedFields,
   TFieldDropdownChoices,
   updateFieldMetaAttribute,
   IHeight,
   TFilterOrUndefined,
   ACTIONS_DS,
+  useBoard,
+  IConfigDifferences,
 } from '..';
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
+  key?: Key;
   /**
    * Unique identifier for this table instance; used as the key for persisted configuration
    */
@@ -60,6 +63,10 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Initial field metadata for columns; overridden by any saved configuration for this table `id`
    */
   fields?: IFieldMeta;
+  /**
+   * Base field metadata set by the board owner (for determining allowed columns in non-edit mode)
+   */
+  baseFieldMeta?: Partial<IFieldMeta>;
   /**
    * Default sort attribute when no saved sort configuration exists
    */
@@ -88,7 +95,10 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * When changed, forces the table to re-fetch its data from the server
    */
   forceUpdate?: boolean;
-
+  /**
+   * Called when the user confirms the reset in the reset confirmation modal
+   */
+  onReset?: () => void;
   /**
    * Called with updated table configuration instead of storing it in local storage
    */
@@ -189,6 +199,29 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Controlled setter for selected row identifiers; if omitted, selection is internal
    */
   setSelectedRows?: (selectedRows: string[]) => void;
+  /**
+   * Controls visibility of the reset-to-default button. When true (or omitted), the
+   * button is shown; when false, it is hidden. Pass false when there are no stored
+   * differences to reset
+   */
+  showConfigReset?: boolean;
+  /**
+   * Shows the differences between the current configuration and the default configuration, 
+   * used to inform users what will be reset when they click the reset button. 
+   * This is used in conjunction with `showConfigReset`
+   */
+  resetConfigDifferences?: IConfigDifferences;
+
+  /**
+   * Test ID used to identify this table in Playwright tests
+   */
+  testid?: string;
+  /**
+   * When this value changes, RemoteTable re-syncs its internal config state from
+   * the current props without remounting. Use this for transitions (e.g. entering
+   * or exiting board edit mode) that should not flash a full loading placeholder.
+   */
+  configSyncKey?: string;
 }
 
 /**
@@ -213,6 +246,8 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
  * using the given `id` as the key namespace.
  */
 export function RemoteTable(props: PRemoteTable) {
+  const { editMode, setTableLoading } = useBoard();
+
   const {
     id,
     objectType,
@@ -225,7 +260,8 @@ export function RemoteTable(props: PRemoteTable) {
     fields,
     defaultSortByAttribute = getTableConfigLocalStorage(id, "defaultSortByAttribute"),
     defaultSortByType = getTableConfigLocalStorage(id, "defaultSortByType"),
-    filterVisibility: propFilterVisibility = getTableConfigLocalStorage(id, "filterVisibility"),
+    filterVisibility: initialFilterVisibility = getTableConfigLocalStorage(id, "filterVisibility"),
+    pageSize: initialPageSize,
     onPageSizeChange,
     onToggleFilterVisibility,
     noDownload,
@@ -236,11 +272,17 @@ export function RemoteTable(props: PRemoteTable) {
     contents,
     height = "100%",
     forceUpdate,
+    onReset: propOnReset,
+    showConfigReset,
+    testid,
+    configSyncKey,
+    selectedRows: controlledSelectedRows,
+    setSelectedRows: setControlledSelectedRows,
   } = props;
 
   const runActionDatasource = new TsDataSource({
-    apiPath: env.API_PATH,
-    apiDataPath: ACTION_API_DATA_PATH,
+    apiPath: API_PATHS.API_PATH,
+    apiDataPath: API_PATHS.ACTION,
   })
 
   // data and field information
@@ -254,7 +296,7 @@ export function RemoteTable(props: PRemoteTable) {
   // pagination
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(
-    getTableConfigLocalStorage(id, "pageSize") || props.pageSize || 50
+    getTableConfigLocalStorage(id, "pageSize") || initialPageSize || 50
   );
   const [totalSize, setTotalSize] = useState<number>(0);
 
@@ -266,7 +308,7 @@ export function RemoteTable(props: PRemoteTable) {
   const [sortByType, setSortByType] = useState<string | undefined>(
     defaultSortByType ?? "asc"
   );
-  const [filterVisibility, setFilterVisibility] = useState<boolean>(propFilterVisibility ?? true);
+  const [filterVisibility, setFilterVisibility] = useState<boolean>(initialFilterVisibility ?? true);
 
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
@@ -276,8 +318,8 @@ export function RemoteTable(props: PRemoteTable) {
 
   // row selection
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
-    props.selectedRows,
-    props.setSelectedRows,
+    controlledSelectedRows,
+    setControlledSelectedRows,
     []
   );
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
@@ -290,6 +332,44 @@ export function RemoteTable(props: PRemoteTable) {
   // Ignore the setting of actionParams until it is needed in editable cells
   // @ts-ignore
   const [actionParams, setActionParams] = useState<object>({});
+
+  // When showConfigReset is not controlled by the caller, derive it from localStorage.
+  const [localHasDiff, setLocalHasDiff] = useState<boolean>(
+    showConfigReset === undefined ? !!getTableConfigLocalStorage(id) : false
+  );
+  const resolvedShowConfigReset = showConfigReset ?? localHasDiff;
+
+  // Incremented when a configSyncKey change triggers an in-place re-fetch,
+  // so renderTable fires even when page/sort/filter haven't changed.
+  const [configSyncTrigger, setConfigSyncTrigger] = useState(0);
+
+  useEffectUpdate(() => {
+    // Re-sync config state in-place when the parent signals a mode transition.
+    // We preserve prev.dataWithDefaults (server-enriched column metadata) so the
+    // table stays visible throughout — only a loading spinner overlay appears.
+    const nextBase = initialiseFieldMeta(fields);
+    setFieldMeta((prev) => ({
+      ...prev,
+      order: nextBase.order,
+      data: nextBase.data,
+    }));
+    setSortByAttribute(defaultSortByAttribute ?? nextBase?.order?.active?.[0]);
+    setSortByType(defaultSortByType ?? "asc");
+    if (initialFilterVisibility !== undefined) setFilterVisibility(initialFilterVisibility);
+    if (initialPageSize !== undefined) setPageSize(initialPageSize);
+    setPage(1);
+    setConfigSyncTrigger((n) => n + 1);
+  }, [configSyncKey]);
+
+  useEffect(() => {
+    setTableLoading(id, editMode && (loading || fullLoad));
+  }, [id, editMode, loading, fullLoad, setTableLoading]);
+
+  useEffect(() => {
+    return () => {
+      setTableLoading(id, false);
+    };
+  }, [id, setTableLoading]);
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
@@ -304,7 +384,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   useEffectUpdate(() => {
     renderTable();
-  }, [page, sortByAttribute, sortByType, filter, forceUpdate]);
+  }, [page, sortByAttribute, sortByType, filter, forceUpdate, configSyncTrigger]);
 
   useEffectUpdate(() => {
     if (fullLoad) {
@@ -320,6 +400,7 @@ export function RemoteTable(props: PRemoteTable) {
       onPageSizeChange(pageSize);
     } else {
       setTableConfigLocalStorage(id, "pageSize", pageSize);
+      if (showConfigReset === undefined) setLocalHasDiff(true);
     }
   }, [pageSize]);
 
@@ -328,6 +409,7 @@ export function RemoteTable(props: PRemoteTable) {
       onToggleFilterVisibility(filterVisibility);
     } else {
       setTableConfigLocalStorage(id, "filterVisibility", filterVisibility);
+      if (showConfigReset === undefined) setLocalHasDiff(true);
     }
   }, [filterVisibility]);
 
@@ -346,11 +428,31 @@ export function RemoteTable(props: PRemoteTable) {
     }
   }
 
+  const onReset = propOnReset ?? (async () => {
+    clearTableConfigLocalStorage(id);
+    if (showConfigReset === undefined) setLocalHasDiff(false);
+    const resetFieldMeta = initialiseFieldMeta(fields);
+    setFieldMeta(resetFieldMeta);
+    setPageSize(props.pageSize ?? 50);
+    setSortByAttribute(props.defaultSortByAttribute ?? fields?.order?.active?.[0]);
+    setSortByType(props.defaultSortByType ?? "asc");
+    setFilterVisibility(props.filterVisibility ?? true);
+    setPage(1);
+    // Re-enrich fieldMeta and explicitly re-render so changes are visible immediately
+    // without requiring a page refresh
+    const enrichedFieldMeta = !basic
+      ? await addFieldMetaDefaults(objectType, resetFieldMeta, dataSource).catch(() => resetFieldMeta)
+      : resetFieldMeta;
+    setFieldMeta(enrichedFieldMeta);
+    setFullLoad(true);
+  });
+
   const renderTable = async () => {
     if (fullLoad) {
       await initialSetup();
     }
     setLoading(true);
+    setError("");
 
     dataSource
       .getListPage({
@@ -359,7 +461,7 @@ export function RemoteTable(props: PRemoteTable) {
         pageSize,
         filter,
         sortBy: createSort(sortByAttribute, sortByType),
-        requestedFields: await amalgamateRequestedFields(fieldMeta),
+        requestedFields: await amalgamateRequestedFields(fieldMeta, dataSource, objectType),
       })
       .then((dataObjects: TDataObjectListOrNull) => {
         setError("");
@@ -388,7 +490,7 @@ export function RemoteTable(props: PRemoteTable) {
       })
       .catch((error: any) => {
         // Temp fix for 500 errors, due to empty requested fields
-        // TODO: Remove when the SDK handles empty requested fields better.
+        // TODO FUTURE: Remove when the SDK handles empty requested fields better.
         const errorMsg = error.response.data.errors[0].detail;
         if (errorMsg.includes("Empty element in path")) {
           setData([]);
@@ -408,7 +510,8 @@ export function RemoteTable(props: PRemoteTable) {
   const onConfigSave = ({
     fieldMeta: fm,
     defaultSortByAttribute,
-    defaultSortByType
+    defaultSortByType,
+    editMode,
   }: ITableConfigSave) => {
     resetFiltersBelow({
       id: id,
@@ -421,12 +524,14 @@ export function RemoteTable(props: PRemoteTable) {
       props.onConfigSave({
         fieldMeta: fm,
         defaultSortByAttribute: defaultSortByAttribute,
-        defaultSortByType: defaultSortByType
+        defaultSortByType: defaultSortByType,
+        editMode,
       });
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(fm));
       setTableConfigLocalStorage(id, "defaultSortByAttribute", defaultSortByAttribute);
       setTableConfigLocalStorage(id, "defaultSortByType", defaultSortByType);
+      if (showConfigReset === undefined) setLocalHasDiff(true);
     }
 
     setSortByAttribute(defaultSortByAttribute ?? fm?.order?.active?.[0]);
@@ -456,6 +561,7 @@ export function RemoteTable(props: PRemoteTable) {
       props.onResizeColumn(columnWidth, dataKey);
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(fieldMeta));
+      if (showConfigReset === undefined) setLocalHasDiff(true);
     }
     setFieldMeta({ ...fieldMeta });
   }
@@ -511,13 +617,19 @@ export function RemoteTable(props: PRemoteTable) {
       return <Placeholder errorMessage={error} height={height} />;
     }
     if (fullLoad) {
-      return <Placeholder loader height={height} />;
+      return (
+        <Placeholder
+          loader
+          height={height}
+          messagePosition="top"
+        />
+      );
     }
     return null;
   };
 
   return (
-    <div style={{ height: height }}>
+    <div style={{ height: height }} data-testid={testid}>
       <ActionCheckModal
         showIdExportModal={idExportModalOpen}
         setShowIdExportModal={setIdExportModalOpen}
@@ -570,6 +682,8 @@ export function RemoteTable(props: PRemoteTable) {
             name: "View Actions",
             action: () => setActionModalOpen(true),
           }}
+        onReset={onReset}
+        showConfigReset={resolvedShowConfigReset}
       />
     </div>
   );

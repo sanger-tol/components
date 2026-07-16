@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export interface User {
+export interface IUser {
   id: string;
   oidc_id?: string;
   email: string;

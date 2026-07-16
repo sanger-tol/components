@@ -83,7 +83,7 @@ const fetchSpreadSheetDataObjects = async (
   stopDownloadRef: any,
   frozenTotalSize: number
 ) => {
-  const results: any[] = []; // TODO: add type - kh16
+  const results: any[] = [];
   for await (const item of gen) {
     updateDownloadCountProgress(
       setFetchCount,

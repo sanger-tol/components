@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { env } from "../../variables";
+import { API_PATHS } from "../../constants";
 
 
 const serializeParam = (k, v) => {
@@ -27,7 +27,7 @@ const serializeParams = (params) =>
     .join("&");
 
 export const CONFIG = {
-  baseURL: env.API_PATH,
+  baseURL: API_PATHS.API_PATH,
   headers: {
     "Content-Type": "application/json",
   },

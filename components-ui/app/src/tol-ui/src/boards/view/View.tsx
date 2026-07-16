@@ -4,142 +4,113 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
 import {
-  ZoneModal,
-  IFilter,
-  getZones,
+  ZoneCreationModal,
   Zone,
-  BOARDS,
-  IDBZone,
-  IDBZoneView,
   PBoard,
-  reorderZoneAndUpsert,
-  getSortedZones,
   useBoard,
-  TsDataSource,
-  UtilityBar,
-  BUTTONS,
+  useBoardState,
+  IBoard,
+  IView,
+  removeBoardEntityInParent,
+  IZone,
+  patchReorderBoardEntity,
+  reorderViaDirection,
+  deleteBoardEntity,
 } from "../..";
 
+
 export interface PView extends PBoard {
+  /**
+   * The ID of the view.
+   */
   id: string;
-  defaultFilter?: IFilter;
+  /**
+   * Open state for the zone creation modal.
+   */
+  open: boolean;
+  /**
+   * Function to set the open state of the zone creation modal.
+   */
+  setOpen: (open: boolean) => void;
+  /**
+   * Whether to show the view in the DOM.
+   */
+  active?: boolean;
 }
 
 export function View(props: PView) {
-  const { id, boardDataSource, actionsDataSource } = props;
+  const { id, open, setOpen, active, boardDataSource, actionsDataSource } = props;
 
-  const { editMode, layoutMode } = useBoard();
+  const { editMode, board, setBoard } = useBoard();
 
-  const [zones, setZones] = useState<IDBZone[]>([]);
-  const [open, setOpen] = useState(false);
-  const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
+  const [view, setView] = useBoardState<IBoard, IView>(
+    id,
+    board,
+    setBoard,
+  );
 
-  useEffect(() => {
-    getZones(id, boardDataSource).then((data: any) => {
-      const initialZones = data.zones.map((zone) => {
-        const dsi = zone.relationships.data_source_instance;
-
-        return {
-          id: zone.id,
-          objectType: zone.object_type,
-          title: zone.title,
-          filter: zone.filter,
-          dataspace: new TsDataSource({
-            ...dsi.ui_api_details,
-            dataSourceInstanceId: dsi.id,
-          }),
-        };
-      });
-      setZoneOrder(data.order);
-      setZones(initialZones);
-    });
-  }, []);
-
-  const deleteZone = (id: string) => {
-    boardDataSource.deleteByID({
-      objectType: BOARDS.ZONE,
+  const onReorderZone = (id: string, direction: "up" | "down") => {
+    const orderedIds = reorderViaDirection(
+      [...view.order!],
       id,
-    });
-    const newZones = zones.filter((zone) => zone.id !== id);
-    setZones(newZones);
-  };
-
-  const onZoneReorder = async (id: string, direction: string) => {
-    reorderZoneAndUpsert(id, direction, zones, zoneOrder, boardDataSource).then(
-      (data) => {
-        if (data) {
-          const { zones: updatedZones, zoneOrder: updatedZoneOrder } = data;
-          setZones(updatedZones);
-          setZoneOrder(updatedZoneOrder);
-        }
-      }
+      direction
     );
-  };
+    patchReorderBoardEntity(boardDataSource, view.id!, orderedIds)
+      .then(() => {
+        view.order = orderedIds;
+        setView({ ...view });
+      });
+  }
 
-  const Bar = (
-    <div className="tol-board-bar">
-      <UtilityBar
-        id="view-utility-bar"
-        buttons={[
-          {
-            ...BUTTONS.ADD,
-            testid: "open-add-zone-modal-button",
-            visible: editMode && !layoutMode,
-            onClick: () => {
-              setOpen(true);
-            },
-            tooltip: "",
-            text: "Add Zone",
-            icon: "object-group",
-          },
-        ]}
-      />
-    </div>
-  )
+  const onDeleteZone = (zoneId: string) => {
+    deleteBoardEntity(boardDataSource, zoneId)
+      .then((status: string | void) => {
+        if (status !== "success") return;
+        removeBoardEntityInParent(zoneId, view);
+        setView({ ...view });
+      });
+  };
 
   return (
-    <div className="tol-view">
-      {editMode && Bar}
-      <ZoneModal
-        open={open}
-        setOpen={setOpen}
-        setZones={setZones}
-        zones={zones}
-        zoneOrder={zoneOrder}
-        setZoneOrder={setZoneOrder}
-        viewId={id}
-        boardDataSource={boardDataSource}
-      />
-      {zones.length > 0 ? (
-        <div className="tol-zones">
-          {getSortedZones(zones, zoneOrder).map((zone) => {
-            return (
-              <Zone
-                key={zone.id}
-                id={zone.id}
-                title={zone.title}
-                objectType={zone.objectType}
-                dataspace={zone.dataspace!}
-                filter={zone.filter}
-                onZoneReorder={onZoneReorder}
-                deleteZone={deleteZone}
-                boardDataSource={boardDataSource}
-                actionsDataSource={actionsDataSource}
-              />
-            );
-          })}
-        </div>
-      ) : (
-        <div className="tol-zone-empty">
+    <div className={`tol-view ${!active ? "tol-view-cached" : ""}`}>
+      {view?.order?.length === 0 ? (
+        <div className="tol-boards-empty">
           {editMode ? (
-            <p>Click the + button to add a Zone</p>
+            <p>Please click the 'Add Zone' button to get started.</p>
           ) : (
             <p>No zones found</p>
           )}
         </div>
+      ) : (
+        <div className="tol-zones">
+          {view?.order?.map((zoneId) => {
+            const zone = view.children?.[zoneId] as IZone;
+            if (zone) {
+              return (
+                <Zone
+                  key={zone.id}
+                  id={zone.id!}
+                  onReorderZone={onReorderZone}
+                  onDeleteZone={onDeleteZone}
+                  boardDataSource={boardDataSource}
+                  view={view}
+                  setView={setView}
+                  actionsDataSource={actionsDataSource}
+                />
+              );
+            }
+          })}
+        </div>
       )}
+      <ZoneCreationModal
+        open={open}
+        setOpen={setOpen}
+        viewId={id}
+        view={view}
+        setView={setView}
+        boardDataSource={boardDataSource}
+      />
     </div>
   );
 }

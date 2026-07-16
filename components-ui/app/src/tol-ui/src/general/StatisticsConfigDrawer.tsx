@@ -4,10 +4,11 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AttributeSelector,
   Button,
+  deepEqual,
   Drawer,
   IStatisticsConfig,
   IRemoteTargetAndZone,
@@ -57,16 +58,31 @@ export function StatisticsConfigDrawer(props: PStatisticsConfigDrawer) {
   const [field, setField] = useState<string[]>(
     config.field ? [config.field] : []
   );
+  const initialConfigRef = useRef({
+    type: config.type ?? "count",
+    field: config.field ? [config.field] : [],
+  });
 
   const requiresField = type !== "count";
-  const hasUpdated = type !== config.type || field[0] !== config.field;
+  const hasUpdated = !deepEqual(
+    {
+      type,
+      field,
+    },
+    initialConfigRef.current
+  );
   const hasRequiredFields = !requiresField || field.length > 0;
   const hasPendingChanges = hasUpdated && hasRequiredFields;
 
   useEffect(() => {
     if (open) {
-      setType(config.type ?? "count");
-      setField(config.field ? [config.field] : []);
+      const initialConfig = {
+        type: config.type ?? "count",
+        field: config.field ? [config.field] : [],
+      };
+      initialConfigRef.current = initialConfig;
+      setType(initialConfig.type);
+      setField(initialConfig.field);
     }
   }, [open, config.field, config.type]);
 

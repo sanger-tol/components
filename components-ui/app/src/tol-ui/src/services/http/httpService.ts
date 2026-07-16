@@ -28,6 +28,17 @@ function wrapClientWithContext(client: AxiosInstance, accessToken = "") {
     },
   };
 
+  const buildBodyConfig = (
+    isFormData: boolean,
+    options: AxiosRequestConfig,
+  ): AxiosRequestConfig => {
+    const headers = { ...defaultOption.headers, ...options.headers };
+    if (isFormData) {
+      delete (headers as Record<string, unknown>)["Content-Type"];
+    }
+    return { ...defaultOption, ...options, headers };
+  };
+
   return {
     get<TResponse>(endPoint: string, options: AxiosRequestConfig = {}) {
       return client.get<TResponse>(endPoint, {
@@ -40,25 +51,19 @@ function wrapClientWithContext(client: AxiosInstance, accessToken = "") {
       data: unknown,
       options: AxiosRequestConfig = {},
     ) {
+      const config = buildBodyConfig(data instanceof FormData, options);
       data = normalizeBody(data);
-      return client.post<TResponse>(endPoint, data, {
-        ...defaultOption,
-        ...options,
-      });
+      return client.post<TResponse>(endPoint, data, config);
     },
     put(endPoint: string, data: unknown, options: AxiosRequestConfig = {}) {
+      const config = buildBodyConfig(data instanceof FormData, options);
       data = normalizeBody(data);
-      return client.put(endPoint, data, {
-        ...defaultOption,
-        ...options,
-      });
+      return client.put(endPoint, data, config);
     },
     patch(endPoint: string, data: unknown, options: AxiosRequestConfig = {}) {
+      const config = buildBodyConfig(data instanceof FormData, options);
       data = normalizeBody(data);
-      return client.patch(endPoint, data, {
-        ...defaultOption,
-        ...options,
-      });
+      return client.patch(endPoint, data, config);
     },
     delete(endPoint: string, options: AxiosRequestConfig = {}) {
       return client.delete(endPoint, {

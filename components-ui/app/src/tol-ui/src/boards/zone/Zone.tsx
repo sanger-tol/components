@@ -5,85 +5,69 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import {
-  useZone,
   FilterConfigDrawer,
-  ComponentPickerModal,
+  ComponentCreationModal,
   Visualisations,
   ConfirmationModal,
-  getComponents,
-  saveTitle,
-  BOARDS,
+  upsertTitle,
+  BOARD_ENTITIES,
   UtilityBar,
-  PButton,
-  PBoard,
-  addComponents,
   useBoard,
   TitleTooltip,
-  TsDataSource,
   BUTTONS,
+  useBoardState,
+  getSiblingBoardEntity,
 } from "../..";
+import type { IZone, IView, PButton, PBoard, IFilter } from "../..";
+import { translateZoneAboveFilter } from "./utils";
 
 
 export interface PZone extends PBoard {
   id: string;
-  title: string;
-  objectType: string;
-  dataspace: TsDataSource;
-  filter: any;
-  onZoneReorder: any;
-  deleteZone: any;
+  view: IView;
+  setView: (view: IView) => void;
+  onReorderZone: (id: string, direction: "up" | "down") => void;
+  onDeleteZone: (id: string) => void;
 }
 
 export function Zone(props: PZone) {
   const {
     id,
-    objectType,
-    dataspace,
+    view,
+    setView,
     boardDataSource,
-    filter,
-    onZoneReorder,
-    deleteZone,
-    actionsDataSource
+    onReorderZone,
+    onDeleteZone,
+    actionsDataSource,
   } = props;
 
   const { editMode, layoutMode } = useBoard();
 
+  const [zone, setZone] = useBoardState<IView, IZone>(id, view, setView);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
-  const [title, setTitle] = useState(props.title);
+  const [title, setTitle] = useState(zone?.title);
 
-  const z = useZone({
-    dataSource: dataspace,
-    objectType,
-    filter: filter,
-    components: [],
-  });
+  const { object_type, dataspace, filter } = zone;
+  const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;
 
   useEffect(() => {
-    getComponents(id, boardDataSource).then((components) => {
-      // sort the widgets based on the order value
-      const sortedComponents = components!.sort((a, b) => a.order! - b.order!);
-      addComponents(sortedComponents, z.zone);
-      z.setZone({ ...z.zone });
-    });
-  }, []);
+    updateTranslatedFilter();
+  }, [zoneAbove]);
+
+  const updateTranslatedFilter = async () => {
+    if (zoneAbove) {
+      const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
+      zone.filter = translatedFilter;
+      setZone({ ...zone });
+    }
+  };
 
   const onAddComponent = () => {
     setOpen(true);
   };
-
-  const ConfirmModal = (
-    <ConfirmationModal
-      setOpen={setConfirmationModalOpen}
-      open={confirmationModalOpen}
-      onConfirmClick={() => deleteZone(id)}
-      itemType={BOARDS.ZONE}
-    />
-  );
 
   const deleteButton: PButton = {
     ...BUTTONS.DISCARD,
@@ -107,26 +91,28 @@ export function Zone(props: PZone) {
 
   const upButton: PButton = {
     outline: true,
-    onClick: async () => {
-      await onZoneReorder(id, "up");
+    onClick: () => {
+      onReorderZone(id, "up");
     },
     type: "primary",
     icon: "arrow-up",
     position: "right",
     tooltip: "Move Zone Up",
     visible: layoutMode,
+    testid: "move-zone-up-button",
   };
 
   const downButton: PButton = {
     outline: true,
-    onClick: async () => {
-      await onZoneReorder(id, "down");
+    onClick: () => {
+      onReorderZone(id, "down");
     },
     type: "primary",
     icon: "arrow-down",
     position: "right",
     tooltip: "Move Zone Down",
     visible: layoutMode,
+    testid: "move-zone-down-button",
   };
 
   const filtersButton: PButton = {
@@ -139,7 +125,15 @@ export function Zone(props: PZone) {
     visible: editMode && !layoutMode,
   };
 
-  const Bar = (
+  const translatorsButton: PButton = {
+    ...BUTTONS.TRANSLATORS,
+    //visible: editMode && !layoutMode,
+    // TODO FUTURE: Implement translators
+    visible: false,
+    onClick: () => { },
+  };
+
+  const bar = (
     <div className="tol-zone-bar">
       <UtilityBar
         id="zone-utility-bar"
@@ -148,16 +142,17 @@ export function Zone(props: PZone) {
           editable: editMode,
           onSave: (value: string) => {
             if (value !== title) {
-              saveTitle(value, id, boardDataSource, BOARDS.ZONE);
+              upsertTitle(value, id, boardDataSource);
               setTitle(value);
             }
-          }
+          },
+          hideButtons: true,
         }}
         description={
           <TitleTooltip
-            title={title}
-            objectType={objectType}
-            dataSource={dataspace}
+            title={title!}
+            objectType={object_type!}
+            dataSource={dataspace!}
             filter={filter}
             id={id}
           />
@@ -168,16 +163,16 @@ export function Zone(props: PZone) {
           filtersButton,
           downButton,
           upButton,
+          translatorsButton,
         ]}
       />
       <div id="component-modal">
-        <ComponentPickerModal
+        <ComponentCreationModal
           open={open}
           setOpen={setOpen}
-          zoneId={id}
           boardDataSource={boardDataSource}
-          dataspace={dataspace}
-          {...z}
+          zone={zone}
+          setZone={setZone}
         />
       </div>
     </div>
@@ -185,42 +180,43 @@ export function Zone(props: PZone) {
 
   return (
     <div className="tol-zone">
-      {(title || editMode) && Bar}
-      {z.zone.order.length > 0 ? (
+      {(title || editMode) && bar}
+      {zone && zone.order && zone.order.length > 0 ? (
         <Visualisations
           id={id}
-          zone={z.zone}
-          setZone={z.setZone}
+          zone={zone}
+          setZone={setZone}
           boardDataSource={boardDataSource}
           actionsDataSource={actionsDataSource}
         />
       ) : (
-        <div className="tol-zone-empty">
+        <div className="tol-boards-empty">
           {editMode ? (
-            <>
-              <p>
-                Click the
-                <FontAwesomeIcon
-                  icon={faPlus}
-                  size="lg"
-                  style={{ padding: "0 8" }}
-                />
-                to add a new Component to the Zone.
-              </p>
-            </>
+            <p>
+              Please click the 'Add Component' button to start adding tables,
+              charts and more.
+            </p>
           ) : (
-            <p>No components found</p>
+            <p>No Components found in Zone</p>
           )}
         </div>
       )}
-      {ConfirmModal}
+      <ConfirmationModal
+        setOpen={setConfirmationModalOpen}
+        open={confirmationModalOpen}
+        onConfirmClick={() => onDeleteZone(id)}
+        itemType={BOARD_ENTITIES.ENTITIES.ZONE}
+      />
       <FilterConfigDrawer
-        {...props}
         id={id}
-        boardObjectType={BOARDS.ZONE}
+        boardObjectType={BOARD_ENTITIES.ENTITIES.ZONE}
+        boardDataSource={boardDataSource}
+        dataSource={zone.dataspace!}
+        objectType={zone.object_type!}
         open={openFilters}
         setOpen={setOpenFilters}
-        {...z}
+        zone={zone}
+        setZone={setZone}
       />
     </div>
   );

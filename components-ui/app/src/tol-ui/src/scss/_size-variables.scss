@@ -1,0 +1,19 @@
+/*
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+:root {
+  // Border Radius
+  --tol-border-radius: 1rem;
+  --tol-border-radius-lg: 1.4rem;
+
+  // Shadows
+  --tol-shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+
+  // Button Sizes
+  --tol-button-size-sm-height: 18px;
+  --tol-button-size-sm-width: calc(var(--tol-button-size-sm-height) * 1.5);
+  --tol-button-size: 30px;
+}

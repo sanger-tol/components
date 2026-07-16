@@ -33,6 +33,7 @@ interface Rgb {
 
 export const LINE_POINT_RADIUS = 3;
 const LINE_HOVER_POINT_RADIUS = 6;
+export const CHART_TAG_POINT_STYLE = "circle";
 
 /*
 useful for creating rgb colours based on hsl
@@ -264,7 +265,7 @@ export function setBorderColour(datasets: any, borderColour: string) {
   return datasets;
 }
 
-// TODO Remove when not used by sunburst
+// TODO FUTURE: Remove when not used by sunburst
 export function isChartDataEmpty(aggs: any) {
   if (!aggs) return NO_DATA_FOUND_MESSAGE;
   else return "";
@@ -487,7 +488,7 @@ export function generateBarLabels(chart: any, titleColour: any) {
       text: dataset.label,
       fillStyle: getChartColour(index),
       fontColor: titleColour,
-      pointStyle: "rectRounded",
+      pointStyle: CHART_TAG_POINT_STYLE,
       lineWidth: 0,
     };
   });
@@ -735,7 +736,7 @@ export function generateSunburstLabels(chart: any, titleColour: any) {
         text: label,
         fillStyle: getChartColour(index),
         fontColor: titleColour,
-        pointStyle: "rectRounded",
+        pointStyle: CHART_TAG_POINT_STYLE,
         lineWidth: 0,
       };
     },

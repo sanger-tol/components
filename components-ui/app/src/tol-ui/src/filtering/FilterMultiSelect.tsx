@@ -82,7 +82,7 @@ export function FilterMultiSelect(props: IFilterInput) {
       // a. The API doesn't handle empty strings/arrays for this resource very well
       // b. Empty arrays are being parsed out, and the params are required on the API
       // c. Should switch to a POST method in the near future.
-      // TODO: Remove on POST method implementation
+      // TODO FUTURE: Remove on POST method implementation
       const queryParamsString = new URLSearchParams({
         group_by: attribute,
         stats_fields: "",

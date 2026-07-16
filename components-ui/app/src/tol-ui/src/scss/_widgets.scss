@@ -6,10 +6,10 @@
 
 .tol-widget {
   background-color: var(--tol-bg);
-  border-radius: 10px;
+  border-radius: var(--tol-border-radius-lg);
   box-sizing: border-box;
-  box-shadow: 0px 0px 10px 0px rgba(black, 0.05);
-  padding: 8px;
+  box-shadow: 0 6px 18px rgba(black, 0.08), 0 2px 6px rgba(black, 0.05);
+  padding: 0.6rem;
   margin: 5px;
   border: var(--tol-grey-subtle) 1px solid;
 
@@ -54,6 +54,22 @@
     font-size: 14px;
     font-weight: bolder;
     color: var(--tol-emphasis);
+  }
+
+  &.message-top > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &.message-top .tol-placeholder-message {
+    position: static;
+    transform: none;
+  }
+
+  &.message-top .loader {
+    top: 0;
   }
 }
 

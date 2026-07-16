@@ -9,10 +9,11 @@ import { RSForm, IFormLabelIcon, Icon } from "..";
 export interface PFormLabel {
   label?: string;
   icon?: IFormLabelIcon;
+  inline?: boolean;
 }
 
 export function FormLabel(props: PFormLabel) {
-  const { label } = props;
+  const { label, inline } = props;
 
   const icon = { ...props.icon, position: props.icon?.position || "right" };
   
@@ -20,7 +21,7 @@ export function FormLabel(props: PFormLabel) {
     <>
       {label && (
         <RSForm.ControlLabel>
-          <div className="tol-form-label">
+          <div className={`tol-form-label ${inline ? "inline" : ""}`}>
             {icon.position === "right" && label}
             {icon.icon && (
               <div className="tol-form-label-icon">
