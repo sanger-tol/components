@@ -4,6 +4,27 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import type {
+  ITextField,
+  IEmailField,
+  IPasswordField,
+  ICountryselectField,
+  IDatetimeField,
+  ISingleselectField,
+  ISingleselectcustomoptionField,
+  IDropzoneField,
+  IAutocompleteField,
+  IMultipleselectField,
+  IMarkdownField,
+  ITextAreaField,
+  ICheckboxFormField,
+  IFormComponent,
+  ILabelAndValueDataInstance,
+  IUserProfileFormData,
+  PAutoComplete,
+  ICheckboxField,
+} from ".."
+
 export type TFormField =
   | ITextField
   | IEmailField
