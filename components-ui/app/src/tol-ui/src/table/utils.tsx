@@ -30,6 +30,9 @@ import {
   MESSAGE_TYPE,
   BOARD_MESSAGE_TEXT,
   updateComponentConfigAndUpsert,
+  isRelationship,
+  TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
+  TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
 } from "..";
 import type {
   TsDataSource,
@@ -56,10 +59,6 @@ interface Rgb {
   r: number;
   g: number;
   b: number;
-}
-
-export function isRelationship(key: string) {
-  return key.includes(".");
 }
 
 const sourceColours = {
@@ -145,6 +144,8 @@ function sortFieldsByRename(fieldMeta: IFieldMeta) {
   return fieldMeta.order.inactive.sort((a, b) => {
     const fieldA = fieldMeta.dataWithDefaults![a];
     const fieldB = fieldMeta.dataWithDefaults![b];
+    if (!fieldA) throw new Error(TABLE_ERROR_FIELD_METADATA_NOT_FOUND(a));
+    if (!fieldB) throw new Error(TABLE_ERROR_FIELD_METADATA_NOT_FOUND(b));
     if (fieldA.rename! < fieldB.rename!) return -1;
     if (fieldA.rename! > fieldB.rename!) return 1;
     return 0;
@@ -189,9 +190,10 @@ export async function addFieldMetaDefaults(
       field: key,
     });
     await descriptor.then((meta) => {
-      if (meta) {
-        addDefaultsFromEntityMeta(key, meta, fieldMeta);
+      if (!meta) {
+        throw new Error(TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND(key, objectType));
       }
+      addDefaultsFromEntityMeta(key, meta, fieldMeta);
     });
   }
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
@@ -330,13 +332,13 @@ export function copyPageColumnValues(
         getFieldByName(element[fieldHeader].props.dataObject, fieldHeader),
       )
         ? getFieldByName(
-            element[fieldHeader].props.dataObject,
-            fieldHeader,
-          ).join(",")
+          element[fieldHeader].props.dataObject,
+          fieldHeader,
+        ).join(",")
         : [
-            getFieldByName(element[fieldHeader].props.dataObject, fieldHeader) +
-              (separator || ""),
-          ],
+          getFieldByName(element[fieldHeader].props.dataObject, fieldHeader) +
+          (separator || ""),
+        ],
     ),
   );
   const emptyStringsRemoval = Array.from(copySet).filter(Boolean);
@@ -708,14 +710,14 @@ export async function handleSavedDiffReset(
   const diffId = componentData?.config_diff?.id;
   isLoggedIn && diffState.hasDiff && diffId
     ? await deleteComponentDiff(boardDataSource, diffId, userId ?? "").then(
-        () => {
-          isSuccessDiffReset = true;
-        },
-      )
+      () => {
+        isSuccessDiffReset = true;
+      },
+    )
     : diffState.hasDiff
       ? (clearTableConfigLocalStorage(
-          `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${componentData.id}`,
-        ),
+        `${BOARD_ENTITIES.ENTITIES.ENTITY_DIFF}_${componentData.id}`,
+      ),
         (isSuccessDiffReset = true))
       : null;
 
@@ -815,7 +817,7 @@ export function createTableConfigHandlers({
       if (isLoggedIn) {
         const diffId = componentData?.config_diff?.id;
         if (diffId) {
-          deleteComponentDiff(boardDataSource, diffId, userId ?? "").catch(() => {});
+          deleteComponentDiff(boardDataSource, diffId, userId ?? "").catch(() => { });
           componentData.config_diff = undefined;
         }
       } else {

@@ -28,7 +28,7 @@ export function TitleTooltip(props: PTitleTooltip) {
 
   return (
     <div className="tol-utility-bar-title-tooltip">
-      <h6>{title}</h6>
+      {title && <h6>{title}</h6>}
       <p><b>Object Type:</b> {normaliseCaps(objectType!)}</p>
       <>
         <b>Filters:</b>

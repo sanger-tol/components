@@ -13,7 +13,7 @@
 .rs-placeholder-active .rs-placeholder-paragraph-graph-image,
 .rs-placeholder-active .rs-placeholder-paragraph-rows > p,
 .rs-placeholder-active.rs-placeholder-graph {
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
 }
 
 .rs-placeholder-graph {
@@ -26,7 +26,7 @@
 .leaflet-popup .leaflet-popup-content-wrapper {
   font-size: 14px;
   opacity: 1 !important;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
 
   .leaflet-popup-content {
     margin: 12px;

@@ -6,6 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { useEffect } from "react";
 import {
+  IBoard,
+  IView,
   IZone,
   IFilter,
   IAndAttributes,
@@ -238,6 +240,28 @@ export function resetAllFilters(zone: IZone) {
       zone.children[currentId].defaultFilter!,
     );
     zone.children[currentId].subFilter = undefined;
+  }
+}
+
+/**
+ * Resets all filters in the given view by resetting every zone it contains.
+ *
+ * @param view The view whose zone filters should be reset.
+ */
+export function resetAllViewFilters(view: IView) {
+  for (const zoneId of view.order) {
+    resetAllFilters(view.children[zoneId]);
+  }
+}
+
+/**
+ * Resets all filters in the given board by resetting every zone in every view.
+ *
+ * @param board The board whose filters should be reset.
+ */
+export function resetAllBoardFilters(board: IBoard) {
+  for (const viewId of board.order) {
+    resetAllViewFilters(board.children[viewId]);
   }
 }
 

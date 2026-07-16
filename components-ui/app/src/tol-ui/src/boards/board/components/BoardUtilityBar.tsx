@@ -14,6 +14,7 @@ import {
   BOARD_ENTITIES,
   HoverOverlay,
   ProfileAvatar,
+  resetAllBoardFilters,
 } from "../../..";
 import { boardButtonsBuilder, ViewModeBoardTitle, ViewTabs } from ".";
 import type { PEditableTitle, PButton } from "../../..";
@@ -109,13 +110,29 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     });
   };
 
+  // Clears all filters to ensure filter state is consistent when switching modes
+  const clearAllFilters = () => {
+    resetAllBoardFilters(board);
+    setBoard({ ...board });
+  };
+
+  const onEditModeClick = () => {
+    clearAllFilters();
+    setEditMode(!editMode);
+  };
+
+  const onLayoutModeClick = () => {
+    clearAllFilters();
+    setLayoutMode(!layoutMode);
+  };
+
   const boardUtilityBarButtons = boardButtonsBuilder({
     activeViewId,
     privilege,
     editMode,
-    setEditMode,
+    onEditModeClick,
     layoutMode,
-    setLayoutMode,
+    onLayoutModeClick,
     tableLoading,
     boardTitle: board?.title!,
     newBoardCopyTitle,
@@ -172,6 +189,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
           }
         />
       </div>
+      {editMode && <hr />}
       {(board?.order?.length > 1 || editMode) && (
         <UtilityBar
           id="tol-board-views-utility-bar"

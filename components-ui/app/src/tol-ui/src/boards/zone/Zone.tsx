@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FilterConfigDrawer,
   ComponentCreationModal,
@@ -17,8 +17,11 @@ import {
   TitleTooltip,
   BUTTONS,
   useBoardState,
+  getSiblingBoardEntity,
 } from "../..";
-import type { IZone, IView, PButton, PBoard } from "../..";
+import type { IZone, IView, PButton, PBoard, IFilter } from "../..";
+import { translateZoneAboveFilter } from "./utils";
+
 
 export interface PZone extends PBoard {
   id: string;
@@ -40,14 +43,27 @@ export function Zone(props: PZone) {
   } = props;
 
   const { editMode, layoutMode } = useBoard();
-  
+
   const [zone, setZone] = useBoardState<IView, IZone>(id, view, setView);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
   const [title, setTitle] = useState(zone?.title);
-  
+
   const { object_type, dataspace, filter } = zone;
+  const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;
+
+  useEffect(() => {
+    updateTranslatedFilter();
+  }, [zoneAbove]);
+
+  const updateTranslatedFilter = async () => {
+    if (zoneAbove) {
+      const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
+      zone.filter = translatedFilter;
+      setZone({ ...zone });
+    }
+  };
 
   const onAddComponent = () => {
     setOpen(true);
@@ -83,6 +99,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Move Zone Up",
     visible: layoutMode,
+    testid: "move-zone-up-button",
   };
 
   const downButton: PButton = {
@@ -95,6 +112,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Move Zone Down",
     visible: layoutMode,
+    testid: "move-zone-down-button",
   };
 
   const filtersButton: PButton = {
@@ -112,7 +130,7 @@ export function Zone(props: PZone) {
     //visible: editMode && !layoutMode,
     // TODO FUTURE: Implement translators
     visible: false,
-    onClick: () => {},
+    onClick: () => { },
   };
 
   const bar = (

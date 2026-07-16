@@ -48,7 +48,7 @@ export function Placeholder(props: PPlaceholder) {
   const Icon = <PlaceholderIcon {...props} />;
 
   if (opacity) style["opacity"] = opacity;
-  if (squareCorners !== true) style["borderRadius"] = 6;
+  if (squareCorners !== true) style["borderRadius"] = "var(--tol-border-radius)";
 
   // default placeholder
   if (!backing) {

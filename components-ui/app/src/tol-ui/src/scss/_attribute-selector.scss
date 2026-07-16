@@ -164,17 +164,17 @@ SPDX-License-Identifier: MIT
   }
 }
 
-.inline-source {
+.tol-inline-source {
   height: 0.75em;
   width: 0.2em;
   margin-right: 0.3em;
-  border-radius: 2px;
+  border-radius: var(--tol-border-radius);
   display: inline-block;
   transition: width 0.5s ease;
 }
 
 .tol-attribute-title:hover {
-  .inline-source {
+  .tol-inline-source {
     width: 0.75em;
   }
 }

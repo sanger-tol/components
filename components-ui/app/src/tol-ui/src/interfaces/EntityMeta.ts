@@ -4,14 +4,10 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-interface IValues {
-  [id: string]: string;
-}
-
-interface IRelationship {
-  one?: IValues;
-  many?: IValues;
-  foreign_keys?: IValues;
+export interface IRelationship {
+  one?: Record<string, string>;
+  many?: Record<string, string>;
+  foreign_keys?: Record<string, string>;
 }
 
 export interface IAttributeData {

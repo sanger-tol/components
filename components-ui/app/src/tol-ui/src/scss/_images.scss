@@ -9,7 +9,7 @@
   width: auto;
   max-width: 100%;
   max-height: 100%;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
   object-fit: contain;
   display: block;
   cursor: default;
@@ -29,7 +29,7 @@
   height: 100%;
   width: 100%;
   min-height: 0;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
   overflow: hidden;
 }
 
@@ -44,7 +44,7 @@
   position: relative;
   height: 100%;
   width: 100%;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
   overflow: hidden;
   outline: none;
 }
@@ -74,7 +74,7 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
 }
 
 .tol-image-modal__content {
@@ -145,7 +145,7 @@
   max-height: 100%;
   display: flex;
   align-items: center;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
   overflow: hidden;
   cursor: default;
 }
@@ -164,7 +164,7 @@
 
 .tol-image-list::-webkit-scrollbar-thumb {
   background: var(--tol-image-list-scrollbar-thumb, var(--tol-grey-light));
-  border-radius: 4px;
+  border-radius: var(--tol-border-radius);
   cursor: pointer;
 }
 

@@ -8,10 +8,10 @@
   position: fixed;
   top: 0;
   left: 0;
-  height: 140px;
+  height: 128px;
   width: 100%;
   background: color-mix(in srgb, var(--tol-bg-dark) 70%, transparent);
-  z-index: 5;
+  z-index: 12;
   backdrop-filter: blur(10px);
 }
 
@@ -19,7 +19,7 @@
   // Hover colour for placeholders when dragging
   .react-grid-item.react-grid-placeholder {
     background-color: var(--tol-primary) !important;
-    border-radius: 6px !important;
+    border-radius: var(--tol-border-radius) !important;
   }
 
   // Editable titles on board entities
@@ -156,7 +156,7 @@
     pointer-events: auto; // captures clicks
     cursor: move;
     backdrop-filter: blur(2px);
-    border-radius: 6px;
+    border-radius: var(--tol-border-radius);
     background-color: color-mix(in srgb, var(--tol-bg) 50%, transparent);
   }
 }
@@ -172,12 +172,17 @@
   position: sticky;
   top: calc(var(--tol-navbar-height) + 20px);
   z-index: 15;
-  box-shadow: 0 8px 20px 4px
-    rgba(0, 0, 0, calc(0.35 * var(--tol-bar-scroll, 0))) !important;
+  box-shadow: 0 8px 20px 4px rgba(0, 0, 0, calc(0.35 * var(--tol-bar-scroll, 0)))
+    !important;
 
   @media (prefers-color-scheme: dark) {
-    box-shadow: 0 8px 20px 6px
-      rgba(0, 0, 0, calc(0.7 * var(--tol-bar-scroll, 0))) !important;
+    box-shadow: 0 8px 20px 6px rgba(0, 0, 0, calc(0.7 * var(--tol-bar-scroll, 0)))
+      !important;
+  }
+
+  // Line break for top and bottom bars
+  hr {
+    margin: 0.4rem -0.5rem;
   }
 
   // Large header for view mode
@@ -199,6 +204,8 @@
     display: flex;
     align-items: center;
     gap: 3px;
+    position: relative;
+    z-index: 2;
 
     .tol-board-bar-profile-bubble {
       margin-left: auto;
@@ -215,6 +222,8 @@
 
   .tol-views-bar {
     margin-top: 10px;
+    position: relative;
+    z-index: 1;
 
     .tol-edit-mode & {
       margin-top: 6px;
@@ -327,6 +336,10 @@
 .my-boards-container {
   overflow: auto;
   min-height: 200px;
+
+  .rs-panel-group {
+    border-radius: var(--tol-border-radius);
+  }
 }
 
 .my-boards-dropdown-buttons {
@@ -364,7 +377,7 @@
 .tol-component-modal-btn {
   cursor: pointer;
   width: auto;
-  border-radius: 6px;
+  border-radius: var(--tol-border-radius);
   text-align: center;
   background-color: var(--tol-grey-subtle);
   position: relative !important;

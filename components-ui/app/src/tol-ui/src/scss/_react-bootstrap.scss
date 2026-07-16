@@ -89,6 +89,7 @@
 // dropdown alterations
 .dropdown-menu.show {
   background-color: black;
+  border-radius: var(--tol-border-radius);
 
   .nav-link {
 

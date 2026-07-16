@@ -6,12 +6,15 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `3.6.0`
+## tol-ui `4.0.0`
 
 18-06-2026
 
 - Refer to the BOARD EPIC on JIRA for full tickets/changes in this release.
 - [TOLP-9811](https://jira.sanger.ac.uk/browse/TOLP-9811)
+- Style overhaul with CSS variables
+- Fixed bug: Inconsistent filters on mode changes
+- Fixed bug: Overflowing multi select filters when many options selected
 
 ## tol-ui `3.5.8`
 
