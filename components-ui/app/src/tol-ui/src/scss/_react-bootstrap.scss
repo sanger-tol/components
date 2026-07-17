@@ -88,7 +88,8 @@
 
 // dropdown alterations
 .dropdown-menu.show {
-  background-color: black;
+  // Temporary use dark mode as nav bar is black
+  background-color: $tol-bg-dark-DARK-MODE;
   border-radius: var(--tol-border-radius);
 
   .nav-link {
