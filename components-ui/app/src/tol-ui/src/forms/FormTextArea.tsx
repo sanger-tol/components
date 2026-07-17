@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { FormComponentWrapper, TextEditor, TFormTextAreaField } from "..";
 
+
 export interface PFormTextArea extends TFormTextAreaField {
   /**
    * The name of the form field. This is used to identify the field in the form data.
@@ -22,6 +23,11 @@ export interface PFormTextArea extends TFormTextAreaField {
   setValue: (value: string) => void;
 }
 
+/**
+ * @autodoc
+ * 
+ * Renders a text-area form field inside the standard form component wrapper.
+ */
 export function FormTextArea(props: PFormTextArea) {
   const { name } = props;
 

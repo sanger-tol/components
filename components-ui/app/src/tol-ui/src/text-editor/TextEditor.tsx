@@ -75,6 +75,16 @@ export interface PTextEditor {
   height?: string | number;
 }
 
+/**
+ * @autodoc
+ *
+ * Renders a Tiptap-powered rich text editor with a configurable formatting toolbar.
+ * The editor initializes from `value` and calls `setValue` whenever its content changes,
+ * serializing that content as HTML, JSON, or plain text according to `returnValueType`.
+ *
+ * Consumers can extend the editor, add toolbar controls, control its editability and height,
+ * and access the current editor instance through `onEditorChange` or `EditorContext`.
+ */
 export function TextEditor(props: PTextEditor) {
   const {
     value,

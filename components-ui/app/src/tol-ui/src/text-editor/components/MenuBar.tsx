@@ -32,6 +32,15 @@ export interface PMenuBar {
   customButtons?: TTextEditorCustomButton[];
 }
 
+/**
+ * @autodoc
+ *
+ * Renders the formatting toolbar for a Tiptap text editor. It derives the state
+ * of standard controls from the active editor, optionally filters them with
+ * `buttons`, and renders custom controls before the undo and redo actions.
+ *
+ * The toolbar is not rendered until the editor instance and its state are ready.
+ */
 export function MenuBar(props: PMenuBar) {
   const { editor, buttons, customButtons } = props;
 
