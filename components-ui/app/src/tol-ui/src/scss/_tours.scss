@@ -10,20 +10,12 @@
   border-radius: var(--tol-border-radius) !important;
 }
 
-.driver-popover-arrow-side-top {
-  border-top-color: var(--tol-bg) !important;
-}
+$border-directions: top, bottom, left, right;
 
-.driver-popover-arrow-side-bottom {
-  border-bottom-color: var(--tol-bg) !important;
-}
-
-.driver-popover-arrow-side-left {
-  border-left-color: var(--tol-bg) !important;
-}
-
-.driver-popover-arrow-side-right {
-  border-right-color: var(--tol-bg) !important;
+@each $direction in $border-directions {
+  .driver-popover-arrow-side-#{$direction} {
+    border-#{$direction}-color: var(--tol-bg) !important;
+  }
 }
 
 .driver-popover-footer {
