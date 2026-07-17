@@ -20,27 +20,35 @@ import { selectFromDropdown } from "../..";
 export const configureTable = async (
   page: Page,
   table: Locator,
-  defaultSort?: string,
-  limitColumnVisibility?: boolean,
-  activeColumns?: string[],
+  config: {
+    defaultSort?: string,
+    limitColumnVisibility?: boolean,
+    activeColumns?: string[],
+  }
 ) => {
   // Click the Configure Table button
   await clickUtilityBarButton(page, table, "table-config-button");
   const configDrawer = page.locator(".tol-drawer");
 
   // Add the default sort attribute if one was provided
-  if (defaultSort) {
-    await selectFromDropdown(configDrawer.getByTestId("default-sort-dropdown"), [defaultSort]);
+  if (config.defaultSort) {
+    await selectFromDropdown(
+      configDrawer.getByTestId("default-sort-dropdown"),
+      [config.defaultSort]
+    );
   }
 
   // Toggle the Limit Column Visibility toggle if requested
-  if (limitColumnVisibility) {
+  if (config.limitColumnVisibility) {
     await configDrawer.getByRole("switch").first().click();
   }
 
   // Add the active columns if they were provided
-  if (activeColumns) {
-    await selectFromDropdown(configDrawer.getByTestId("active-columns-dropdown"), activeColumns);
+  if (config.activeColumns) {
+    await selectFromDropdown(
+      configDrawer.getByTestId("active-columns-dropdown"),
+      config.activeColumns
+    );
   }
 
   // Save the table
