@@ -32,6 +32,13 @@ export interface PFormComponentWrapper extends TFormComponentWrapper {
   as?: React.ElementType;
 }
 
+/**
+ * @autodoc
+ *
+ * Wraps a form control in a consistently structured form group. It renders the
+ * field label, optional icon and help text, child control, and validation error
+ * message, while supporting inline labels and a configurable wrapper element.
+ */
 export function FormComponentWrapper(props: PFormComponentWrapper) {
   const {
     id,
