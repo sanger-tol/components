@@ -181,7 +181,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
         <h4>Add New Zone</h4>
         <Button
           {...BUTTONS.INITIATE_TOUR}
-          onClick={() => processTour("addZone", ADD_ZONE_TOUR, null)}
+          onClick={() => processTour("addZone", ADD_ZONE_TOUR, null, true)}
         />
       </span>
       <p className="tol-zone-modal-labels">
