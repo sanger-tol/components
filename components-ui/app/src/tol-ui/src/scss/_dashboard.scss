@@ -484,6 +484,11 @@
   margin-bottom: 5px !important;
 }
 
+.tol-zone-modal-title {
+  display: flex;
+  justify-content: space-between;
+}
+
 // temp - accordion header hover
 .rs-panel-btn:hover,
 .rs-panel-btn:focus,
@@ -501,9 +506,4 @@
   .rs-modal-footer span {
     margin: 0 !important;
   }
-}
-
-.tol-zone-modal-title {
-  display: flex;
-  justify-content: space-between;
 }
