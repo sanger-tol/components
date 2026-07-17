@@ -8,9 +8,11 @@ SPDX-License-Identifier: MIT
 
 ## tol-ui `4.0.1`
 
-16-07-2026
+17-07-2026
 
-- Fix requestedFields for fields used in Cell Renderer params.
+- Fixed bug: requestedFields for fields used in Cell Renderer params
+- Fixed bug: Filters are not being calculated in the utility bar tooltips.
+
 
 ## tol-ui `4.0.0`
 
