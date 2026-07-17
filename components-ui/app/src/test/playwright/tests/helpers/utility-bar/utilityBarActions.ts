@@ -15,8 +15,12 @@ export const clickUtilityBarButton = async (page: Page, component: Locator, test
   // A utility bar button will either be in a utility bar at the top of a component,
   // or it will be hidden in an rs-popover that appears when the condensed utility bar button
   // is clicked.
-  // First check whether a condensed button exists on this component
+
+  // First, check whether a condensed button exists on this component
   const condensedUtilityBarButton = component.getByTestId("condensed-utility-bar-button");
+  if (await condensedUtilityBarButton.count() > 0) {
+    await condensedUtilityBarButton.waitFor({ state: "visible", timeout: 500 });
+  }
   const isCondensed = await condensedUtilityBarButton
     .waitFor({ state: "visible", timeout: 500 })
     .then(() => true)
@@ -30,6 +34,8 @@ export const clickUtilityBarButton = async (page: Page, component: Locator, test
     await targetButton.click();
   } else {
     // Just click the button in the utility bar
-    component.getByTestId(testId).click();
+    const utilityBarButton = component.getByTestId(testId);
+    await utilityBarButton.waitFor({ state: "visible", timeout: 500 });
+    await utilityBarButton.click();
   }
 }
