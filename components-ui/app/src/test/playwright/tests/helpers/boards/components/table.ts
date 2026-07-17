@@ -29,6 +29,7 @@ export const configureTable = async (
   // Click the Configure Table button
   await clickUtilityBarButton(page, table, "table-config-button");
   const configDrawer = page.locator(".tol-drawer");
+  await configDrawer.waitFor({ state: "visible" });
 
   // Add the default sort attribute if one was provided
   if (config.defaultSort) {

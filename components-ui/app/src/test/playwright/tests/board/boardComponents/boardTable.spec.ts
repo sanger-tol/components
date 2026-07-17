@@ -13,6 +13,7 @@ import {
   clickUtilityBarButton,
   createBoardId,
   isInHeadlessMode,
+  configureTable,
 } from "../../helpers";
 
 let BOARD_ID: string;
@@ -31,9 +32,18 @@ test.afterEach(async ({ page }) => {
     await exitEditMode(page);
   }
 });
-  
+
 test("manage dashboard", async ({ page }) => {
   await addComponent(page, 0, "table", "large");
+  await configureTable(
+    page,
+    page.getByTestId("board-component-table"),
+    {
+      defaultSort: "Priority",
+      limitColumnVisibility: true,
+      activeColumns: ["Species Name", "Priority"],
+    }
+  )
   await deleteComponent(page, page.getByTestId("board-component-table"), "table");
   await expect(page.locator(".tol-table")).not.toBeVisible({ timeout: 1000 });
 });
