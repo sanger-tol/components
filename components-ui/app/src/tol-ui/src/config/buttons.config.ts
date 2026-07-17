@@ -130,4 +130,10 @@ export const BUTTONS: Record<string, PButton> = {
     tooltip: "Paste",
     position: "right",
   },
+  INITIATE_TOUR: {
+    outline: true,
+    icon: "question",
+    tooltip: "Take the tour",
+    position: "right",
+  }
 };
