@@ -174,7 +174,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
       data-testid="ZoneCreationModal"
     >
       <h4>Add New Zone</h4>
-      <p className="zone-modal-labels">
+      <p className="tol-zone-modal-labels">
         Select Dataspace <RequiredAsterisk />
       </p>
       <SingleSelect
@@ -187,7 +187,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
         testid="dataspace-picker"
       />
       <br />
-      <p className="zone-modal-labels">
+      <p className="tol-zone-modal-labels">
         Select Object Type <RequiredAsterisk />
       </p>
       <SingleSelect
