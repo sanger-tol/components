@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ITourStep } from "..";
+import type { ITourStep } from "..";
 
-export const addZoneTour: ITourStep[] = [
+export const ADD_ZONE_TOUR: ITourStep[] = [
   {
     testid: "zoneModal",
     title: "Zones",

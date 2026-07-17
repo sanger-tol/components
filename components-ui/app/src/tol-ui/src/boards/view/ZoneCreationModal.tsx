@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  addZoneTour,
+  ADD_ZONE_TOUR,
   BOARD_ENTITIES,
   Button,
   BUTTONS,
@@ -179,7 +179,10 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
     >
       <span className="tol-zone-modal-title">
         <h4>Add New Zone</h4>
-        <Button {...BUTTONS.INITIATE_TOUR} onClick={() => processTour("addZone", addZoneTour, null)} />
+        <Button
+          {...BUTTONS.INITIATE_TOUR}
+          onClick={() => processTour("addZone", ADD_ZONE_TOUR, null)}
+        />
       </span>
       <p className="tol-zone-modal-labels">
         Select Dataspace <RequiredAsterisk />
