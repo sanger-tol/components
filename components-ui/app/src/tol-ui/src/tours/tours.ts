@@ -36,6 +36,7 @@ export async function processTour(
       element: `[data-testid="${step.testid}"]`,
       popover: { title: step.title, description: step.description },
     })),
+    stageRadius: 16,
     onDestroyStarted: () => {
       if (!showRegardless) registerTourAsSeen(tourName, userId);
       driverObj.destroy();
