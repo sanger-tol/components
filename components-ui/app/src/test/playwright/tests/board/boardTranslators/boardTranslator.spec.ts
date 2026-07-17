@@ -82,8 +82,13 @@ TRANSLATOR_TEST_INPUTS.forEach(({ zoneObjectTypes, TableFields }) => {
         })
         .not.toEqual(initialSampleRow);
 
-      const secondFilterInput = await page.getByTestId("Scientific Name-filter-input").nth(1);
-      expect(await secondFilterInput.inputValue()).toEqual(filterString);
+      const secondFilterInput = page.getByTestId("Scientific Name-filter-input").nth(1);
+      await expect
+        .poll(async () => await secondFilterInput.inputValue(), {
+          timeout: 15000,
+          message: "Expected second filter input to be updated with the filter value",
+        })
+        .toEqual(filterString);
     });
 
   });
