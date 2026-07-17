@@ -48,21 +48,30 @@ const insertBoardToDB = async (
   viewTitle: string,
   zoneTitle: string,
   boardTitle: string,
-  zoneObjectType: string,
+  zoneObjectType: string | undefined,
 ) => {
   try {
-    await sql.unsafe(`
+    const query = `
       INSERT INTO "board"
       VALUES ('${boardId}', '${boardTitle}', '{"and_":{}}', ${userId});
       INSERT INTO "view"
       VALUES ('${viewID}', '${viewTitle}', '{"and_":{}}', ${userId});
       INSERT INTO "view_board"
       VALUES (${randomInt()}, '1', '${viewID}', '${boardId}');
+    `
+    if (zoneObjectType === undefined) {
+      await sql.unsafe(`
+      ${query}
+    `).simple();
+    } else {
+      await sql.unsafe(`
+      ${query}
       INSERT INTO "zone"
       VALUES ('${zoneID}', '${zoneTitle}', '${zoneObjectType}', '{"and_":{}}', ${userId}, 'tol_production');
       INSERT INTO "zone_view"
       VALUES (${randomInt()}, '1', '${zoneID}', '${viewID}');
     `).simple();
+    }
   }
   catch (e) {
     console.log(e)
@@ -87,14 +96,20 @@ export const setBoard = async (page, boardId) => {
 /**
  * Adds a new board into the database for the given user ID
  * @param userId The ID of the owner user of this new board
+ * @param viewTitle The title of the view to create for this new board
+ * @param zoneTitle The title of the zone to create for this new board
+ * @param boardTitle The title of the new board
+ * @param zoneObjectType The object type of the zone to create for this new board 
+ * (This is required if you want to create an initial zone for the board)
+ * @returns The IDs of the newly created board, view, and zone
  */
 export const createBoardForUser = async (
   {
     userId,
+    zoneObjectType,
     viewTitle = `${randomInt()}`,
     zoneTitle = `${randomInt()}`,
     boardTitle = `${randomInt()}`,
-    zoneObjectType = "curation",
   }: createBoardForUserOptions
 ) => {
   const boardId = createBoardId();
@@ -110,7 +125,7 @@ export const createBoardForUser = async (
     boardTitle,
     zoneObjectType
   );
-  return {boardId, viewId, zoneId};
+  return { boardId, viewId, zoneId };
 }
 
 /**

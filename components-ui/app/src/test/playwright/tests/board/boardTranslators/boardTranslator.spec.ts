@@ -25,18 +25,13 @@ TRANSLATOR_TEST_INPUTS.forEach(({ zoneObjectTypes, TableFields }) => {
       const userId = JSON.parse(user || '{}').id;
 
       // Create a board with initial species zone
-      const { boardId, zoneId, viewId } = await createBoardForUser({
+      const { boardId, viewId } = await createBoardForUser({
         userId: String(userId),
-        zoneTitle: `Zone for ${zoneObjectTypes[0]}`,
-        zoneObjectType: zoneObjectTypes[0],
       });
-      // Remove the first zone as its created in the above function
-      const ZoneObjectTypesWithoutFirst = [...zoneObjectTypes];
-      ZoneObjectTypesWithoutFirst.shift();
 
       // Create additional zones for the remaining zoneObjectTypes
-      let zoneIds: string[] = [zoneId];
-      for (const zoneObjectType of ZoneObjectTypesWithoutFirst || []) {
+      let zoneIds: string[] = [ ];
+      for (const zoneObjectType of zoneObjectTypes || []) {
         const returnedZoneId = await insertZoneToBoard({
           userId: String(userId),
           viewId,
