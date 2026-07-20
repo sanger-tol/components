@@ -55,7 +55,7 @@ export const configureTable = async (
       config.activeColumns
     );
   }
-  await sleep(30_000)
+
   // Save the table
   await configDrawer.getByTestId("save-table-button").click();
 

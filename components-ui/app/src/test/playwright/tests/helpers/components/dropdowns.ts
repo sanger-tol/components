@@ -22,18 +22,15 @@ export const selectFromDropdown = async (page: Page, dropdown: Locator, values: 
   // it. It can be reliably selected using `page` because there can only be one open at a time.
   for (const value of values) {
     // Search for the value
-    await sleep(1000)
     await page.locator(".rs-search-box-input").fill(value);
 
     // Select it
-    await sleep(1000)
     await page.locator(".rs-check-item").first().click();
   }
 
   // Close the dropdown.
   // There's some weird thing where it doesn't register properly for a moment, so unfortunately
-  // a manual sleep is needed. 
-  await sleep(200);
+  // a manual sleep is needed.
   await dropdown.click();
   await sleep(200);
 }
