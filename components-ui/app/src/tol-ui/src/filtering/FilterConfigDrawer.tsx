@@ -7,10 +7,12 @@ SPDX-License-Identifier: MIT
 import { Toggle } from "rsuite"
 import { useEffect, useRef, useState } from "react";
 import {
+  cleanFilterAttributesFromBoardEntity,
   IconTooltip,
   IBoardTargetAndZone,
   RemoteFilters,
   Drawer,
+  deleteFilterAttributeFromBoardEntity,
   generateFilter,
   resetFiltersBelow,
   deepCopy,
@@ -149,16 +151,10 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setAttributes([]);
     setCurrentFilterZone((prev) => {
       const updatedZone = deepCopy(prev);
-      if (boardObjectType === "zone") {
-        updatedZone.filter = { and_: {} };
-        updatedZone.defaultFilter = { and_: {} };
-      } else {
-        if (updatedZone.children?.[id]?.filter) {
-          updatedZone.children[id].filter.and_ = {};
-        }
-        if (updatedZone.children?.[id]?.defaultFilter) {
-          updatedZone.children[id].defaultFilter.and_ = {};
-        }
+      if (updatedZone.children?.[id]) {
+        cleanFilterAttributesFromBoardEntity({
+          boardEntity: updatedZone.children[id],
+        });
       }
       return updatedZone;
     });
@@ -168,12 +164,11 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setAttributes((prev) => prev.filter((str) => str !== attribute));
     setCurrentFilterZone((prev) => {
       const updatedZone = deepCopy(prev);
-      if (boardObjectType === "zone") {
-        delete updatedZone.filter?.and_?.[attribute];
-        delete updatedZone.defaultFilter?.and_?.[attribute];
-      } else {
-        delete updatedZone.children?.[id]?.filter?.and_?.[attribute];
-        delete updatedZone.children?.[id]?.defaultFilter?.and_?.[attribute];
+      if (updatedZone.children?.[id]) {
+        deleteFilterAttributeFromBoardEntity({
+          attribute,
+          boardEntity: updatedZone.children[id],
+        });
       }
       return updatedZone;
     });
