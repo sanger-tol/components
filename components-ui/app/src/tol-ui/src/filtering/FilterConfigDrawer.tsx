@@ -18,7 +18,6 @@ import {
   deepCopy,
   IFilter,
   AttributeSelector,
-  Icon,
   defineZoneWithComponentList,
   IZone,
   FILTER_ALREADY_EXISTS,
@@ -26,6 +25,8 @@ import {
   IDBBoardEntityFilter,
   upsertBoardEntity,
   deepEqual,
+  Button,
+  BUTTONS,
 } from ".."
 
 
@@ -177,7 +178,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
 
   // Element to be passed to each remote filter to allow for individual removal of filters
   const RemoveCross = ({ attribute }: { attribute: string }) => (
-    <Icon icon="close" onClick={() => { removeFilter(attribute) }} className="tol-remove-filter-button" />
+    <Button {...BUTTONS.REMOVE} onClick={() => removeFilter(attribute)} />
   );
 
   return (

@@ -9,6 +9,7 @@
 }
 
 .tol-table {
+
   // Dealing with dropdown overflow issue
   .rs-table-cell-content,
   .rs-table-cell,
@@ -94,7 +95,7 @@
     margin-bottom: 0;
   }
 
-  .rs-form-group > span {
+  .rs-form-group>span {
     display: block;
     width: 100%;
   }
@@ -151,22 +152,22 @@
   grid-template-columns: repeat(2, var(--tol-filter-toggle-width));
 }
 
-.tol-filter-button-group > :nth-child(1) {
+.tol-filter-button-group> :nth-child(1) {
   grid-row: 1;
   grid-column: 1;
 }
 
-.tol-filter-button-group > :nth-child(2) {
+.tol-filter-button-group> :nth-child(2) {
   grid-row: 2;
   grid-column: 1;
 }
 
-.tol-filter-button-group > :nth-child(3) {
+.tol-filter-button-group> :nth-child(3) {
   grid-row: 1;
   grid-column: 2;
 }
 
-.tol-filter-button-group > * {
+.tol-filter-button-group>* {
   margin: 0;
 }
 
@@ -194,25 +195,52 @@
   }
 }
 
-.tol-filter-button.negate:hover,
-.tol-filter-button.negate.btn.active {
-  border-color: var(--tol-danger) !important;
-  background-color: var(--tol-danger) !important;
-  color: white !important;
+.tol-filter-button.negate.btn {
+  &:not(:disabled):hover {
+    border-color: var(--tol-danger) !important;
+  }
+
+  &.active:not(:disabled):not(:hover) {
+    border-color: var(--tol-danger-translucent) !important;
+  }
+
+  &:not(:disabled):hover,
+  &.active:not(:disabled) {
+    background-color: var(--tol-danger-translucent) !important;
+    color: var(--tol-danger) !important;
+  }
 }
 
-.tol-filter-button.exists:hover,
-.tol-filter-button.exists.btn.active {
-  border-color: var(--tol-success) !important;
-  background-color: var(--tol-success) !important;
-  color: white !important;
+.tol-filter-button.exists.btn {
+  &:not(:disabled):hover {
+    border-color: var(--tol-success) !important;
+  }
+
+  &.active:not(:disabled):not(:hover) {
+    border-color: var(--tol-success-translucent) !important;
+  }
+
+  &:not(:disabled):hover,
+  &.active:not(:disabled) {
+    background-color: var(--tol-success-translucent) !important;
+    color: var(--tol-success) !important;
+  }
 }
 
-.tol-filter-button.in-list:hover,
-.tol-filter-button.in-list.btn.active {
-  border-color: var(--tol-primary) !important;
-  background-color: var(--tol-primary) !important;
-  color: white !important;
+.tol-filter-button.in-list.btn {
+  &:not(:disabled):hover {
+    border-color: var(--tol-primary) !important;
+  }
+
+  &.active:not(:disabled):not(:hover) {
+    border-color: var(--tol-primary-translucent) !important;
+  }
+
+  &:not(:disabled):hover,
+  &.active:not(:disabled) {
+    background-color: var(--tol-primary-translucent) !important;
+    color: var(--tol-primary) !important;
+  }
 }
 
 .tol-filter-button.negate:disabled,
@@ -227,7 +255,7 @@
 
 .tol-filter-button.negate.active:disabled {
   border-color: var(--tol-grey) !important;
-  background-color: var(--tol-danger) !important;
+  background-color: var(--tol-danger-translucent) !important;
   color: var(--tol-grey-subtle) !important;
   cursor: not-allowed;
   pointer-events: all !important;
@@ -236,7 +264,7 @@
 
 .tol-filter-button.exists.active:disabled {
   border-color: var(--tol-grey) !important;
-  background-color: var(--tol-success) !important;
+  background-color: var(--tol-success-translucent) !important;
   color: var(--tol-grey-subtle) !important;
   cursor: not-allowed;
   pointer-events: all !important;
@@ -245,7 +273,7 @@
 
 .tol-filter-button.in-list.active:disabled {
   border-color: var(--tol-grey) !important;
-  background-color: var(--tol-primary) !important;
+  background-color: var(--tol-primary-translucent) !important;
   color: var(--tol-grey-subtle) !important;
   cursor: not-allowed;
   pointer-events: all !important;

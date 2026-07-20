@@ -59,8 +59,8 @@ export function FilterToggle(props: PFilterToggle) {
     <div className="tol-filter-button-group">
       {!disabled ? (
         <HoverOverlay
-          contents="Filter by values that exist. This will exclude empty/null values."
           followCursor
+          contents="Filter by values that exist. This will exclude empty/null values."
         >
           {existsButton}
         </HoverOverlay>
@@ -68,7 +68,14 @@ export function FilterToggle(props: PFilterToggle) {
         existsButton
       )}
       {!disabled ? (
-        <HoverOverlay contents="Negate this filter." followCursor>
+        <HoverOverlay
+          followCursor
+          contents={
+            negate
+              ? "Remove this filter's negation"
+              : "Negate this filter"
+          }
+        >
           {negateButton}
         </HoverOverlay>
       ) : (
@@ -76,8 +83,8 @@ export function FilterToggle(props: PFilterToggle) {
       )}
       {showInListButton && !disabled ? (
         <HoverOverlay
-          contents="Filter by a list of values."
           followCursor
+          contents="Filter by a list of values."
         >
           {inListButton}
         </HoverOverlay>
