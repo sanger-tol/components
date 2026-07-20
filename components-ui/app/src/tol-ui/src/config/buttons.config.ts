@@ -27,6 +27,13 @@ export const BUTTONS: Record<string, PButton> = {
     tooltip: "Cancel",
     position: "right",
   },
+  REMOVE: {
+    outline: true,
+    type: "error",
+    icon: "minus",
+    tooltip: "Remove",
+    position: "right",
+  },
   CLOSE: {
     type: "error",
     icon: "xmark",
