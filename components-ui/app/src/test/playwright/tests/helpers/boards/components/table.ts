@@ -37,21 +37,21 @@ export const configureTable = async (
   if (config.defaultSort) {
     await selectFromDropdown(
       page,
-      configDrawer.getByTestId("default-sort-dropdown").getByRole("combobox"),
+      configDrawer.getByRole("combobox").nth(0),
       [config.defaultSort]
     );
   }
 
   // Toggle the Limit Column Visibility toggle if requested
   if (config.limitColumnVisibility) {
-    await configDrawer.getByRole("switch").first().click();
+    await configDrawer.locator(".rs-toggle").first().click();
   }
 
   // Add the active columns if they were provided
   if (config.activeColumns) {    
     await selectFromDropdown(
       page,
-      configDrawer.getByTestId("active-columns-dropdown").getByRole("combobox"),
+      configDrawer.getByRole("combobox").nth(1),
       config.activeColumns
     );
   }
