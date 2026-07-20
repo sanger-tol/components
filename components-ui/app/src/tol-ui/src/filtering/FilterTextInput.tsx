@@ -18,6 +18,7 @@ import {
   MultipleSelect,
   Modal,
   PButton,
+  FILTER_INPUT_DELAY,
 } from "..";
 
 
@@ -93,7 +94,7 @@ export function FilterTextInput(props: PFilterTextInput) {
             valueExists: input !== "",
           });
           setZone({ ...zone });
-        }, delay ?? 800),
+        }, delay ?? FILTER_INPUT_DELAY),
       );
     }
   };

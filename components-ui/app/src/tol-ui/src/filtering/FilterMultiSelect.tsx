@@ -20,6 +20,7 @@ import {
   API_OPERATIONS,
   resetFiltersBelow,
   useEffectUpdate,
+  FILTER_INPUT_DELAY,
 } from "..";
 
 
@@ -150,7 +151,7 @@ export function FilterMultiSelect(props: IFilterInput) {
           valueExists: input.length !== 0,
         });
         setZone({ ...zone });
-      }, delay ?? 800),
+      }, delay ?? FILTER_INPUT_DELAY),
     );
   };
 

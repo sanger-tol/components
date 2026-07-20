@@ -76,20 +76,21 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const [currentFilterZone, setCurrentFilterZone] = useState<IZone>(
     defineZoneWithComponentList(
       "dummy-object-for-remote-filters",
-      [{ id: id, filter: savedFilters }]
+      [{ id: id, filter: deepCopy(savedFilters) }]
     ),
   );
   const currentFilters = normaliseFilter(generateFilter(currentFilterZone, id));
-  const initialFilters = normaliseFilter(savedFilters);
+  const initialFiltersRef = useRef<IFilter | undefined>(normaliseFilter(getInitialFilter()));
 
   const hasPendingChanges = (
-    !deepEqual(currentFilters, initialFilters) ||
+    !deepEqual(currentFilters, initialFiltersRef.current) ||
     passThrough !== initialPassThroughRef.current
   );
 
   useEffect(() => {
     const initialFilters = getInitialFilter();
     setSavedFilters(initialFilters);
+    initialFiltersRef.current = normaliseFilter(initialFilters);
     setAttributes(Object.keys(initialFilters?.and_ || {}));
     setDisabledFilterValues(
       removeCurrentEntityFiltersForDisabledFilters(
@@ -105,7 +106,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setCurrentFilterZone(
       defineZoneWithComponentList(
         "dummy-object-for-remote-filters",
-        [{ id: id, filter: initialFilters }]
+        [{ id: id, filter: deepCopy(initialFilters) }]
       )
     );
   }, [open]);
@@ -201,7 +202,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           populatedFieldType="filter"
           numPopulatedFields={
             Object.keys(
-              zone.children?.[id]?.filter?.and_ || {},
+              currentFilterZone.children?.[id]?.filter?.and_ || {},
             ).length
           }
           tooltipContent={FILTER_ALREADY_EXISTS}
@@ -237,6 +238,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           attributes={attributes}
           ExtraElement={RemoveCross}
           className={"tol-filter-config-remote-filter"}
+          delay={0}
         />
       </Drawer>
     </div>
