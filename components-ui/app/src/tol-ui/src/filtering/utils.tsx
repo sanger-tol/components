@@ -14,6 +14,7 @@ import {
   deepCopy,
   isEmptyObject,
   TFilterOrUndefined,
+  IComponent,
 } from "..";
 
 
@@ -516,6 +517,40 @@ export function resetZone(params: { zone: IZone; setZone: any }) {
   const { zone, setZone } = params;
   resetAllFilters(zone);
   setZone({ ...zone });
+}
+
+/**
+ * Deletes a specific filter attribute from a board entity's filter and default filter.
+ *
+ * @param params An object containing the parameters for deleting a filter attribute.
+ * - `attribute`: The name of the filter attribute to delete.
+ * - `boardEntity`: The component or zone whose filter state should be updated.
+ */
+export function deleteFilterAttributeFromBoardEntity(params: {
+  attribute: string;
+  boardEntity: IComponent | IZone;
+}) {
+  const { attribute, boardEntity } = params;
+  const entity = boardEntity;
+  if (entity.filter?.and_?.[attribute]) {
+    delete entity.filter.and_[attribute];
+    delete entity.defaultFilter?.and_?.[attribute];
+  }
+}
+
+/**
+ * Deletes all filter attributes from a board entity's filter and default filter.
+ *
+ * @param params An object containing the parameters for clearing filter attributes.
+ * - `boardEntity`: The component or zone whose filter state should be cleared.
+ */
+export function cleanFilterAttributesFromBoardEntity(params: {
+  boardEntity: IComponent | IZone;
+}) {
+  const { boardEntity } = params;
+  const entity = boardEntity;
+  entity.filter = {};
+  entity.defaultFilter = {};
 }
 
 /**
