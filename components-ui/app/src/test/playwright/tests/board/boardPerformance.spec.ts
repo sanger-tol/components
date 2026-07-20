@@ -13,6 +13,7 @@ import {
   isInHeadlessMode,
   setAuth,
   setBoard,
+  sleep,
 } from "../helpers";
 
 let BOARD_ID: string;
@@ -36,11 +37,8 @@ test("big table", async ({ page }) => {
     page,
     page.getByTestId("board-component-table"),
     {
-      // activeColumns: ["Species Name", "Priority"],
-      // defaultSort: "Priority"
-      // activeColumns: ["Priority", "Species Name"]
       defaultSort: "Priority",
-      activeColumns: ["Species Name"]
+      activeColumns: ["Species Name", "Priority"]
     }
   )
 });

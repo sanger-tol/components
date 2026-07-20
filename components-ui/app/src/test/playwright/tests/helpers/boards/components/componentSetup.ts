@@ -70,7 +70,7 @@ export const addComponentFilter = async (
   const filterDrawer = page.locator(".tol-drawer");
 
   // Select the attribute to filter
-  await selectFromDropdown(filterDrawer.getByRole("combobox").first(), [attribute]);
+  await selectFromDropdown(page, filterDrawer.getByRole("combobox").first(), [attribute]);
 
   // Provide the filter value
   switch (filterType) {

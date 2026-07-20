@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 import type { Locator, Page } from "@playwright/test";
-
 import { sleep } from "../sleep";
 
 /**
@@ -21,15 +20,15 @@ export const selectFromDropdown = async (page: Page, dropdown: Locator, values: 
 
   // NOTE: The area where you select from the dropdown is separated from where you click to open
   // it. It can be reliably selected using `page` because there can only be one open at a time.
-  values.forEach(async (value) => {
-    await page.locator(".rs-search-box-input").clear();
-    
+  for (const value of values) {
     // Search for the value
+    await sleep(1000)
     await page.locator(".rs-search-box-input").fill(value);
 
     // Select it
+    await sleep(1000)
     await page.locator(".rs-check-item").first().click();
-  });
+  }
 
   // Close the dropdown.
   // There's some weird thing where it doesn't register properly for a moment, so unfortunately
