@@ -91,7 +91,7 @@ export function FilterTextInput(props: PFilterTextInput) {
             attribute: attribute,
             componentId: componentId,
             zone: zone,
-            valueExists: input !== "",
+            hasValue: input !== "",
           });
           setZone({ ...zone });
         }, delay ?? FILTER_INPUT_DELAY),
@@ -109,7 +109,7 @@ export function FilterTextInput(props: PFilterTextInput) {
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: false,
+      hasValue: false,
     });
     setOperator(op);
     setZone({ ...zone });
@@ -139,7 +139,7 @@ export function FilterTextInput(props: PFilterTextInput) {
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: values.length > 1 ? true : values[0] !== "",
+      hasValue: values.length > 1 ? true : values[0] !== "",
     });
     setZone({ ...zone });
   };
@@ -156,7 +156,7 @@ export function FilterTextInput(props: PFilterTextInput) {
         attribute: attribute,
         componentId: componentId,
         zone: zone,
-        valueExists: true,
+        hasValue: true,
       });
     } else {
       setFilterInput({
@@ -166,7 +166,7 @@ export function FilterTextInput(props: PFilterTextInput) {
         attribute: attribute,
         componentId: componentId,
         zone: zone,
-        valueExists: input[0] !== "",
+        hasValue: input[0] !== "",
       });
     }
     setZone({ ...zone });
@@ -182,7 +182,7 @@ export function FilterTextInput(props: PFilterTextInput) {
         attribute: attribute,
         componentId: componentId,
         zone: zone,
-        valueExists: false,
+        hasValue: false,
       });
       setZone({ ...zone });
     }
@@ -271,6 +271,7 @@ export function FilterTextInput(props: PFilterTextInput) {
         showInListButton={!isNumber}
         onInList={onOpenInListModal}
         disabled={disabled}
+        hasValue={values.length > 1 || values[0] !== ""}
       />
       <Modal
         size="md"

@@ -51,7 +51,7 @@ export function FilterDatePicker(props: IFilterInput) {
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: from !== null,
+      hasValue: from !== null,
     });
     setFilterInput({
       operator: "lt",
@@ -60,7 +60,7 @@ export function FilterDatePicker(props: IFilterInput) {
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: to !== null,
+      hasValue: to !== null,
     });
     setZone({ ...zone });
   };
@@ -93,7 +93,7 @@ export function FilterDatePicker(props: IFilterInput) {
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: from !== null,
+      hasValue: from !== null,
     });
     setFilterInput({
       operator: exists ? "exists" : "lt",
@@ -103,7 +103,7 @@ export function FilterDatePicker(props: IFilterInput) {
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: to !== null,
+      hasValue: to !== null,
     });
     setZone({ ...zone });
   };
@@ -125,6 +125,7 @@ export function FilterDatePicker(props: IFilterInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
+        hasValue={value !== null && value !== undefined}
       />
     </div>
   );
