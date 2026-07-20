@@ -136,3 +136,17 @@ $sizes: (
     }
   }
 }
+
+// Give initiate tour buttons a fun hover effect
+.tol-initiate-tour-button:hover {
+  animation: full-rotate 0.2s linear;
+}
+
+@keyframes full-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to { 
+    transform: rotate(360deg);
+  }
+}
