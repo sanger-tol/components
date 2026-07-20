@@ -36,4 +36,5 @@ export const selectFromDropdown = async (page: Page, dropdown: Locator, values: 
   // a manual sleep is needed. 
   await sleep(200);
   await dropdown.click();
+  await sleep(200);
 }

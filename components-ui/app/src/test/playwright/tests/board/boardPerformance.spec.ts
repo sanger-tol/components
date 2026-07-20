@@ -38,7 +38,9 @@ test("big table", async ({ page }) => {
     {
       // activeColumns: ["Species Name", "Priority"],
       // defaultSort: "Priority"
-      activeColumns: ["Priority"]
+      // activeColumns: ["Priority", "Species Name"]
+      defaultSort: "Priority",
+      activeColumns: ["Species Name"]
     }
   )
 });
