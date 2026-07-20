@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.2`
+
+20-07-2026
+
+- Fixed bug: Can not remove a saved filter in a filter drawer.
+- Fixed bug: Filters are not being calculated in the utility bar tooltips.
+
 ## tol-ui `4.0.1`
 
 17-07-2026
