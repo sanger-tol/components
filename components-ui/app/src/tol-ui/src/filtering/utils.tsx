@@ -283,7 +283,7 @@ export function setFilterInput(params: {
   // filter state
   zone: object;
   // differentials
-  valueExists?: any;
+  hasValue?: boolean;
 }) {
   const {
     operator,
@@ -293,7 +293,7 @@ export function setFilterInput(params: {
     attribute,
     componentId,
     zone,
-    valueExists,
+    hasValue,
   } = params;
   const z = zone as IZone;
 
@@ -305,7 +305,7 @@ export function setFilterInput(params: {
 
   resetFiltersBelow({ id: componentId, zone: z });
 
-  if (valueExists || exists) {
+  if (hasValue || exists) {
     // exists filter removed if value is already set
     if ("exists" in (and_[attribute] || {})) {
       delete and_[attribute]["exists"];

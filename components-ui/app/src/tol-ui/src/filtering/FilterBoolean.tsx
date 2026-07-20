@@ -75,7 +75,7 @@ export function FilterBoolean(props: IFilterInput) {
           attribute: attribute,
           componentId: componentId,
           zone: zone,
-          valueExists: input.length !== 0,
+          hasValue: input.length !== 0,
         });
         setZone({ ...zone });
       }, delay ?? FILTER_INPUT_DELAY),

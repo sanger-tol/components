@@ -14,13 +14,15 @@ export interface PFilterToggle {
   exists: boolean;
   onExists: any;
   disabled?: boolean;
+  hasValue?: boolean;
   inList?: boolean;
   onInList?: any;
   showInListButton?: boolean;
 }
 
 export function FilterToggle(props: PFilterToggle) {
-  const { negate, onNegate, exists, onExists, disabled = false, inList = false, onInList, showInListButton = false } = props;
+  const { negate, onNegate, exists, onExists, disabled = false, hasValue = false, inList = false, onInList, showInListButton = false } = props;
+  const negateDisabled = disabled || (!exists && !hasValue);
 
   const existsButton = (
     <Button
@@ -35,7 +37,7 @@ export function FilterToggle(props: PFilterToggle) {
 
   const negateButton = (
     <Button
-      disabled={disabled}
+      disabled={negateDisabled}
       active={negate}
       className="tol-filter-button negate"
       onClick={() => onNegate(negate)}
@@ -67,20 +69,18 @@ export function FilterToggle(props: PFilterToggle) {
       ) : (
         existsButton
       )}
-      {!disabled ? (
-        <HoverOverlay
-          followCursor
-          contents={
-            negate
-              ? "Remove this filter's negation"
-              : "Negate this filter"
-          }
-        >
-          {negateButton}
-        </HoverOverlay>
-      ) : (
-        negateButton
-      )}
+      <HoverOverlay
+        followCursor
+        contents={
+          negateDisabled && !disabled
+            ? "A filter value must be set before negating."
+            : negate
+              ? "Remove this filter's negation."
+              : "Negate this filter."
+        }
+      >
+        {negateButton}
+      </HoverOverlay>
       {showInListButton && !disabled ? (
         <HoverOverlay
           followCursor
