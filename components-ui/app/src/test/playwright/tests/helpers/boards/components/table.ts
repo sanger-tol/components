@@ -5,7 +5,7 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { clickUtilityBarButton } from "../../utility-bar";
-import { selectFromDropdown } from "../..";
+import { selectFromDropdown, sleep } from "../..";
 
 /**
  * Configured the provided table component with the given config,
@@ -29,11 +29,14 @@ export const configureTable = async (
   // Click the Configure Table button
   await clickUtilityBarButton(page, table, "table-config-button");
   const configDrawer = page.locator(".tol-drawer");
-  await configDrawer.waitFor({ state: "visible" });
+
+  // I unfortunately couldn't find a suitable waiting condition for the opening animation to finish
+  await sleep(200)
 
   // Add the default sort attribute if one was provided
   if (config.defaultSort) {
     await selectFromDropdown(
+      page,
       configDrawer.getByTestId("default-sort-dropdown"),
       [config.defaultSort]
     );
@@ -47,6 +50,7 @@ export const configureTable = async (
   // Add the active columns if they were provided
   if (config.activeColumns) {
     await selectFromDropdown(
+      page,
       configDrawer.getByTestId("active-columns-dropdown"),
       config.activeColumns
     );

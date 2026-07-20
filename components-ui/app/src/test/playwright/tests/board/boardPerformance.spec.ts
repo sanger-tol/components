@@ -12,7 +12,7 @@ import {
   exitEditMode,
   isInHeadlessMode,
   setAuth,
-  setBoard
+  setBoard,
 } from "../helpers";
 
 let BOARD_ID: string;
@@ -32,11 +32,12 @@ test.afterEach(async ({ page }) => {
 
 test("big table", async ({ page }) => {
   await addComponent(page, 0, "table");
-  // await configureTable(
-  //   page,
-  //   page.getByTestId("board-component-table"),
-  //   {
-  //     activeColumns: ["Species Name", "Priority"]
-  //   }
-  // )
+  await configureTable(
+    page,
+    page.getByTestId("board-component-table"),
+    {
+      // activeColumns: ["Species Name", "Priority"],
+      defaultSort: "Priority"
+    }
+  )
 });

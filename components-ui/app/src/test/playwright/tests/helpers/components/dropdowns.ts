@@ -2,25 +2,33 @@
 //
 // SPDX-License-Identifier: MIT
 
-import type { Locator } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
+
+import { sleep } from "../sleep";
 
 /**
  * Selects the requested values from a dropdown
+ * @param page The Playwright page handle
  * @param dropdown Playwright locator handle to the dropdown
  * @param values The values to select
  */
-export const selectFromDropdown = async (dropdown: Locator, values: string[]) => {
+export const selectFromDropdown = async (page: Page, dropdown: Locator, values: string[]) => {
   // Open the dropdown
   await dropdown.click();
-
+  
+  // NOTE: The area where you select from the dropdown is separated from where you click to open
+  // it. It can be reliably selected using `page` because there can only be one open at a time.
   values.forEach(async (value) => {
     // Search for the value
-    await dropdown.locator(".rs-search-box-input").fill(value);
+    await page.locator(".rs-search-box-input").fill(value);
 
     // Select it
-    await dropdown.locator(".rs-check-item").first().click();
+    await page.locator(".rs-check-item").first().click();
   });
 
-  // Close the dropdown
+  // Close the dropdown.
+  // There's some weird thing where it doesn't register properly for a moment, so unfortunately
+  // a manual sleep is needed. 
+  await sleep(200);
   await dropdown.click();
 }

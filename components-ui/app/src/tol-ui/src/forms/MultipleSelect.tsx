@@ -46,6 +46,7 @@ export interface PMultipleSelect {
   icon?: IFormLabelIcon;
   renderMenu?: (menuItem: JSX.Element) => JSX.Element;
   menuClassName?: string;
+  testid?: string;
 }
 
 export function MultipleSelect(props: PMultipleSelect) {
@@ -77,7 +78,8 @@ export function MultipleSelect(props: PMultipleSelect) {
     menuClassName,
     groupBy,
     icon,
-    renderMenu
+    renderMenu,
+    testid,
   } = props;
   const block = isPropDefined(props.block);
 
