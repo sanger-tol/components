@@ -37,7 +37,8 @@ test("big table", async ({ page }) => {
     page.getByTestId("board-component-table"),
     {
       // activeColumns: ["Species Name", "Priority"],
-      defaultSort: "Priority"
+      // defaultSort: "Priority"
+      activeColumns: ["Priority"]
     }
   )
 });

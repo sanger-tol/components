@@ -13,12 +13,17 @@ import { sleep } from "../sleep";
  * @param values The values to select
  */
 export const selectFromDropdown = async (page: Page, dropdown: Locator, values: string[]) => {
+  // Make sure the dropdown is ready to be used
+  await dropdown.waitFor({ state: "visible" });
+  
   // Open the dropdown
   await dropdown.click();
-  
+
   // NOTE: The area where you select from the dropdown is separated from where you click to open
   // it. It can be reliably selected using `page` because there can only be one open at a time.
   values.forEach(async (value) => {
+    await page.locator(".rs-search-box-input").clear();
+    
     // Search for the value
     await page.locator(".rs-search-box-input").fill(value);
 

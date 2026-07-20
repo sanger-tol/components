@@ -37,7 +37,7 @@ export const configureTable = async (
   if (config.defaultSort) {
     await selectFromDropdown(
       page,
-      configDrawer.getByTestId("default-sort-dropdown"),
+      configDrawer.getByTestId("default-sort-dropdown").getByRole("combobox"),
       [config.defaultSort]
     );
   }
@@ -48,10 +48,10 @@ export const configureTable = async (
   }
 
   // Add the active columns if they were provided
-  if (config.activeColumns) {
+  if (config.activeColumns) {    
     await selectFromDropdown(
       page,
-      configDrawer.getByTestId("active-columns-dropdown"),
+      configDrawer.getByTestId("active-columns-dropdown").getByRole("combobox"),
       config.activeColumns
     );
   }
