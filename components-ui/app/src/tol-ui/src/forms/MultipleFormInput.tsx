@@ -7,13 +7,14 @@ SPDX-License-Identifier: MIT
 import { cloneElement, useEffect } from "react";
 import {
   Button,
-  RSForm,
   PButton,
-  createNewInput
+  createNewInput,
+  FormComponentWrapper,
 } from "..";
+import type { TFormField } from "..";
 
 export interface PMultipleFormInput {
-  field: any;
+  field: TFormField;
   formData: object;
   setFormData: (data: object) => void;
   setModifiedFields: (data: object) => void;
@@ -73,8 +74,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
   }
 
   return (
-    <div>
-      {field.label && <RSForm.ControlLabel>{field.label}</RSForm.ControlLabel>}
+    <FormComponentWrapper {...field}>
       <Button {...addButton} />
       {Object.keys(fieldData).map((input, index) => (
         <div
@@ -103,6 +103,6 @@ export function MultipleFormInput(props: PMultipleFormInput) {
           )}
         </div>
       ))}
-    </div>
+    </FormComponentWrapper>
   );
 }

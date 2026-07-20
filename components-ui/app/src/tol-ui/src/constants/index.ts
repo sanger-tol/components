@@ -23,3 +23,4 @@ export * from "./regex.constants";
 export * from "./statistics.constants";
 export * from "./style.constants";
 export * from "./table.constants";
+export * from "./text-editor.constants";

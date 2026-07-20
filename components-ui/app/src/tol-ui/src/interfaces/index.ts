@@ -33,6 +33,7 @@ export * from "./Table";
 export * from "./Tabs";
 export * from "./Tours";
 export * from "./Translators";
+export * from "./TextEditor";
 export * from "./TsDataSource";
 export * from "./TsDocParser";
 export * from "./User";

@@ -4,45 +4,49 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React from "react";
-import { FormLabel, IFormLabelIcon, RSForm, capitaliseFirstLetter } from "..";
+import { FormComponentWrapper, ITextField, RSForm } from "..";
+import type { TTextFieldType } from "..";
 
-export interface PFormTextField {
+export interface PFormTextField extends Omit<ITextField, "type"> {
+  /**
+   * The unique identifier for the form field. This is used to associate the label with the input field.
+   */
   id: string;
-  name: string;
-  label: string;
-  accepter?: React.ReactNode; // Allows custom elements to be passed in
-  helpText?: string;
-  placeholder?: string;
+  /**
+   * The name of the form field. This is used to identify the field when submitting the form.
+   */
   value?: string;
-  onChange?: Function;
-  type?: string;
-  readOnly?: boolean;
-  required?: boolean;
-  centered?: boolean;
-  icon?: IFormLabelIcon;
-  labelInline?: boolean;
+  /**
+   * The callback function that is called when the value of the form field changes.
+   */
+  onChange?: (value: string) => void;
+  /**
+   * The type of the form field. This can be "text", "email", or "password".
+   */
+  type?: TTextFieldType;
+  /**
+   * Error text to display when form fails validation. This will be displayed below the input field.
+   */
+  errorText?: string;
 }
 
 export function FormTextField(props: PFormTextField) {
-  const { id, name, centered, label, accepter, helpText, icon, labelInline, ...rest } =
-    props;
-  let style = {};
-
-  centered ? (style = { ...style, textAlign: "center" }) : null;
+  const {
+    centered,
+    label,
+    helpText,
+    icon,
+    labelInline,
+    errorText,
+    ...controlProps
+  } = props;
 
   return (
-    <RSForm.Group controlId={`form-${id}-${capitaliseFirstLetter(name)}`}>
-      <div className={labelInline ? "tol-form-field-inline" : ""}>
-        <FormLabel label={label} icon={icon} inline={labelInline} />
-        <RSForm.Control
-          style={style}
-          name={name}
-          accepter={accepter}
-          {...rest}
-        />
-        {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
-      </div>
-    </RSForm.Group>
+    <FormComponentWrapper {...props}>
+      <RSForm.Control
+        {...controlProps}
+        style={centered ? { textAlign: "center" } : {}}
+      />
+    </FormComponentWrapper>
   );
 }
