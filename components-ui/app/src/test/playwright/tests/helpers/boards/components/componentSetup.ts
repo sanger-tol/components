@@ -75,9 +75,7 @@ export const addComponentFilter = async (
   // Provide the filter value
   switch (filterType) {
     case "in_list":
-      await filterDrawer.getByRole("combobox").nth(1).click();
-      await filterDrawer.getByText(filterValue).click();
-      await filterDrawer.getByRole("combobox").nth(1).click();
+      await selectFromDropdown(page, filterDrawer.getByRole("combobox").nth(1), [filterValue]);
   }
 
   // Click Apply Filter button
