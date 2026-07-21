@@ -13,7 +13,6 @@ import {
   isInHeadlessMode,
   setAuth,
   setBoard,
-  sleep,
 } from "../helpers";
 
 let BOARD_ID: string;
@@ -27,9 +26,9 @@ test.beforeEach(async ({ page }) => {
   await enterEditMode(page);
 });
 
-test.afterEach(async ({ page }) => {
-  await exitEditMode(page);
-});
+// test.afterEach(async ({ page }) => {
+//   await exitEditMode(page);
+// });
 
 test("big table", async ({ page }) => {
   await addComponent(page, 0, "table");
@@ -37,8 +36,9 @@ test("big table", async ({ page }) => {
     page,
     page.getByTestId("board-component-table"),
     {
-      defaultSort: "Priority",
-      activeColumns: ["Species Name", "Priority"]
+      activeColumns: ["Species Name", "Priority"],
     }
-  )
+  );
+  await exitEditMode(page);
+  
 });

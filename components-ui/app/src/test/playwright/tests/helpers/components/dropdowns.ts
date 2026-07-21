@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Locator, Page } from "@playwright/test";
+
 import { sleep } from "../sleep";
 
 /**
