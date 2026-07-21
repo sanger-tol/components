@@ -1,0 +1,135 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.tol-text-editor {
+  display: flex;
+  flex-direction: column;
+  height: 250px;
+  overflow: hidden;
+  border: 1px solid var(--tol-grey);
+  border-radius: 6px;
+  background-color: var(--tol-bg);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:focus-within {
+    border-color: var(--tol-primary);
+    box-shadow: 0 0 0 3px var(--tol-primary-translucent);
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.2rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--tol-grey);
+
+    .rs-btn {
+      box-shadow: none;
+    }
+  }
+
+  &__toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+
+    &--end {
+      margin-left: auto;
+    }
+  }
+
+  &__toolbar-divider {
+    align-self: stretch;
+    width: 1px;
+    margin: 0.2rem 0.35rem;
+    background-color: var(--tol-grey);
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    cursor: text;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--tol-grey) transparent;
+
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--tol-grey);
+      border-radius: 6px;
+      border: 3px solid transparent;
+      background-clip: padding-box;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      border-width: 2px;
+    }
+  }
+
+  &__footer {
+    padding: 0.4rem 0.75rem;
+    border-top: 1px solid var(--tol-grey);
+    font-size: 12px;
+    text-align: right;
+    color: var(--tol-text);
+    opacity: 0.65;
+
+    kbd {
+      padding: 0.1rem 0.35rem;
+      border: 1px solid var(--tol-grey);
+      border-radius: 3px;
+      background-color: var(--tol-grey-translucent);
+      color: var(--tol-text);
+      font-size: 11px;
+    }
+  }
+}
+
+.tiptap.tol-text-editor__content {
+  min-height: 100%;
+  padding: 0.75rem 1rem;
+
+  &:focus,
+  &:focus-visible,
+  &.ProseMirror-focused {
+    outline: none;
+    box-shadow: none;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .tol-text-editor {
+    max-height: 70vh;
+
+    &__toolbar {
+      padding: 0.35rem 0.5rem;
+    }
+
+    &__toolbar-divider {
+      display: none;
+    }
+
+    &__footer {
+      display: none;
+    }
+  }
+
+  .tiptap.tol-text-editor__content {
+    padding: 0.5rem 0.75rem;
+  }
+}

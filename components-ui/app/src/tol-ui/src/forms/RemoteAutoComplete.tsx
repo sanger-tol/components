@@ -5,26 +5,31 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useRef } from "react";
-import {
-  AutoComplete,
-  PAutoComplete,
+import { AutoComplete } from "..";
+import type {
   IRemoteTarget,
   IRemoteAutoCompleteData,
+  TAutoCompleteValue,
+  TFormRemoteAutoCompleteField,
 } from "..";
 
-export interface PRemoteAutoComplete extends PAutoComplete, IRemoteTarget {
-  label: string;
-  data: string[];
+export interface PRemoteAutoComplete
+  extends TFormRemoteAutoCompleteField, IRemoteTarget {
   value: string;
-  onChange?: any;
+  onChange?: (value: TAutoCompleteValue) => void;
   displayFields?: string[];
   displayFieldsTitle?: boolean;
   searchBy: string;
-  errorText?: string;
 }
 
 export function RemoteAutoComplete(props: PRemoteAutoComplete) {
-  const { onChange, dataSource, objectType, displayFields = [], displayFieldsTitle, searchBy } = props;
+  const {
+    onChange,
+    dataSource,
+    objectType,
+    displayFields = [],
+    searchBy,
+  } = props;
   const [filteredData, setFilteredData] = useState<IRemoteAutoCompleteData>({});
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -66,9 +71,9 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
           if (item[searchBy] === value) {
             matchedId = item.id;
           }
-          newData[item[searchBy]] = displayFields.map(
-            (field: string) => ({ [field]: item[field] })
-          );
+          newData[item[searchBy]] = displayFields.map((field: string) => ({
+            [field]: item[field],
+          }));
         });
 
         // update the ref so we keep track of the matched ID
@@ -87,18 +92,15 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
     }, 400);
   };
 
-
   return (
     <div>
       <AutoComplete
+        {...props}
         onChange={handleChange}
-        label={props.label}
         data={Object.keys(filteredData)}
         value={props.value}
-        displayFields={filteredData}
-        displayFieldsTitle={displayFieldsTitle}
         loading={loading}
-        errorText={props.errorText}
+        displayFields={filteredData}
       />
     </div>
   );

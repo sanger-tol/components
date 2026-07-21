@@ -12,42 +12,31 @@ import {
   Loader,
   StatusMessage,
   useStateFallback,
-  TsDataSource,
   TMessageType,
   IMessage,
   IWaitingUpload,
   IFileData,
-  RSForm,
+  TFormDropzoneField,
+  FormComponentWrapper,
   MAX_FILE_SIZE,
   USER_SHOWN_FILE_TYPE_DEFAULTS,
 } from "..";
 
-export interface PDropzone {
-  resource: string;
-  dataSource: TsDataSource;
-  fileType: string;
-  generateMessages?: (apiRes: any) => IMessage[];
-  setResponse?: any;
+export interface PDropzone extends TFormDropzoneField {
+  name?: string;
   errorText?: string;
-  onFileDrop?: (length: boolean) => void;
-  fileListVisible?: boolean;
-  fileList?: IFileData[];
-  setFileList?: (fileList: IFileData[]) => void;
-  parentToSubmit?: boolean;
-  resetKey?: string | number;
-  validating?: boolean;
   allowedSize?: string;
   allowedFileTypes?: string;
 }
 
 export function Dropzone(props: PDropzone) {
   const {
+    name,
     resource,
     dataSource,
     fileType,
     generateMessages,
     setResponse,
-    errorText,
     onFileDrop,
     fileListVisible = false,
     parentToSubmit = false,
@@ -55,13 +44,13 @@ export function Dropzone(props: PDropzone) {
     validating = false,
     allowedSize = MAX_FILE_SIZE,
     allowedFileTypes = USER_SHOWN_FILE_TYPE_DEFAULTS, // This is more concise than the actual allowed file list,
-                                                      // found under the prop 'fileType'.
+    // found under the prop 'fileType'.
   } = props;
 
   const [fileList, setFileList] = useStateFallback<IFileData[]>(
     props.fileList,
     props.setFileList,
-    []
+    [],
   );
   const [validate, setValidate] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +74,7 @@ export function Dropzone(props: PDropzone) {
     formData.set(
       "file",
       fileList[fileList.length - 1].blobFile,
-      fileList[fileList.length - 1].name
+      fileList[fileList.length - 1].name,
     );
 
     dataSource
@@ -136,7 +125,7 @@ export function Dropzone(props: PDropzone) {
   };
 
   return (
-    <RSForm.Group controlId={resetKey?.toString()}>
+    <FormComponentWrapper {...props} id={resetKey?.toString() ?? name}>
       <div className="tol-dropzone" key={resetKey}>
         <Uploader
           action="temp-error-please-ignore"
@@ -202,9 +191,6 @@ export function Dropzone(props: PDropzone) {
           <></>
         )}
       </div>
-      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
-        {errorText}
-      </RSForm.ErrorMessage>
-    </RSForm.Group>
+    </FormComponentWrapper>
   );
 }

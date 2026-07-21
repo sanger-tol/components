@@ -6,27 +6,19 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { Checkbox, CheckboxGroup } from "rsuite";
-import { RSForm, ICheckboxConfig } from "..";
+import { FormComponentWrapper, TFormCheckboxFields } from "..";
 
-
-export interface PFormCheckboxes {
+export interface PFormCheckboxes extends TFormCheckboxFields {
   id: string;
-  label?: string;
   errorText?: string;
-  checkboxConfig: ICheckboxConfig;
   checkedItems: string[];
-  setCheckedItems: Function;
-  inline?: boolean;
-  indeterminate?: boolean;
-  hidden?: boolean;
+  setCheckedItems: (value: string[]) => void;
   defaultChecked?: string[];
 }
 
 export function FormCheckboxes(props: PFormCheckboxes) {
   const {
     id,
-    label,
-    errorText,
     checkboxConfig,
     inline,
     indeterminate,
@@ -46,8 +38,7 @@ export function FormCheckboxes(props: PFormCheckboxes) {
 
   return (
     <div style={{ display: hidden ? "none" : "block" }}>
-      <RSForm.Group controlId={id}>
-        {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
+      <FormComponentWrapper {...props}>
         <CheckboxGroup
           id={id}
           name={`${id}-checkbox-group`}
@@ -69,7 +60,10 @@ export function FormCheckboxes(props: PFormCheckboxes) {
                   {field.children}
                   {field.subtext && (
                     <span className="rs-form-help-text">
-                      <span className="tol-danger-colour" style={{ marginLeft: "10px" }}>
+                      <span
+                        className="tol-danger-colour"
+                        style={{ marginLeft: "10px" }}
+                      >
                         *{" "}
                       </span>
                       {field.subtext}
@@ -80,8 +74,7 @@ export function FormCheckboxes(props: PFormCheckboxes) {
             </div>
           ))}
         </CheckboxGroup>
-        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
-      </RSForm.Group>
+      </FormComponentWrapper>
     </div>
   );
 }

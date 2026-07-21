@@ -5,45 +5,45 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { Message, Toaster } from "rsuite";
-import { IFieldMapping, IFormConfig, MISSING_DATA_ERROR } from "..";
-
-/**
- * Displays an error toast with the provided message
- *
- * @param message - The message to display
- * @param toaster - The component managing the toast stack
- */
-export function pushErrorMessage(message: string, toaster: Toaster) {
-  toaster.push(<Message children={message} type="error" showIcon={true} />, {
-    duration: 4000,
-  });
-}
+import {
+  IFieldMapping,
+  IFormConfig,
+  MESSAGE_TYPE,
+  MISSING_DATA_ERROR,
+  PopUpMessage,
+  TFormField,
+} from "..";
 
 /**
  * Sets the initial data in a form to `data`
- *
- * @remarks
- * Designed for the `FormAllInOne` component.
  *
  * @param formConfig - The form config object used to define the form
  * @param setFormData - The state setter for a form data state
  * @param data - The data to be set as the initial data
  */
-export function setInitialData(
+export function setInitialData<T>(
   formConfig: IFormConfig,
-  setFormData: React.Dispatch<React.SetStateAction<object>>,
-  data?: any,
+  setFormData: React.Dispatch<React.SetStateAction<T>>,
+  data?: T,
 ) {
-  setFormData(() => createInitialDataSnapshot(formConfig, data));
-};
+  setFormData(createInitialDataSnapshot<T>(formConfig, data) as T);
+}
 
-export function createInitialDataSnapshot(
+/**
+ * Builds the initial form state object from a form configuration and optional source data.
+ * If source `data` contains a value for a field name, that value is used instead
+ * of the fallback default.
+ *
+ * @param formConfig - Form configuration containing the fields to initialize.
+ * @param data - Optional source object used to pre-fill field values.
+ * @returns A name-keyed object containing normalized initial field values.
+ */
+export function createInitialDataSnapshot<T>(
   formConfig: IFormConfig,
-  data?: any
+  data?: T,
 ): Record<string, any> {
   const initialData: Record<string, any> = {};
-  formConfig.fields.forEach((field: any) => {
+  formConfig.fields.forEach((field: TFormField) => {
     if (field.type === "checkbox" && field.defaultChecked) {
       initialData[field.name] = field.defaultChecked;
     } else if (field.multiple) {
@@ -64,19 +64,19 @@ export function createInitialDataSnapshot(
  * @param onSubmit - Runs if the form is valid
  * @returns A boolean describing whether or not the form was valid
  */
-export function validateForm(
+export function validateForm<T>(
   formRef: React.RefObject<any>,
-  toaster: Toaster,
-  formData: object,
-  onSubmit?: (formData: object, isValid: boolean) => void,
+  formData: T,
+  onSubmit?: (formData: T, isValid: boolean) => void,
 ): boolean {
   if (!formRef.current || !formRef.current.check()) {
-    pushErrorMessage(MISSING_DATA_ERROR, toaster);
+    PopUpMessage({
+      message: MISSING_DATA_ERROR,
+      type: MESSAGE_TYPE.ERROR,
+    });
     return false;
   } else {
-    if (onSubmit) {
-      onSubmit(formData, true);
-    }
+    onSubmit?.(formData, true);
     return true;
   }
 }
@@ -110,7 +110,7 @@ export function applyFieldMappings<T extends Record<string, any>>(
     const sourceValue = data[sourceField];
     if (!sourceValue) continue;
     if (condition && !condition(sourceValue)) continue;
-    if (data[targetField]) continue; // Don't overwrite existing target values
+    if (data[targetField]) continue;
 
     mappedData[targetField as keyof T] = (
       transform ? transform(sourceValue) : sourceValue
@@ -141,11 +141,22 @@ export function applyReadOnlyFields(
   };
 }
 
-export function createNewInput(
+/**
+ * Appends a new empty keyed input under a multi-input field and updates form state.
+ *
+ * When `setModifiedFields` is provided, the same nested field update is mirrored
+ * into the modified-fields state.
+ *
+ * @param fieldName - Name of the top-level form field holding dynamic nested inputs.
+ * @param formData - Current form data object.
+ * @param setFormData - State setter for form data.
+ * @param setModifiedFields - Optional state setter for tracking modified fields.
+ */
+export function createNewInput<T>(
   fieldName: string,
-  formData: object,
-  setFormData: React.Dispatch<React.SetStateAction<object>>,
-  setModifiedFields?: React.Dispatch<React.SetStateAction<object>>,
+  formData: T,
+  setFormData: React.Dispatch<React.SetStateAction<T>>,
+  setModifiedFields?: React.Dispatch<React.SetStateAction<T>>,
 ) {
   const newInput = `${fieldName}${Math.floor(Math.random() * 900) + 100}`;
   const updatedFormData = {
@@ -156,10 +167,8 @@ export function createNewInput(
     },
   };
   setFormData(updatedFormData);
-  if (setModifiedFields) {
-    setModifiedFields((prev) => ({
-      ...prev,
-      [fieldName]: updatedFormData[fieldName],
-    }));
-  }
+  setModifiedFields?.((prev) => ({
+    ...prev,
+    [fieldName]: updatedFormData[fieldName],
+  }));
 }
