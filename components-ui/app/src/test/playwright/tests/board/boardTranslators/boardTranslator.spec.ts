@@ -24,12 +24,12 @@ TRANSLATOR_TEST_INPUTS.forEach(({ zoneObjectTypes, TableFields }) => {
       });
       const userId = JSON.parse(user || '{}').id;
 
-      // Create a board with initial species zone
+      // Create an initial board
       const { boardId, viewId } = await createBoardForUser({
         userId: String(userId),
       });
 
-      // Create additional zones for the remaining zoneObjectTypes
+      // Create additional zones for the board
       let zoneIds: string[] = [ ];
       for (const zoneObjectType of zoneObjectTypes || []) {
         const returnedZoneId = await insertZoneToBoard({
