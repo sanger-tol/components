@@ -173,7 +173,7 @@ export function generateFilter(
       )
     ) continue;
 
-    // Keep self filter as-is; all other components use default + active merged filters.
+    // Keep self filter as-is; all other components use defaultFilter as back-up if filter is empty
     let currentFilter: IFilter = isSelf
       ? (zone.children?.[currentId].filter || {})
       : mergeFilters(
