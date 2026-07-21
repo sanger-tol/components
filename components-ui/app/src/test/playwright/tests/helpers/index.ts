@@ -6,5 +6,6 @@ export * from "./auth";
 export * from "./boards";
 export * from "./components";
 export * from "./meta";
+export * from "./pageActions";
 export * from "./sleep";
 export * from "./utility-bar";

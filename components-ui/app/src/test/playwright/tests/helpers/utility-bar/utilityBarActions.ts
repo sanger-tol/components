@@ -3,29 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 import type { Locator, Page } from "@playwright/test";
-import { sleep } from "../sleep";
 
-const clickWithRetries = async (
-  getLocator: () => Locator,
-  attempts: number = 5,
-  timeoutMs: number = 1_500
-) => {
-  let lastError: unknown;
-
-  for (let attempt = 0; attempt < attempts; attempt++) {
-    try {
-      const locator = getLocator();
-      await locator.waitFor({ state: "visible", timeout: timeoutMs });
-      await locator.click({ timeout: timeoutMs });
-      return;
-    } catch (error) {
-      lastError = error;
-      await sleep(100 * (attempt + 1));
-    }
-  }
-
-  throw lastError;
-};
+import { clickWithRetries, sleep } from "..";
 
 /**
  * Clicks the utility bar button with the testid `testId` on the provided component,
@@ -44,17 +23,12 @@ export const clickUtilityBarButton = async (page: Page, component: Locator, test
   const condensedUtilityBarButton = component.getByTestId("condensed-utility-bar-button");
   const hasCondensedButton = (await condensedUtilityBarButton.count()) > 0;
 
-  // If condensed controls are present, prefer that path and fall back to direct click
-  // when the component re-renders during interactions.
   if (hasCondensedButton) {
-    try {
-      await clickWithRetries(() => component.getByTestId("condensed-utility-bar-button"));
-      await clickWithRetries(() => page.locator("#control-id-clickable").getByTestId(testId));
-      return;
-    } catch {
-      // Fall back to a direct utility-bar click if condensed interactions are unstable.
-    }
+    // Open the condensed utility bar to show the requested button, then click it
+    await clickWithRetries(() => component.getByTestId("condensed-utility-bar-button"));
+    await clickWithRetries(() => page.locator("#control-id-clickable").getByTestId(testId));
+  } else {
+    // Directly click the requested button
+    await clickWithRetries(() => component.getByTestId(testId));
   }
-
-  await clickWithRetries(() => component.getByTestId(testId));
 };
