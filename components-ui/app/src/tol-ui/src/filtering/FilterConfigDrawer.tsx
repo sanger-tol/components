@@ -73,6 +73,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       ? false
       : zone.children?.[id]?.filterPassThrough || false,
   );
+
   // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone
   const [currentFilterZone, setCurrentFilterZone] = useState<IZone>(
     defineZoneWithComponentList(
@@ -80,7 +81,9 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       [{ id: id, filter: deepCopy(savedFilters) }]
     ),
   );
-  const currentFilters = normaliseFilter(generateFilter(currentFilterZone, id));
+
+  // Don't use `generateFilter` as it has a back-up of the defaultFilter
+  const currentFilters = normaliseFilter(currentFilterZone.children?.[id]?.filter);
   const initialFiltersRef = useRef<IFilter | undefined>(normaliseFilter(getInitialFilter()));
 
   const hasPendingChanges = (
