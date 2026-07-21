@@ -2,7 +2,7 @@
 
 ## Overview
 
-This folder handles zone/component filtering and filter composition order.
+This folder handles zone/component filtering.
 
 ```ts
 { and_: { [attribute]: { [operator]: { value?: any, negate?: boolean } } } }
