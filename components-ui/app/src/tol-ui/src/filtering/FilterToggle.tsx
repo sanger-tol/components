@@ -21,7 +21,17 @@ export interface PFilterToggle {
 }
 
 export function FilterToggle(props: PFilterToggle) {
-  const { negate, onNegate, exists, onExists, disabled = false, hasValue = false, inList = false, onInList, showInListButton = false } = props;
+  const {
+    negate,
+    onNegate,
+    exists,
+    onExists,
+    disabled = false,
+    hasValue = false,
+    inList = false,
+    onInList,
+    showInListButton = false,
+  } = props;
   const negateDisabled = disabled || (!exists && !hasValue);
 
   const existsButton = (

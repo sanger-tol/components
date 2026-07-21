@@ -10,6 +10,7 @@ import {
   IView,
   IZone,
   IFilter,
+  IFilterDateBounds,
   IAndAttributes,
   deepCopy,
   isEmptyObject,
@@ -144,6 +145,7 @@ function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThro
  * @param zone - The zone object containing components and their filters.
  * @param id - The identifier of the current component.
  * @param includeOwnSubFilter - A boolean indicating whether to include the component's own sub-filter.
+ * @param includeSelf - A boolean indicating whether to include the current component in the compounded filter.
  * @returns The compounded filter object.
  */
 export function generateFilter(
@@ -162,6 +164,8 @@ export function generateFilter(
 
   // Loop through 'above' components
   for (const currentId of aboveComponents) {
+    const isSelf = currentId === id;
+
     // Exclude pass throughs except self
     if (
       shouldFilterPassThrough(
@@ -169,15 +173,17 @@ export function generateFilter(
       )
     ) continue;
 
-    // Get the current filter, using the default filter as a base
-    let currentFilter: IFilter = mergeFilters(
-      zone.children?.[currentId].defaultFilter || {},
-      zone.children?.[currentId].filter || {},
-    );
+    // Keep self filter as-is; all other components use default + active merged filters.
+    let currentFilter: IFilter = isSelf
+      ? (zone.children?.[currentId].filter || {})
+      : mergeFilters(
+          zone.children?.[currentId].defaultFilter || {},
+          zone.children?.[currentId].filter || {},
+        );
 
     // Include sub filter if required
     const subFilter = zone.children?.[currentId].subFilter;
-    if ((currentId !== id || includeOwnSubFilter) && subFilter) {
+    if ((!isSelf || includeOwnSubFilter) && subFilter) {
       currentFilter = mergeFilters(currentFilter, subFilter);
     }
 
@@ -410,7 +416,10 @@ export function filterListener(
     setDisabled?: any;
     emptyValue: any;
     zoneToValue: (filterValue: any, exisitingValue?: any) => any;
-    // Whether to only listen to the component's own filter changes, ignoring changes from components above in the hierarchy
+    /**
+     * Whether to only listen to the component's own filter changes,
+     * ignoring changes from components above in the hierarchy
+     */
     onlyUpdateMyValues?: boolean;
   },
   dependencies?: any[],
@@ -602,3 +611,121 @@ export function operatorToSymbol(operator: string, values?: string[]) {
       return "contains";
   }
 };
+
+/**
+ * Parses an unknown value into a valid Date.
+ *
+ * @param value The raw filter value.
+ * @returns A valid Date instance, or `null` if parsing fails.
+ */
+function toValidDate(value: any) {
+  const date = value instanceof Date ? new Date(value) : new Date(String(value));
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+/**
+ * Normalises a date to the start of day in local time.
+ *
+ * @param date The source date.
+ * @returns A new Date set to 00:00:00.000.
+ */
+function startOfDay(date: Date) {
+  const normalized = new Date(date);
+  normalized.setHours(0, 0, 0, 0);
+  return normalized;
+}
+
+/**
+ * Checks whether a Date timestamp is at local end-of-day.
+ *
+ * @param date The date to inspect.
+ * @returns `true` when the time is 23:59:59.999.
+ */
+function isEndOfDay(date: Date) {
+  return (
+    date.getHours() === 23 &&
+    date.getMinutes() === 59 &&
+    date.getSeconds() === 59 &&
+    date.getMilliseconds() === 999
+  );
+}
+
+/**
+ * Converts a `gte` date filter value to an inclusive lower day-bound.
+ *
+ * @param date The `gte` filter value.
+ * @returns The normalised start-of-day bound.
+ */
+function getLowerBound(date: Date) {
+  return startOfDay(date);
+}
+
+/**
+ * Converts an `lt` date filter value to an inclusive upper day-bound.
+ *
+ * @param date The `lt` filter value.
+ * @returns The latest allowed day (start-of-day), accounting for end-of-day timestamps.
+ */
+function getUpperBound(date: Date) {
+  const normalized = startOfDay(date);
+  if (!isEndOfDay(date)) {
+    normalized.setDate(normalized.getDate() - 1);
+  }
+  return normalized;
+}
+
+/**
+ * Computes incoming date bounds for an attribute based on zone-level and upstream component filters.
+ *
+ * @param attribute The filter attribute key.
+ * @param componentId The current component id.
+ * @param zone The current zone context.
+ * @returns A pair of inclusive day bounds used to disable out-of-range dates.
+ */
+export function getIncomingDateBounds(
+  attribute: string,
+  componentId: string,
+  zone: IZone,
+) {
+  const bounds: IFilterDateBounds = { minDate: null, maxDate: null };
+  const incomingFilter = generateFilter(zone, componentId, false, false);
+  const attributeFilters = incomingFilter?.and_?.[attribute];
+
+  if (!attributeFilters) return bounds;
+
+  const minDate = toValidDate(attributeFilters["gte"]?.value);
+  if (minDate) {
+    bounds.minDate = getLowerBound(minDate);
+  }
+
+  const maxDate = toValidDate(attributeFilters["lt"]?.value);
+  if (maxDate) {
+    bounds.maxDate = getUpperBound(maxDate);
+  }
+
+  return bounds;
+}
+
+/**
+ * Returns true when a day is outside incoming date bounds and should be disabled in date picker UIs.
+ *
+ * @param date The calendar day being evaluated.
+ * @param bounds The inclusive lower/upper bounds derived from incoming filters.
+ * @returns `true` if the date should be disabled.
+ */
+export function shouldDisableDateOutsideBounds(
+  date: Date,
+  bounds: IFilterDateBounds,
+) {
+  const normalizedDate = startOfDay(date);
+  if (bounds.minDate && normalizedDate < bounds.minDate) {
+    return true;
+  }
+  if (bounds.maxDate && normalizedDate > bounds.maxDate) {
+    return true;
+  }
+  if (bounds.minDate && bounds.maxDate && bounds.minDate > bounds.maxDate) {
+    return true;
+  }
+  return false;
+}

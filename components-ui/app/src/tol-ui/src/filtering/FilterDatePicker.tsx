@@ -9,18 +9,24 @@ import { DateRangePicker } from "rsuite";
 import {
   stopPropagation,
   IFilterInput,
+  TFilterDateRangeValue,
   setFilterInput,
   filterListener,
   FilterToggle,
+  getIncomingDateBounds,
+  shouldDisableDateOutsideBounds,
 } from "..";
 
 
 export function FilterDatePicker(props: IFilterInput) {
   const { attribute, componentId, rename, zone, setZone } = props;
-  const [value, setValue] = useState<any>();
+  const [value, setValue] = useState<TFilterDateRangeValue>(null);
   const [disabled, setDisabled] = useState(false);
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
+
+  // Get the min and max date bounds for the date picker based on the incoming filter values
+  const disabledBounds = getIncomingDateBounds(attribute, componentId, zone);
 
   filterListener({
     attribute: attribute,
@@ -32,13 +38,17 @@ export function FilterDatePicker(props: IFilterInput) {
     setNegate: setNegate,
     setDisabled: setDisabled,
     emptyValue: null,
-    zoneToValue: (filterValue: any, exisitingValue: any) => {
-      if (exisitingValue === null) return filterValue; // first iteration
-      return [new Date(exisitingValue), new Date(filterValue)]; // second iteration
+    zoneToValue: (filterValue: any, existingValue: TFilterDateRangeValue) => {
+      const nextDate =
+        filterValue instanceof Date ? new Date(filterValue) : new Date(String(filterValue));
+      if (Number.isNaN(nextDate.getTime())) return existingValue;
+      if (existingValue === null) return [nextDate, nextDate];
+      return [existingValue[0], nextDate];
     },
+    onlyUpdateMyValues: true,
   });
 
-  const onFilter = (input: string[]) => {
+  const onFilter = (input: TFilterDateRangeValue) => {
     const from = input !== null ? new Date(input[0]) : null;
     const to = input !== null ? new Date(input[1]) : null;
     if (from !== null) from.setHours(0, 0, 0, 0);
@@ -112,12 +122,11 @@ export function FilterDatePicker(props: IFilterInput) {
     <div className="tol-date-filter" onClick={stopPropagation}>
       <DateRangePicker
         block
-        // @ts-ignore
         onChange={onFilter}
         value={value}
         placeholder={rename}
         format="dd/MM/yyyy"
-        disabled={disabled}
+        shouldDisableDate={(date) => shouldDisableDateOutsideBounds(date, disabledBounds)}
         preventOverflow
       />
       <FilterToggle
@@ -125,6 +134,7 @@ export function FilterDatePicker(props: IFilterInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
+        disabled={disabled}
         hasValue={value !== null && value !== undefined}
       />
     </div>

@@ -214,6 +214,7 @@ export function FilterMultiSelect(props: IFilterInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
+        disabled={loading}
         hasValue={values.length !== 0}
       />
     </div>
