@@ -25,6 +25,10 @@ This folder handles zone/component filtering and filter composition order.
 - Multi-select inputs: the control stays usable, but the option list is filtered by upstream constraints, so users only see valid choices.
 - Date range inputs: the control stays usable, but days outside upstream bounds are disabled in the calendar.
 
+### Operator toggles
+- Exists: toggling this will remove an inputted value filter. They cannot coexist.
+- Negate: you can only toggle this once a filter has been added. You cannot negate 'nothing'.
+
 ## `filter` vs `defaultFilter` vs `subFilter`
 
 - `filter`: the active filter currently applied.
