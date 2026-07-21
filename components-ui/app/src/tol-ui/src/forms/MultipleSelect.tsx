@@ -6,55 +6,29 @@ SPDX-License-Identifier: MIT
 
 import { Checkbox, CheckPicker as RSCheckPicker } from "rsuite";
 import {
-  RSForm,
   isPropDefined,
   IData,
-  FormLabel,
-  IFormLabelIcon
+  FormComponentWrapper,
+  TFormMultipleSelectField,
 } from "..";
 
-
-export interface PMultipleSelect {
-  sticky?: boolean;
-  block?: boolean;
-  data: string[] | IData[];
+export interface PMultipleSelect extends TFormMultipleSelectField {
+  name?: string;
   value: string[];
-  setValue: any;
+  setValue: (value: string[]) => void;
   errorText?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  loading?: boolean;
-  open?: boolean;
-  onOpen?: any;
-  onEntering?: any;
-  onClose?: any;
-  onClean?: any;
-  onClick?: any;
-  renderMenuItem?: any;
-  renderValue?: any;
-  noSearch?: boolean;
-  noSelectAll?: boolean;
-  label?: string;
-  disabledItemValues?: string[];
-  searchBy?: (keyword: string, label: any, item: any) => boolean;
-  caretAs?: any;
   renderExtraFooter?: any;
-  className?: string;
-  onExit?: any;
-  onExiting?: any;
-  groupBy?: string;
-  icon?: IFormLabelIcon;
   renderMenu?: (menuItem: JSX.Element) => JSX.Element;
   menuClassName?: string;
 }
 
 export function MultipleSelect(props: PMultipleSelect) {
   const {
+    name,
     sticky,
     data,
     value,
     setValue,
-    errorText,
     placeholder,
     disabled,
     loading,
@@ -68,7 +42,6 @@ export function MultipleSelect(props: PMultipleSelect) {
     renderValue,
     noSearch,
     noSelectAll,
-    label,
     disabledItemValues,
     searchBy,
     caretAs,
@@ -76,15 +49,13 @@ export function MultipleSelect(props: PMultipleSelect) {
     className,
     menuClassName,
     groupBy,
-    icon,
     renderMenu,
   } = props;
   const block = isPropDefined(props.block);
 
-  const formattedData: any =
-    data.length > 0 && typeof data[0] === "string"
-      ? data.map((i) => ({ label: i, value: i }))
-      : data;
+  const formattedData: IData[] = data.map((item) =>
+    typeof item === "string" ? { label: item, value: item } : item,
+  );
 
   const allValues = formattedData.map((item) => item.value);
 
@@ -116,8 +87,12 @@ export function MultipleSelect(props: PMultipleSelect) {
   };
 
   return (
-    <RSForm.Group controlId="formMultipleSelect" as="span">
-      <FormLabel label={label} icon={icon} />
+    <FormComponentWrapper
+      {...props}
+      id={name}
+      as="span"
+      errorMessageClassName="tol-multiple-select-error-message"
+    >
       <span onClick={onClick}>
         <RSCheckPicker
           groupBy={groupBy}
@@ -147,15 +122,6 @@ export function MultipleSelect(props: PMultipleSelect) {
           menuClassName={menuClassName}
         />
       </span>
-      {/*
-        If there is a multiple select toggle filter, MultipleSelect being an RSForm.Group
-        pushes it downwards. To fix this, MultipleSelect has been made a span. This fixed the
-        filter but made the error message too high up, so this class moves it back down again
-        See `_form.scss`
-      */}
-      <span className="tol-multiple-select-error-message">
-        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
-      </span>
-    </RSForm.Group>
+    </FormComponentWrapper>
   );
 }

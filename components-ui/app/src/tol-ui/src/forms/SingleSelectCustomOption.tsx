@@ -11,35 +11,22 @@ when 'other' is selected, allowing for custom response
 
 import { useState, useEffect } from "react";
 import {
-  RSForm,
   SingleSelect,
   FormTextField,
-  FormLabel,
-  IFormLabelIcon,
+  FormComponentWrapper,
+  TFormSingleSelectCustomOptionField,
 } from "..";
 
-export interface PSingleSelectCustomOption {
+export interface PSingleSelectCustomOption extends TFormSingleSelectCustomOptionField {
   id: string;
+  name?: string;
   value: string;
-  setValue: Function;
+  setValue: (value: string) => void;
   errorText?: string;
-  data: string[];
-  label?: string;
-  customOptionPlaceholder?: string;
-  icon?: IFormLabelIcon;
 }
 
 export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
-  const {
-    id,
-    value,
-    setValue,
-    data,
-    label,
-    customOptionPlaceholder,
-    errorText,
-    icon,
-  } = props;
+  const { id, value, setValue, data, label, customOptionPlaceholder } = props;
 
   const [selectedOption, setSelectedOption] = useState("");
   const [customValue, setCustomValue] = useState("");
@@ -84,36 +71,26 @@ export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
   };
 
   return (
-    <>
-      <RSForm.Group
-        controlId={`form${
-          label ? label.replace(/\s+/, "") : "OtherOptionSelect"
-        }`}
-      >
-        <FormLabel label={label || "Select an option:"} icon={icon} />
-        <SingleSelect
-          data={data}
-          placeholder="Please Select..."
-          value={selectedOption}
-          onChange={handleSelectChange}
-          block
+    <FormComponentWrapper {...props} label={label || "Select an option:"}>
+      <SingleSelect
+        data={data}
+        placeholder="Please Select..."
+        value={selectedOption}
+        onChange={handleSelectChange}
+        block
+      />
+      {showCustomBox && (
+        <FormTextField
+          id={`form-${id}-custom-${label}`}
+          name={`custom${label ? label.replace(/\s+/, "") : "FormTextField"}`}
+          label={`Other ${label || "Option"}`}
+          placeholder={`${
+            customOptionPlaceholder || "Please enter a custom option..."
+          }`}
+          value={customValue}
+          onChange={handleCustomValueChange}
         />
-        {showCustomBox && (
-          <FormTextField
-            id={`form-${id}-custom-${label}`}
-            name={`custom${label ? label.replace(/\s+/, "") : "FormTextField"}`}
-            label={`Other ${label || "Option"}`}
-            placeholder={`${
-              customOptionPlaceholder || "Please enter a custom option..."
-            }`}
-            value={customValue}
-            onChange={handleCustomValueChange}
-          />
-        )}
-        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
-          {errorText}
-        </RSForm.ErrorMessage>
-      </RSForm.Group>
-    </>
+      )}
+    </FormComponentWrapper>
   );
 }

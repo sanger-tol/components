@@ -50,6 +50,11 @@ export interface PUseFormData<T> {
    * condition (e.g. a completed profile, required fields present, etc.).
    */
   isComplete?: (data: T | null) => boolean;
+  /**
+   * Optional additional parts to append to the query key for React Query.
+   * This can be used to create unique query keys for different instances of the same form.
+   */
+  queryKeyParts?: string[];
 }
 
 /**
@@ -69,12 +74,20 @@ export const useFormData = <T>(props: PUseFormData<T>) => {
     errorMessage,
     enabledCondition,
     isComplete,
+    queryKeyParts = [],
   } = props;
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
+  const userId = user?.id ? String(user.id) : undefined;
+  const queryKey = [
+    formName,
+    userId ?? "pending-user",
+    ...(queryKeyParts.length > 0 ? queryKeyParts : ["unnamed-form"]),
+  ];
+
   const { data, isLoading, isError, error } = useQueryData<T>(
-    [formName, user?.id!],
+    queryKey,
     () =>
       fetchFormData<T>(dataSource, objectType, andFilter ?? {}).catch((err) => {
         console.error("fetchFormData failed:", err);

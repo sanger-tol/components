@@ -23,6 +23,7 @@ export interface PModal {
   onEnter?: () => void;
   onExited?: () => void;
   testid?: string;
+  onOpen?: () => void;
 }
 
 export function Modal(props: PModal) {
@@ -42,6 +43,7 @@ export function Modal(props: PModal) {
     onEnter,
     onExited,
     testid,
+    onOpen,
   } = props;
 
   const handleClose = () => {
@@ -57,6 +59,7 @@ export function Modal(props: PModal) {
         onClose={onClose || handleClose}
         /* @ts-ignore */
         size={size}
+        onOpen={onOpen}
         className={className}
         onEnter={onEnter}
         onExited={onExited}

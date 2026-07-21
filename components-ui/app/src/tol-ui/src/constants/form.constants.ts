@@ -10,4 +10,4 @@ export const UNSUPPORTED_FIELD_TYPE = "Unsupported field type:";
 
 export const PRE_DEFINED_FORM_TYPES = {
     USER_PROFILE: "userProfile",
-}
+} as const;
