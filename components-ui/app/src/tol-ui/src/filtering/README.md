@@ -10,14 +10,14 @@ This folder handles zone/component filtering and filter composition order.
 
 ## How the filtering system works:
 
-1. Filters trickle throughout a Zone and a whole Board with translators.
-2. A filter set in a higher control is treated as an upstream constraint for controls below it.
+1. Filters trickle throughout a Zone. This can be expanded on to a whole Board with translators.
+2. A filter set in a higher entity is treated as an upstream constraint for controls below it.
 3. Each lower control reads those upstream constraints before deciding what the user can edit/select.
 
 #### When is a filter disabled or restricted?
 
 - If a filter is saved against the component you are looking at, it will act as a pre-filled filter that can be removed by the user.
-- If a filter is saved above the component you are looking at, it will have restricted capabilities. These can be different depending on the input type. See below.
+- If a filter is saved above the component you are looking at, it will have restricted capabilities. These can vary depending on the input type. See below.
 
 #### What this means by input type:
 
@@ -29,7 +29,7 @@ This folder handles zone/component filtering and filter composition order.
 - Exists: toggling this will remove an inputted value filter. They cannot coexist.
 - Negate: you can only toggle this once a filter has been added. You cannot negate 'nothing'.
 
-## `filter` vs `defaultFilter` vs `subFilter`
+## Behind the scenes
 
 - `filter`: the active filter currently applied.
 - `defaultFilter`: the baseline filter used on reset and is a fall-back for non-self entries.
