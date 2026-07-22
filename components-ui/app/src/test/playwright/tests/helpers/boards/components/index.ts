@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
+export * from "./componentInfo";
 export * from "./componentSetup";
 export * from "./componentUpdates";
 export * from "./table";
