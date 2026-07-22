@@ -7,30 +7,31 @@ import type { Locator, Page } from "@playwright/test";
 
 import { clickUtilityBarButton } from "../../utility-bar";
 import { selectFromDropdown } from "../../components";
+import { getComponentCount } from "./componentInfo";
 
 /**
  * Adds the specified component to the specified zone.
  * It checks whether the component was created successfully.
  * @param page The Playwright page handle
- * @param zoneIndex The zone to add this component to. Starts at 0 for the first zone in the board
- * @param component The name of the component type to add (lowercase)
+ * @param zone Playwright locator handle to the zone to add a component to
+ * @param componentType The type of component this is (needed to derive the testId)
  * (this will be picked from the component select modal)
  * @param size The component size to select in the component select modal
  */
 export const addComponent = async (
   page: Page,
-  zoneIndex: number,
-  component: string,
+  zone: Locator,
+  componentType: string,
   size: string = "Small",
 ) => {
   // Get how many of this component type exist already (so we can check one was added afterwards)
-  const countBefore = (await page.getByTestId(`board-component-${component}`).all()).length;
+  const countBefore = await getComponentCount(page, componentType);
 
   // Click the Add Component button for the desired zone
-  await page.getByTestId("add-component-button").nth(zoneIndex).click();
+  await zone.getByTestId("add-component-button").click();
 
   // Select the component type in the modal
-  await page.getByTestId(`component-option-${component}`).click();
+  await page.getByTestId(`component-option-${componentType}`).click();
 
   // Select the component size in the modal
   await page.getByText(size).click();
@@ -41,8 +42,9 @@ export const addComponent = async (
   // Ensure the component was added
   // I have absolutely no idea why, but if this visibility check (which should be redundant)
   // is removed, then the count retrieval afterwards does not work.
-  await expect(await page.getByTestId(`board-component-${component}`)).toBeVisible();
-  const countAfter = await page.getByTestId(`board-component-${component}`).count();
+  await expect(await page.getByTestId(`board-component-${componentType}`)).toBeVisible();
+
+  const countAfter = await getComponentCount(page, componentType);
   await expect(countAfter).toBe(countBefore + 1);
 };
 
