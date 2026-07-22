@@ -48,7 +48,6 @@ export const addComponent = async (
 
 /**
  * Adds a filter onto the provided component
- * Adds a filter onto the `componentIndex`th component of the `component` kind
  * @param page The Playwright page handle
  * @param component Playwright locator handle to the component to filter
  * @param componentType The type of component this is (needed to derive the testId)
