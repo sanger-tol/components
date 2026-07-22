@@ -155,7 +155,7 @@
     justify-content: center;
     pointer-events: auto; // captures clicks
     cursor: move;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(3px);
     border-radius: var(--tol-border-radius);
     background-color: color-mix(in srgb, var(--tol-bg) 50%, transparent);
   }

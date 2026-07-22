@@ -6,11 +6,22 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.2`
+
+20-07-2026
+
+- Added datetime filter specificity.
+- DefaultFilter is now only defaulted to for above components and not self.
+- Fixed bug: Can not remove a saved filter in a filter drawer.
+- Fixed bug: Filters are not being calculated in the utility bar tooltips.
+
 ## tol-ui `4.0.1`
 
-16-07-2026
+17-07-2026
 
-- Fix requestedFields for fields used in Cell Renderer params.
+- Fixed bug: requestedFields for fields used in Cell Renderer params
+- Fixed bug: Filters are not being calculated in the utility bar tooltips.
+
 
 ## tol-ui `4.0.0`
 

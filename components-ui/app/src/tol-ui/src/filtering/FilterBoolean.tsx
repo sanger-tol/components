@@ -12,6 +12,7 @@ import {
   MultipleSelect,
   StatusMessage,
   PopUpMessage,
+  FILTER_INPUT_DELAY,
 } from "..";
 
 
@@ -74,10 +75,10 @@ export function FilterBoolean(props: IFilterInput) {
           attribute: attribute,
           componentId: componentId,
           zone: zone,
-          valueExists: input.length !== 0,
+          hasValue: input.length !== 0,
         });
         setZone({ ...zone });
-      }, delay ?? 800),
+      }, delay ?? FILTER_INPUT_DELAY),
     );
   };
 
