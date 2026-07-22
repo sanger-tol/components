@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.3`
+
+22-07-2026
+
+- Adding prop to SmartApp to remove the footer
+
 ## tol-ui `4.0.2`
 
 20-07-2026
