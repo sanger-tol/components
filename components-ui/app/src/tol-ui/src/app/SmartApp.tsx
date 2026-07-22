@@ -99,6 +99,10 @@ export interface PSmartApp {
    */
   routePrefix?: string;
   /**
+   * If true, removes the footer from the application.
+   */
+  removeFooter?: boolean;
+  /**
    * Optional configuration for the user profile form, including base and additional configs.
    * If not provided, the default configuration will be used.
    */
@@ -121,6 +125,7 @@ export function SmartApp(props: PSmartApp) {
     register = false,
     configurableBoards = false,
     routePrefix,
+    removeFooter = false,
     profileFormConfigs,
   } = props;
 
@@ -305,7 +310,7 @@ export function SmartApp(props: PSmartApp) {
                   )}
                 </div>
               </div>
-              <Footer />
+              {!removeFooter && <Footer />}
             </Router>
           </GlobalLoadingProvider>
         </AuthProvider>
