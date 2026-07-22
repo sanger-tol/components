@@ -23,7 +23,7 @@ test.beforeEach(async ({ page }) => {
   await setAuth(page);
   await setBoard(page, BOARD_ID);
   await enterEditMode(page);
-  await addComponent(page, 0, "table", "large");
+  await addComponent(page, page.getByTestId("zone").first(), "table", "large");
 });
 
 test.afterEach(async ({ page }) => {
@@ -43,7 +43,11 @@ const openTableConfig = async (page: Page) => {
   }
 
   await closePickerPopup(page);
-  await clickUtilityBarButton(page, "table-config-button", 0);
+  await clickUtilityBarButton(
+    page,
+    page.getByTestId("board-component-table"),
+    "table-config-button"
+  );
   await expect(drawer).toBeVisible();
 };
 const getColumnSelector = (page: Page) =>

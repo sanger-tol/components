@@ -480,8 +480,13 @@
   color: var(--rs-form-errormessage-text);
 }
 
-.zone-modal-labels {
+.tol-zone-modal-labels {
   margin-bottom: 5px !important;
+}
+
+.tol-zone-modal-title {
+  display: flex;
+  justify-content: space-between;
 }
 
 // temp - accordion header hover
@@ -501,9 +506,4 @@
   .rs-modal-footer span {
     margin: 0 !important;
   }
-}
-
-.tol-zone-modal-title {
-  display: flex;
-  justify-content: space-between;
 }

@@ -23,7 +23,7 @@ test.beforeEach(async ({ page }) => {
   await setAuth(page);
   await setBoard(page, BOARD_ID);
   await enterEditMode(page);
-  await addComponent(page, 0, "table", "large");
+  await addComponent(page, page.getByTestId("zone").first(), "table", "large");
 });
 
 const tableDrawer = (page: Page) => page.getByTestId("drawer-wrapper").first();
@@ -66,7 +66,7 @@ test.afterEach(async ({ page }) => {
 });
 
 const openTableConfig = async (page: Page) => {
-  await clickUtilityBarButton(page, "table-config-button", 0);
+  await clickUtilityBarButton(page, page.getByTestId("board-component-table"), "table-config-button");
   await expect(page.locator(".rs-drawer-wrapper")).toBeVisible();
 };
 

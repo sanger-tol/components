@@ -10,6 +10,7 @@ import {
   isInHeadlessMode,
   createZone,
   addView,
+  clickWithRetries,
 } from "../helpers";
   
 test.use({ headless: isInHeadlessMode });
@@ -20,7 +21,6 @@ test.beforeEach(async ({ page }) => {
 
 
 test("User can create a board", async ({ page }) => {
-
     // Navigate to profile dropdown and click My Boards
     const profileDropdown = page.getByTestId("profile-dropdown");
     await expect(profileDropdown).toBeVisible();
@@ -28,14 +28,14 @@ test("User can create a board", async ({ page }) => {
     await page.getByRole("link", { name: "My Boards" }).click();
 
     // Create a new board
-    await page.getByTestId("create-new-board-button").click();
+    await clickWithRetries(() => page.getByTestId("create-new-board-button"));
 
     // Add a new zone
     await createZone(page);
 
     await enterEditMode(page);
     // Add a new component to the zone
-    await addComponent(page, 0, "table");
+    await addComponent(page, page.getByTestId("zone").first(), "table");
 
     await addView(page);
 });

@@ -44,6 +44,7 @@ export interface PAttributeSelector extends IRemoteTarget {
   allowedCardinality?: IAllowedCardinality;
   groupBy?: boolean;
   advanceTab?: boolean;
+  testid?: string;
 }
 
 export function AttributeSelector(props: PAttributeSelector) {
@@ -67,7 +68,8 @@ export function AttributeSelector(props: PAttributeSelector) {
     allowedCardinality,
     setAttributeMeta,
     groupBy,
-    advanceTab
+    advanceTab,
+    testid
   } = props;
 
   const [loading, setLoading] = useState(true);
@@ -136,7 +138,7 @@ export function AttributeSelector(props: PAttributeSelector) {
   if (loading) return <></>;
 
   return (
-    <div className="tol-attribute-selector">
+    <div className="tol-attribute-selector" data-testid={testid}>
       <MultipleSelect
         className="tol-attribute-selector-select"
         menuClassName={`tol-attribute-selector-menu${maxSelections === 1 && ' tol-single-selector'}`}
