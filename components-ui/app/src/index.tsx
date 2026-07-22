@@ -48,7 +48,6 @@ root.render(
     brand="Components"
     pageElements={pageElements}
     configDataSource={CONFIG_DS}
-    removeFooter
   />
 );
 
