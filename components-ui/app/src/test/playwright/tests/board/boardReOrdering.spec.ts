@@ -38,6 +38,7 @@ test.beforeEach(async ({ page }) => {
   const { boardId, zoneId, viewId } = await createBoardForUser({
     userId: String(userId),
     zoneTitle: "Zone 1",
+    zoneObjectType: "curation",
   });
 
   const secondZoneId = await insertZoneToBoard({
