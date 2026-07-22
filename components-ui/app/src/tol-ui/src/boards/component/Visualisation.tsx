@@ -25,6 +25,7 @@ import {
   ConfirmationModal,
   BoardMap,
   TsDataSource,
+  generateFilter,
 } from "../..";
 
 
@@ -49,13 +50,14 @@ export function Visualisation(props: PVisualisation) {
     onDeleteComponent,
   } = props;
 
-  const { object_type, dataspace, filter } = zone;
-
   const { editMode, layoutMode } = useBoard();
 
   const [title, setTitle] = useState(props.title);
   const [openFilters, setOpenFilters] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+
+  const { object_type, dataspace } = zone;
+  const filter = generateFilter(zone, id);
 
   const filterButton: PButton = {
     outline: true,
