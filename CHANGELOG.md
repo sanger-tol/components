@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
 
 22-07-2026
 
+- Fixed bug: Form issue for profiles (use queryKey as the form identifier)
 - Adding prop to SmartApp to remove the footer
 
 ## tol-ui `4.0.2`
