@@ -23,7 +23,7 @@ test.beforeEach(async ({ page }) => {
   await setAuth(page);
   await setBoard(page, BOARD_ID);
   await enterEditMode(page);
-  await addComponent(page, 0, "table", "large");
+  await addComponent(page, page.getByTestId("zone").first(), "table", "large");
 });
 
 const tableDrawer = (page: Page) => page.getByTestId("drawer-wrapper").first();

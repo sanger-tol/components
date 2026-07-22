@@ -35,7 +35,7 @@ test("User can create a board", async ({ page }) => {
 
     await enterEditMode(page);
     // Add a new component to the zone
-    await addComponent(page, 0, "table");
+    await addComponent(page, page.getByTestId("zone").first(), "table");
 
     await addView(page);
 });

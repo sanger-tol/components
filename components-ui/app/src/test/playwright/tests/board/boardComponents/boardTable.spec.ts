@@ -34,7 +34,7 @@ test.afterEach(async ({ page }) => {
 });
 
 test("manage dashboard", async ({ page }) => {
-  await addComponent(page, 0, "table", "large");
+  await addComponent(page, page.getByTestId("zone").first(), "table", "large");
   await configureTable(
     page,
     page.getByTestId("board-component-table"),
@@ -49,7 +49,7 @@ test("manage dashboard", async ({ page }) => {
 });
 
 test("shows personal table configuration notices outside edit mode", async ({ page }) => {
-  await addComponent(page, 0, "table", "large");
+  await addComponent(page, page.getByTestId("zone").first(), "table", "large");
   await page.getByTestId("component-creation-modal").waitFor({ state: "hidden", timeout: 5000 });
   await exitEditMode(page);
 

@@ -52,7 +52,7 @@ const filterStatisticsComponent = async (page: Page) => {
 }
 
 test("manage dashboard", async ({ page }) => {
-  await addComponent(page, 0, "statistics", "Small");
+  await addComponent(page, page.getByTestId("zone").first(), "statistics", "Small");
 
   await filterStatisticsComponent(page);
 
