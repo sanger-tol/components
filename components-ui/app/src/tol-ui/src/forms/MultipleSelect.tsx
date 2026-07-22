@@ -21,7 +21,7 @@ export interface PMultipleSelect extends TFormMultipleSelectField {
   setValue: React.Dispatch<React.SetStateAction<string[]>>;
   errorText?: string;
   renderExtraFooter?: React.ReactNode;
-  renderMenu?: React.Dispatch<React.SetStateAction<JSX.Element>>
+  renderMenu?: (menuItem: JSX.Element) => JSX.Element;
   menuClassName?: string;
 }
 
