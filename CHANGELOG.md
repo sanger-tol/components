@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.4`
+
+23-07-2026
+
+- Fixed bug: Delete on MyBoards was erroring
+- Fixed bug: Copying boards/views was erroring
+
 ## tol-ui `4.0.3`
 
 22-07-2026

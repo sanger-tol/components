@@ -93,7 +93,7 @@ export function Board(props: PBoard) {
     isLoading,
   } = useQueryData<IBoard>(
     [BOARD_ENTITIES.ENTITIES.BOARD, id],
-    () => fetchBoardEntityAndChildren(boardDataSource, id!),
+    () => fetchBoardEntityAndChildren(boardDataSource, id!) as Promise<IBoard>,
     { enabled: !!id },
   );
 

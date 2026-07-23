@@ -24,6 +24,7 @@ import {
   returnViewInfo,
   API_METHODS,
   PopUpMessage,
+  deleteBoardEntity,
 } from "../..";
 
 interface AccordionBaseProps {
@@ -93,30 +94,14 @@ export function BoardAccordion(props: BoardsAccordionProps) {
       (board: any) => board.id !== boardIdToDelete,
     );
     setBoardDetails(deletedBoard);
-    await boardDataSource
-      .custom({
-        method: API_METHODS.DELETE,
-        resource: `${BOARD_ENTITIES.ENTITIES.BOARD}/${boardIdToDelete}`,
+    await deleteBoardEntity(boardDataSource, boardIdToDelete)
+      .then(() => {
+        setOpenDelete(false);
+        setBoardIdToDelete(null);
       })
-      .then((res: any) => {
-        if (res.status === 200) {
-          PopUpMessage({
-            type: "success",
-            message: "Board deleted successfully",
-          });
-        }
-      })
-      .catch((err) => {
-        PopUpMessage({
-          type: "error",
-          message: `Failed to delete board: ${err.message}`,
-        });
-        setBoardDetails(boardDetails);
-      });
-    setBoardIdToDelete(null);
-  };
+  }
 
-  const handleDelete = (id: string) => {
+  const onDeleteClick = (id: string) => {
     setBoardIdToDelete(id);
     setOpenDelete(true);
   };
@@ -132,19 +117,19 @@ export function BoardAccordion(props: BoardsAccordionProps) {
     boardId: string,
     viewId?: string,
   ): IDropdownButtonConfig[] => [
-    {
-      name: "View",
-      action: () => {
-        viewId !== undefined ? goToView(boardId, viewId!) : goToBoard(boardId);
+      {
+        name: "View",
+        action: () => {
+          viewId !== undefined ? goToView(boardId, viewId!) : goToBoard(boardId);
+        },
       },
-    },
-    {
-      name: "Delete",
-      action: () => {
-        handleDelete(boardId);
+      {
+        name: "Delete",
+        action: () => {
+          onDeleteClick(boardId);
+        },
       },
-    },
-  ];
+    ];
 
   const BoardOptionsDropdownButton = (boardId: string, viewId?: string) => (
     <DeprecatedDropdownButtons
