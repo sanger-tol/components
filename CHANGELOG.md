@@ -10,8 +10,12 @@ SPDX-License-Identifier: MIT
 
 23-07-2026
 
-- Fixed bug: Delete on MyBoards was erroring
-- Fixed bug: Copying boards/views was erroring
+- Fixed bug: Delete on MyBoards erroring
+- Fixed bug: Copying boards/views erroring
+- Fixed bug: Table flickering on load
+- Fixed bug: `AmalgamateRequestedFields` error for ~ notation
+- Fixed bug: Markdown overflows widget
+- Fixed bug: BoardTable doesn't give button until reload
 
 ## tol-ui `4.0.3`
 
