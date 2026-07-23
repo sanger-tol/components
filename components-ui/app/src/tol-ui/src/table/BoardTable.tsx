@@ -302,7 +302,6 @@ export function BoardTable(props: PBoardTable) {
       <RemoteTable
         key={resetKey}
         {...props}
-        configSyncKey={editMode ? "edit" : "view"}
         resizeableColumns={isLoggedIn}
         onReset={onReset}
         showConfigReset={
