@@ -22,8 +22,6 @@ import {
   returnComponentInfo,
   returnZoneInfo,
   returnViewInfo,
-  API_METHODS,
-  PopUpMessage,
   deleteBoardEntity,
 } from "../..";
 

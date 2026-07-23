@@ -23,7 +23,6 @@ import type {
   IView,
   TBoardChildren,
   TBoardEntityType,
-  IZone,
 } from "../..";
 
 /**

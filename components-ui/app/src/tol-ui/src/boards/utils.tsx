@@ -18,8 +18,6 @@ import {
   TsDataSource,
 } from "..";
 import type {
-  IBoard,
-  IBoardParentEntity,
   IComponent,
   IZone,
   TBoardChildren,

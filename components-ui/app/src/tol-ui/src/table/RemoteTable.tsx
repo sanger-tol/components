@@ -48,7 +48,6 @@ import {
   useBoard,
   IConfigDifferences,
   MESSAGE_TYPE,
-  getInitialDiffState,
 } from "..";
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
