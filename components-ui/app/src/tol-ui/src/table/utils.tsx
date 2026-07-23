@@ -35,6 +35,7 @@ import {
   TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
   CELL_RENDERER_PROP_TAG_START,
   CELL_RENDERER_PROP_TAG_END,
+  CELL_RENDERER_PARENT_OPERATOR,
 } from "..";
 import type {
   TsDataSource,
@@ -387,28 +388,38 @@ async function addFieldsFromStringProp(
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
 
+  // This notation indicates that the cellRenderer is referring to a field on the parent object rather than the current object type. 
+  const refersToParentObject = value.includes(CELL_RENDERER_PARENT_OPERATOR);
+
   for (const match of matches) {
     const relativeAttribute = match
       .replace(CELL_RENDERER_PROP_TAG_START, "")
       .replace(CELL_RENDERER_PROP_TAG_END, "")
       .replace(CELL_RENDERER_SPREAD_OPERATOR, "")
       .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
+      .replace(CELL_RENDERER_PARENT_OPERATOR, "")
       .trim();
 
-    /**
+    /*
      * Ensure any fields used in a cellRenderer (referred to from the objectType the
      * field is already on) have the relevant relationship prefix added to the field
      * name so they are requested correctly from the API.
      * 
      * e.g. If the fieldName is "relationship.attribute" and the relativeAttribute is "attribute2",
      *      the requested field should be "relationship.attribute2" rather than just "attribute2".
+     * 
+     * Parent object fields are already on the current object type, so they don't need a relationship prefix.
      */
-    const relationship = getRelationshipNameByField(fieldName);
-    const field =
-      relationship
-        ? `${relationship}.${relativeAttribute}`
-        : relativeAttribute;
-    if (field) requestedFields.add(field);
+    if (refersToParentObject) {
+      requestedFields.add(relativeAttribute);
+    } else {
+      const relationship = getRelationshipNameByField(fieldName);
+      const field =
+        relationship
+          ? `${relationship}.${relativeAttribute}`
+          : relativeAttribute;
+      if (field) requestedFields.add(field);
+    }
   }
 }
 
