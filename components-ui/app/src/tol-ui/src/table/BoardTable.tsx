@@ -49,17 +49,23 @@ export function BoardTable(props: PBoardTable) {
   const componentData = zone?.children[id];
 
   // Calculate sequential board number from zone.children keys
-  const componentNumber = zone?.children ? Object.keys(zone.children).indexOf(id) + 1 : 1;
+  const componentNumber = zone?.children
+    ? Object.keys(zone.children).indexOf(id) + 1
+    : 1;
 
   const [resetKey, setResetKey] = useState<number>(0);
   const [diffState, setDiffState] = useState<IDiffState>(
     handleFirstLoadDiffState(componentData),
   );
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [removedColumnsForModal, setRemovedColumnsForModal] = useState<ReactNode[]>([]);
+  const [removedColumnsForModal, setRemovedColumnsForModal] = useState<
+    ReactNode[]
+  >([]);
   const [columnsRemaining, setColumnsRemaining] = useState<number>(0);
   const diffStateRef = useRef(diffState);
   const previousEditModeRef = useRef(editMode);
+  const appliedRemoteDiffStateRef = useRef<IDiffState | undefined>(undefined);
+
   useEffect(() => {
     diffStateRef.current = diffState;
   }, [diffState]);
@@ -96,39 +102,44 @@ export function BoardTable(props: PBoardTable) {
   );
 
   useEffect(() => {
-    // Update diff state when remote diff state changes
-    if (!remoteDiffState) return;
+    if (!remoteDiffState || !("currentConfig" in remoteDiffState)) return;
+
+    if (appliedRemoteDiffStateRef.current === remoteDiffState) return;
+    appliedRemoteDiffStateRef.current = remoteDiffState;
 
     if (!editMode && remoteDiffState.removedColumns?.length) {
       const removedColumns = remoteDiffState.removedColumns;
 
       // Resolve display names from enriched and saved metadata, with a readable fallback.
       const fieldMeta = componentData?.config?.fieldMeta;
-      const removedColumnNodes = removedColumns.map(
-        (col) => (
-          <AttributeTitle
-            attributeId={col}
-            dataSource={TOL_DS}
-            objectType={objectType}
-            rename={
-              fieldMeta?.dataWithDefaults?.[col]?.rename
-              || fieldMeta?.data?.[col]?.rename
-              || normaliseCaps(col)
-            }
-          />
-        ),
-      );
+      const removedColumnNodes = removedColumns.map((col: string) => (
+        <AttributeTitle
+          attributeId={col}
+          dataSource={TOL_DS}
+          objectType={objectType}
+          rename={
+            fieldMeta?.dataWithDefaults?.[col]?.rename ||
+            fieldMeta?.data?.[col]?.rename ||
+            normaliseCaps(col)
+          }
+        />
+      ));
 
       // Store for modal display
       setRemovedColumnsForModal(removedColumnNodes);
-      const remaining = (remoteDiffState.currentConfig?.fieldMeta?.order?.active?.length || 0) +
-                       (remoteDiffState.currentConfig?.fieldMeta?.order?.inactive?.length || 0);
+      const remaining =
+        (remoteDiffState.currentConfig?.fieldMeta?.order?.active?.length || 0) +
+        (remoteDiffState.currentConfig?.fieldMeta?.order?.inactive?.length ||
+          0);
       setColumnsRemaining(remaining);
 
       // Create persistent warning message with "See more" button
       const warningMessage = (
         <div className="tol-removed-columns-warning-message">
-          <span>Board {componentNumber} has {removedColumns.length} column(s) removed due to board owner changes</span>
+          <span>
+            Board {componentNumber} has {removedColumns.length} column(s)
+            removed due to board owner changes
+          </span>
           <button
             onClick={() => setModalOpen(true)}
             className="tol-removed-columns-see-more-button"
@@ -316,7 +327,7 @@ export function BoardTable(props: PBoardTable) {
         onPageSizeChange={onPageSizeChange}
         onResizeColumn={onResizeColumn}
         testid="board-component-table"
-    />
+      />
       <RemovedColumnsModal
         open={modalOpen}
         setOpen={setModalOpen}

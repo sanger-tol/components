@@ -18,6 +18,7 @@ import {
   BUTTONS,
   useBoardState,
   getSiblingBoardEntity,
+  Placeholder,
 } from "../..";
 import type { IZone, IView, PButton, PBoard, IFilter } from "../..";
 import { translateZoneAboveFilter } from "./utils";
@@ -53,15 +54,24 @@ export function Zone(props: PZone) {
   const { object_type, dataspace, filter } = zone;
   const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;
 
+  // State to track whether the filter translation is in progress
+  const [translatingFilter, setTranslatingFilter] = useState<boolean>(!!zoneAbove);
+
   useEffect(() => {
     updateTranslatedFilter();
   }, [zoneAbove]);
 
   const updateTranslatedFilter = async () => {
-    if (zoneAbove) {
+    if (!zoneAbove) {
+      setTranslatingFilter(false);
+      return;
+    }
+    try {
       const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
       zone.filter = translatedFilter;
       setZone({ ...zone });
+    } finally {
+      setTranslatingFilter(false);
     }
   };
 
@@ -182,13 +192,17 @@ export function Zone(props: PZone) {
     <div className="tol-zone" data-testid="zone">
       {(title || editMode) && bar}
       {zone && zone.order && zone.order.length > 0 ? (
-        <Visualisations
-          id={id}
-          zone={zone}
-          setZone={setZone}
-          boardDataSource={boardDataSource}
-          actionsDataSource={actionsDataSource}
-        />
+        translatingFilter ? (
+          <Placeholder loader height="200px" />
+        ) : (
+          <Visualisations
+            id={id}
+            zone={zone}
+            setZone={setZone}
+            boardDataSource={boardDataSource}
+            actionsDataSource={actionsDataSource}
+          />
+        )
       ) : (
         <div className="tol-boards-empty">
           {editMode ? (

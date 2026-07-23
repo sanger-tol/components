@@ -103,6 +103,7 @@ export function DataColumn(props: PDataColumn) {
           attributeId={fieldKey}
           className="tol-header-text"
           rename={field.rename!}
+          source={field.source}
         />
         {filterable && (
           <span

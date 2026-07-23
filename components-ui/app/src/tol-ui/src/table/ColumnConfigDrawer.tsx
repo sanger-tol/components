@@ -226,6 +226,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const additionalIcons = [
     CellRendererConfigurerWrapper,
   ];
+
   const resetButton: PButton = {
     visible: !!showConfigReset,
     position: "right",

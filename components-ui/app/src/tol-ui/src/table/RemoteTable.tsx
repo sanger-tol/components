@@ -29,6 +29,7 @@ import {
   resetFiltersBelow,
   setTableConfigLocalStorage,
   addFieldMetaDefaults,
+  getIsManyByField,
   useEffectUpdate,
   useStateFallback,
   TsDataSource,
@@ -46,7 +47,9 @@ import {
   ACTIONS_DS,
   useBoard,
   IConfigDifferences,
-} from '..';
+  MESSAGE_TYPE,
+  getInitialDiffState,
+} from "..";
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
   key?: Key;
@@ -206,8 +209,8 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    */
   showConfigReset?: boolean;
   /**
-   * Shows the differences between the current configuration and the default configuration, 
-   * used to inform users what will be reset when they click the reset button. 
+   * Shows the differences between the current configuration and the default configuration,
+   * used to inform users what will be reset when they click the reset button.
    * This is used in conjunction with `showConfigReset`
    */
   resetConfigDifferences?: IConfigDifferences;
@@ -258,9 +261,15 @@ export function RemoteTable(props: PRemoteTable) {
     zone,
     setZone,
     fields,
-    defaultSortByAttribute = getTableConfigLocalStorage(id, "defaultSortByAttribute"),
+    defaultSortByAttribute = getTableConfigLocalStorage(
+      id,
+      "defaultSortByAttribute",
+    ),
     defaultSortByType = getTableConfigLocalStorage(id, "defaultSortByType"),
-    filterVisibility: initialFilterVisibility = getTableConfigLocalStorage(id, "filterVisibility"),
+    filterVisibility: initialFilterVisibility = getTableConfigLocalStorage(
+      id,
+      "filterVisibility",
+    ),
     pageSize: initialPageSize,
     onPageSizeChange,
     onToggleFilterVisibility,
@@ -283,32 +292,32 @@ export function RemoteTable(props: PRemoteTable) {
   const runActionDatasource = new TsDataSource({
     apiPath: API_PATHS.API_PATH,
     apiDataPath: API_PATHS.ACTION,
-  })
+  });
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<IFieldMeta>(
-    initialiseFieldMeta(
-      getTableConfigLocalStorage(id, "fieldMeta") || fields
-    )
+    initialiseFieldMeta(getTableConfigLocalStorage(id, "fieldMeta") || fields),
   );
 
   // pagination
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(
-    getTableConfigLocalStorage(id, "pageSize") || initialPageSize || 50
+    getTableConfigLocalStorage(id, "pageSize") || initialPageSize || 50,
   );
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
   const [filter, setFilter] = useState<TFilterOrUndefined>({});
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(
-    defaultSortByAttribute ?? fieldMeta?.order?.active?.[0]
+    defaultSortByAttribute ?? fieldMeta?.order?.active?.[0],
   );
   const [sortByType, setSortByType] = useState<string | undefined>(
-    defaultSortByType ?? "asc"
+    defaultSortByType ?? "asc",
   );
-  const [filterVisibility, setFilterVisibility] = useState<boolean>(initialFilterVisibility ?? true);
+  const [filterVisibility, setFilterVisibility] = useState<boolean>(
+    initialFilterVisibility ?? true,
+  );
 
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
@@ -320,7 +329,7 @@ export function RemoteTable(props: PRemoteTable) {
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     controlledSelectedRows,
     setControlledSelectedRows,
-    []
+    [],
   );
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [idExportModalOpen, setIdExportModalOpen] = useState<boolean>(false);
@@ -335,7 +344,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   // When showConfigReset is not controlled by the caller, derive it from localStorage.
   const [localHasDiff, setLocalHasDiff] = useState<boolean>(
-    showConfigReset === undefined ? !!getTableConfigLocalStorage(id) : false
+    showConfigReset === undefined ? !!getTableConfigLocalStorage(id) : false,
   );
   const resolvedShowConfigReset = showConfigReset ?? localHasDiff;
 
@@ -355,7 +364,8 @@ export function RemoteTable(props: PRemoteTable) {
     }));
     setSortByAttribute(defaultSortByAttribute ?? nextBase?.order?.active?.[0]);
     setSortByType(defaultSortByType ?? "asc");
-    if (initialFilterVisibility !== undefined) setFilterVisibility(initialFilterVisibility);
+    if (initialFilterVisibility !== undefined)
+      setFilterVisibility(initialFilterVisibility);
     if (initialPageSize !== undefined) setPageSize(initialPageSize);
     setPage(1);
     setConfigSyncTrigger((n) => n + 1);
@@ -384,7 +394,14 @@ export function RemoteTable(props: PRemoteTable) {
 
   useEffectUpdate(() => {
     renderTable();
-  }, [page, sortByAttribute, sortByType, filter, forceUpdate, configSyncTrigger]);
+  }, [
+    page,
+    sortByAttribute,
+    sortByType,
+    filter,
+    forceUpdate,
+    configSyncTrigger,
+  ]);
 
   useEffectUpdate(() => {
     if (fullLoad) {
@@ -416,43 +433,65 @@ export function RemoteTable(props: PRemoteTable) {
   const initialSetup = async () => {
     if (!basic) {
       setFieldMeta(
-        await addFieldMetaDefaults(
-          objectType,
-          fieldMeta,
-          dataSource,
-        ).catch((error) => {
-          console.error("Error in addFieldMetaDefaults:", error);
-          return fieldMeta;
-        })
-      )
+        await addFieldMetaDefaults(objectType, fieldMeta, dataSource).catch(
+          (error) => {
+            console.error("Error in addFieldMetaDefaults:", error);
+            return fieldMeta;
+          },
+        ),
+      );
     }
-  }
+  };
 
-  const onReset = propOnReset ?? (async () => {
-    clearTableConfigLocalStorage(id);
-    if (showConfigReset === undefined) setLocalHasDiff(false);
-    const resetFieldMeta = initialiseFieldMeta(fields);
-    setFieldMeta(resetFieldMeta);
-    setPageSize(props.pageSize ?? 50);
-    setSortByAttribute(props.defaultSortByAttribute ?? fields?.order?.active?.[0]);
-    setSortByType(props.defaultSortByType ?? "asc");
-    setFilterVisibility(props.filterVisibility ?? true);
-    setPage(1);
-    // Re-enrich fieldMeta and explicitly re-render so changes are visible immediately
-    // without requiring a page refresh
-    const enrichedFieldMeta = !basic
-      ? await addFieldMetaDefaults(objectType, resetFieldMeta, dataSource).catch(() => resetFieldMeta)
-      : resetFieldMeta;
-    setFieldMeta(enrichedFieldMeta);
-    setFullLoad(true);
-  });
+  const onReset =
+    propOnReset ??
+    (async () => {
+      clearTableConfigLocalStorage(id);
+      if (showConfigReset === undefined) setLocalHasDiff(false);
+      const resetFieldMeta = initialiseFieldMeta(fields);
+      setFieldMeta(resetFieldMeta);
+      setPageSize(props.pageSize ?? 50);
+      setSortByAttribute(
+        props.defaultSortByAttribute ?? fields?.order?.active?.[0],
+      );
+      setSortByType(props.defaultSortByType ?? "asc");
+      setFilterVisibility(props.filterVisibility ?? true);
+      setPage(1);
+      // Re-enrich fieldMeta and explicitly re-render so changes are visible immediately
+      // without requiring a page refresh
+      const enrichedFieldMeta = !basic
+        ? await addFieldMetaDefaults(
+            objectType,
+            resetFieldMeta,
+            dataSource,
+          ).catch(() => resetFieldMeta)
+        : resetFieldMeta;
+      setFieldMeta(enrichedFieldMeta);
+      setFullLoad(true);
+    });
 
   const renderTable = async () => {
+    setLoading(true);
+    setError("");
+
+    dataSource
+      .custom({
+        method: API_METHODS.POST,
+        resource: `${objectType}:count`,
+        body: {
+          filter: filter,
+        },
+      })
+      .then((res: any) => {
+        setTotalSize(res.data.meta.total);
+      })
+      .catch((error: any) => {
+        console.error(error);
+      });
+
     if (fullLoad) {
       await initialSetup();
     }
-    setLoading(true);
-    setError("");
 
     dataSource
       .getListPage({
@@ -463,8 +502,15 @@ export function RemoteTable(props: PRemoteTable) {
         sortBy: createSort(sortByAttribute, sortByType),
         requestedFields: await amalgamateRequestedFields(fieldMeta),
       })
-      .then((dataObjects: TDataObjectListOrNull) => {
+      .then(async (dataObjects: TDataObjectListOrNull) => {
         setError("");
+
+        // Render every cell synchronously in a single pass.
+        const isManyByField = await getIsManyByField(
+          dataSource,
+          objectType,
+          fieldMeta,
+        );
         setData(
           convertTableData(
             dataObjects,
@@ -473,20 +519,9 @@ export function RemoteTable(props: PRemoteTable) {
             setExpandedRows,
             cellRenderers,
             editableCells,
-          )
+            isManyByField,
+          ),
         );
-        // fetch count
-        dataSource
-          .custom({
-            method: API_METHODS.POST,
-            resource: `${objectType}:count`,
-            body: {
-              filter: filter,
-            },
-          })
-          .then((res: any) => {
-            setTotalSize(res.data.meta.total);
-          });
       })
       .catch((error: any) => {
         // Temp fix for 500 errors, due to empty requested fields
@@ -495,7 +530,7 @@ export function RemoteTable(props: PRemoteTable) {
         if (errorMsg.includes("Empty element in path")) {
           setData([]);
           return;
-        };
+        }
         setError(error.message);
         setData([]);
         console.error(error);
@@ -505,7 +540,6 @@ export function RemoteTable(props: PRemoteTable) {
         setFullLoad(false);
       });
   };
-
 
   const onConfigSave = ({
     fieldMeta: fm,
@@ -529,7 +563,11 @@ export function RemoteTable(props: PRemoteTable) {
       });
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(fm));
-      setTableConfigLocalStorage(id, "defaultSortByAttribute", defaultSortByAttribute);
+      setTableConfigLocalStorage(
+        id,
+        "defaultSortByAttribute",
+        defaultSortByAttribute,
+      );
       setTableConfigLocalStorage(id, "defaultSortByType", defaultSortByType);
       if (showConfigReset === undefined) setLocalHasDiff(true);
     }
@@ -549,22 +587,20 @@ export function RemoteTable(props: PRemoteTable) {
   const onResizeColumn = (columnWidth?: number, dataKey?: string) => {
     if (!columnWidth || !dataKey) return;
 
-    updateFieldMetaAttribute(
-      fieldMeta,
-      dataKey,
-      "width",
-      columnWidth,
-      true
-    )
+    updateFieldMetaAttribute(fieldMeta, dataKey, "width", columnWidth, true);
 
     if (props.onResizeColumn) {
       props.onResizeColumn(columnWidth, dataKey);
     } else {
-      setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(fieldMeta));
+      setTableConfigLocalStorage(
+        id,
+        "fieldMeta",
+        optimiseFieldMetaForSave(fieldMeta),
+      );
       if (showConfigReset === undefined) setLocalHasDiff(true);
     }
     setFieldMeta({ ...fieldMeta });
-  }
+  };
 
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
@@ -577,8 +613,8 @@ export function RemoteTable(props: PRemoteTable) {
             ids: ids,
             action_name: actionName,
             object_type: objectType,
-            params: actionParams
-          }
+            params: actionParams,
+          },
         },
       })
       .finally(() => {
@@ -586,16 +622,16 @@ export function RemoteTable(props: PRemoteTable) {
         setSelectedRows([]);
         setLoading(false);
       });
-    if (Object.keys(res.data).includes('success')) {
+    if (Object.keys(res.data).includes("success")) {
       PopUpMessage({
-        type: 'info',
+        type: MESSAGE_TYPE.INFO,
         message: `'${actionName}' triggered.`,
-      })
+      });
     } else {
       PopUpMessage({
-        type: 'error',
+        type: MESSAGE_TYPE.ERROR,
         message: `'${actionName}' failed to run.`,
-      })
+      });
     }
   };
 
@@ -609,7 +645,7 @@ export function RemoteTable(props: PRemoteTable) {
     setLoading,
     idsWithReqNotMet,
     completeAction,
-    actions
+    actions,
   );
 
   const Contents = () => {
@@ -617,16 +653,12 @@ export function RemoteTable(props: PRemoteTable) {
       return <Placeholder errorMessage={error} height={height} />;
     }
     if (fullLoad) {
-      return (
-        <Placeholder
-          loader
-          height={height}
-          messagePosition="top"
-        />
-      );
+      return <Placeholder loader height={height} messagePosition="top" />;
     }
     return null;
   };
+
+  // const resetDifferences = props.resetConfigDifferences ?? getInitialDiffState(id, ) ?? { add: [], remove: [] };
 
   return (
     <div style={{ height: height }} data-testid={testid}>
@@ -656,6 +688,7 @@ export function RemoteTable(props: PRemoteTable) {
         resizeableColumns={resizeableColumns}
         height={height}
         loading={loading}
+        // resetConfigDifferences={resetDifferences}
         page={page}
         setPage={setPage}
         pageSize={pageSize}
@@ -678,10 +711,13 @@ export function RemoteTable(props: PRemoteTable) {
         setSelectedRows={setSelectedRows}
         actions={convertedActions}
         actionsFooter={
-          noActionsFooter ? undefined : {
-            name: "View Actions",
-            action: () => setActionModalOpen(true),
-          }}
+          noActionsFooter
+            ? undefined
+            : {
+                name: "View Actions",
+                action: () => setActionModalOpen(true),
+              }
+        }
         onReset={onReset}
         showConfigReset={resolvedShowConfigReset}
       />

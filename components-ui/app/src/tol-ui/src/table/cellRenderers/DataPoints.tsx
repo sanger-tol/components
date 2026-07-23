@@ -50,6 +50,11 @@ export interface PDataPoints {
    * editing behaviour such as a status-type dropdown.
    */
   actsAs?: string;
+  /**
+   * Precomputed flag indicating whether the field is a "many" relationship.
+   * When provided, the async lookup is skipped and the cell renders synchronously.
+   */
+  isMany?: boolean;
 }
 
 /**
@@ -57,11 +62,11 @@ export interface PDataPoints {
  * Can take a renderer to allow for custom rendering of each data point.
  */
 export function DataPoints(props: PDataPoints) {
-  const { field, dataObject, dataSource } = props;
+  const { field, dataObject, dataSource, isMany: precomputedIsMany } = props;
 
   // State to track whether there could be multiple data points to render.
-  const [isMany, setIsMany] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isMany, setIsMany] = useState(precomputedIsMany ?? false);
+  const [loading, setLoading] = useState(precomputedIsMany === undefined);
 
   // get the child objects based on the field
   const childObjects = getChildObjectsByName(dataObject, field);
@@ -70,6 +75,8 @@ export function DataPoints(props: PDataPoints) {
   const attribute = getAttributeNameByField(field);
 
   useEffect(() => {
+    // Skip the async lookup when the flag has been precomputed by the caller
+    if (precomputedIsMany !== undefined) return;
     if (dataObject) {
       dataSource
         .isManyDataPointsByName(
@@ -85,7 +92,7 @@ export function DataPoints(props: PDataPoints) {
     } else {
       setLoading(false);
     }
-  }, [field, dataObject]);
+  }, [field, dataObject, precomputedIsMany]);
 
   /**
    * getRelationshipConfig (used in isManyDataPointsByName) is already stored in cache

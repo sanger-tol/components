@@ -100,6 +100,7 @@ export function convertTableData(
   setExpandedRows: (expandedRows: string[]) => void,
   customCellRenderers?: ICustomCellRenderers,
   editableCells?: boolean,
+  isManyByField?: { [field: string]: boolean },
 ): ITableData {
   if (!dataObjects) return [];
   const data: ITableData = [];
@@ -118,12 +119,39 @@ export function convertTableData(
           customCellRenderers={customCellRenderers}
           editable={editableCells}
           actsAs={fieldMeta.dataWithDefaults?.[field]?.acts_as}
+          isMany={isManyByField?.[field]}
         />
       );
     });
     data.push(row);
   });
   return data;
+}
+
+/**
+ * Resolves whether each active column in the field meta points at a "many"
+ * relationship. Computing this once per column (rather than once per cell)
+ * lets table cells render synchronously in a single pass.
+ *
+ * @param dataSource - The data source used to resolve relationship config.
+ * @param objectType - The object type of the table rows.
+ * @param fieldMeta - The field meta whose active columns are resolved.
+ * @returns A map of field name to whether it is a "many" relationship.
+ */
+export async function getIsManyByField(
+  dataSource: TsDataSource,
+  objectType: string,
+  fieldMeta?: IFieldMeta,
+): Promise<{ [field: string]: boolean }> {
+  const entries = await Promise.all(
+    (fieldMeta?.order.active || []).map(
+      async (field): Promise<[string, boolean]> => [
+        field,
+        await dataSource.isManyDataPointsByName(objectType, field),
+      ],
+    ),
+  );
+  return Object.fromEntries(entries);
 }
 
 function addDefaultCellRenderer(type: string): TCellRenderer {
@@ -186,18 +214,19 @@ export async function addFieldMetaDefaults(
   const attributes = fieldMeta.order.active.concat(
     fieldMeta.order.inactive || [],
   );
-  for (const key of attributes) {
-    const descriptor = dataSource.getAttributeDescriptor({
-      objectType: objectType,
-      field: key,
-    });
-    await descriptor.then((meta) => {
+  // Fetch all attribute descriptors in parallel rather than sequentially
+  await Promise.all(
+    attributes.map(async (key) => {
+      const meta = await dataSource.getAttributeDescriptor({
+        objectType: objectType,
+        field: key,
+      });
       if (!meta) {
         throw new Error(TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND(key, objectType));
       }
       addDefaultsFromEntityMeta(key, meta, fieldMeta);
-    });
-  }
+    }),
+  );
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
   return fieldMeta;
 }
