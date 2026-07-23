@@ -66,7 +66,7 @@ export function MultipleSelect(props: PMultipleSelect) {
     setValue(value.length === allValues.length ? [] : allValues);
   };
 
-  const selectAll = () => {
+  const renderSelectAllCheckbox = () => {
     if (data.length === 0) return undefined;
     return (
       <>
@@ -115,7 +115,7 @@ export function MultipleSelect(props: PMultipleSelect) {
           onEntering={onEntering}
           onClose={onClose}
           onClean={onClean}
-          renderExtraFooter={selectAll}
+          renderExtraFooter={renderSelectAllCheckbox}
           renderMenuItem={renderMenuItem}
           renderValue={renderValue}
           disabledItemValues={disabledItemValues}
