@@ -57,7 +57,10 @@ export function AttributeTooltip(props: PAttributeTooltip) {
 
   const Tooltip = <FormatTooltip contents={details} />;
 
-  if (Object.keys(details).length === 0) return <></>;
+  // Render the tooltip with no contents if there are no details to show, to avoid flickering on first load
+  if (Object.keys(details).length === 0) {
+    return <IconTooltip icon={element} contents={undefined} />;
+  }
 
   const tooltipContents = (
     <div>

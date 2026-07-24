@@ -229,7 +229,6 @@ export function SmartApp(props: PSmartApp) {
       <BoardContextProvider>
         <Board
           boardDataSource={configDataSource}
-          brand={brand}
           actionsDataSource={actionsDataSource}
         />
       </BoardContextProvider>
@@ -294,7 +293,6 @@ export function SmartApp(props: PSmartApp) {
                         {collectRoutes(
                           mergedNavigation,
                           pageElements,
-                          brand,
                           configDataSource,
                           actionsDataSource,
                         )}

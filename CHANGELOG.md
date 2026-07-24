@@ -6,6 +6,19 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.4`
+
+23-07-2026
+
+- Fixed bug: Delete on MyBoards erroring
+- Fixed bug: Copying boards/views erroring
+- Fixed bug: Table flickering on load
+- Fixed bug: `AmalgamateRequestedFields` error for ~ notation
+- Fixed bug: Markdown overflows widget
+- Fixed bug: BoardTable doesn't give button until reload
+- Fixed bug: Boards don't have correct loading
+- Fixed bug: Squashed Statistics component screens
+
 ## tol-ui `4.0.3`
 
 22-07-2026

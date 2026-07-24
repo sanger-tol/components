@@ -18,7 +18,6 @@ import {
   TsDataSource,
 } from "..";
 import type {
-  IBoard,
   IComponent,
   IZone,
   TBoardChildren,
@@ -234,22 +233,22 @@ export function removeBoardEntityInParent(id: string, parentEntity: TParentBoard
 export async function fetchBoardEntityAndChildren(
   boardDataSource: TsDataSource,
   parentId: string,
-): Promise<IBoard> {
+): Promise<TParentBoardEntity> {
   const entityType = deriveBoardObjectType(parentId);
   return await boardDataSource
     .custom({
       method: API_METHODS.GET,
       resource: `${BOARDS_API.OPERATIONS.GET}/${parentId}`,
     })
-    .then((res: { data: IBoard }) => {
-      return defineBoardEntity(res.data, entityType) as IBoard;
+    .then((res: { data: TParentBoardEntity }) => {
+      return defineBoardEntity(res.data, entityType) as TParentBoardEntity;
     })
     .catch(() => {
       PopUpMessage({
         type: MESSAGE_TYPE.ERROR,
         message: BOARD_MESSAGE_TEXT(entityType).FETCH.ERROR,
       });
-      return {} as IBoard;
+      return {} as TParentBoardEntity;
     });
 }
 
