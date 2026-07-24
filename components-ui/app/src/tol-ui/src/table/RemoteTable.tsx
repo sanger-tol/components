@@ -650,7 +650,6 @@ export function RemoteTable(props: PRemoteTable) {
         resizeableColumns={resizeableColumns}
         height={height}
         loading={loading}
-        // resetConfigDifferences={resetDifferences}
         page={page}
         setPage={setPage}
         pageSize={pageSize}
