@@ -32,7 +32,7 @@ import {
   isEmptyObject,
 } from "../..";
 import { BoardUtilityBar, ImportViewModal } from "./components";
-import type { IBoard, TNavBrand, TsDataSource } from "../..";
+import type { IBoard, TsDataSource } from "../..";
 
 
 export interface PBoard {
@@ -48,17 +48,13 @@ export interface PBoard {
    * The data source for fetching actions.
    */
   actionsDataSource?: TsDataSource;
-  /**
-   * The brand to display in the loading screen.
-   */
-  brand?: TNavBrand;
 }
 
 /**
  * Component to render a board based on its ID and TSDataSource.
  */
 export function Board(props: PBoard) {
-  const { boardId, boardDataSource, brand, actionsDataSource } = props;
+  const { boardId, boardDataSource, actionsDataSource } = props;
 
   const { setPrivilege, editMode, board, setBoard } = useBoard();
 

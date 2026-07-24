@@ -42,10 +42,6 @@ export interface PRoute {
    */
   actionsDataSource?: TsDataSource;
   /**
-   * The brand to display in the loading screen.
-   */
-  brand?: TNavBrand;
-  /**
    * The access level for this route. Drives the runtime guard chain: non-public
    * access wraps the page in auth + completed-profile guards, and role-gated
    * access additionally wraps it in a role guard.
@@ -64,7 +60,6 @@ export function Route(props: PRoute) {
     actionsDataSource,
     path,
     pageElements,
-    brand,
     access,
   } = props;
 
@@ -82,7 +77,6 @@ export function Route(props: PRoute) {
           <Board
             boardDataSource={boardDataSource}
             boardId={path.pageElementReference}
-            brand={brand}
             actionsDataSource={actionsDataSource!}
           />
         </BoardContextProvider>
