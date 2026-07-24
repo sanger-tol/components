@@ -23,7 +23,6 @@ import {
   Route,
   INavDestination,
   formatPath,
-  TNavBrand,
   API_PATHS,
 } from "..";
 
