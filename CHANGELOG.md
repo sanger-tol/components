@@ -16,6 +16,8 @@ SPDX-License-Identifier: MIT
 - Fixed bug: `AmalgamateRequestedFields` error for ~ notation
 - Fixed bug: Markdown overflows widget
 - Fixed bug: BoardTable doesn't give button until reload
+- Fixed bug: Boards don't have correct loading
+- Fixed bug: Squashed Statistics component screens
 
 ## tol-ui `4.0.3`
 

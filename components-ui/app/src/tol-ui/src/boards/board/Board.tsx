@@ -29,6 +29,7 @@ import {
   updateViewInUrl,
   patchReorderBoardEntity,
   defineBoardEntityInParent,
+  isEmptyObject,
 } from "../..";
 import { BoardUtilityBar, ImportViewModal } from "./components";
 import type { IBoard, TNavBrand, TsDataSource } from "../..";
@@ -180,8 +181,8 @@ export function Board(props: PBoard) {
     return <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />;
   }
 
-  if (isLoading && !isSuccess && !boardData && !board) {
-    return <LoadingContent overlayNav brand={brand} text="Finding Board..." />;
+  if (isLoading && !isSuccess && isEmptyObject(boardData) && isEmptyObject(board)) {
+    return <LoadingContent text="Getting the board ready..." />;
   }
 
   return (
