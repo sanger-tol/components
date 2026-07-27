@@ -122,15 +122,17 @@ export function Board(props: PBoard) {
 
   // Scroll listener for sticky board bar shadow effect
   useEffect(() => {
+    if (!isSuccess) return;
     const bar = document.querySelector<HTMLElement>(".tol-board-bar");
     if (!bar) return;
     const onScroll = () => {
       const progress = Math.min(window.scrollY / 20, 1);
       bar.style.setProperty("--tol-bar-scroll", progress.toString());
     };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isSuccess]);
 
   const onClickView = (viewId: string) => () => {
     setActiveViewId(viewId);

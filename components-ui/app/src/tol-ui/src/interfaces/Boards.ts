@@ -98,7 +98,7 @@ export type TBoardEntityType =
  *   id: "b_1",
  *   type: "board",
  *   title: "My Board",
- *   owner_email: "example@example.com",
+ *   owner_email: "example@mail.com",
  *   order: ["v_1"],
  *   children: {
  *     "v_1": {
