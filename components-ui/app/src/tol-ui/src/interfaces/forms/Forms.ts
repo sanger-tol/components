@@ -227,6 +227,7 @@ export interface IMultipleselectField extends IFormComponent {
 
 export interface IMultipleselecttreeField extends IFormComponent {
   type: "multipleselecttree";
+  block?: boolean;
   data: TUnformattedMultipleSelectTreeFieldValue[];
 }
 
