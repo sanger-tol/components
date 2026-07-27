@@ -237,6 +237,7 @@ export function SmartApp(props: PSmartApp) {
       <MyBoards
         boardDataSource={configDataSource}
         actionsDataSource={actionsDataSource}
+        navConfig={navigation}
       />
     ),
     validationResultsDetail: <ValidationResultsViewer />,

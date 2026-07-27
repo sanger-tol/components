@@ -10,7 +10,35 @@ import {
   TDataObjectListOrNull,
   TDataObjectOrNull,
   BOARD_ENTITIES,
+  TNavConfig,
+  isDropdown,
+  isPageElementReference,
 } from "../..";
+
+/**
+ * Checks whether a board ID is referenced by a page at any level of a navigation config.
+ *
+ * @param navConfig - The navigation configuration to search.
+ * @param boardId - The board ID to find.
+ * @returns Whether the board is present in the navigation configuration.
+ */
+export function isBoardInNavConfig(
+  navConfig: TNavConfig | undefined,
+  boardId: string,
+): boolean {
+  if (!navConfig) return false;
+
+  return Object.values(navConfig.data).some((navItem) => {
+    if (
+      isPageElementReference(navItem.path) &&
+      navItem.path.pageElementReference === boardId
+    ) {
+      return true;
+    }
+
+    return isDropdown(navItem) && isBoardInNavConfig(navItem.pages, boardId);
+  });
+}
 
 export async function getBoardDetails(
   boardDataSource: TsDataSource,
@@ -27,10 +55,12 @@ export async function getBoardDetails(
       },
     })
     .then((data: TDataObjectListOrNull) => {
-      return data?.map((board: TDataObjectOrNull) => ({
-        id: board?.id,
-        title: board?.title,
-      }));
+      return data
+        ?.map((board: TDataObjectOrNull) => ({
+          id: board?.id,
+          title: board?.title,
+        }))
+        .sort((a, b) => String(a.title).localeCompare(String(b.title)));
     })
     .catch((error: any) => {
       console.error("Error fetching boards:", error);

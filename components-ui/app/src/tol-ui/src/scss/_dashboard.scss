@@ -333,6 +333,15 @@
   margin: 2px;
 }
 
+.tol-my-boards-live-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-weight: normal;
+}
+
 .my-boards-container {
   overflow: auto;
   min-height: 200px;
@@ -340,6 +349,12 @@
   .rs-panel-group {
     border-radius: var(--tol-border-radius);
   }
+}
+
+.tol-my-boards-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .my-boards-dropdown-buttons {

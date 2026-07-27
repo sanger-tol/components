@@ -23,13 +23,16 @@ import {
   returnZoneInfo,
   returnViewInfo,
   deleteBoardEntity,
+  Icon,
+  isBoardInNavConfig,
+  TNavConfig,
 } from "../..";
 
 interface AccordionBaseProps {
   id: string;
   objectType: string;
   filterKey: string;
-  title: string;
+  title: React.ReactNode;
   itemType?: string;
   subHeader?: string;
   renderChildren: (childIds: string[]) => React.ReactNode;
@@ -41,6 +44,7 @@ interface BoardsAccordionProps {
   boardDetails: string[];
   setBoardDetails: any;
   boardDataSource: TsDataSource;
+  navConfig?: TNavConfig;
 }
 
 interface ViewsAccordionProps {
@@ -57,7 +61,7 @@ interface ComponentsProps {
 }
 
 export function BoardAccordion(props: BoardsAccordionProps) {
-  const { boardDetails, setBoardDetails, boardDataSource } = props;
+  const { boardDetails, setBoardDetails, boardDataSource, navConfig } = props;
   const history = useHistory();
   const [openDelete, setOpenDelete] = useState(false);
   const [boardIdToDelete, setBoardIdToDelete] = useState<string | null>(null);
@@ -88,10 +92,9 @@ export function BoardAccordion(props: BoardsAccordionProps) {
 
   const deleteBoard = async () => {
     if (boardIdToDelete === null) return;
-    const deletedBoard = boardDetails.filter(
-      (board: any) => board.id !== boardIdToDelete,
+    setBoardDetails((boards: any[]) =>
+      boards.filter((board: any) => board.id !== boardIdToDelete),
     );
-    setBoardDetails(deletedBoard);
     await deleteBoardEntity(boardDataSource, boardIdToDelete)
       .then(() => {
         setOpenDelete(false);
@@ -325,38 +328,52 @@ export function BoardAccordion(props: BoardsAccordionProps) {
 
   return (
     <>
-      {boardDetails.map((board: any) => (
-        <div
-          data-testid={board.title}
-          key={board.id}
-          className="tol-board-accordion"
-        >
-          <div style={{ flex: "1" }}>
-            <AccordionBase
-              id={board.id}
-              title={board.title}
-              objectType={BOARD_ENTITIES.JOINING_ENTITIES.VIEW_BOARD}
-              filterKey="board.id"
-              itemType={BOARD_ENTITIES.ENTITIES.VIEW}
-              clickable={true}
-              renderChildren={(viewIds) => (
-                <ViewsAccordion boardId={board.id} viewIds={viewIds} />
-              )}
-            />
-          </div>
+      {boardDetails.map((board: any) => {
+        const Title = (
+          <span className="tol-my-boards-title">
+            {board.title}
+            {isBoardInNavConfig(navConfig, board.id) && (
+              <Icon
+                icon="globe"
+                colour="var(--tol-primary)"
+              />
+            )}
+          </span>
+        )
+
+        return (
           <div
-            style={{
-              top: "0",
-              marginLeft: "10px",
-              marginRight: "5px",
-              marginTop: "15px",
-            }}
+            data-testid={board.title}
+            key={board.id}
+            className="tol-board-accordion"
           >
-            {BoardOptionsDropdownButton(board.id, undefined)}
+            <div style={{ flex: "1" }}>
+              <AccordionBase
+                id={board.id}
+                title={Title}
+                objectType={BOARD_ENTITIES.JOINING_ENTITIES.VIEW_BOARD}
+                filterKey="board.id"
+                itemType={BOARD_ENTITIES.ENTITIES.VIEW}
+                clickable={true}
+                renderChildren={(viewIds) => (
+                  <ViewsAccordion boardId={board.id} viewIds={viewIds} />
+                )}
+              />
+            </div>
+            <div
+              style={{
+                top: "0",
+                marginLeft: "10px",
+                marginRight: "5px",
+                marginTop: "15px",
+              }}
+            >
+              {BoardOptionsDropdownButton(board.id, undefined)}
+            </div>
+            {deleteConfirmationModal(board.id)}
           </div>
-          {deleteConfirmationModal(board.id)}
-        </div>
-      ))}
+        )
+      })}
     </>
   );
 }
