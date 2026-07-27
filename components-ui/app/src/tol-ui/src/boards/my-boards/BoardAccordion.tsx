@@ -25,7 +25,8 @@ import {
   deleteBoardEntity,
   Icon,
   isBoardInNavConfig,
-  TNavConfig,
+  PopUpMessage,
+  useApp,
 } from "../..";
 
 interface AccordionBaseProps {
@@ -44,7 +45,6 @@ interface BoardsAccordionProps {
   boardDetails: string[];
   setBoardDetails: any;
   boardDataSource: TsDataSource;
-  navConfig?: TNavConfig;
 }
 
 interface ViewsAccordionProps {
@@ -61,7 +61,8 @@ interface ComponentsProps {
 }
 
 export function BoardAccordion(props: BoardsAccordionProps) {
-  const { boardDetails, setBoardDetails, boardDataSource, navConfig } = props;
+  const { boardDetails, setBoardDetails, boardDataSource } = props;
+  const { navConfig } = useApp();
   const history = useHistory();
   const [openDelete, setOpenDelete] = useState(false);
   const [boardIdToDelete, setBoardIdToDelete] = useState<string | null>(null);
@@ -103,6 +104,14 @@ export function BoardAccordion(props: BoardsAccordionProps) {
   }
 
   const onDeleteClick = (id: string) => {
+    if (isBoardInNavConfig(navConfig, id)) {
+      PopUpMessage({
+        type: "warning",
+        message: "This board is currently live and cannot be deleted."
+      });
+      return;
+    }
+
     setBoardIdToDelete(id);
     setOpenDelete(true);
   };

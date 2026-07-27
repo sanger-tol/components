@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 export * from "./boards";
 export * from "./listeners";
+export * from "./useApp";
 export * from "./useBoard";
 export * from "./useEffectUpdate";
 export * from "./useQuery";

@@ -18,19 +18,15 @@ import {
   getBoardDetails,
   LoadingContent,
   PBoard,
-  TNavConfig,
   isBoardInNavConfig,
+  useApp,
 } from "../..";
 
-export interface PMyBoards extends PBoard {
-  /**
-   * The navigation configuration used to identify boards linked in the app navigation.
-   */
-  navConfig?: TNavConfig;
-}
+export function MyBoards(props: PBoard) {
+  const { boardDataSource } = props;
 
-export function MyBoards(props: PMyBoards) {
-  const { boardDataSource, navConfig } = props;
+  const { navConfig } = useApp();
+
   const [boardDetails, setBoardDetails] = useState<any[]>([]);
   const [liveOnly, setLiveOnly] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -128,7 +124,6 @@ export function MyBoards(props: PMyBoards) {
           boardDetails={displayedBoards}
           setBoardDetails={setBoardDetails}
           boardDataSource={boardDataSource}
-          navConfig={navConfig}
         />
       ) : NoBoards}
     </div>
