@@ -93,3 +93,10 @@
 .tol-profile-form {
   padding: 1rem;
 }
+
+.tol-multiple-select-tree-popup {
+  .rs-check-tree-node, .rs-check-tree-node-content,
+  .rs-check-tree-node-label, .rs-checkbox-label {
+    width: 100% !important;
+  }
+}

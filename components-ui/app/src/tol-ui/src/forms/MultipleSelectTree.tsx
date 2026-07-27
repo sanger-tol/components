@@ -46,6 +46,7 @@ export function MultipleSelectTree(props: PMultipleSelectTree) {
       errorMessageClassName="tol-multiple-select-error-message"
     >
       <RSCheckTreePicker
+        popupClassName="tol-multiple-select-tree-popup"
         value={value}
         onChange={setValue}
         data={formattedData}
