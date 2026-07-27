@@ -17,7 +17,6 @@ export * from "./FormTextArea";
 export * from "./FormTextField";
 export * from "./MultipleFormInput";
 export * from "./MultipleSelect";
-export * from "./MultipleSelectTree";
 export * from "./RemoteAutoComplete";
 export * from "./RequiredAsterisk";
 export * from "./SingleSelect";
