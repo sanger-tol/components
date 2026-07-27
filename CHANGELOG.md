@@ -14,6 +14,7 @@ SPDX-License-Identifier: MIT
 - Fixed bug: No shadow on top board bar
 - Added solid nav on scroll when header is present
 - Added 'live' indicator for boards
+- Added auth api path env var
 
 ## tol-ui `4.0.4`
 

@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { createContext, ReactNode } from "react";
-import { TNavConfig } from "..";
+import { createContext } from "react";
+import type { ReactNode } from "react";
+import type { TNavConfig } from "..";
 
 export interface IAppContextValue {
   /**
@@ -14,15 +15,16 @@ export interface IAppContextValue {
   navConfig: TNavConfig;
 }
 
+export interface IAppContextProviderProps extends IAppContextValue {
+  children: ReactNode;
+}
+
 export const AppContext = createContext<IAppContextValue | undefined>(undefined);
 
 export function AppContextProvider({
   children,
   navConfig,
-}: {
-  children: ReactNode;
-  navConfig: TNavConfig;
-}) {
+}: IAppContextProviderProps) {
   return (
     <AppContext.Provider value={{ navConfig }}>
       {children}

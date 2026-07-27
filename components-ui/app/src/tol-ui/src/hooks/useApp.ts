@@ -6,16 +6,13 @@ SPDX-License-Identifier: MIT
 
 import { useContext } from "react";
 import { AppContext, IAppContextValue } from "..";
-import type { TNavConfig } from "..";
 
-export const useApp = () => {
-  const context = useContext<IAppContextValue | undefined>(AppContext);
+export function useApp(): IAppContextValue {
+  const context = useContext(AppContext);
 
   if (context === undefined) {
-    return {
-      navConfig: { data: {}, order: [] } as TNavConfig,
-    };
+    throw new Error("useApp must be used within an AppContextProvider.");
   }
 
   return context;
-};
+}
