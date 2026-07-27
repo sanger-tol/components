@@ -23,6 +23,8 @@ import type {
   IUserProfileFormData,
   PAutoComplete,
   ICheckboxField,
+  IMultipleselecttreeField,
+  IHierachicalData,
 } from ".."
 
 export type TFormField =
@@ -36,6 +38,7 @@ export type TFormField =
   | IDropzoneField
   | IAutocompleteField
   | IMultipleselectField
+  | IMultipleselecttreeField
   | IMarkdownField
   | ITextAreaField
   | ICheckboxFormField;
@@ -69,6 +72,12 @@ export type TFormMultipleSelectField = Omit<
   IMultipleselectField,
   "type" | "name"
 >;
+
+export type TFormMultipleSelectTreeField = Omit<
+  IMultipleselecttreeField,
+  "type" | "name"
+>;
+export type TUnformattedMultipleSelectTreeFieldValue = Omit<IHierachicalData, "label">;
 
 export type TFormRemoteAutoCompleteField = Omit<PAutoComplete, "onChange">;
 

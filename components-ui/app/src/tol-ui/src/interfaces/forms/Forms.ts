@@ -15,6 +15,7 @@ import type {
   TCheckboxFields,
   TFormField,
   TLabelAndValueData,
+  TUnformattedMultipleSelectTreeFieldValue,
 } from "../..";
 
 export interface IWaitingUpload {
@@ -45,6 +46,10 @@ export interface IFileData {
 export interface IData {
   label: string;
   value: string;
+}
+
+export interface IHierachicalData extends IData {
+  children?: IHierachicalData[];
 }
 
 export interface ICheckboxField {
@@ -218,6 +223,11 @@ export interface IMultipleselectField extends IFormComponent {
   onExit?: any;
   onExiting?: any;
   groupBy?: string;
+}
+
+export interface IMultipleselecttreeField extends IFormComponent {
+  type: "multipleselecttree";
+  data: TUnformattedMultipleSelectTreeFieldValue[];
 }
 
 export interface IMarkdownField extends IFormComponent {
