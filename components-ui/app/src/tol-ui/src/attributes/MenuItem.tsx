@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 import { forwardRef, useState } from "react";
 import type { HTMLAttributes } from "react";
-import { Animation as RSAnimation } from "rsuite";
+import { Animation as RSAnimation, Checkbox as RSCheckbox } from "rsuite";
 
 import {
   TsDataSource,
@@ -64,8 +64,17 @@ export function MenuItem(props: PMenuItem) {
   const ProvenancePicker = forwardRef<
     HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>
   >((props, ref) => (
-    <div {...props} ref={ref}>
-      <p>adf</p>
+    <div {...props} ref={ref} onClick={e => {e.stopPropagation(); e.preventDefault()}}>
+      <div className="tol-provenance-picker">
+        <label className="tol-provenance-picker-entry" role="option">
+          <RSCheckbox />
+          STS
+        </label>
+        <label className="tol-provenance-picker-entry" role="option">
+          <RSCheckbox />
+          Benchling
+        </label>
+      </div>
     </div>
   ));
 

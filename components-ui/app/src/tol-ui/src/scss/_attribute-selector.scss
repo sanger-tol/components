@@ -207,3 +207,27 @@ SPDX-License-Identifier: MIT
   }
 
 }
+
+.tol-provenance-picker {
+  background-color: var(--tol-bg);
+  border-radius: var(--tol-border-radius-sm);
+  display: flex;
+  flex-direction: column;
+
+  & > * {
+    padding: 0.5rem;
+  }
+}
+
+.tol-provenance-picker-entry {
+  padding: 0.2rem;
+  border-radius: 0.4rem !important;
+  background-color: var(--tol-bg);
+  color: var(--tol-text);
+  font-weight: normal;
+
+  &:hover {
+    background-color: var(--tol-grey-subtle);
+    color: var(--tol-primary);
+  }
+}
