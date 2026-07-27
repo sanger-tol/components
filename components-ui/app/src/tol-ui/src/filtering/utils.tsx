@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import {
   IBoard,
   IView,
@@ -439,7 +439,10 @@ export function filterListener(
     zoneToValue,
   } = params;
 
-  useEffect(() => {
+  // Use a layout effect so values/disabled state derived from the zone filter
+  // are applied before the browser paints, avoiding a flash of the
+  // empty/enabled input state.
+  useLayoutEffect(() => {
     // initialise - use an object to take advantage of reference type
     const filterMeta = {
       values: emptyValue,

@@ -260,7 +260,7 @@ export function FilterTextInput(props: PFilterTextInput) {
           disabled={disabled}
           inside
         >
-          <Input onChange={onFilter} value={values[0]} placeholder={rename} />
+          <Input onChange={onFilter} value={values[0]} placeholder={rename} data-testid={`${rename}-filter-input`}/>
         </InputGroup>
       )}
       <FilterToggle

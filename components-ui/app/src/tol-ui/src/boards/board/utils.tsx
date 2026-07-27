@@ -15,6 +15,7 @@ import {
   upsertTitle,
   postAddBoardEntity,
   defineBoardEntityInParent,
+  defineBoardEntity,
 } from "../..";
 import type {
   TsDataSource,
@@ -22,7 +23,6 @@ import type {
   IView,
   TBoardChildren,
   TBoardEntityType,
-  IZone,
 } from "../..";
 
 /**
@@ -120,7 +120,7 @@ export async function copyBoard(
     const boardId = newBoard.id;
     const firstViewId = Object.keys(newBoard.children ?? {})[0];
     replaceURLState(boardId!, firstViewId!);
-    return newBoard;
+    return defineBoardEntity(newBoard, BOARD_ENTITIES.ENTITIES.BOARD) as IBoard;
   });
 }
 
@@ -150,16 +150,12 @@ export async function copyView(
     parentEntityId,
   ).then((newView: IView | undefined) => {
     if (!newView || !currentBoard) return;
-    const viewsMap = currentBoard.children ?? ({} as TBoardChildren<IZone>);
-    const updatedBoard: IBoard = {
-      ...currentBoard,
-      children: {
-        ...viewsMap,
-        [newView.id!]: newView,
-      } as TBoardChildren<IView>,
-      order: [...(currentBoard.order ?? []), newView.id!],
-    };
     replaceURLState(currentBoard.id!, newView.id!);
+    const updatedBoard = defineBoardEntityInParent(
+      BOARD_ENTITIES.ENTITIES.VIEW,
+      newView,
+      currentBoard,
+    ) as IBoard;
     return { view: newView, updatedBoard };
   });
 }

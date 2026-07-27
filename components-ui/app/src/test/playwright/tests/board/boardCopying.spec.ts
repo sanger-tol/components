@@ -30,6 +30,7 @@ const setupBoardWithComponent = async (page) => {
   const { userId } = await addUserToDB();
   const { boardId, zoneId } = await createBoardForUser({
     userId: String(userId),
+    zoneObjectType: "species",
   });
 
   await insertComponentToBoard(

@@ -106,7 +106,8 @@ export const useFormData = <T>(props: PUseFormData<T>) => {
     mutationFn: (formData: T) =>
       upsertFormData<T>(dataSource, objectType, formData, user?.id),
     onSuccess: (saved) => {
-      queryClient.setQueryData([formName, user?.id], saved);
+      // Keep writer and reader in sync by updating the exact query key used above.
+      queryClient.setQueryData(queryKey, saved);
       successMessage &&
         PopUpMessage({ type: MESSAGE_TYPE.SUCCESS, message: successMessage });
     },

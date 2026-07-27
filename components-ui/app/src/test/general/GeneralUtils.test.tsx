@@ -38,6 +38,8 @@ test("isEmptyObject function", () => {
   const not_empty = { value: true };
   expect(isEmptyObject(empty)).toBe(true);
   expect(isEmptyObject(not_empty)).toBe(false);
+  expect(isEmptyObject([])).toBe(true);
+  expect(isEmptyObject(["value"])).toBe(false);
 });
 
 test("normailseCaps function", () => {
