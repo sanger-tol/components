@@ -12,7 +12,7 @@
   width: 100%;
   background: color-mix(in srgb, var(--tol-bg-dark) 70%, transparent);
   z-index: 12;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
 }
 
 .tol-board {
