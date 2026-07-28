@@ -47,14 +47,14 @@ objs = ds.get_list('${objectType}', object_filters=f)
 
 // This will need changing to use DataSourceUtils in the CLI once we support direct and via_api
 export function generateCLICommand(
-  dataspace: string,
+  dataSourceInstanceId: string,
   filter: IFilter,
   objectType: string,
   requestedFields: string[]
 ) {
   return `
 tol data \
---source=${dataspace || "tol_production"} \
+--source=${dataSourceInstanceId || "tol_production"} \
 --operation=list \
 --type=${objectType} \
 --filter='${JSON.stringify(filter) || '{"and":{}}'}' \

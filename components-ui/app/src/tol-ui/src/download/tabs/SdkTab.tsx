@@ -9,25 +9,25 @@ import {
   Button,
   generateSdkScript,
   IFilter,
+  TsDataSource,
   copyToClipboard
 } from "../..";
 import { SdkInstructions } from ".";
 
 export interface PSdkTab {
-  dataspace: string,
+  dataSource?: TsDataSource,
   filter: IFilter,
   objectType: string
 }
 
 export function SdkTab(props: PSdkTab) {
   const {
-    dataspace,
+    dataSource,
     filter,
     objectType
   } = props;
-  const dataspaceToUse = dataspace || "tol_production";
 
-  const SDKText = generateSdkScript(dataspaceToUse, filter, objectType)
+  const SDKText = generateSdkScript(dataSource?.dataSourceInstanceId, filter, objectType)
 
   return (
     <>

@@ -8,13 +8,14 @@ import { CodeBlock } from "react-code-blocks";
 import {
   Button,
   IFilter,
+  TsDataSource,
   copyToClipboard,
   generateCLICommand
 } from "../..";
 import { SdkInstructions } from ".";
 
 export interface PCommandLineTab {
-  dataspace: string,
+  dataSource?: TsDataSource,
   filter: IFilter,
   objectType: string
   requestedFields: string[]
@@ -22,14 +23,12 @@ export interface PCommandLineTab {
 
 export function CommandLineTab(props: PCommandLineTab) {
   const {
-    dataspace,
+    dataSource,
     filter,
     objectType,
     requestedFields
   } = props;
-  const dataspaceToUse = dataspace || "tol_production";
-
-  const CLICommand = generateCLICommand(dataspaceToUse, filter, objectType, requestedFields)
+  const CLICommand = generateCLICommand(dataSource?.dataSourceInstanceId, filter, objectType, requestedFields)
 
   return (
     <>
