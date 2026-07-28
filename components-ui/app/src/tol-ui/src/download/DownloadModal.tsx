@@ -7,8 +7,8 @@ SPDX-License-Identifier: MIT
 import { useState, useRef, useEffect } from "react";
 import {
   Button,
+  IRemoteTarget,
   Modal,
-  TsDataSource,
   PEditableTitle,
   IFieldMeta,
   Tabs,
@@ -18,7 +18,7 @@ import {
 } from "..";
 import { CommandLineTab, ImageTab, SdkTab, SpreadsheetTab } from "./tabs";
 
-export interface PDownloadModal {
+export interface PDownloadModal extends IRemoteTarget {
 
   /**
    * List of tabs to disable
@@ -63,19 +63,10 @@ export interface PDownloadModal {
    */
   title?: PEditableTitle;
 
-  // Tabe specific props 
-  /**
-   * Object type of the data being downloaded
-   */
-  objectType: string;
   /**
    * Any filters applied to the component itself, used when retrieving data for download
    */
   filter?: any;
-  /**
-   * The actual TSDataSource instance, used for fetching metadata and data for downloads when necessary (Table Only)
-   */
-  dataSource?: TsDataSource;
   /**
    * Specifies the fields to be requested for download (Table Only)
    */
