@@ -31,8 +31,18 @@ const stringifyFilter = (filter: any) => {
     .replace(/"False"/g, "False");
 };
 
-// This will need changing to use DataSourceUtils.get_datasource() once we support
-// direct and via_api
+/**
+ * Generates a script that contains an example of how the SDK can be used to retrieve
+ * data from the specified data source, object type, and filter.
+ *
+ * This will need changing to use DataSourceUtils.get_datasource() once we support
+ * direct and via_api
+ * 
+ * @param dataSourceInstanceId - The ID of the data source instance.
+ * @param filter - The filter to apply when retrieving data.
+ * @param objectType - The object type to retrieve.
+ * @returns A string containing the SDK script.
+ */
 export function generateSdkScript(
   dataSourceInstanceId: string | undefined,
   filter: IFilter,
@@ -49,7 +59,19 @@ objs = ds.get_list('${objectType}', object_filters=f)
   `;
 }
 
-// This will need changing to use DataSourceUtils in the CLI once we support direct and via_api
+/**
+ * Generates a CLI command that contains an example of how the SDK can be used to retrieve
+ * data from the specified data source, object type, and filter.
+ *
+ * This will need changing to use DataSourceUtils.get_datasource() in the CLI once we support
+ * direct and via_api
+ * 
+ * @param dataSourceInstanceId - The ID of the data source instance.
+ * @param filter - The filter to apply when retrieving data.
+ * @param objectType - The object type to retrieve.
+ * @param requestedFields - The fields to request when retrieving data.
+ * @returns A string containing the SDK script.
+ */
 export function generateCLICommand(
   dataSourceInstanceId: string | undefined,
   filter: IFilter,

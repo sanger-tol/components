@@ -9,15 +9,13 @@ import {
   Button,
   generateSdkScript,
   IFilter,
-  TsDataSource,
+  IRemoteTarget,
   copyToClipboard
 } from "../..";
 import { SdkInstructions } from ".";
 
-export interface PSdkTab {
-  dataSource?: TsDataSource,
+export interface PSdkTab extends IRemoteTarget {
   filter: IFilter,
-  objectType: string
 }
 
 export function SdkTab(props: PSdkTab) {
@@ -28,7 +26,7 @@ export function SdkTab(props: PSdkTab) {
   } = props;
 
   const SDKText = generateSdkScript(
-    dataSource?.getDataSourceInstanceId(),
+    dataSource.getDataSourceInstanceId(),
     filter,
     objectType
   )
