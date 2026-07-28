@@ -108,6 +108,7 @@ export function DownloadModal(props: PDownloadModal) {
     setOpen,
     objectType,
     filter,
+    dataSource,
     requestedFields,
     title,
     componentId,

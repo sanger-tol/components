@@ -27,7 +27,11 @@ export function SdkTab(props: PSdkTab) {
     objectType
   } = props;
 
-  const SDKText = generateSdkScript(dataSource?.dataSourceInstanceId, filter, objectType)
+  const SDKText = generateSdkScript(
+    dataSource?.getDataSourceInstanceId(),
+    filter,
+    objectType
+  )
 
   return (
     <>

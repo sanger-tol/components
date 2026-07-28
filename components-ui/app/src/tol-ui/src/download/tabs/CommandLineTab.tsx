@@ -28,7 +28,12 @@ export function CommandLineTab(props: PCommandLineTab) {
     objectType,
     requestedFields
   } = props;
-  const CLICommand = generateCLICommand(dataSource?.dataSourceInstanceId, filter, objectType, requestedFields)
+  const CLICommand = generateCLICommand(
+    dataSource?.getDataSourceInstanceId(),
+    filter,
+    objectType,
+    requestedFields
+  )
 
   return (
     <>

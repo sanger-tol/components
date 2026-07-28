@@ -33,7 +33,11 @@ const stringifyFilter = (filter: any) => {
 
 // This will need changing to use DataSourceUtils.get_datasource() once we support
 // direct and via_api
-export function generateSdkScript(dataspace: string, filter: IFilter, objectType: string) {
+export function generateSdkScript(
+  dataspace: string,
+  filter: IFilter,
+  objectType: string
+) {
   return `from tol.core import DataSourceFilter
 from tol.sources.portal import portal
 
