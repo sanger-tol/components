@@ -14,7 +14,7 @@ import {
 import { SdkInstructions } from ".";
 
 export interface PCommandLineTab {
-  source: string,
+  dataspace: string,
   filter: IFilter,
   objectType: string
   requestedFields: string[]
@@ -22,14 +22,14 @@ export interface PCommandLineTab {
 
 export function CommandLineTab(props: PCommandLineTab) {
   const {
-    source,
+    dataspace,
     filter,
     objectType,
     requestedFields
   } = props;
-  const sourceToUse = source || "tol_production";
+  const dataspaceToUse = dataspace || "tol_production";
 
-  const CLICommand = generateCLICommand(sourceToUse, filter, objectType, requestedFields)
+  const CLICommand = generateCLICommand(dataspaceToUse, filter, objectType, requestedFields)
 
   return (
     <>

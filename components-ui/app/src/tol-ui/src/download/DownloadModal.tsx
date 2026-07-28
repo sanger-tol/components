@@ -73,10 +73,10 @@ export interface PDownloadModal {
    */
   filter?: any;
   /**
-   * DataSource used to retrieve data,
+   * Dataspace used to retrieve data,
    * needed for SDK and CLI tabs to generate appropriate commands and scripts
    */
-  source?: string;
+  dataspace?: string;
   /**
    * The actual TSDataSource instance, used for fetching metadata and data for downloads when necessary (Table Only)
    */
@@ -113,7 +113,7 @@ export function DownloadModal(props: PDownloadModal) {
     setOpen,
     objectType,
     filter,
-    source,
+    dataspace,
     requestedFields,
     title,
     componentId,
@@ -122,7 +122,7 @@ export function DownloadModal(props: PDownloadModal) {
     totalSize,
   } = props;
 
-  const sourceToUse = source || "tol_production";
+  const dataspaceToUse = dataspace || "tol_production";
 
   // Spreadsheet progress state lives here so it survives the modal being closed/unmounted
   const [fetchCount, setFetchCount] = useState<number>(0);
@@ -199,12 +199,12 @@ export function DownloadModal(props: PDownloadModal) {
           )}
           {disabledTabs?.includes("SDK") ? null : (
             <Tabs.Tab eventKey="2" title="SDK">
-              <SdkTab source={sourceToUse} objectType={objectType} filter={filter} />
+              <SdkTab dataspace={dataspaceToUse} objectType={objectType} filter={filter} />
             </Tabs.Tab>
           )}
           {disabledTabs?.includes("CLI") ? null : (
             <Tabs.Tab eventKey="3" title="CLI">
-              <CommandLineTab source={sourceToUse} objectType={objectType} filter={filter} requestedFields={requestedFields} />
+              <CommandLineTab ={dataspaceToUse} objectType={objectType} filter={filter} requestedFields={requestedFields} />
             </Tabs.Tab>
           )}
           {disabledTabs?.includes("Image") ? null : (

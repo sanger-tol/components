@@ -14,20 +14,20 @@ import {
 import { SdkInstructions } from ".";
 
 export interface PSdkTab {
-  source: string,
+  dataspace: string,
   filter: IFilter,
   objectType: string
 }
 
 export function SdkTab(props: PSdkTab) {
   const {
-    source,
+    dataspace,
     filter,
     objectType
   } = props;
-  const sourceToUse = source || "tol_production";
+  const dataspaceToUse = dataspace || "tol_production";
 
-  const SDKText = generateSdkScript(sourceToUse, filter, objectType)
+  const SDKText = generateSdkScript(dataspaceToUse, filter, objectType)
 
   return (
     <>

@@ -31,10 +31,13 @@ const stringifyFilter = (filter: any) => {
     .replace(/"False"/g, "False");
 };
 
-export function generateSdkScript(source: string, filter: IFilter, objectType: string) {
-  return `from tol.core import DataSourceFilter, DataSourceUtils
+// This will need changing to use DataSourceUtils.get_datasource() once we support
+// direct and via_api
+export function generateSdkScript(dataspace: string, filter: IFilter, objectType: string) {
+  return `from tol.core import DataSourceFilter
+from tol.sources.portal import portal
 
-ds = DataSourceUtils.get_datasource('${source || "tol_production"}')
+ds = portal(dataspace='${dataspace || "tol_production"}')
 f = DataSourceFilter(
     and_ = ${stringifyFilter(filter?.and_)}
 )
@@ -42,15 +45,16 @@ objs = ds.get_list('${objectType}', object_filters=f)
   `;
 }
 
+// This will need changing to use DataSourceUtils in the CLI once we support direct and via_api
 export function generateCLICommand(
-  source: string,
+  dataspace: string,
   filter: IFilter,
   objectType: string,
   requestedFields: string[]
 ) {
   return `
 tol data \
---dataspace=${source || "tol_production"} \
+--source=${dataspace || "tol_production"} \
 --operation=list \
 --type=${objectType} \
 --filter='${JSON.stringify(filter) || '{"and":{}}'}' \
