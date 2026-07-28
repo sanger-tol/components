@@ -34,14 +34,14 @@ const stringifyFilter = (filter: any) => {
 // This will need changing to use DataSourceUtils.get_datasource() once we support
 // direct and via_api
 export function generateSdkScript(
-  dataspace: string,
+  dataSourceInstanceId: string | undefined,
   filter: IFilter,
   objectType: string
 ) {
   return `from tol.core import DataSourceFilter
 from tol.sources.portal import portal
 
-ds = portal(dataspace='${dataspace || "tol_production"}')
+ds = portal(dataspace='${dataSourceInstanceId || "tol_production"}')
 f = DataSourceFilter(
     and_ = ${stringifyFilter(filter?.and_)}
 )
@@ -51,7 +51,7 @@ objs = ds.get_list('${objectType}', object_filters=f)
 
 // This will need changing to use DataSourceUtils in the CLI once we support direct and via_api
 export function generateCLICommand(
-  dataSourceInstanceId: string,
+  dataSourceInstanceId: string | undefined,
   filter: IFilter,
   objectType: string,
   requestedFields: string[]
