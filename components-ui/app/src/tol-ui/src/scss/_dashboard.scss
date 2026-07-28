@@ -12,7 +12,7 @@
   width: 100%;
   background: color-mix(in srgb, var(--tol-bg-dark) 70%, transparent);
   z-index: 12;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
 }
 
 .tol-board {
@@ -155,7 +155,7 @@
     justify-content: center;
     pointer-events: auto; // captures clicks
     cursor: move;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(3px);
     border-radius: var(--tol-border-radius);
     background-color: color-mix(in srgb, var(--tol-bg) 50%, transparent);
   }
@@ -333,6 +333,15 @@
   margin: 2px;
 }
 
+.tol-my-boards-live-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-weight: normal;
+}
+
 .my-boards-container {
   overflow: auto;
   min-height: 200px;
@@ -340,6 +349,12 @@
   .rs-panel-group {
     border-radius: var(--tol-border-radius);
   }
+}
+
+.tol-my-boards-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .my-boards-dropdown-buttons {
@@ -480,8 +495,13 @@
   color: var(--rs-form-errormessage-text);
 }
 
-.zone-modal-labels {
+.tol-zone-modal-labels {
   margin-bottom: 5px !important;
+}
+
+.tol-zone-modal-title {
+  display: flex;
+  justify-content: space-between;
 }
 
 // temp - accordion header hover
@@ -501,9 +521,4 @@
   .rs-modal-footer span {
     margin: 0 !important;
   }
-}
-
-.tol-zone-modal-title {
-  display: flex;
-  justify-content: space-between;
 }

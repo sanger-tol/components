@@ -4,24 +4,23 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { RSForm, IFormLabelIcon, Icon } from "..";
+import { RSForm, IFormComponent, Icon, RequiredAsterisk } from "..";
 
-export interface PFormLabel {
-  label?: string;
-  icon?: IFormLabelIcon;
+export interface PFormLabel extends Pick<IFormComponent, "label" | "icon" | "required"> {
   inline?: boolean;
 }
 
 export function FormLabel(props: PFormLabel) {
-  const { label, inline } = props;
+  const { label, inline, required } = props;
 
   const icon = { ...props.icon, position: props.icon?.position || "right" };
-  
+
   return (
     <>
       {label && (
         <RSForm.ControlLabel>
           <div className={`tol-form-label ${inline ? "inline" : ""}`}>
+            {required && <RequiredAsterisk />}
             {icon.position === "right" && label}
             {icon.icon && (
               <div className="tol-form-label-icon">

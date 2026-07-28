@@ -18,7 +18,7 @@ export function RowCounter(props: PRowCounter) {
   if (loading) return null;
 
   return (
-    <div className="tol-table-row-counter">
+    <div className="tol-table-row-counter" data-testid="table-row-counter">
       {formatTotalSize(totalSize)}
     </div>
   );

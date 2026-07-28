@@ -7,6 +7,7 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { Toggle } from "rsuite";
 import {
   Widgets,
   Message,
@@ -17,12 +18,17 @@ import {
   getBoardDetails,
   LoadingContent,
   PBoard,
+  isBoardInNavConfig,
+  useApp,
 } from "../..";
-
 
 export function MyBoards(props: PBoard) {
   const { boardDataSource } = props;
+
+  const { navConfig } = useApp();
+
   const [boardDetails, setBoardDetails] = useState<any[]>([]);
+  const [liveOnly, setLiveOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const toaster = Toaster();
@@ -36,6 +42,14 @@ export function MyBoards(props: PBoard) {
       toaster.push(errMessage);
     }
   }, [errorMessage]);
+
+  const hasLiveBoards = boardDetails.some((board) =>
+    isBoardInNavConfig(navConfig, board.id),
+  );
+
+  useEffect(() => {
+    if (!hasLiveBoards) setLiveOnly(false);
+  }, [hasLiveBoards]);
 
   const errMessage = (
     <Message
@@ -90,11 +104,24 @@ export function MyBoards(props: PBoard) {
     />
   );
 
+  const displayedBoards = liveOnly
+    ? boardDetails.filter((board) => isBoardInNavConfig(navConfig, board.id))
+    : boardDetails;
+
   const Content = (
     <div className="my-boards-container">
-      {boardDetails && boardDetails.length > 0 ? (
+      {hasLiveBoards && (
+        <label className="tol-my-boards-live-toggle">
+          <Toggle
+            checked={liveOnly}
+            onChange={setLiveOnly}
+          />
+          Only show live Boards
+        </label>
+      )}
+      {displayedBoards.length > 0 ? (
         <BoardAccordion
-          boardDetails={boardDetails}
+          boardDetails={displayedBoards}
           setBoardDetails={setBoardDetails}
           boardDataSource={boardDataSource}
         />

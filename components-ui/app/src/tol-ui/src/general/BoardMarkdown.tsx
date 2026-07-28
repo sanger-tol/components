@@ -101,11 +101,11 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   );
 
   return (
-    <>
+    <div className="tol-component-contents" data-testid="board-component-text">
       <UtilityBar noLeftSide id={id} {...ubc} />
-      <div className="tol-markdown tol-component-contents" data-testid="board-component-text">
+      <div className="tol-markdown tol-component-contents">
         {(showMarkdownViewer) ? MarkdownViewer : MarkdownEditor}
       </div>
-    </>
+    </div>
   );
 }

@@ -29,9 +29,10 @@ import {
   updateViewInUrl,
   patchReorderBoardEntity,
   defineBoardEntityInParent,
+  isEmptyObject,
 } from "../..";
 import { BoardUtilityBar, ImportViewModal } from "./components";
-import type { IBoard, TNavBrand, TsDataSource } from "../..";
+import type { IBoard, TsDataSource } from "../..";
 
 
 export interface PBoard {
@@ -47,17 +48,13 @@ export interface PBoard {
    * The data source for fetching actions.
    */
   actionsDataSource?: TsDataSource;
-  /**
-   * The brand to display in the loading screen.
-   */
-  brand?: TNavBrand;
 }
 
 /**
  * Component to render a board based on its ID and TSDataSource.
  */
 export function Board(props: PBoard) {
-  const { boardId, boardDataSource, brand, actionsDataSource } = props;
+  const { boardId, boardDataSource, actionsDataSource } = props;
 
   const { setPrivilege, editMode, board, setBoard } = useBoard();
 
@@ -93,7 +90,7 @@ export function Board(props: PBoard) {
     isLoading,
   } = useQueryData<IBoard>(
     [BOARD_ENTITIES.ENTITIES.BOARD, id],
-    () => fetchBoardEntityAndChildren(boardDataSource, id!),
+    () => fetchBoardEntityAndChildren(boardDataSource, id!) as Promise<IBoard>,
     { enabled: !!id },
   );
 
@@ -125,15 +122,17 @@ export function Board(props: PBoard) {
 
   // Scroll listener for sticky board bar shadow effect
   useEffect(() => {
+    if (!isSuccess) return;
     const bar = document.querySelector<HTMLElement>(".tol-board-bar");
     if (!bar) return;
     const onScroll = () => {
       const progress = Math.min(window.scrollY / 20, 1);
       bar.style.setProperty("--tol-bar-scroll", progress.toString());
     };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isSuccess]);
 
   const onClickView = (viewId: string) => () => {
     setActiveViewId(viewId);
@@ -180,8 +179,8 @@ export function Board(props: PBoard) {
     return <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />;
   }
 
-  if (isLoading && !isSuccess && !boardData && !board) {
-    return <LoadingContent overlayNav brand={brand} text="Finding Board..." />;
+  if (isLoading && !isSuccess && isEmptyObject(boardData) && isEmptyObject(board)) {
+    return <LoadingContent text="Getting the board ready..." />;
   }
 
   return (

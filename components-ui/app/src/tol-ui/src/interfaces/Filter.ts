@@ -26,6 +26,13 @@ export interface IFilter {
   and_?: IAndAttributes;
 }
 
+export type TFilterDateRangeValue = [Date, Date] | null;
+
+export interface IFilterDateBounds {
+  minDate: Date | null;
+  maxDate: Date | null;
+}
+
 export type TFilterOrUndefined = IFilter | undefined;
 
 export type TDescribedFilters = Record<string, string[]>;

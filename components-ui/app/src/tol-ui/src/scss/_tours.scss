@@ -4,68 +4,41 @@
  * SPDX-License-Identifier: MIT
  */
 
-// A bit of a fudge solution.
-// We can't use ToL Buttons in the driver.js popup,
-// so these are a bunch of overrides to make them as similar as possible
-
-.driver-popover-footer {
-  button {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    line-height: 1.25rem !important;
-    text-align: center !important;
-    vertical-align: middle !important;
-    cursor: pointer !important;
-    white-space: nowrap !important;
-    user-select: none !important;
-    text-decoration: none !important;
-    border-radius: 5px !important;
-
-    height: 30px !important;
-    min-width: 30px !important;
-    padding: 5px !important;
-    font-size: 14px !important;
-    border: 1px solid !important;
-    text-shadow: none !important;
-
-    font-family: "Lato";
-  }
-
-  .driver-popover-next-btn {
-    color: white !important;
-    border-color: var(--tol-primary) !important;
-    background-color: var(--tol-primary) !important;
-
-    &:hover {
-      border-color: var(--tol-primary-light) !important;
-    }
-  }
-
-  .driver-popover-prev-btn {
-    color: var(--tol-primary) !important;
-    background-color: transparent !important;
-    border-color: var(--tol-grey) !important;
-
-    &:hover {
-      border-color: var(--tol-primary) !important;
-    }
-  }
-
-  .driver-popover-btn-disabled {
-    background-color: var(--tol-grey-subtle) !important;
-    border-color: var(--tol-grey) !important;
-    color: var(--tol-bg) !important;
-    fill: var(--tol-bg) !important;
-  }
-}
-
 .driver-popover {
   background-color: var(--tol-bg) !important;
   color: var(--tol-text) !important;
+  border-radius: var(--tol-border-radius) !important;
 }
 
-.InitiateTourButton {
-  background: none;
-  color: var(--tol-grey);
+$border-directions: top, bottom, left, right;
+
+@each $direction in $border-directions {
+  .driver-popover-arrow-side-#{$direction} {
+    border-#{$direction}-color: var(--tol-bg) !important;
+  }
+}
+
+.driver-popover-footer {
+  // We can't use the Buttom component in the popover. Instead we must use the ones already there,
+  // and adapt the styles to look as similar as possible. We can extend of the necessary classes
+  // (see below), but there are some override rules here to "fudge" the difference.
+  button {
+    font-family: 'Lato' !important;
+    font-size: 14px !important;
+    
+    // This doesn't match the usual buttons but the small amount of padding looked weird.
+    // We would usually use icons with a tooltip so wouldn't encounter this
+    padding: 10px !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .driver-popover-next-btn {
+    @extend .icon-button-primary-md;
+  }
+
+  .driver-popover-prev-btn {
+    @extend .icon-button-primary-md-outline;
+  }
 }

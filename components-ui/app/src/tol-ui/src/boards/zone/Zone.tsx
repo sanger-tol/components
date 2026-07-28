@@ -179,7 +179,7 @@ export function Zone(props: PZone) {
   );
 
   return (
-    <div className="tol-zone">
+    <div className="tol-zone" data-testid="zone">
       {(title || editMode) && bar}
       {zone && zone.order && zone.order.length > 0 ? (
         <Visualisations

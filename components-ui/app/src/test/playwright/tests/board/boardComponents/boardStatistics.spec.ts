@@ -37,8 +37,8 @@ const filterStatisticsComponent = async (page: Page) => {
 
   await addComponentFilter(
     page,
+    page.getByTestId("board-component-statistics"),
     "statistics",
-    0,
     "grit_project",
     "in_list",
     "ToL Rapid Curation"
@@ -52,10 +52,10 @@ const filterStatisticsComponent = async (page: Page) => {
 }
 
 test("manage dashboard", async ({ page }) => {
-  await addComponent(page, 0, "statistics", "Small");
+  await addComponent(page, page.getByTestId("zone").first(), "statistics", "Small");
 
   await filterStatisticsComponent(page);
 
-  await deleteComponent(page, "statistics", 0);
+  await deleteComponent(page, page.getByTestId("board-component-statistics"), "statistics");
   await expect(page.locator(".tol-count")).not.toBeVisible();
 });

@@ -6,9 +6,56 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.5`
+
+27-07-2026
+
+- Fixed bug: filterPassThrough not working on boards
+- Fixed bug: No shadow on top board bar
+- Added solid nav on scroll when header is present
+- Added 'live' indicator for boards
+- Added auth api path env var
+
+## tol-ui `4.0.4`
+
+23-07-2026
+
+- Fixed bug: Delete on MyBoards erroring
+- Fixed bug: Copying boards/views erroring
+- Fixed bug: Table flickering on load
+- Fixed bug: `AmalgamateRequestedFields` error for ~ notation
+- Fixed bug: Markdown overflows widget
+- Fixed bug: BoardTable doesn't give button until reload
+- Fixed bug: Boards don't have correct loading
+- Fixed bug: Squashed Statistics component screens
+
+## tol-ui `4.0.3`
+
+22-07-2026
+
+- Fixed bug: Form issue for profiles (use queryKey as the form identifier)
+- Adding prop to SmartApp to remove the footer
+
+## tol-ui `4.0.2`
+
+20-07-2026
+
+- Added datetime filter specificity.
+- DefaultFilter is now only defaulted to for above components and not self.
+- Fixed bug: Can not remove a saved filter in a filter drawer.
+- Fixed bug: Filters are not being calculated in the utility bar tooltips.
+
+## tol-ui `4.0.1`
+
+17-07-2026
+
+- Fixed bug: requestedFields for fields used in Cell Renderer params
+- Fixed bug: Filters are not being calculated in the utility bar tooltips.
+
+
 ## tol-ui `4.0.0`
 
-18-06-2026
+16-07-2026
 
 - Refer to the BOARD EPIC on JIRA for full tickets/changes in this release.
 - [TOLP-9811](https://jira.sanger.ac.uk/browse/TOLP-9811)

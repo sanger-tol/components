@@ -55,7 +55,7 @@ export function falseIfUndefined(prop: any) {
   return false;
 }
 
-export function isEmptyObject(x: object|undefined) {
+export function isEmptyObject(x: object|unknown[]|undefined) {
   return Object.keys(x || {}).length === 0;
 }
 

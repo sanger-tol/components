@@ -13,6 +13,7 @@ import {
   Row,
   Col,
   AttributeTitle,
+  FILTER_INPUT_DELAY,
 } from "..";
 
 export interface PRemoteFilters extends IRemoteTargetAndZone {
@@ -32,6 +33,10 @@ export interface PRemoteFilters extends IRemoteTargetAndZone {
    * Optional custom classname for the filter columns
    */
   className?: string;
+  /**
+   * Optional delay in milliseconds before applying the filter after user input. Defaults to 800ms.
+   */
+  delay?: number;
   /**
    * Optional extra element to render alongside each filter, receives the attribute as a prop
    */
@@ -59,7 +64,8 @@ export function RemoteFilters(props: PRemoteFilters) {
     attributes,
     className,
     utilityBarConfig,
-    ExtraElement
+    delay = FILTER_INPUT_DELAY,
+    ExtraElement,
   } = props;
 
   const [loading, setLoading] = useState(true);
@@ -102,7 +108,7 @@ export function RemoteFilters(props: PRemoteFilters) {
                     dataSource={dataSource}
                     zone={zone}
                     setZone={setZone}
-                    delay={800}
+                    delay={delay}
                   />
                 </div>
                 {ExtraElement && <ExtraElement attribute={attribute} />}

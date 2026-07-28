@@ -128,9 +128,8 @@ SPDX-License-Identifier: MIT
   float: right;
   background-color: var(--config-source-bg-color);
   color: black;
-  padding-left: 3px;
-  padding-right: 3px;
-  border-radius: 4px;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--tol-border-radius);
   float: none !important;
 }
 
@@ -170,7 +169,7 @@ SPDX-License-Identifier: MIT
   margin-right: 0.3em;
   border-radius: var(--tol-border-radius);
   display: inline-block;
-  transition: width 0.5s ease;
+  transition: width 0.5s ease, background-color 0.3s ease;
 }
 
 .tol-attribute-title:hover {

@@ -17,7 +17,7 @@ describe("getBoardDetails function", () => {
             id: "b_mock1",
             type: BOARD_ENTITIES.ENTITIES.BOARD,
             attributes: {
-              title: "First",
+              title: "Second",
               children: {},
               order: [],
               owner_email: "bob@example.com",
@@ -27,7 +27,7 @@ describe("getBoardDetails function", () => {
             id: "b_mock2",
             type: BOARD_ENTITIES.ENTITIES.BOARD,
             attributes: {
-              title: "Second",
+              title: "First",
               children: {},
               order: [],
               owner_email: "example@bob.com"
@@ -40,11 +40,11 @@ describe("getBoardDetails function", () => {
     const boardDetails = await getBoardDetails(mockDataSource, "id", () => {});
     expect(boardDetails).toEqual([
       {
-        id: "b_mock1",
+        id: "b_mock2",
         title: "First",
       },
       {
-        id: "b_mock2",
+        id: "b_mock1",
         title: "Second",
       }
     ]);

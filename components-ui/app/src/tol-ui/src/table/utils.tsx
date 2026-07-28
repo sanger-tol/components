@@ -33,6 +33,9 @@ import {
   isRelationship,
   TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
   TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
+  CELL_RENDERER_PROP_TAG_START,
+  CELL_RENDERER_PROP_TAG_END,
+  CELL_RENDERER_PARENT_OPERATOR,
 } from "..";
 import type {
   TsDataSource,
@@ -98,6 +101,7 @@ export function convertTableData(
   setExpandedRows: (expandedRows: string[]) => void,
   customCellRenderers?: ICustomCellRenderers,
   editableCells?: boolean,
+  isManyByField?: { [field: string]: boolean },
 ): ITableData {
   if (!dataObjects) return [];
   const data: ITableData = [];
@@ -116,12 +120,39 @@ export function convertTableData(
           customCellRenderers={customCellRenderers}
           editable={editableCells}
           actsAs={fieldMeta.dataWithDefaults?.[field]?.acts_as}
+          isMany={isManyByField?.[field]}
         />
       );
     });
     data.push(row);
   });
   return data;
+}
+
+/**
+ * Resolves whether each active column in the field meta points at a "many"
+ * relationship. Computing this once per column (rather than once per cell)
+ * lets table cells render synchronously in a single pass.
+ *
+ * @param dataSource - The data source used to resolve relationship config.
+ * @param objectType - The object type of the table rows.
+ * @param fieldMeta - The field meta whose active columns are resolved.
+ * @returns A map of field name to whether it is a "many" relationship.
+ */
+export async function getIsManyByField(
+  dataSource: TsDataSource,
+  objectType: string,
+  fieldMeta?: IFieldMeta,
+): Promise<{ [field: string]: boolean }> {
+  const entries = await Promise.all(
+    (fieldMeta?.order.active || []).map(
+      async (field): Promise<[string, boolean]> => [
+        field,
+        await dataSource.isManyDataPointsByName(objectType, field),
+      ],
+    ),
+  );
+  return Object.fromEntries(entries);
 }
 
 function addDefaultCellRenderer(type: string): TCellRenderer {
@@ -184,18 +215,19 @@ export async function addFieldMetaDefaults(
   const attributes = fieldMeta.order.active.concat(
     fieldMeta.order.inactive || [],
   );
-  for (const key of attributes) {
-    const descriptor = dataSource.getAttributeDescriptor({
-      objectType: objectType,
-      field: key,
-    });
-    await descriptor.then((meta) => {
+  // Fetch all attribute descriptors in parallel rather than sequentially
+  await Promise.all(
+    attributes.map(async (key) => {
+      const meta = await dataSource.getAttributeDescriptor({
+        objectType: objectType,
+        field: key,
+      });
       if (!meta) {
         throw new Error(TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND(key, objectType));
       }
       addDefaultsFromEntityMeta(key, meta, fieldMeta);
-    });
-  }
+    }),
+  );
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
   return fieldMeta;
 }
@@ -351,32 +383,43 @@ async function addFieldsFromStringProp(
   requestedFields: Set<string>,
   value: unknown,
   fieldName: string,
-  dataSource: TsDataSource,
-  objectType: string,
 ) {
-  if (typeof value !== "string" || !value.includes("${")) return;
+  if (typeof value !== "string" || !value.includes(CELL_RENDERER_PROP_TAG_START)) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
 
+  // This notation indicates that the cellRenderer is referring to a field on the parent object rather than the current object type. 
+  const refersToParentObject = value.includes(CELL_RENDERER_PARENT_OPERATOR);
+
   for (const match of matches) {
     const relativeAttribute = match
-      .replace("${", "")
-      .replace("}", "")
+      .replace(CELL_RENDERER_PROP_TAG_START, "")
+      .replace(CELL_RENDERER_PROP_TAG_END, "")
       .replace(CELL_RENDERER_SPREAD_OPERATOR, "")
       .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
+      .replace(CELL_RENDERER_PARENT_OPERATOR, "")
       .trim();
 
-    // Ensure we request the field for the original objectType and not the related objectType
-    const relationship = getRelationshipNameByField(fieldName);
-    const isMany = await dataSource.isManyDataPointsByName(
-      objectType,
-      fieldName.split(".")[0],
-    );
-    const field =
-      relationship && !!isMany
-        ? `${relationship}.${relativeAttribute}`
-        : relativeAttribute;
-    if (field) requestedFields.add(field);
+    /*
+     * Ensure any fields used in a cellRenderer (referred to from the objectType the
+     * field is already on) have the relevant relationship prefix added to the field
+     * name so they are requested correctly from the API.
+     * 
+     * e.g. If the fieldName is "relationship.attribute" and the relativeAttribute is "attribute2",
+     *      the requested field should be "relationship.attribute2" rather than just "attribute2".
+     * 
+     * Parent object fields are already on the current object type, so they don't need a relationship prefix.
+     */
+    if (refersToParentObject) {
+      requestedFields.add(relativeAttribute);
+    } else {
+      const relationship = getRelationshipNameByField(fieldName);
+      const field =
+        relationship
+          ? `${relationship}.${relativeAttribute}`
+          : relativeAttribute;
+      if (field) requestedFields.add(field);
+    }
   }
 }
 
@@ -396,8 +439,6 @@ function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
 
 export async function amalgamateRequestedFields(
   fieldMeta: IFieldMeta,
-  dataSource: TsDataSource,
-  objectType: string,
 ): Promise<string[]> {
   const requestedFields = new Set<string>(fieldMeta?.order.active || []);
 
@@ -417,8 +458,6 @@ export async function amalgamateRequestedFields(
         requestedFields,
         value,
         fieldName,
-        dataSource,
-        objectType,
       );
       addFieldsFromFilterProp(requestedFields, value);
     }

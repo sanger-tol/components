@@ -5,14 +5,33 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { TMessageType, PButton, TsDataSource, PIcon } from "../..";
+import type {
+  TMessageType,
+  PButton,
+  TsDataSource,
+  PIcon,
+  TTextEditorButtons,
+  TFormLabelIconPosition,
+  TCheckboxFields,
+  TFormField,
+  TLabelAndValueData,
+} from "../..";
 
 export interface IWaitingUpload {
+  /**
+   * The message to display while waiting for the upload to complete.
+   */
   message: string | React.ReactNode;
 }
 
 export interface IMessage {
+  /**
+   * The type of message. Can be "success", "info", "warning", or "error".
+   */
   type: string;
+  /**
+   * The message to display. Can be a string or a React node.
+   */
   message: TMessageType;
 }
 
@@ -41,28 +60,75 @@ export interface ICheckboxConfig {
   fields: TCheckboxFields;
 }
 
-export type TCheckboxFields = ICheckboxField[];
-
-// Below until the IFormConfig interface allows for type hints when
-// designing a form config object
-
 export interface IFormLabelIcon extends PIcon {
-  position?: "left" | "right";
+  position?: TFormLabelIconPosition;
 }
 
-export interface ITextField {
+export interface IFormComponent {
+  /**
+   * The unique identifier for the form field.
+   */
+  id?: string;
+  /**
+   * The name of the form field. This is used to identify the field in the form data.
+   */
   name: string;
-  type: "text";
-  label: string;
-  accepter?: React.ReactNode; // Allows custom elements to be passed in
+  /**
+   * The type of form field. This determines the kind of input element that will be rendered.
+   */
+  type: TFormField["type"];
+  /**
+   * The label for the form field. This is displayed above the input element.
+   */
+  label?: string;
+  /**
+   * The help text for the form field. This is displayed below the input element.
+   */
   helpText?: string;
+  /**
+   * The placeholder text for the form field. This is displayed inside the input element when it is empty.
+   */
   placeholder?: string;
+  /**
+   * Whether the form field is read-only. If true, the user cannot modify the value of the field.
+   */
   readOnly?: boolean;
+  /**
+   * Whether the form field is required. If true, the user must provide a value for the field before submitting the form.
+   * This will also display a red asterisk next to the label.
+   */
   required?: boolean;
+  /**
+   * Whether the form field is centered. If true, the label and input element will be centered.
+   */
   centered?: boolean;
+  /**
+   * The icon for the form field label. This is displayed next to the label.
+   */
   icon?: IFormLabelIcon;
+  /**
+   * Whether the form field label is displayed inline with the input element.
+   * If true, the label will be displayed to the left of the input element.
+   */
   labelInline?: boolean;
+  /**
+   * The section of the form that this field belongs to. This can be used to group related fields together.
+   */
   section?: string;
+  /**
+   * Whether multiple of a particular form field should be allowed. If true, the user can add multiple instances of this field.
+   */
+  multiple?: boolean;
+  /**
+   * Whether at least one instance of a particular form field is required.
+   * If true, the user must provide at least one instance of this field before submitting the form.
+   */
+  minOne?: boolean;
+}
+
+export interface ITextField extends IFormComponent {
+  type: "text";
+  accepter?: React.ReactNode; // Allows custom elements to be passed in
 }
 
 // "email" and "password" are controlled by the same form element in
@@ -75,24 +141,14 @@ export interface IPasswordField extends Omit<ITextField, "type"> {
   type: "password";
 }
 
-export interface ICountryselectField {
-  name: string;
+export interface ICountryselectField extends IFormComponent {
   type: "countryselect";
-  label?: string;
-  icon?: IFormLabelIcon;
-  section?: string;
 }
 
-export interface IDatetimeField {
-  name: string;
+export interface IDatetimeField extends IFormComponent {
   type: "datetime";
-  label?: string;
-  helpText?: string;
-  placeholder?: string;
   hideMinutes?: (minute: number, date: Date) => boolean;
   format?: string;
-  icon?: IFormLabelIcon;
-  section?: string;
 }
 
 export interface ILabelAndValueDataInstance {
@@ -100,32 +156,19 @@ export interface ILabelAndValueDataInstance {
   value: any;
   [otherParams: string]: any;
 }
-
-export type TLabelAndValueData = ILabelAndValueDataInstance[];
-
-export interface ISingleselectField {
-  name: string;
+export interface ISingleselectField extends IFormComponent {
   type: "singleselect";
-  label: string;
   data: string[] | TLabelAndValueData; // Array of selectable options
-  placeholder?: string;
   block?: boolean;
-  icon?: IFormLabelIcon;
-  section?: string;
 }
 
-export interface ISingleselectcustomoptionField {
-  name: string;
+export interface ISingleselectcustomoptionField extends IFormComponent {
   type: "singleselectcustomoption";
   data: string[];
-  label?: string;
   customOptionPlaceholder?: string;
-  icon?: IFormLabelIcon;
-  section?: string;
 }
 
-export interface IDropzoneField {
-  name: string;
+export interface IDropzoneField extends IFormComponent {
   type: "dropzone";
   resource: string;
   dataSource: TsDataSource;
@@ -139,22 +182,16 @@ export interface IDropzoneField {
   parentToSubmit?: boolean;
   resetKey?: string | number;
   validating?: boolean;
-  icon?: IFormLabelIcon;
-  section?: string;
 }
 
-export interface IAutocompleteField {
-  name: string;
+export interface IAutocompleteField extends IFormComponent {
   type: "autocomplete";
   label: string;
   data: string[];
   dataSource?: TsDataSource; // Exists if this is a RemoteAutoComplete field
-  icon?: IFormLabelIcon;
-  section?: string;
 }
 
-export interface IMultipleselectField {
-  name: string;
+export interface IMultipleselectField extends IFormComponent {
   type: "multipleselect";
   sticky?: boolean;
   block?: boolean;
@@ -181,26 +218,28 @@ export interface IMultipleselectField {
   onExit?: any;
   onExiting?: any;
   groupBy?: string;
-  icon?: IFormLabelIcon;
-  section?: string;
 }
 
-export interface IMarkdownField {
-  name: string;
+export interface IMarkdownField extends IFormComponent {
   type: "markdown";
   preview?: boolean;
-  label?: string;
   removeCommands?: string[];
   height?: string | number;
-  helpText?: string;
-  icon?: IFormLabelIcon;
-  section?: string;
 }
 
-// This is named to avoid conflict with `ICheckboxField` from `ICheckboxConfig`,
-// which you'll see used in this interface
-export interface ICheckboxFormField {
-  name: string;
+export interface ITextAreaField extends IFormComponent {
+  type: "textarea";
+  menuButtons?: TTextEditorButtons;
+  errorText?: string;
+  returnValueType?: "html" | "json" | "text";
+  customExtensions?: any[];
+  customButtons?: any[];
+  keyboardShortcutElement?: React.ReactNode;
+  editable?: boolean;
+  height?: string | number;
+  onEditorChange?: (editor: any) => void;
+}
+export interface ICheckboxFormField extends IFormComponent {
   type: "checkbox";
   label: string;
   checkboxConfig: ICheckboxConfig;
@@ -208,22 +247,7 @@ export interface ICheckboxFormField {
   inline?: boolean;
   indeterminate?: boolean;
   defaultChecked?: string[];
-  section?: string;
 }
-
-export type TFormField =
-  | ITextField
-  | IEmailField
-  | IPasswordField
-  | ICountryselectField
-  | IDatetimeField
-  | ISingleselectField
-  | ISingleselectcustomoptionField
-  | IDropzoneField
-  | IAutocompleteField
-  | IMultipleselectField
-  | IMarkdownField
-  | ICheckboxFormField;
 
 export interface IFormButtons {
   buttons: PButton[];
@@ -247,13 +271,9 @@ export interface IRemoteAutoCompleteData {
   [key: string]: object[];
 }
 
-export type TAutoCompleteValue = string | { value: string, id: string };
-
 export interface IUserProfileFormData {
   name?: string;
   email?: string;
   workplace?: string;
   [key: string]: any;
 }
-
-export type TUserProfileFormDataOrNull = IUserProfileFormData | null;

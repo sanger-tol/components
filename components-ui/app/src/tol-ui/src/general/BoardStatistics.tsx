@@ -51,7 +51,7 @@ export function BoardStatistics(props: PVisualisation) {
   );
 
   return (
-    <>
+    <div className="tol-component-contents" data-testid="board-component-statistics">
       <StatisticsConfigDrawer
         {...props}
         open={openConfig}
@@ -65,8 +65,7 @@ export function BoardStatistics(props: PVisualisation) {
         type={config.type}
         field={config.field}
         utilityBarConfig={ubc}
-        testid="board-component-statistics"
       />
-    </>
+    </div>
   );
 }

@@ -6,60 +6,48 @@ SPDX-License-Identifier: MIT
 
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
-import { FormLabel, IFormLabelIcon, RSForm } from "..";
+import { FormComponentWrapper, TFormMarkdownField } from "..";
 
-export interface PFormMarkdown {
+export interface PFormMarkdown extends TFormMarkdownField {
+  name?: string;
   value: string;
   onChange: (value: string) => void;
-  preview?: boolean;
-  label?: string;
-  removeCommands?: string[];
-  height?: string | number;
-  helpText?: string;
   errorText?: string;
-  icon?: IFormLabelIcon;
 }
 
 export function FormMarkdown(props: PFormMarkdown) {
   const {
+    name,
     value,
     onChange,
     preview = true,
     label,
     removeCommands,
     height,
-    helpText,
-    errorText,
-    icon
   } = props;
 
   return (
-    <>
-      <RSForm.Group controlId={label}>
-        <FormLabel label={label || "Markdown Editor:"} icon={icon}/>
-        {helpText && (
-          <div className="tol-form-markdown-help-text">
-            <RSForm.HelpText>{helpText}</RSForm.HelpText>
-          </div>
-        )}
-        <MDEditor
-          id={label}
-          value={value}
-          onChange={onChange}
-          preview={preview ? "live" : "edit"}
-          className="tol-markdown-viewer tol-form-markdown"
-          fullscreen={false}
-          height={height || "100%"}
-          visibleDragbar={false}
-          previewOptions={{
-            rehypePlugins: [[rehypeSanitize]],
-          }}
-          commandsFilter={(commands: any) => {
-            return !removeCommands?.includes(commands.name) ? commands : [];
-          }}
-        />
-        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
-      </RSForm.Group>
-    </>
+    <FormComponentWrapper
+      {...props}
+      id={name}
+      label={label || "Markdown Editor:"}
+    >
+      <MDEditor
+        id={label}
+        value={value}
+        onChange={(value) => onChange(value ?? "")}
+        preview={preview ? "live" : "edit"}
+        className="tol-markdown-viewer tol-form-markdown"
+        fullscreen={false}
+        height={height || "100%"}
+        visibleDragbar={false}
+        previewOptions={{
+          rehypePlugins: [[rehypeSanitize]],
+        }}
+        commandsFilter={(commands: any) => {
+          return !removeCommands?.includes(commands.name) ? commands : [];
+        }}
+      />
+    </FormComponentWrapper>
   );
 }

@@ -226,6 +226,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const additionalIcons = [
     CellRendererConfigurerWrapper,
   ];
+
   const resetButton: PButton = {
     visible: !!showConfigReset,
     position: "right",
@@ -280,6 +281,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       <h6>Default Sort:</h6>
       <AttributeSelector
         {...props}
+        testid="default-sort-dropdown"
         groupBy={groupBy}
         maxSelections={1}
         placeholder="Default Sort Column"
@@ -354,6 +356,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
           <div>
             <AttributeSelector
               {...props}
+              testid="active-columns-dropdown"
               sticky
               recommendedFilterAvailable
               renderSearchBySource

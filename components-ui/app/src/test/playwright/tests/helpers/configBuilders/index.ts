@@ -2,4 +2,5 @@
 //
 // SPDX-License-Identifier: MIT
 
-export * from "./tableConfiguration";
+export * from "./componentConfigBuilders";
+export * from "./interfaces";

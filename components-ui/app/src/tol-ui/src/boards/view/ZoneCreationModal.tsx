@@ -6,21 +6,25 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
+  ADD_ZONE_TOUR,
+  BOARD_ENTITIES,
   Button,
-  Modal,
-  SingleSelect,
-  PBoard,
   BUTTONS,
-  RequiredAsterisk,
+  defineBoardEntityInParent,
   getPublishedDataspaces,
-  TLabelAndValueData,
-  TsDataSource,
+  Modal,
   normaliseCaps,
   PopUpMessage,
-  IView,
-  defineBoardEntityInParent,
-  BOARD_ENTITIES,
   postAddBoardEntity,
+  processTour,
+  RequiredAsterisk,
+  SingleSelect,
+  TsDataSource,
+} from "../..";
+import type {
+  IView,
+  PBoard,
+  TLabelAndValueData,
 } from "../..";
 
 export interface PZoneCreationModal extends PBoard {
@@ -173,8 +177,14 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
       overflow={false}
       data-testid="ZoneCreationModal"
     >
-      <h4>Add New Zone</h4>
-      <p className="zone-modal-labels">
+      <span className="tol-zone-modal-title">
+        <h4>Add New Zone</h4>
+        <Button
+          {...BUTTONS.INITIATE_TOUR}
+          onClick={() => processTour("addZone", ADD_ZONE_TOUR, null, true)}
+        />
+      </span>
+      <p className="tol-zone-modal-labels">
         Select Dataspace <RequiredAsterisk />
       </p>
       <SingleSelect
@@ -187,7 +197,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
         testid="dataspace-picker"
       />
       <br />
-      <p className="zone-modal-labels">
+      <p className="tol-zone-modal-labels">
         Select Object Type <RequiredAsterisk />
       </p>
       <SingleSelect

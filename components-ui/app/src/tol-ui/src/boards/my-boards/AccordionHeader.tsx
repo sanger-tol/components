@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { ReactNode } from "react";
+
 interface Props {
-  header: string;
+  header: ReactNode;
   subHeader?: string;
   infoText?: string;
   containerStyle?: object;

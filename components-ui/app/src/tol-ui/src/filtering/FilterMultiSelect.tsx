@@ -20,6 +20,7 @@ import {
   API_OPERATIONS,
   resetFiltersBelow,
   useEffectUpdate,
+  FILTER_INPUT_DELAY,
 } from "..";
 
 
@@ -147,10 +148,10 @@ export function FilterMultiSelect(props: IFilterInput) {
           attribute: attribute,
           componentId: componentId,
           zone: zone,
-          valueExists: input.length !== 0,
+          hasValue: input.length !== 0,
         });
         setZone({ ...zone });
-      }, delay ?? 800),
+      }, delay ?? FILTER_INPUT_DELAY),
     );
   };
 
@@ -178,7 +179,7 @@ export function FilterMultiSelect(props: IFilterInput) {
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: values.length !== 0,
+      hasValue: values.length !== 0,
     });
     setZone({ ...zone });
   };
@@ -213,6 +214,8 @@ export function FilterMultiSelect(props: IFilterInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
+        disabled={loading}
+        hasValue={values.length !== 0}
       />
     </div>
   );

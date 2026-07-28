@@ -12,6 +12,7 @@ import { TolLoader, HoverOverlay, Icon, getButtonWrapperClass } from "..";
 export interface PButton {
   icon?: string;
   onClick?: (...args: any[]) => void;
+  onMouseDown?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   text?: string | ReactNode;
   disabled?: boolean;
@@ -36,6 +37,7 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
     const {
       icon,
       onClick,
+      onMouseDown,
       className,
       text,
       disabled,
@@ -115,6 +117,7 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
         as={Component}
         id={id}
         onClick={handleClick}
+        onMouseDown={onMouseDown}
         disabled={isDisabled}
         active={active}
         className={`icon-button-${type}-${size || "md"}${outlineClass} ${className || ""}`}

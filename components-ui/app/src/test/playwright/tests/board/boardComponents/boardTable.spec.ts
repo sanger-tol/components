@@ -13,6 +13,7 @@ import {
   clickUtilityBarButton,
   createBoardId,
   isInHeadlessMode,
+  configureTable,
 } from "../../helpers";
 
 let BOARD_ID: string;
@@ -31,19 +32,28 @@ test.afterEach(async ({ page }) => {
     await exitEditMode(page);
   }
 });
-  
+
 test("manage dashboard", async ({ page }) => {
-  await addComponent(page, 0, "table", "large");
-  await deleteComponent(page, "table", 0);
+  await addComponent(page, page.getByTestId("zone").first(), "table", "large");
+  await configureTable(
+    page,
+    page.getByTestId("board-component-table"),
+    {
+      defaultSort: "Priority",
+      limitColumnVisibility: true,
+      activeColumns: ["Species Name", "Priority"],
+    }
+  )
+  await deleteComponent(page, page.getByTestId("board-component-table"), "table");
   await expect(page.locator(".tol-table")).not.toBeVisible({ timeout: 1000 });
 });
 
 test("shows personal table configuration notices outside edit mode", async ({ page }) => {
-  await addComponent(page, 0, "table", "large");
+  await addComponent(page, page.getByTestId("zone").first(), "table", "large");
   await page.getByTestId("component-creation-modal").waitFor({ state: "hidden", timeout: 5000 });
   await exitEditMode(page);
 
-  await clickUtilityBarButton(page, "table-config-button", 0);
+  await clickUtilityBarButton(page, page.getByTestId("board-component-table"), "table-config-button");
 
   await expect(
     page.getByText("Please be aware that you are editing a version of this table for yourself. If you want to edit the table for all board viewers please switch to edit mode."),
