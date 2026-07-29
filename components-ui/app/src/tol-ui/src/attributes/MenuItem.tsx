@@ -10,24 +10,24 @@ import type { HTMLAttributes } from "react";
 import { Animation as RSAnimation, Checkbox as RSCheckbox } from "rsuite";
 
 import {
-  TsDataSource,
-  Icon,
-  SourceTag,
-  truncateString,
   AttributeTitle,
   Button,
   Col,
+  Icon,
+  SourceTag,
+  truncateString,
+  TsDataSource,
 } from "..";
 
 export interface PMenuItem {
-  source: string,
-  field: string,
-  authoritative: boolean,
-  objectType: string,
-  dataSource: TsDataSource,
-  displaySource?: boolean,
-  tooltipContent?: string,
-  disabledValues?: any,
+  source: string;
+  field: string;
+  authoritative: boolean;
+  objectType: string;
+  dataSource: TsDataSource;
+  displaySource?: boolean;
+  tooltipContent?: string;
+  disabledValues?: any;
   provenances?: string[];
   onProvenanceChange?: (field: string, selectedProvenance: string[]) => void;
 }
@@ -42,7 +42,7 @@ export function MenuItem(props: PMenuItem) {
     dataSource,
     displaySource,
     provenances,
-    onProvenanceChange
+    onProvenanceChange,
   } = props;
 
   const [provenancePickerOpen, setProvenancePickerOpen] = useState(false);
@@ -61,6 +61,7 @@ export function MenuItem(props: PMenuItem) {
 
   const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
 
+  // The contents of the main item entry showing the non-provenance field
   const ItemContents = (
     <>
       <div className="tol-attribute-selector-menu-item-inner-container">
