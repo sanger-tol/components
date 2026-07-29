@@ -8,21 +8,47 @@ import { TsDataSource, BOARD_ENTITIES } from "..";
 import type { IFieldMeta, PUtilityBar, IFilter, TComponentType } from "..";
 
 export interface TBoardEntityCore {
+  /**
+   * The unique identifier for a board entity.
+   */
   id: string;
+  /**
+   * The type of the board entity e.g. "component"
+   */
   type?: TBoardEntityType;
+  /**
+   * The title of the board entity, used for display purposes.
+   */
   title?: string;
 }
 
 export type TBoardChildren<TChild> = Record<string, TChild>;
 
 export interface IBoardParentEntity<TChild> extends TBoardEntityCore {
+  /**
+   * The child entities of a board entity
+   */
   children: TBoardChildren<TChild>;
+  /**
+   * The order of child entities, used to determine the display order of children.
+   */
   order: string[];
 }
 
 export interface IBoardFilter {
+  /**
+   * The filter directly related to this entity.
+   */
   filter?: IFilter;
+  /**
+   * The default filter for this entity, used to reset the filter to its original state.
+   */
   defaultFilter?: IFilter;
+  /**
+   * Whether the filter should be passed through to child entities.
+   * If true, the filter will not be applied to child entities.
+   */
+  excludeIncomingFilters?: boolean;
 }
 
 export interface IComponentConfig {

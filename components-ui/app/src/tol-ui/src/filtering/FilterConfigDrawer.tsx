@@ -48,9 +48,11 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setOpen,
   } = props;
 
+  const isZone = boardObjectType === "zone";
+
   const getInitialFilter = () =>
     deepCopy(
-      boardObjectType === "zone"
+      isZone
         ? zone.defaultFilter
         : zone.children?.[id]?.defaultFilter,
     );
@@ -71,11 +73,11 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   // Only apply filter to the current component
   const [passThrough, setPassThrough] = useState<boolean>(false);
   const initialPassThroughRef = useRef(
-    boardObjectType === "zone"
+    isZone
       ? false
       : zone.children?.[id]?.filterPassThrough || false,
   );
-  
+
   // Ability to exclude incoming filters from the entity above
   const [excludeIncomingFilters, setExcludeIncomingFilters] = useState<boolean>(false);
 
@@ -111,7 +113,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         initialFilters?.and_!,
       ),
     );
-    const initialPassThrough = boardObjectType === "zone"
+    const initialPassThrough = isZone
       ? false
       : zone.children?.[id]?.filterPassThrough || false;
     initialPassThroughRef.current = initialPassThrough;
@@ -146,7 +148,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     let attributes: IDBBoardEntityFilter = {
       filter: filter
     };
-    if (boardObjectType === "zone") {
+    if (isZone) {
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
     } else {
@@ -211,7 +213,6 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           "Toggling this on means this filter does not affect other components in the heirarchy. Filters from above are still applied."
         }
       />
-      <hr style={{ marginTop: 24 }} />
     </div>
   )
 
@@ -235,21 +236,25 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         />
       </div>
       <div className="tol-toggle-option">
-        <Toggle
-          key="tol-advanced-translations-toggle"
-          onClick={() => {
-            setAdvancedTranslations(!advancedTranslations);
-          }}
-          checked={advancedTranslations}
-        />
-        <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
-          Use advanced translations.
-        </span>
-        <IconTooltip
-          contents={
-            "Toggling this allows you to specify a mapping of custom translations. These are prioritised over automatic translations."
-          }
-        />
+        {!excludeIncomingFilters && isZone && (
+          <>
+            <Toggle
+              key="tol-advanced-translations-toggle"
+              onClick={() => {
+                setAdvancedTranslations(!advancedTranslations);
+              }}
+              checked={advancedTranslations}
+            />
+            <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+              Use advanced Zone translations.
+            </span>
+            <IconTooltip
+              contents={
+                "Toggling this allows you to specify a mapping of custom translations. These are prioritised over automatic translations."
+              }
+            />
+          </>
+        )}
         {advancedTranslations && (
           <Input
             className="tol-filter-translations-input"
@@ -260,7 +265,6 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
             onChange={setTranslationsText}
           />
         )}
-        <hr style={{ marginTop: 24 }} />
       </div>
     </>
   )
@@ -276,7 +280,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         onSaveTestId="apply-filter-button"
       >
         {ExcludeIncomingFiltersToggle}
-        {boardObjectType === "component" && FilterPassThroughToggle}
+        {!isZone && FilterPassThroughToggle}
+        <hr style={{ marginTop: 24 }} />
         <AttributeSelector
           {...props}
           displaySource
