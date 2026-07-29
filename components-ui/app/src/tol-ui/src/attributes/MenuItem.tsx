@@ -28,6 +28,7 @@ export interface PMenuItem {
   displaySource?: boolean,
   tooltipContent?: string,
   disabledValues?: any,
+  provenances: string[];
   onProvenanceChange?: (field: string, selectedProvenance: string[]) => void;
 }
 
@@ -40,6 +41,7 @@ export function MenuItem(props: PMenuItem) {
     objectType,
     dataSource,
     displaySource,
+    provenances,
     onProvenanceChange
   } = props;
 
@@ -84,22 +86,16 @@ export function MenuItem(props: PMenuItem) {
   >((props, ref) => (
     <div {...props} ref={ref} onClick={e => {e.stopPropagation(); e.preventDefault()}}>
       <div className="tol-provenance-picker" role="listbox">
-        <span className="tol-provenance-picker-entry" role="option">
-          <RSCheckbox 
-            checked={selectedProvenance.includes("STS")}
-            onChange={(v, checked) => handleProvenanceChange("STS", checked)}
-          >
-            STS
-          </RSCheckbox>
-        </span>
-        <span className="tol-provenance-picker-entry" role="option">
-          <RSCheckbox 
-            checked={selectedProvenance.includes("Benchling")}
-            onChange={(v, checked) => handleProvenanceChange("Benchling", checked)}
-          >
-            Benchling
-          </RSCheckbox>
-        </span>
+        {provenances.map(provenance =>
+          <span key={provenance} className="tol-provenance-picker-entry" role="option">
+            <RSCheckbox 
+              checked={selectedProvenance.includes(provenance)}
+              onChange={(_value, checked) => handleProvenanceChange(provenance, checked)}
+            >
+              {provenance}
+            </RSCheckbox>
+          </span>
+        )}
       </div>
     </div>
   ));
