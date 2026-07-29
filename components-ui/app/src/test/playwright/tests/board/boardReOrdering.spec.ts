@@ -7,7 +7,7 @@ import {
   setAuth,
   enterEditMode,
   isInHeadlessMode,
-  createBoardForUser,
+  createBoardAndViewAndZone,
   insertComponentToBoard,
   insertZoneToBoard,
 } from "../helpers";
@@ -35,7 +35,7 @@ test.beforeEach(async ({ page }) => {
   });
   const userId = JSON.parse(user || '{}').id;
 
-  const { boardId, zoneId, viewId } = await createBoardForUser({
+  const { boardId, zoneId, viewId } = await createBoardAndViewAndZone({
     userId: String(userId),
     zoneTitle: "Zone 1",
     zoneObjectType: "curation",

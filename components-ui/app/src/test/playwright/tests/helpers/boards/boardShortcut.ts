@@ -6,10 +6,35 @@ import sql from "../../../db";
 globalThis.crypto ??= require("node:crypto").webcrypto
 
 import { createBoardId, createViewId, createZoneId, createComponentId } from ".";
+import { DATASOURCE_INSTANCE_ID, OBJECT_TYPE } from "../../constants/board";
+import { Page } from "@playwright/test";
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
-export interface InsertComponentToBoardOptions {
+export interface ICreateBoard {
+  userId: string;
+  boardId?: string;
+  viewId?: string;
+  zoneId?: string;
+  boardTitle?: string;
+  viewTitle?: string;
+  zoneTitle?: string;
+  zoneObjectType?: string;
+}
+
+export interface ICreateBoardOptional extends Partial<ICreateBoard> {}
+
+export interface IInsertZoneToBoard {
+  userId: string;
+  viewId: string;
+  objectType: string;
+  datasourceInstanceId?: string;
+  title?: string;
+  filter?: object;
+  order?: number;
+}
+
+export interface IInsertComponentToBoard {
   userId: string;
   componentTitle: string;
   zoneId: string;
@@ -22,129 +47,99 @@ export interface InsertComponentToBoardOptions {
   order?: number;
 }
 
-export interface InsertZoneToBoardOptions {
-  userId: string;
-  viewId: string;
-  objectType: string;
-  datasourceInstanceId?: string;
-  title?: string;
-  filter?: object;
-  order?: number;
-}
-
-export interface createBoardForUserOptions {
-  userId: string;
-  viewTitle?: string;
-  zoneTitle?: string;
-  boardTitle?: string;
-  zoneObjectType?: string;
-}
-
-const insertBoardToDB = async (
-  userId: string,
-  boardId: string,
-  viewID: string = createViewId(),
-  zoneID: string = createZoneId(),
-  viewTitle: string,
-  zoneTitle: string,
-  boardTitle: string,
-  zoneObjectType: string | undefined,
-) => {
+async function insertBoardToDB({
+  userId,
+  boardId = createBoardId(),
+  viewId = createViewId(),
+  zoneId = createZoneId(),
+  boardTitle = "Test Board",
+  viewTitle,
+  zoneTitle,
+  zoneObjectType,
+}: ICreateBoard) {
   try {
     const query = `
       INSERT INTO "board"
       VALUES ('${boardId}', '${boardTitle}', '{"and_":{}}', ${userId});
       INSERT INTO "view"
-      VALUES ('${viewID}', '${viewTitle}', '{"and_":{}}', ${userId});
+      VALUES ('${viewId}', '${viewTitle}', '{"and_":{}}', ${userId});
       INSERT INTO "view_board"
-      VALUES (${randomInt()}, '1', '${viewID}', '${boardId}');
+      VALUES (${randomInt()}, '1', '${viewId}', '${boardId}');
     `
-    if (zoneObjectType === undefined) {
+    if (zoneObjectType) {
       await sql.unsafe(`
       ${query}
+      INSERT INTO "zone"
+      VALUES ('${zoneId}', '${zoneTitle}', '${zoneObjectType}', '{"and_":{}}', ${userId}, '${DATASOURCE_INSTANCE_ID}');
+      INSERT INTO "zone_view"
+      VALUES (${randomInt()}, '1', '${zoneId}', '${viewId}');
     `).simple();
     } else {
       await sql.unsafe(`
       ${query}
-      INSERT INTO "zone"
-      VALUES ('${zoneID}', '${zoneTitle}', '${zoneObjectType}', '{"and_":{}}', ${userId}, 'tol_production');
-      INSERT INTO "zone_view"
-      VALUES (${randomInt()}, '1', '${zoneID}', '${viewID}');
     `).simple();
     }
-  }
-  catch (e) {
+  } catch (e) {
     console.log(e)
   };
-};
-
-/**
- * Creates a board using the given id and navigates to it
- * @param page The Playwright page handle
- * @param boardId The ID to give this new board
- */
-export const setBoard = async (page, boardId) => {
-  const user = await page.evaluate(() => {
-    return localStorage.getItem("user");
-  });
-  const userId = JSON.parse(user).id;
-  await insertBoardToDB(userId, boardId);
-  await page.goto(`/board/${boardId}`);
-  await page.getByTestId("board-enter-edit-mode-button").waitFor({ state: "visible" });
-};
-
-/**
- * Adds a new board into the database for the given user ID
- * @param userId The ID of the owner user of this new board
- * @param viewTitle The title of the view to create for this new board
- * @param zoneTitle The title of the zone to create for this new board
- * @param boardTitle The title of the new board
- * @param zoneObjectType The object type of the zone to create for this new board 
- * (This is required if you want to create an initial zone for the board)
- * @returns The IDs of the newly created board, view, and zone
- */
-export const createBoardForUser = async (
-  {
-    userId,
-    zoneObjectType,
-    viewTitle = `${randomInt()}`,
-    zoneTitle = `${randomInt()}`,
-    boardTitle = `${randomInt()}`,
-  }: createBoardForUserOptions
-) => {
-  const boardId = createBoardId();
-  const viewId = createViewId();
-  const zoneId = createZoneId();
-  await insertBoardToDB(
+  return {
     userId,
     boardId,
     viewId,
     zoneId,
+    boardTitle,
     viewTitle,
     zoneTitle,
-    boardTitle,
-    zoneObjectType
-  );
-  return { boardId, viewId, zoneId };
+    zoneObjectType,
+  } as ICreateBoard;
+};
+
+export async function createPopulatedBoardAndGoToPage(page: Page, params: ICreateBoardOptional = {}) {
+  const user = await page.evaluate(() => {
+    return localStorage.getItem("user");
+  });
+  const userId = JSON.parse(user!).id;
+
+  const boardParams = await insertBoardToDB({ ...params as ICreateBoard, userId });
+  await page.goto(`/board/${boardParams.boardId}`);
+  await page.getByTestId("board-enter-edit-mode-button").waitFor({ state: "visible" });
+  return boardParams;
+};
+
+export async function createBoard(params: ICreateBoard) {
+  return await insertBoardToDB(params);
 }
+
+export async function createBoardAndView(params: ICreateBoard) {
+  return await createBoard({
+    ...params,
+    viewId: params.viewId || createViewId(),
+  });
+}
+
+export async function createBoardAndViewAndZone(params: ICreateBoard) {
+  return await createBoardAndView({
+    ...params,
+    zoneId: params.zoneId || createZoneId(),
+  });
+}
+
 
 /**
  * Inserts a component into the database for the given user ID and zone ID
  */
-export const insertComponentToBoard = async (
-  {
-    userId,
-    componentTitle,
-    zoneId,
-    componentType = "table",
-    datasourceInstanceId = "tol_production",
-    filter = {},
-    config = {},
-    widgetType = "lg",
-    objectType = "curation",
-    order = 1,
-  }: InsertComponentToBoardOptions
-) => {
+export const insertComponentToBoard = async ({
+  userId,
+  componentTitle,
+  zoneId,
+  componentType = "table",
+  datasourceInstanceId = DATASOURCE_INSTANCE_ID,
+  filter = {},
+  config = {},
+  widgetType = "lg",
+  objectType = OBJECT_TYPE,
+  order = 1,
+}: IInsertComponentToBoard) => {
   try {
     const componentId = createComponentId();
     await sql.unsafe(`
@@ -175,11 +170,11 @@ export const insertZoneToBoard = async (
     userId,
     viewId,
     title = 'Test Zone',
-    objectType = "curation",
+    objectType = OBJECT_TYPE,
     filter = {},
     order = 1,
-    datasourceInstanceId = "tol_production",
-  }: InsertZoneToBoardOptions
+    datasourceInstanceId = DATASOURCE_INSTANCE_ID,
+  }: IInsertZoneToBoard
 ) => {
   try {
     const zoneId = createZoneId();
@@ -195,4 +190,3 @@ export const insertZoneToBoard = async (
     console.log(e)
   };
 }
-

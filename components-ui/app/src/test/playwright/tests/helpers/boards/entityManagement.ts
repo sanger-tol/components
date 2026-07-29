@@ -4,6 +4,7 @@
 import { Page } from "@playwright/test";
 
 import { enterEditMode, exitEditMode } from ".";
+import { DATASOURCE_INSTANCE_ID } from "../../constants/board";
 
 const createShortId = (prefix: string) => `${prefix}_${crypto.randomUUID().slice(0, 12)}`;
 
@@ -36,7 +37,7 @@ export const createZone = async (page: Page) => {
   await page.getByTestId("dataspace-picker").click();
 
   // select the dataspace;
-  await page.locator("[data-key=\"tol_production\"]").click();
+  await page.locator(`[data-key="${DATASOURCE_INSTANCE_ID}"]`).click();
 
   // choose the object type picker
   const objectTypePicker = page.getByTestId("object-type-picker");

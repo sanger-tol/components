@@ -8,7 +8,7 @@ import {
   isInHeadlessMode,
   insertComponentToBoard,
   insertZoneToBoard,
-  createBoardForUser,
+  createBoardAndViewAndZone,
   createTableConfig,
 } from "../../helpers";
 import { TRANSLATOR_TEST_INPUTS } from "./boardTranslatorConfigs.config";
@@ -25,7 +25,7 @@ TRANSLATOR_TEST_INPUTS.forEach(({ zoneObjectTypes, TableFields }) => {
       const userId = JSON.parse(user || '{}').id;
 
       // Create an initial board
-      const { boardId, viewId } = await createBoardForUser({
+      const { boardId, viewId } = await createBoardAndViewAndZone({
         userId: String(userId),
       });
 
