@@ -15,11 +15,16 @@ import {
   IChartDataset,
   TDisabledTab,
   deepCopy,
+  TsDataSource,
 } from "..";
 import { CommandLineTab, ImageTab, SdkTab, SpreadsheetTab } from "./tabs";
 
-export interface PDownloadModal extends IRemoteTarget {
 
+export interface PDownloadModal extends Omit<IRemoteTarget, "dataSource"> {
+  /**
+   * Data source used for CLI & SDK tabs
+   */
+  dataSource?: TsDataSource;
   /**
    * List of tabs to disable
    */
@@ -181,12 +186,12 @@ export function DownloadModal(props: PDownloadModal) {
               />
             </Tabs.Tab>
           )}
-          {disabledTabs?.includes("SDK") ? null : (
+          {!disabledTabs?.includes("SDK") && dataSource && (
             <Tabs.Tab eventKey="2" title="SDK">
               <SdkTab dataSource={dataSource} objectType={objectType} filter={filter} />
             </Tabs.Tab>
           )}
-          {disabledTabs?.includes("CLI") ? null : (
+          {!disabledTabs?.includes("CLI") && dataSource && (
             <Tabs.Tab eventKey="3" title="CLI">
               <CommandLineTab dataSource={dataSource} objectType={objectType} filter={filter} requestedFields={requestedFields} />
             </Tabs.Tab>

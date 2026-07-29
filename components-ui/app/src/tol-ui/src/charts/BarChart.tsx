@@ -82,7 +82,7 @@ export function BarChart(props: Props) {
     utilityBarConfig = {},
     contents,
     chartType = 'bar',
-    objectType
+    objectType,
   } = props;
   const originDatasets = initialiseDatasets(props.datasets);
 
