@@ -65,11 +65,11 @@ export function MenuItem(props: PMenuItem) {
     HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>
   >((props, ref) => (
     <div {...props} ref={ref} onClick={e => {e.stopPropagation(); e.preventDefault()}}>
-      <div className="tol-provenance-picker">
-        <span className="tol-provenance-picker-entry">
+      <div className="tol-provenance-picker" role="listbox">
+        <span className="tol-provenance-picker-entry" role="option">
           <RSCheckbox>STS</RSCheckbox>
         </span>
-        <span className="tol-provenance-picker-entry">
+        <span className="tol-provenance-picker-entry" role="option">
           <RSCheckbox>Benchling</RSCheckbox>
         </span>
       </div>
