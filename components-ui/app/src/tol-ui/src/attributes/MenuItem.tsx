@@ -66,14 +66,12 @@ export function MenuItem(props: PMenuItem) {
   >((props, ref) => (
     <div {...props} ref={ref} onClick={e => {e.stopPropagation(); e.preventDefault()}}>
       <div className="tol-provenance-picker">
-        <label className="tol-provenance-picker-entry" role="option">
-          <RSCheckbox />
-          STS
-        </label>
-        <label className="tol-provenance-picker-entry" role="option">
-          <RSCheckbox />
-          Benchling
-        </label>
+        <span className="tol-provenance-picker-entry">
+          <RSCheckbox>STS</RSCheckbox>
+        </span>
+        <span className="tol-provenance-picker-entry">
+          <RSCheckbox>Benchling</RSCheckbox>
+        </span>
       </div>
     </div>
   ));
