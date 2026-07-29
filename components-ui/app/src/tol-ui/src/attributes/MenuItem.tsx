@@ -28,7 +28,7 @@ export interface PMenuItem {
   displaySource?: boolean,
   tooltipContent?: string,
   disabledValues?: any,
-  provenances: string[];
+  provenances?: string[];
   onProvenanceChange?: (field: string, selectedProvenance: string[]) => void;
 }
 
@@ -81,12 +81,14 @@ export function MenuItem(props: PMenuItem) {
     </>
   );
 
+  // The contents of the expanded area when the expand button on the right of the menu item
+  // is clicked. Contains an option for each available provenance
   const ProvenancePicker = forwardRef<
     HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>
   >((props, ref) => (
     <div {...props} ref={ref} onClick={e => {e.stopPropagation(); e.preventDefault()}}>
       <div className="tol-provenance-picker" role="listbox">
-        {provenances.map(provenance =>
+        {provenances?.map(provenance =>
           <span key={provenance} className="tol-provenance-picker-entry" role="option">
             <RSCheckbox 
               checked={selectedProvenance.includes(provenance)}
@@ -104,7 +106,7 @@ export function MenuItem(props: PMenuItem) {
     <Col className="tol-attribute-selector-menu-item">
       <div key={field} className="tol-attribute-selector-menu-item-container">
         {ItemContents}
-        {true && ( // TODO change to some indicator of provenance being active
+        {provenances && provenances.length > 0 && (
           <Button
             outline
             icon={provenancePickerOpen ? "angle-up" : "angle-down"}
