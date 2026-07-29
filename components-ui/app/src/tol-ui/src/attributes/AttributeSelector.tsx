@@ -105,6 +105,21 @@ export function AttributeSelector(props: PAttributeSelector) {
     }
   }, [attribute, entityMeta, objectType, setAttributeMeta]);
 
+  const handleProvenanceChange = (field: string, selectedProvenance: string[]) => {
+    // TODO: The format of what's to be added is not final yet.
+    // Here is a placeholder (`${field}_${provenance}`)
+  
+    // Remove existing provenance entries for this field
+    const baseAttributes = attribute.filter(attr => !attr.startsWith(`${field}_`));
+    
+    // Add new provenance entries
+    const provenanceAttributes = selectedProvenance.map(prov => `${field}_${prov}`);
+    
+    // Update the attributes
+    const newAttributes = [...baseAttributes, ...provenanceAttributes];
+    setAttributes(newAttributes);
+  };
+
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
@@ -119,6 +134,7 @@ export function AttributeSelector(props: PAttributeSelector) {
           displaySource={displaySource}
           tooltipContent={tooltipContent}
           disabledValues={disabledValues}
+          onProvenanceChange={handleProvenanceChange}
         />
 
       </div>
