@@ -87,16 +87,16 @@ export function MenuItem(props: PMenuItem) {
   const ProvenancePicker = forwardRef<
     HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>
   >((props, ref) => (
-    <div {...props} ref={ref} onClick={e => {e.stopPropagation(); e.preventDefault()}}>
+    <div {...props} ref={ref} onClick={e => e.stopPropagation()}>
       <div className="tol-provenance-picker" role="listbox">
         {provenances?.map(provenance =>
           <span
             key={provenance}
             className="tol-provenance-picker-entry"
             role="option"
-            onClick={() => handleProvenanceChange(provenance, !selectedProvenance.includes(provenance))}
           >
-            <RSCheckbox 
+            <RSCheckbox
+              className="tol-provenance-picker-checkbox"
               checked={selectedProvenance.includes(provenance)}
               onChange={(_value, checked) => handleProvenanceChange(provenance, checked)}
             >
