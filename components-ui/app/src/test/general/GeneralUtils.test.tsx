@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { expect, test, vi } from "vitest";
 import {
   isPropDefined,
-  falseIfUndefined,
   isEmptyObject,
   normaliseCaps,
   timeout,
@@ -26,11 +25,6 @@ import {
 test("isPropDefined function", () => {
   expect(isPropDefined(undefined)).toBe(false);
   expect(isPropDefined(true)).toBe(true);
-});
-
-test("falseIfUndefined function", () => {
-  expect(falseIfUndefined(undefined)).toBe(false);
-  expect(falseIfUndefined(true)).toBe(true);
 });
 
 test("isEmptyObject function", () => {

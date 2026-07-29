@@ -48,13 +48,6 @@ export function isPropDefined(prop: any) {
   return prop !== undefined;
 }
 
-export function falseIfUndefined(prop: any) {
-  if (prop) {
-    return true;
-  }
-  return false;
-}
-
 export function isEmptyObject(x: object|unknown[]|undefined) {
   return Object.keys(x || {}).length === 0;
 }
