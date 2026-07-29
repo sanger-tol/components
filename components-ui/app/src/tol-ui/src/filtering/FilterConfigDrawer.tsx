@@ -226,7 +226,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           checked={excludeIncomingFilters}
         />
         <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
-          Don't use the incoming filters.
+          Exclude incoming filters.
         </span>
         <IconTooltip
           contents={
@@ -275,8 +275,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         hasPendingChanges={hasPendingChanges}
         onSaveTestId="apply-filter-button"
       >
-        {boardObjectType === "zone" && ExcludeIncomingFiltersToggle}
-        {FilterPassThroughToggle}
+        {ExcludeIncomingFiltersToggle}
+        {boardObjectType === "component" && FilterPassThroughToggle}
         <AttributeSelector
           {...props}
           displaySource
