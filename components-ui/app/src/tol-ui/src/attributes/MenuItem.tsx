@@ -90,7 +90,12 @@ export function MenuItem(props: PMenuItem) {
     <div {...props} ref={ref} onClick={e => {e.stopPropagation(); e.preventDefault()}}>
       <div className="tol-provenance-picker" role="listbox">
         {provenances?.map(provenance =>
-          <span key={provenance} className="tol-provenance-picker-entry" role="option">
+          <span
+            key={provenance}
+            className="tol-provenance-picker-entry"
+            role="option"
+            onClick={() => handleProvenanceChange(provenance, !selectedProvenance.includes(provenance))}
+          >
             <RSCheckbox 
               checked={selectedProvenance.includes(provenance)}
               onChange={(_value, checked) => handleProvenanceChange(provenance, checked)}
