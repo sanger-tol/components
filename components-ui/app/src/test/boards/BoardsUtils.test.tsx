@@ -126,6 +126,7 @@ describe(
         },
         filter: { and_: {} },
         defaultFilter: { and_: {} },
+        filterPassThrough: false,
         title: ""
       };
 
@@ -224,6 +225,7 @@ describe(
             },
             filter: { and_: {} },
             defaultFilter: { and_: {} },
+            filterPassThrough: false,
             title: "",
           },
           "c_687YLHdga": {
@@ -237,6 +239,7 @@ describe(
             },
             filter: { and_: {} },
             defaultFilter: { and_: {} },
+            filterPassThrough: false,
             title: "",
           }
         }
@@ -291,6 +294,7 @@ describe(
             },
             filter: { and_: {} },
             defaultFilter: { and_: {} },
+            filterPassThrough: false,
             title: ""
           }
         }
@@ -379,6 +383,7 @@ describe(
                     title: "",
                     filter: { and_: {} },
                     defaultFilter: { and_: {} },
+                    filterPassThrough: false,
                     data_source_instance_id: "test",
                     ui_api_details: {
                       url: "https://portal.tol.sanger.ac.uk",
@@ -392,6 +397,7 @@ describe(
                     title: "",
                     filter: { and_: {} },
                     defaultFilter: { and_: {} },
+                    filterPassThrough: false,
                     data_source_instance_id: "test",
                     ui_api_details: {
                       url: "https://portal.tol.sanger.ac.uk",

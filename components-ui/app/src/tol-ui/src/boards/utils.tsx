@@ -142,7 +142,18 @@ export function defineBoardEntity(
       dataspace: new TsDataSource({
         dataSourceInstanceId: definedEntity.data_source_instance_id,
         ...definedEntity.ui_api_details,
-      })
+      }),
+    };
+  }
+
+  // TODO: Temp fix due to different casing
+  if (
+    objectType === BOARD_ENTITIES.ENTITIES.COMPONENT
+  ) {
+    const definedEntity = entity as any;
+    entity = {
+      ...entity,
+      filterPassThrough: definedEntity.filter_pass_through ?? false,
     };
   }
 

@@ -6,6 +6,16 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.5`
+
+27-07-2026
+
+- Fixed bug: filterPassThrough not working on boards
+- Fixed bug: No shadow on top board bar
+- Added solid nav on scroll when header is present
+- Added 'live' indicator for boards
+- Added auth api path env var
+
 ## tol-ui `4.0.4`
 
 23-07-2026
