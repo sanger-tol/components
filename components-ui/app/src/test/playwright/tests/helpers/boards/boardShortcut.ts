@@ -18,6 +18,11 @@ import type {
 } from "../../interfaces/board";
 
 
+/**
+ * Inserts a board and, when configured, its view and zone into the database.
+ * @param params The board, view, and zone values to insert if provided
+ * @returns The identifiers and values used to create the board hierarchy
+ */
 async function insertBoardToDB({
   userId,
   boardId = createBoardId(),
@@ -68,10 +73,20 @@ async function insertBoardToDB({
   };
 };
 
+/**
+ * Creates a board directly in the database.
+ * @param params The board values to insert
+ * @returns The identifiers and values used to create the board
+ */
 export async function createBoard(params: ICreateBoard): Promise<ICreateBoardReturn> {
   return await insertBoardToDB(params);
 }
 
+/**
+ * Creates a board and an associated view directly in the database.
+ * @param params The board and optional view values to insert
+ * @returns The identifiers and values used to create the board and view
+ */
 export async function createBoardAndView(params: ICreateBoard): Promise<ICreateBoardAndViewReturn> {
   const viewId = params.viewId || createViewId();
   const viewTitle = params.viewTitle ?? "Test View";
@@ -83,6 +98,11 @@ export async function createBoardAndView(params: ICreateBoard): Promise<ICreateB
   return { ...board, viewId, viewTitle };
 }
 
+/**
+ * Creates a board, an associated view, and a zone directly in the database.
+ * @param params The board and optional view and zone values to insert
+ * @returns The identifiers and values used to create the board, view, and zone
+ */
 export async function createBoardAndViewAndZone(
   params: ICreateBoard
 ): Promise<ICreateBoardAndViewAndZoneReturn> {
@@ -98,6 +118,13 @@ export async function createBoardAndViewAndZone(
   return { ...board, zoneId, zoneTitle, zoneObjectType };
 }
 
+/**
+ * Creates a populated board for the authenticated user and navigates to it.
+ * Waits until the board is ready to enter edit mode before returning.
+ * @param page The Playwright page handle containing the authenticated user
+ * @param params Optional values used to create the board, view, and zone
+ * @returns The identifiers and values used to create the board, view, and zone
+ */
 export async function createPopulatedBoardAndGoToPage(page: Page, params: ICreateBoardOptional = {}) {
   const user = await page.evaluate(() => {
     return localStorage.getItem("user");
@@ -110,6 +137,11 @@ export async function createPopulatedBoardAndGoToPage(page: Page, params: ICreat
   return boardParams;
 };
 
+/**
+ * Creates a component directly in the database and associates it with a zone.
+ * @param params The component values and target zone
+ * @returns A promise that resolves when the component has been created
+ */
 export const createComponentInZone = async ({
   userId,
   componentTitle,
@@ -147,6 +179,11 @@ export const createComponentInZone = async ({
   };
 }
 
+/**
+ * Creates a zone directly in the database and associates it with a view.
+ * @param params The zone values and target view
+ * @returns The created zone ID, or undefined if the database operation fails
+ */
 export const createZoneInView = async ({
   userId,
   viewId,
