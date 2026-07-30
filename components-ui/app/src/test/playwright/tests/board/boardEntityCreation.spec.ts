@@ -10,7 +10,6 @@ import {
   isInHeadlessMode,
   createZone,
   addView,
-  clickWithRetries,
 } from "../helpers";
   
 test.use({ headless: isInHeadlessMode });
@@ -28,7 +27,7 @@ test("User can create a board", async ({ page }) => {
     await page.getByRole("link", { name: "My Boards" }).click();
 
     // Create a new board
-    await clickWithRetries(() => page.getByTestId("create-new-board-button"));
+    await page.getByTestId("create-new-board-button").click();
 
     // Add a new zone
     await createZone(page);
