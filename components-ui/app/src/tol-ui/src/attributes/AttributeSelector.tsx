@@ -7,22 +7,24 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { Checkbox } from "rsuite";
 import {
-  MultipleSelect,
-  IconTooltip,
-  SourceTag,
-  getFlattenedMetaData,
+  AdvanceSearchTab,
   attributeSelectorSearchBy,
-  normaliseCaps,
   filterAttributes,
   getAllAttributeData,
-  IRemoteTarget,
-  IAllowedCardinality,
+  getFlattenedMetaData,
   handleSetAttribute,
-  renderTotalSelectedItems,
+  IconTooltip,
   MenuItem,
-  AdvanceSearchTab,
+  MultipleSelect,
+  normaliseCaps,
   PROVENANCE_IN_FIELD_REGEX,
   PROVENANCE_IN_FIELD_REGEX_GLOBAL,
+  renderTotalSelectedItems,
+  SourceTag,
+} from "..";
+import type {
+  IAllowedCardinality,
+  IRemoteTarget,
 } from "..";
 
 export interface PAttributeSelector extends IRemoteTarget {
