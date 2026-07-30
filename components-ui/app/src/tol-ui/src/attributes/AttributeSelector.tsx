@@ -134,7 +134,7 @@ export function AttributeSelector(props: PAttributeSelector) {
           displaySource={displaySource}
           tooltipContent={tooltipContent}
           disabledValues={disabledValues}
-          provenances={["STS", "Benchling"]}
+          provenances={["sts", "benchling"]}
           onProvenanceChange={handleProvenanceChange}
         />
 

@@ -100,7 +100,9 @@ export function MenuItem(props: PMenuItem) {
               checked={selectedProvenance.includes(provenance)}
               onChange={(_value, checked) => handleProvenanceChange(provenance, checked)}
             >
-              {provenance}
+              <SourceTag
+                source={provenance}
+              />
             </RSCheckbox>
           </span>
         )}

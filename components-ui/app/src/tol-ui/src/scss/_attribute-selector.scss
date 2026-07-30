@@ -245,5 +245,9 @@ SPDX-License-Identifier: MIT
       display: block;
       width: 100%;
     }
+
+    .rs-checkbox-label div {
+      display: inline;
+    }
   }
 }
