@@ -30,6 +30,7 @@ const createRoleBindingQuery = async (userId: number, roleNames: string[]) => {
 };
 
 const insertAuthToDB = async (userId: number, token: string, orcidId: string, roles?: string[]) => {
+  console.log(`Inserting user with ID ${userId} and token ${token} into the database.`);
 
   const roleBindingInserts = await createRoleBindingQuery(userId, roles ?? ["tol"]);
 
@@ -71,16 +72,19 @@ export const setAuth = async (page: Page, roles?: string[]) => {
     "token": token,
   });
 
-  await page.goto("/");
-
-  await page.evaluate((data) => {
+  // Seed auth state before app scripts execute to avoid first-load unauthenticated races in CI.
+  await page.addInitScript((data) => {
     Object.keys(data).forEach((key) => {
       localStorage.setItem(key, JSON.stringify(data[key]));
     });
   }, storageData);
 
-  await page.reload();
+  await page.goto("/");
+  await page.waitForFunction(() => {
+    return Boolean(localStorage.getItem("token") && localStorage.getItem("user"));
+  });
   await page.waitForLoadState("load");
+  await page.getByTestId("profile-dropdown").waitFor({ state: "visible" });
 };
 
 /**
