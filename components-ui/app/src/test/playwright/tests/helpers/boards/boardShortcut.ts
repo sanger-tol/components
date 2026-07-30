@@ -14,15 +14,31 @@ const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 export interface ICreateBoard {
   userId: string;
   boardId?: string;
-  viewId?: string;
-  zoneId?: string;
   boardTitle?: string;
+  viewId?: string;
   viewTitle?: string;
+  zoneId?: string;
   zoneTitle?: string;
   zoneObjectType?: string;
 }
 
-export interface ICreateBoardOptional extends Partial<ICreateBoard> {}
+export interface ICreateBoardReturn extends ICreateBoard {
+  boardId: string;
+  boardTitle: string;
+}
+
+export interface ICreateBoardAndViewReturn extends ICreateBoardReturn {
+  viewId: string;
+  viewTitle: string;
+}
+
+export interface ICreateBoardAndViewAndZoneReturn extends ICreateBoardAndViewReturn {
+  zoneId: string;
+  zoneTitle: string;
+  zoneObjectType: string;
+}
+
+export interface ICreateBoardOptional extends Partial<ICreateBoard> { }
 
 export interface IInsertZoneToBoard {
   userId: string;
@@ -50,35 +66,38 @@ export interface IInsertComponentToBoard {
 async function insertBoardToDB({
   userId,
   boardId = createBoardId(),
-  viewId = createViewId(),
-  zoneId = createZoneId(),
   boardTitle = "Test Board",
+  viewId,
   viewTitle,
+  zoneId,
   zoneTitle,
   zoneObjectType,
-}: ICreateBoard) {
+}: ICreateBoard): Promise<ICreateBoardReturn> {
   try {
-    const query = `
+    let query = `
       INSERT INTO "board"
       VALUES ('${boardId}', '${boardTitle}', '{"and_":{}}', ${userId});
-      INSERT INTO "view"
-      VALUES ('${viewId}', '${viewTitle}', '{"and_":{}}', ${userId});
-      INSERT INTO "view_board"
-      VALUES (${randomInt()}, '1', '${viewId}', '${boardId}');
     `
-    if (zoneObjectType) {
-      await sql.unsafe(`
-      ${query}
+
+    if (viewId) {
+      query += `
+        INSERT INTO "view"
+        VALUES ('${viewId}', '${viewTitle}', '{"and_":{}}', ${userId});
+        INSERT INTO "view_board"
+        VALUES (${randomInt()}, '1', '${viewId}', '${boardId}');
+      `
+    }
+
+    if (viewId && zoneId && zoneObjectType) {
+      query += `
       INSERT INTO "zone"
       VALUES ('${zoneId}', '${zoneTitle}', '${zoneObjectType}', '{"and_":{}}', ${userId}, '${DATASOURCE_INSTANCE_ID}');
       INSERT INTO "zone_view"
       VALUES (${randomInt()}, '1', '${zoneId}', '${viewId}');
-    `).simple();
-    } else {
-      await sql.unsafe(`
-      ${query}
-    `).simple();
+      `
     }
+
+    await sql.unsafe(query).simple();
   } catch (e) {
     console.log(e)
   };
@@ -91,8 +110,38 @@ async function insertBoardToDB({
     viewTitle,
     zoneTitle,
     zoneObjectType,
-  } as ICreateBoard;
+  };
 };
+
+export async function createBoard(params: ICreateBoard): Promise<ICreateBoardReturn> {
+  return await insertBoardToDB(params);
+}
+
+export async function createBoardAndView(params: ICreateBoard): Promise<ICreateBoardAndViewReturn> {
+  const viewId = params.viewId || createViewId();
+  const viewTitle = params.viewTitle ?? "Test View";
+  const board = await createBoard({
+    ...params,
+    viewId,
+    viewTitle,
+  });
+  return { ...board, viewId, viewTitle };
+}
+
+export async function createBoardAndViewAndZone(
+  params: ICreateBoard
+): Promise<ICreateBoardAndViewAndZoneReturn> {
+  const zoneId = params.zoneId || createZoneId();
+  const zoneTitle = params.zoneTitle ?? "Test Zone";
+  const zoneObjectType = params.zoneObjectType || OBJECT_TYPE;
+  const board = await createBoardAndView({
+    ...params,
+    zoneId,
+    zoneTitle,
+    zoneObjectType,
+  });
+  return { ...board, zoneId, zoneTitle, zoneObjectType };
+}
 
 export async function createPopulatedBoardAndGoToPage(page: Page, params: ICreateBoardOptional = {}) {
   const user = await page.evaluate(() => {
@@ -100,35 +149,13 @@ export async function createPopulatedBoardAndGoToPage(page: Page, params: ICreat
   });
   const userId = JSON.parse(user!).id;
 
-  const boardParams = await insertBoardToDB({ ...params as ICreateBoard, userId });
+  const boardParams = await createBoardAndViewAndZone({ ...params as ICreateBoard, userId });
   await page.goto(`/board/${boardParams.boardId}`);
   await page.getByTestId("board-enter-edit-mode-button").waitFor({ state: "visible" });
   return boardParams;
 };
 
-export async function createBoard(params: ICreateBoard) {
-  return await insertBoardToDB(params);
-}
-
-export async function createBoardAndView(params: ICreateBoard) {
-  return await createBoard({
-    ...params,
-    viewId: params.viewId || createViewId(),
-  });
-}
-
-export async function createBoardAndViewAndZone(params: ICreateBoard) {
-  return await createBoardAndView({
-    ...params,
-    zoneId: params.zoneId || createZoneId(),
-  });
-}
-
-
-/**
- * Inserts a component into the database for the given user ID and zone ID
- */
-export const insertComponentToBoard = async ({
+export const insertComponentInBoard = async ({
   userId,
   componentTitle,
   zoneId,
@@ -165,17 +192,15 @@ export const insertComponentToBoard = async ({
   };
 }
 
-export const insertZoneToBoard = async (
-  {
-    userId,
-    viewId,
-    title = 'Test Zone',
-    objectType = OBJECT_TYPE,
-    filter = {},
-    order = 1,
-    datasourceInstanceId = DATASOURCE_INSTANCE_ID,
-  }: IInsertZoneToBoard
-) => {
+export const insertZoneInBoard = async ({
+  userId,
+  viewId,
+  title = 'Test Zone',
+  objectType = OBJECT_TYPE,
+  filter = {},
+  order = 1,
+  datasourceInstanceId = DATASOURCE_INSTANCE_ID,
+}: IInsertZoneToBoard) => {
   try {
     const zoneId = createZoneId();
     await sql.unsafe(`
