@@ -6,8 +6,8 @@ import { test, expect } from "@playwright/test";
 import {
   setAuth,
   isInHeadlessMode,
-  insertComponentInBoard,
-  insertZoneInBoard,
+  createComponentInZone,
+  createZoneInView,
   createBoardAndViewAndZone,
   createTableConfig,
 } from "../../helpers";
@@ -32,7 +32,7 @@ TRANSLATOR_TEST_INPUTS.forEach(({ zoneObjectTypes, TableFields }) => {
       // Create additional zones for the board
       let zoneIds: string[] = [ ];
       for (const zoneObjectType of zoneObjectTypes || []) {
-        const returnedZoneId = await insertZoneInBoard({
+        const returnedZoneId = await createZoneInView({
           userId: String(userId),
           viewId,
           title: `Zone for ${zoneObjectType}`,
@@ -48,7 +48,7 @@ TRANSLATOR_TEST_INPUTS.forEach(({ zoneObjectTypes, TableFields }) => {
       // For each new zone, insert a table component with the corresponding TableFields
       for (const [index, newZoneId] of zoneIds.entries()) {
         const field = TableFields[zoneObjectTypes[index]];
-        await insertComponentInBoard(
+        await createComponentInZone(
           {
             userId: String(userId),
             componentTitle: `${newZoneId} Table`,

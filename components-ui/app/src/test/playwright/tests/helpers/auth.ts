@@ -5,8 +5,8 @@
 import { Page } from '@playwright/test';
 import sql from '../../db';
 globalThis.crypto ??= require("node:crypto").webcrypto
+import { randomInt } from '..';
 
-const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
 const getRoleId = async (roleName: string) => {
   try {

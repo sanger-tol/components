@@ -4,64 +4,19 @@
 
 import sql from "../../../db";
 globalThis.crypto ??= require("node:crypto").webcrypto
-
 import { createBoardId, createViewId, createZoneId, createComponentId } from ".";
-import { DATASOURCE_INSTANCE_ID, OBJECT_TYPE } from "../../constants/board";
 import { Page } from "@playwright/test";
+import { DATASOURCE_INSTANCE_ID, OBJECT_TYPE, randomInt } from "../..";
+import type {
+  ICreateBoardReturn,
+  ICreateBoardAndViewReturn,
+  ICreateBoardAndViewAndZoneReturn,
+  ICreateBoard,
+  ICreateBoardOptional,
+  ICreateZoneInView,
+  ICreateComponentInZone,
+} from "../../interfaces/board";
 
-const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
-
-export interface ICreateBoard {
-  userId: string;
-  boardId?: string;
-  boardTitle?: string;
-  viewId?: string;
-  viewTitle?: string;
-  zoneId?: string;
-  zoneTitle?: string;
-  zoneObjectType?: string;
-}
-
-export interface ICreateBoardReturn extends ICreateBoard {
-  boardId: string;
-  boardTitle: string;
-}
-
-export interface ICreateBoardAndViewReturn extends ICreateBoardReturn {
-  viewId: string;
-  viewTitle: string;
-}
-
-export interface ICreateBoardAndViewAndZoneReturn extends ICreateBoardAndViewReturn {
-  zoneId: string;
-  zoneTitle: string;
-  zoneObjectType: string;
-}
-
-export interface ICreateBoardOptional extends Partial<ICreateBoard> { }
-
-export interface IInsertZoneToBoard {
-  userId: string;
-  viewId: string;
-  objectType: string;
-  datasourceInstanceId?: string;
-  title?: string;
-  filter?: object;
-  order?: number;
-}
-
-export interface IInsertComponentToBoard {
-  userId: string;
-  componentTitle: string;
-  zoneId: string;
-  componentType?: string;
-  datasourceInstanceId?: string;
-  filter?: object;
-  config?: object;
-  widgetType?: string;
-  objectType?: string;
-  order?: number;
-}
 
 async function insertBoardToDB({
   userId,
@@ -155,7 +110,7 @@ export async function createPopulatedBoardAndGoToPage(page: Page, params: ICreat
   return boardParams;
 };
 
-export const insertComponentInBoard = async ({
+export const createComponentInZone = async ({
   userId,
   componentTitle,
   zoneId,
@@ -166,7 +121,7 @@ export const insertComponentInBoard = async ({
   widgetType = "lg",
   objectType = OBJECT_TYPE,
   order = 1,
-}: IInsertComponentToBoard) => {
+}: ICreateComponentInZone) => {
   try {
     const componentId = createComponentId();
     await sql.unsafe(`
@@ -192,7 +147,7 @@ export const insertComponentInBoard = async ({
   };
 }
 
-export const insertZoneInBoard = async ({
+export const createZoneInView = async ({
   userId,
   viewId,
   title = 'Test Zone',
@@ -200,7 +155,7 @@ export const insertZoneInBoard = async ({
   filter = {},
   order = 1,
   datasourceInstanceId = DATASOURCE_INSTANCE_ID,
-}: IInsertZoneToBoard) => {
+}: ICreateZoneInView) => {
   try {
     const zoneId = createZoneId();
     await sql.unsafe(`

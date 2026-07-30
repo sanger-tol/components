@@ -8,8 +8,8 @@ import {
   enterEditMode,
   isInHeadlessMode,
   createBoardAndViewAndZone,
-  insertComponentInBoard,
-  insertZoneInBoard,
+  createComponentInZone,
+  createZoneInView,
 } from "../helpers";
 
 
@@ -17,7 +17,7 @@ test.use({ headless: isInHeadlessMode });
 
 const insertTableComponents = async (userId: string, zoneId: string, iterations: number) => {
   for (let i = 1; i <= iterations; i++) {
-    await insertComponentInBoard(
+    await createComponentInZone(
       {
         userId: String(userId),
         componentTitle: `Test Table ${i}`,
@@ -41,7 +41,7 @@ test.beforeEach(async ({ page }) => {
     zoneObjectType: "curation",
   });
 
-  const secondZoneId = await insertZoneInBoard({
+  const secondZoneId = await createZoneInView({
     userId: String(userId),
     viewId,
     title: "Zone 2",

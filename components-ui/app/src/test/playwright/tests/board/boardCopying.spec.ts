@@ -8,7 +8,7 @@ import {
   addUserToDB,
   createBoardAndViewAndZone,
   isInHeadlessMode,
-  insertComponentInBoard,
+  createComponentInZone,
   createPopulatedBoardAndGoToPage,
   createBoardId,
   enterEditMode,
@@ -33,7 +33,7 @@ const setupBoardWithComponent = async (page) => {
     zoneObjectType: "species",
   });
 
-  await insertComponentInBoard(
+  await createComponentInZone(
     {
       userId: String(userId),
       componentTitle: "Test Table",
