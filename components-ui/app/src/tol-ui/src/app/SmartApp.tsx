@@ -46,6 +46,7 @@ import {
   URL_PATHS,
   UserProfile,
   IUserProfileAdditionalConfigs,
+  AppContextProvider,
   PFooter,
 } from "..";
 
@@ -265,7 +266,8 @@ export function SmartApp(props: PSmartApp) {
   );
 
   return (
-    <div id="tol-smart-app-background">
+    <AppContextProvider navConfig={navigation}>
+      <div id="tol-smart-app-background">
       <QueryClientProvider client={queryClient}>
         <AuthProvider
           value={{
@@ -315,5 +317,6 @@ export function SmartApp(props: PSmartApp) {
         </AuthProvider>
       </QueryClientProvider>
     </div>
+    </AppContextProvider>
   );
 }
