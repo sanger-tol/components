@@ -107,13 +107,13 @@ export function AttributeSelector(props: PAttributeSelector) {
 
   const handleProvenanceChange = (field: string, selectedProvenance: string[]) => {
     // TODO: The format of what's to be added is not final yet.
-    // Here is a placeholder (`${field}_${provenance}`)
+    // Here is a placeholder (`${field}[${provenance}]`)
   
     // Remove existing provenance entries for this field
-    const baseAttributes = attribute.filter(attr => !attr.startsWith(`${field}_`));
+    const baseAttributes = attribute.filter(attr => !attr.startsWith(`${field}[`));
     
     // Add new provenance entries
-    const provenanceAttributes = selectedProvenance.map(prov => `${field}_${prov}`);
+    const provenanceAttributes = selectedProvenance.map(prov => `${field}[${prov}]`);
     
     // Update the attributes
     const newAttributes = [...baseAttributes, ...provenanceAttributes];
@@ -155,10 +155,13 @@ export function AttributeSelector(props: PAttributeSelector) {
 
   const RenderSelectedValue = (value: string) => {
     const metaData = getFlattenedMetaData(entityMeta, objectType, value) || {};
+    const provenance = value.match(/\[(.*)\]/)?.[1]
+    const displayName = metaData["display_name"]
+      ?? (normaliseCaps(value) as string).replace(/\[(.*)\]/g, "");
     return (
       <span className="tol-attribute-selector-render-single-item">
-        {metaData["display_name"] ?? normaliseCaps(value)}
-        <SourceTag source={metaData["source"]} />
+        {displayName}
+        <SourceTag source={provenance || metaData["source"]} />
       </span>
     );
   };
