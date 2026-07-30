@@ -128,10 +128,7 @@ export function AttributeSelector(props: PAttributeSelector) {
   const [provenances, setProvenances] = useState<Record<string, string[]>>({});
   // TODO HARDCODED FOR TESTING
   const provenancesAvailable: Record<string, string[]> = {
-    "grit_species.goat_genus": ["goat", "sts"],
-    "grit_species.goat_scientific_name": ["goat", "sts"],
-    "grit_species.goat_common_name": ["goat", "sts"],
-    "grit_tolid.tolqc_sts_specimen": ["sts", "benchling", "grit"]
+    "species.scientific_name": ["goat", "sts", "tolqc"]
   };
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
