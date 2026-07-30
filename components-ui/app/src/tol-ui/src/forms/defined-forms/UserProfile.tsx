@@ -22,6 +22,8 @@ import {
   USER,
   PRE_DEFINED_FORM_TYPES,
   FORM_MESSAGE_TEXT,
+  BreadcrumbNav,
+  RemoteBreadcrumbNav,
 } from "../..";
 import type {
   IUserProfileAdditionalConfigs,
@@ -125,7 +127,22 @@ export function UserProfile(props: PUserProfile) {
       component: isLoading ? (
         <TolLoader content="Loading profile..." vertical size="md" />
       ) : (
-        ProfileForm
+        // ProfileForm
+        <RemoteBreadcrumbNav
+          size="lg"
+          separator=">"
+          dataSource={LOCAL_DS}
+          objectType={"species"}
+          lastLinkable
+          links={[
+            { text: "Chordata", url: "/explore?phylum=Chordata" },
+            { text: "Actinopterygii", url: "/explore?class=Actinopterygii" },
+            { text: "Pleuronectiformes", url: "/explore?order=Pleuronectiformes" },
+            { text: "Soleidae", url: "/explore?family=Soleidae" },
+          ]}
+          attributes={["phylum", "class", "order", "family"]}
+          baseUrl="/explore?${attribute}=${value}"
+        />
       ),
     },
   ];
