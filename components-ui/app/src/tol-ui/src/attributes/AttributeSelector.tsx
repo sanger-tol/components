@@ -120,6 +120,8 @@ export function AttributeSelector(props: PAttributeSelector) {
     setAttributes(newAttributes);
   };
 
+  // TODO VERY PRELIMINARY
+  const [provenances, setProvenances] = useState<Record<string, string[]>>({});
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
@@ -134,8 +136,13 @@ export function AttributeSelector(props: PAttributeSelector) {
           displaySource={displaySource}
           tooltipContent={tooltipContent}
           disabledValues={disabledValues}
-          provenances={["sts", "benchling"]}
-          onProvenanceChange={handleProvenanceChange}
+          provenancesAvailable={["sts", "benchling"]}
+          provenancesSelected={provenances[label]}
+          onProvenancesChanged={(newProvenances) => {
+            console.log(newProvenances)
+            handleProvenanceChange(label, newProvenances);
+            setProvenances({ ...provenances, [label]: newProvenances });
+          }}
         />
 
       </div>

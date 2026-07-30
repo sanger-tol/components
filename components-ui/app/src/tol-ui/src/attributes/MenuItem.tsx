@@ -28,8 +28,9 @@ export interface PMenuItem {
   displaySource?: boolean;
   tooltipContent?: string;
   disabledValues?: any;
-  provenances?: string[];
-  onProvenanceChange?: (field: string, selectedProvenance: string[]) => void;
+  provenancesAvailable?: string[];
+  provenancesSelected?: string[];
+  onProvenancesChanged?: (newProvenances: string[]) => void
 }
 
 export function MenuItem(props: PMenuItem) {
@@ -41,20 +42,12 @@ export function MenuItem(props: PMenuItem) {
     objectType,
     dataSource,
     displaySource,
-    provenances,
-    onProvenanceChange,
+    provenancesAvailable = [],
+    provenancesSelected = [],
+    onProvenancesChanged,
   } = props;
 
   const [provenancePickerOpen, setProvenancePickerOpen] = useState(false);
-  const [selectedProvenance, setSelectedProvenance] = useState<string[]>([]);
-
-  const handleProvenanceChange = (item: string, checked: boolean) => {
-    const updated = checked 
-      ? [...selectedProvenance, item]
-      : selectedProvenance.filter(p => p !== item);
-    setSelectedProvenance(updated);
-    onProvenanceChange?.(field, updated);
-  };
 
   const disabled =
     disabledValues && Object.keys(disabledValues).includes(field);
@@ -89,7 +82,7 @@ export function MenuItem(props: PMenuItem) {
   >((props, ref) => (
     <div {...props} ref={ref} onClick={e => e.stopPropagation()}>
       <div className="tol-provenance-picker" role="listbox">
-        {provenances?.map(provenance =>
+        {provenancesAvailable.map(provenance =>
           <span
             key={provenance}
             className="tol-provenance-picker-entry"
@@ -97,8 +90,12 @@ export function MenuItem(props: PMenuItem) {
           >
             <RSCheckbox
               className="tol-provenance-picker-checkbox"
-              checked={selectedProvenance.includes(provenance)}
-              onChange={(_value, checked) => handleProvenanceChange(provenance, checked)}
+              checked={provenancesSelected.includes(provenance)}
+              onChange={(_value, checked) => onProvenancesChanged?.(
+                checked
+                  ? [...provenancesSelected, provenance]
+                  : provenancesSelected.filter(item => item !== provenance)
+              )}
             >
               <SourceTag
                 source={provenance}
@@ -114,7 +111,7 @@ export function MenuItem(props: PMenuItem) {
     <Col className="tol-attribute-selector-menu-item">
       <div key={field} className="tol-attribute-selector-menu-item-container">
         {ItemContents}
-        {provenances && provenances.length > 0 && (
+        {provenancesAvailable.length > 0 && (
           <Button
             outline
             icon={provenancePickerOpen ? "angle-up" : "angle-down"}
