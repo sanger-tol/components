@@ -53,17 +53,29 @@ export function Zone(props: PZone) {
   const { object_type, dataspace, filter } = zone;
   const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;
 
+  /**
+   * Translates the preceding zone's compounded filter for this zone whenever
+   * that zone changes. Translation performs asynchronous datasource lookups,
+   * so the cleanup prevents an obsolete request from overwriting newer state.
+   */
   useEffect(() => {
-    updateTranslatedFilter();
-  }, [zoneAbove]);
+    let cancelled = false;
 
-  const updateTranslatedFilter = async () => {
-    if (zoneAbove) {
-      const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
-      zone.filter = translatedFilter;
-      setZone({ ...zone });
-    }
-  };
+    const updateTranslatedFilter = async () => {
+      if (zoneAbove) {
+        const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
+        if (!cancelled) {
+          setZone({ ...zone, filter: translatedFilter });
+        }
+      }
+    };
+
+    updateTranslatedFilter();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [zoneAbove]);
 
   const onAddComponent = () => {
     setOpen(true);
