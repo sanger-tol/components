@@ -21,6 +21,8 @@ import {
   renderTotalSelectedItems,
   MenuItem,
   AdvanceSearchTab,
+  PROVENANCE_IN_FIELD_REGEX,
+  PROVENANCE_IN_FIELD_REGEX_GLOBAL,
 } from "..";
 
 export interface PAttributeSelector extends IRemoteTarget {
@@ -155,9 +157,9 @@ export function AttributeSelector(props: PAttributeSelector) {
 
   const RenderSelectedValue = (value: string) => {
     const metaData = getFlattenedMetaData(entityMeta, objectType, value) || {};
-    const provenance = value.match(/\[(.*)\]/)?.[1]
+    const provenance = value.match(PROVENANCE_IN_FIELD_REGEX)?.[1]
     const displayName = metaData["display_name"]
-      ?? (normaliseCaps(value) as string).replace(/\[(.*)\]/g, "");
+      ?? (normaliseCaps(value) as string).replace(PROVENANCE_IN_FIELD_REGEX_GLOBAL, "");
     return (
       <span className="tol-attribute-selector-render-single-item">
         {displayName}

@@ -10,3 +10,6 @@ export const CELL_RENDERER_PROP_ATTRIBUTE: RegExp = new RegExp(`\\${CELL_RENDERE
 export const CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY: RegExp = /\[[^\]]*]/g;
 export const CELL_RENDERER_SPREAD_OPERATOR: string = "...";
 export const CELL_RENDERER_PARENT_OPERATOR = "~";
+
+export const PROVENANCE_IN_FIELD_REGEX = /\[(.*)\]/;
+export const PROVENANCE_IN_FIELD_REGEX_GLOBAL = /\[(.*)\]/g;
