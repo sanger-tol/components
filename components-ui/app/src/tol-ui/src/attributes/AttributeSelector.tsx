@@ -226,7 +226,7 @@ export function AttributeSelector(props: PAttributeSelector) {
           return attributeSelectorSearchBy(keyWord, label, entityMeta, objectType);
         }}
         sticky={sticky}
-        onClean={onClean}
+        onClean={() => {onClean?.(); setProvenances({});}}
         onClose={() => setSelectedSources([])}
       />
       {recommendedFilterAvailable && (
