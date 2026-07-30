@@ -133,25 +133,23 @@ export function AttributeSelector(props: PAttributeSelector) {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
     return (
-      <div key={`${label}-${index}`}>
-        <MenuItem
-          source={metaData["source"]}
-          field={label}
-          authoritative={metaData["authoritative"]}
-          objectType={objectType}
-          dataSource={dataSource}
-          displaySource={displaySource}
-          tooltipContent={tooltipContent}
-          disabledValues={disabledValues}
-          provenancesAvailable={provenancesAvailable[label]}
-          provenancesSelected={provenances[label]}
-          onProvenancesChanged={(newProvenances) => {
-            handleProvenanceChange(label, newProvenances);
-            setProvenances({ ...provenances, [label]: newProvenances });
-          }}
-        />
-
-      </div>
+      <MenuItem
+        key={`${label}-${index}`}
+        source={metaData["source"]}
+        field={label}
+        authoritative={metaData["authoritative"]}
+        objectType={objectType}
+        dataSource={dataSource}
+        displaySource={displaySource}
+        tooltipContent={tooltipContent}
+        disabledValues={disabledValues}
+        provenancesAvailable={provenancesAvailable[label]}
+        provenancesSelected={provenances[label]}
+        onProvenancesChanged={(newProvenances) => {
+          handleProvenanceChange(label, newProvenances);
+          setProvenances({ ...provenances, [label]: newProvenances });
+        }}
+      />
     );
   };
 
