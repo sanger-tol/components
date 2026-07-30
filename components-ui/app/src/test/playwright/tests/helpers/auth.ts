@@ -54,6 +54,9 @@ export const setAuth = async (page: Page, roles?: string[]) => {
   const userID = randomInt();
   const token = crypto.randomUUID();
   const orcidID = `https://orcid.org/${crypto.randomUUID()}`;
+  const name = "Test User";
+  const email = `${userID}@example.com`;
+  const workplace = "Test Workplace";
 
   await insertAuthToDB(userID, token, orcidID, roles);
 
@@ -63,6 +66,9 @@ export const setAuth = async (page: Page, roles?: string[]) => {
       "token_created_at": "2025-03-31T14:13:36.345558",
       "token_expires_at": "2090-04-07T14:13:36.345581",
       "id": userID,
+      "name": name,
+      "email": email,
+      "workplace": workplace,
       "roles": roles ?? ["tol"],
     },
     "token": token,
@@ -74,9 +80,9 @@ export const setAuth = async (page: Page, roles?: string[]) => {
 
   // Seed auth state before app scripts execute to avoid first-load unauthenticated races in CI.
   await page.addInitScript((data) => {
-    Object.keys(data).forEach((key) => {
-      localStorage.setItem(key, JSON.stringify(data[key]));
-    });
+    localStorage.setItem("user", JSON.stringify(data.user));
+    // App expects token as a raw string (not JSON-encoded) in localStorage.
+    localStorage.setItem("token", data.token);
   }, storageData);
 
   await page.goto("/");
