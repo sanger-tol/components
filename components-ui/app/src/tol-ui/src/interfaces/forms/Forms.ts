@@ -48,10 +48,6 @@ export interface IData {
   value: string;
 }
 
-export interface IHierachicalData extends IData {
-  children?: IHierachicalData[];
-}
-
 export interface ICheckboxField {
   disabled?: boolean;
   defaultChecked?: boolean;
@@ -223,12 +219,6 @@ export interface IMultipleselectField extends IFormComponent {
   onExit?: any;
   onExiting?: any;
   groupBy?: string;
-}
-
-export interface IMultipleselecttreeField extends IFormComponent {
-  type: "multipleselecttree";
-  block?: boolean;
-  data: TUnformattedMultipleSelectTreeFieldValue[];
 }
 
 export interface IMarkdownField extends IFormComponent {
