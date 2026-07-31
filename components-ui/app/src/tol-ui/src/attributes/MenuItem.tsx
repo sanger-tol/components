@@ -4,14 +4,12 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-
 import { forwardRef, useState } from "react";
 import type { HTMLAttributes } from "react";
 import { Animation as RSAnimation, Checkbox as RSCheckbox } from "rsuite";
 
 import {
   AttributeTitle,
-  Button,
   Col,
   ExpandButton,
   Icon,
