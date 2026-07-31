@@ -13,6 +13,7 @@ import {
   AttributeTitle,
   Button,
   Col,
+  ExpandButton,
   Icon,
   SourceTag,
   truncateString,
@@ -111,11 +112,14 @@ export function MenuItem(props: PMenuItem) {
         <span className="tol-attribute-selector-menu-item-right-container">
           {displaySource && source && <SourceTag source={source} />}
           {provenancesAvailable.length > 0 && (
-            <Button
-              outline
-              icon={provenancePickerOpen ? "angle-up" : "angle-down"}
-              tooltip="Configure Provenance"
-              onClick={() => setProvenancePickerOpen(prev => !prev)}
+            <ExpandButton
+              expanded={provenancePickerOpen}
+              setExpanded={setProvenancePickerOpen}
+              tooltip={
+                provenancePickerOpen
+                  ? "Collapse Provenance Picker"
+                  : "Configure Provenance"
+              }
             />
           )}
         </span>
