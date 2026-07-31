@@ -15,7 +15,6 @@ import type {
   TCheckboxFields,
   TFormField,
   TLabelAndValueData,
-  TUnformattedMultipleSelectTreeFieldValue,
 } from "../..";
 
 export interface IWaitingUpload {
