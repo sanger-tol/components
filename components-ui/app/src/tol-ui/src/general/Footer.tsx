@@ -17,11 +17,11 @@ import {
 
 export interface PFooter {
   /**
-   * If footer is shown on the page
+   * Controls whether the footer is rendered.
    */
   visible?: boolean;
   /**
-   * Override element for the footer
+   * Replaces the default footer content when provided.
    */
   element?: ReactNode;
 }

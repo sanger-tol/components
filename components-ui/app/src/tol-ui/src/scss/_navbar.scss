@@ -109,7 +109,7 @@
 
 // clear navbar with header
 .tol-navigation:has(+ .tol-smart-app .masthead) .tol-navbar {
-  background-color: unset;
+  background-color: rgba(0, 0, 0, var(--tol-navbar-scroll, 0)) !important;
 }
 
 // remove border around mobile nav
