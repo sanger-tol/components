@@ -71,7 +71,6 @@ export function MenuItem(props: PMenuItem) {
           </div>
         </div>
       </div>
-      {displaySource && source && <SourceTag source={source} />}
     </>
   );
 
@@ -111,14 +110,17 @@ export function MenuItem(props: PMenuItem) {
     <Col className="tol-attribute-selector-menu-item">
       <div key={field} className="tol-attribute-selector-menu-item-container">
         {ItemContents}
-        {provenancesAvailable.length > 0 && (
-          <Button
-            outline
-            icon={provenancePickerOpen ? "angle-up" : "angle-down"}
-            tooltip="Configure Provenance"
-            onClick={() => setProvenancePickerOpen(prev => !prev)}
-          />
-        )}
+        <span className="tol-attribute-selector-menu-item-right-container">
+          {displaySource && source && <SourceTag source={source} />}
+          {provenancesAvailable.length > 0 && (
+            <Button
+              outline
+              icon={provenancePickerOpen ? "angle-up" : "angle-down"}
+              tooltip="Configure Provenance"
+              onClick={() => setProvenancePickerOpen(prev => !prev)}
+            />
+          )}
+        </span>
       </div>
       <RSAnimation.Collapse in={provenancePickerOpen}>
         {(props, ref) => <ProvenancePicker {...props} ref={ref} />}
