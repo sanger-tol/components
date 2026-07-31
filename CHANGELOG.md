@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.7`
+
+30-07-2026
+
+- Added footer content override for SmartApp
+
 ## tol-ui `4.0.5`
 
 27-07-2026
