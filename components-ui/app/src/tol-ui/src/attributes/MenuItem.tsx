@@ -55,23 +55,21 @@ export function MenuItem(props: PMenuItem) {
   const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
 
   // The contents of the main item entry showing the non-provenance field
-  const ItemContents = (
-    <>
-      <div className="tol-attribute-selector-menu-item-inner-container">
-        <div className="tol-attribute-selector-display-name">
-          <AttributeTitle
-            objectType={objectType}
-            dataSource={dataSource}
-            attributeId={field}
-            className={disabled ? "disabled" : undefined}
-          />
-          <div className="tol-attribute-selector-display-key">
-            {authoritative === true && <Icon icon="star" />}
-            <p>{truncateString(field, lettersToDisplay)}</p>
-          </div>
+  const MenuItemAttributeTitle = (
+    <div className="tol-attribute-selector-menu-item-inner-container">
+      <div className="tol-attribute-selector-display-name">
+        <AttributeTitle
+          objectType={objectType}
+          dataSource={dataSource}
+          attributeId={field}
+          className={disabled ? "disabled" : undefined}
+        />
+        <div className="tol-attribute-selector-display-key">
+          {authoritative === true && <Icon icon="star" />}
+          <p>{truncateString(field, lettersToDisplay)}</p>
         </div>
       </div>
-    </>
+    </div>
   );
 
   // The contents of the expanded area when the expand button on the right of the menu item
@@ -109,7 +107,7 @@ export function MenuItem(props: PMenuItem) {
   return (
     <Col className="tol-attribute-selector-menu-item">
       <div key={field} className="tol-attribute-selector-menu-item-container">
-        {ItemContents}
+        {MenuItemAttributeTitle}
         <span className="tol-attribute-selector-menu-item-right-container">
           {displaySource && source && <SourceTag source={source} />}
           {provenancesAvailable.length > 0 && (
