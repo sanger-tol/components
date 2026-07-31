@@ -7,4 +7,5 @@
 export * from "./Button";
 export * from "./DropdownButton";
 export * from "./DeprecatedDropdownButtons";
+export * from "./ExpandButton";
 export * from "./utils";
