@@ -19,19 +19,59 @@ import {
 } from "..";
 
 export interface PMenuItem {
+  /**
+   * Source identifier shown in the source tag
+   */
   source: string;
+  /**
+   * The attribute this menu item describes
+   */
   field: string;
+  /**
+   * Whether the attribute is marked as authoritative
+   */
   authoritative: boolean;
+  /**
+   * Object type used to resolve attribute metadata
+   */
   objectType: string;
+  /**
+   * Data source to fetch attribute metadata with
+   */
   dataSource: TsDataSource;
+  /**
+   * Whether to display the source tag in the menu item
+   */
   displaySource?: boolean;
+  /**
+   * Optional tooltip content for the menu item
+   */
   tooltipContent?: string;
+  /**
+   * The values in the AttributeSelector that are disabled.
+   * This MenuItem is disabled if this contains `field`.
+   */
   disabledValues?: any;
+  /**
+   * The provenances available for this attribute that are displayed in the Provanence picker.
+   * If this is not provided (or an empty list), then this attribute does not use Provenance.
+   */
   provenancesAvailable?: string[];
+  /**
+   * Currently selected provenance fields for this attribute
+   */
   provenancesSelected?: string[];
+  /**
+   * Callback fired when provenance selections change
+   * (used to update provenances selected state in a parent component)
+   */
   onProvenancesChanged?: (newProvenances: string[]) => void
 }
 
+/**
+ * Renders an attribute selection menu item with optional source display
+ * and an expandable provenance picker for configuring selected provenances.
+ */
 export function MenuItem(props: PMenuItem) {
   const {
     source,
