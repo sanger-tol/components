@@ -26,7 +26,7 @@ export function ExpandButton(props: PExpandButton) {
   const propsToPassOn = {
     ...buttonProps,
     onClick: () => {
-      props.onClick?.();
+      buttonProps.onClick?.();
       setExpanded(!expanded);
     }
   };
