@@ -132,7 +132,7 @@ export function defineBoardEntity(
     objectType === BOARD_ENTITIES.ENTITIES.COMPONENT ||
     objectType === BOARD_ENTITIES.ENTITIES.ZONE
   ) {
-    const definedEntity = entity as Partial<IZone> | Partial<IComponent>;
+    const definedEntity = entity as any; // Partial<IZone> | Partial<IComponent>;
     const initialFilter = definedEntity.filter ?? { and_: {} };
     entity = {
       ...entity,
@@ -143,13 +143,13 @@ export function defineBoardEntity(
         dataSourceInstanceId: definedEntity.data_source_instance_id,
         ...definedEntity.ui_api_details,
       }),
+      // TODO: Temp fix due to different casing
+      filterExcludeIncoming: definedEntity.filter_exclude_incoming ?? false,
     };
   }
 
   // TODO: Temp fix due to different casing
-  if (
-    objectType === BOARD_ENTITIES.ENTITIES.COMPONENT
-  ) {
+  if (objectType === BOARD_ENTITIES.ENTITIES.COMPONENT) {
     const definedEntity = entity as any;
     entity = {
       ...entity,
