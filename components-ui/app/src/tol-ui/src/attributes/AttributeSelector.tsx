@@ -169,12 +169,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     );
   };
 
-  const EXPAND_BUTTON_SELECTOR = "[data-testid^='attribute-selector-provenance-toggle-']";
-  const OPEN_PROVENANCE_SELECTOR =
-    ".tol-attribute-selector-menu-item[data-provenance-open='true']";
-  const PROVENANCE_CHECKBOX_SELECTOR =
-    ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']";
-
   const getNearestMenuItemContainer = (target: HTMLElement) => {
     // Prefer the local MenuItem container regardless of rsuite wrapper shape.
     const directMenuItem = target.closest<HTMLElement>(".tol-attribute-selector-menu-item");
@@ -183,14 +177,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     // Fallback: when focus is on a row wrapper, locate the MenuItem rendered inside it.
     const rowContainer = target.closest<HTMLElement>(".rs-check-item, li, [role='option'], [role='menuitem']");
     return rowContainer?.querySelector<HTMLElement>(".tol-attribute-selector-menu-item") || null;
-  };
-
-  const getOpenProvenanceCheckboxesForMenuItem = (menuItem: HTMLElement) => {
-    if (!menuItem.matches(OPEN_PROVENANCE_SELECTOR)) return [];
-
-    return Array.from(
-      menuItem.querySelectorAll<HTMLElement>(PROVENANCE_CHECKBOX_SELECTOR)
-    );
   };
 
   /**
@@ -209,8 +195,8 @@ export function AttributeSelector(props: PAttributeSelector) {
     const attributeSelector = event.target as HTMLElement | null;
     if (!attributeSelector) return;
 
-    // Keep native arrow-key behavior in the provenance picker
-    // (otherwise RSCheckPicker will skip all its contents to go to the next menu item)
+    // If we're within the provenance picker, return early.
+    // Handling of keyboard navigation from within the picker is done in MenuItem
     if (attributeSelector.closest(".tol-provenance-picker")) return;
 
     // When the row has an expanded provenance list, ArrowUp/ArrowDown should enter
@@ -220,7 +206,15 @@ export function AttributeSelector(props: PAttributeSelector) {
       // Locate the provenance checkbox elements in this menu item's sublist
       const menuItem = getNearestMenuItemContainer(attributeSelector);
       if (!menuItem) return;
-      const provenanceCheckboxes = getOpenProvenanceCheckboxesForMenuItem(menuItem);
+
+      if (!menuItem.matches("[data-provenance-open='true']")) {
+        // If the provenance picker isn't open, there's no point trying to select any of its checkboxes
+        return;
+      }
+
+      const provenanceCheckboxes = menuItem.querySelectorAll<HTMLElement>(
+        ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']"
+      );
       if (!provenanceCheckboxes.length) return;
 
       // If there are provenance entries in the sublist, enter it.
@@ -238,7 +232,9 @@ export function AttributeSelector(props: PAttributeSelector) {
     } else if (event.key === "ArrowRight") {
       // Get the provenance expand button element
       const selectableContainer = attributeSelector.closest(".rs-check-item") || attributeSelector;
-      const expandButton = selectableContainer.querySelector<HTMLButtonElement>(EXPAND_BUTTON_SELECTOR);
+      const expandButton = selectableContainer.querySelector<HTMLButtonElement>(
+        "[data-testid^='attribute-selector-provenance-toggle-']"
+      );
       if (!expandButton) return;
 
       // Focus it

@@ -91,6 +91,23 @@ export function MenuItem(props: PMenuItem) {
   } = props;
 
   const [provenancePickerOpen, setProvenancePickerOpen] = useState(false);
+  
+  const disabled =
+    disabledValues && Object.keys(disabledValues).includes(field);
+
+  const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   const PROVENANCE_CHECKBOX_SELECTOR =
     ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']";
 
@@ -232,12 +249,9 @@ export function MenuItem(props: PMenuItem) {
     restoreProvenanceCheckboxFocus(event.currentTarget, provenance);
   };
 
-  const disabled =
-    disabledValues && Object.keys(disabledValues).includes(field);
-
-  const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
-
-  // The contents of the main item entry showing the non-provenance field
+  /**
+   * The contents of the main item entry showing the non-provenance field
+   */
   const MenuItemAttributeTitle = (
     <div className="tol-attribute-selector-menu-item-inner-container">
       <div className="tol-attribute-selector-display-name">
@@ -255,8 +269,10 @@ export function MenuItem(props: PMenuItem) {
     </div>
   );
 
-  // The contents of the expanded area when the expand button on the right of the menu item
-  // is clicked. Contains an option for each available provenance
+  /**
+   * The contents of the expanded area when the expand button on the right of the menu item
+   * is clicked. Contains an option for each available provenance
+   */
   const ProvenancePicker = forwardRef<
     HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>
   >((props, ref) => (
