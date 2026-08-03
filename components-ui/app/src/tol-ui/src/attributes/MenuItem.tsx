@@ -97,14 +97,20 @@ export function MenuItem(props: PMenuItem) {
 
   const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
 
-  const getCheckboxesInProvenancePicker = (menuItem: HTMLElement) => (
-    Array.from(
+  const getCheckboxesInProvenancePicker = (menuItem: HTMLElement) => {
+    return Array.from(
       menuItem.querySelectorAll<HTMLElement>(
         ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']"
       )
     )
-  );
+  };
 
+  /**
+   * Handles keyboard navigation for the expand button that opens the provenance picker
+   * (i.e. activating it with Enter or Space, and moving from it to the menu item above it,
+   * or the menu item below it, or the first provenance entry below it, depending on whether
+   * the provenance picker is expanded)
+   */
   const handleExpandButtonKeyDownEvent = (
     event: ReactKeyboardEvent<HTMLSpanElement>
   ) => {
@@ -132,10 +138,7 @@ export function MenuItem(props: PMenuItem) {
       event.preventDefault();
       event.stopPropagation();
 
-      const menuItem = event.currentTarget.closest<HTMLElement>(
-        "li, [role='option'], [role='menuitem']"
-      );
-
+      const menuItem = event.currentTarget.closest<HTMLElement>("[role='option']");
       if (!menuItem) return;
 
       const focusableInItem = menuItem.querySelector<HTMLElement>("[tabindex]");
