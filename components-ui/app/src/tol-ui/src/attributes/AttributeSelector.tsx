@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { Checkbox } from "rsuite";
 import {
   AdvanceSearchTab,
@@ -157,7 +158,7 @@ export function AttributeSelector(props: PAttributeSelector) {
 
   const RenderSelectedValue = (value: string) => {
     const metaData = getFlattenedMetaData(entityMeta, objectType, value) || {};
-    const provenance = value.match(PROVENANCE_IN_FIELD_REGEX)?.[1]
+    const provenance = value.match(PROVENANCE_IN_FIELD_REGEX)?.[1];
     const displayName = metaData["display_name"]
       ?? (normaliseCaps(value) as string).replace(PROVENANCE_IN_FIELD_REGEX_GLOBAL, "");
     return (
@@ -168,10 +169,82 @@ export function AttributeSelector(props: PAttributeSelector) {
     );
   };
 
+  const SELECTABLE_ROW_SELECTOR = "li, [role='option'], [role='menuitem']";
+  const EXPAND_BUTTON_SELECTOR = "[data-testid^='attribute-selector-provenance-toggle-']";
+  const OPEN_PROVENANCE_SELECTOR =
+    ".tol-attribute-selector-menu-item[data-provenance-open='true']";
+  const PROVENANCE_CHECKBOX_SELECTOR =
+    ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']";
+
+  const getOpenProvenanceCheckboxesForRow = (row: HTMLElement) => {
+    const expandedMenuItem = row.querySelector<HTMLElement>(OPEN_PROVENANCE_SELECTOR);
+    if (!expandedMenuItem) return [];
+
+    return Array.from(
+      expandedMenuItem.querySelectorAll<HTMLElement>(PROVENANCE_CHECKBOX_SELECTOR)
+    );
+  };
+
+  /**
+   * Runs when a keydown event is detected on the attribute selector,
+   * which adds keyboard navigation to provenance dropdowns.
+   * 
+   * On a menu item, ArrowRight will focus the provenance toggle expand button.
+   * Focus can be placed back on the menu item with ArrowLeft.
+   * If this button is pressed to open the provenance picker, the entries in the provenance pickers
+   * will be considered at the same level as the base menu items
+   * (so they can all be cycled through with ArrowUp and ArrowDown).
+   */
+  const handleAttributeSelectorKeyNavigation = (
+    event: ReactKeyboardEvent<HTMLDivElement>
+  ) => {
+    const attributeSelector = event.target as HTMLElement | null;
+    if (!attributeSelector) return;
+
+    // Keep native arrow-key behavior in the provenance picker
+    // (otherwise RSCheckPicker will skip all its contents to go to the next menu item)
+    if (attributeSelector.closest(".tol-provenance-picker")) return;
+
+    // When the row has an expanded provenance list, ArrowUp/ArrowDown should enter
+    // that sublist before moving to previous/next top-level rows
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      const selectableContainer = attributeSelector.closest<HTMLElement>(SELECTABLE_ROW_SELECTOR);
+      if (!selectableContainer) return;
+
+      const provenanceCheckboxes = getOpenProvenanceCheckboxesForRow(selectableContainer);
+      if (!provenanceCheckboxes.length) return;
+
+      const targetCheckbox = event.key === "ArrowDown"
+        ? provenanceCheckboxes[0]
+        : provenanceCheckboxes[provenanceCheckboxes.length - 1];
+
+      event.preventDefault();
+      event.stopPropagation();
+      targetCheckbox.focus();
+      return;
+    }
+
+    if (event.key !== "ArrowRight") return;
+
+    const selectableContainer = attributeSelector.closest(SELECTABLE_ROW_SELECTOR) || attributeSelector;
+
+    const expandButton = selectableContainer.querySelector<HTMLButtonElement>(EXPAND_BUTTON_SELECTOR);
+
+    if (!expandButton) return;
+
+    event.preventDefault();
+    expandButton.focus();
+  };
+
   if (loading) return <></>;
 
   return (
-    <div className="tol-attribute-selector" data-testid={testid}>
+    <div
+      className="tol-attribute-selector"
+      data-testid={testid}
+      // Register the event at the capture phase so it overrides the default menu navigation
+      onKeyDownCapture={handleAttributeSelectorKeyNavigation}
+    >
       <MultipleSelect
         className="tol-attribute-selector-select"
         menuClassName={`tol-attribute-selector-menu${maxSelections === 1 && ' tol-single-selector'}`}

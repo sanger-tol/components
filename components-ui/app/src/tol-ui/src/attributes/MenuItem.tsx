@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { forwardRef, useState } from "react";
-import type { HTMLAttributes } from "react";
+import type { HTMLAttributes, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { Animation as RSAnimation, Checkbox as RSCheckbox } from "rsuite";
 
 import {
@@ -87,6 +87,87 @@ export function MenuItem(props: PMenuItem) {
   } = props;
 
   const [provenancePickerOpen, setProvenancePickerOpen] = useState(false);
+  const PROVENANCE_CHECKBOX_SELECTOR =
+    ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']";
+
+  const getProvenanceFocusableCheckboxes = (container: HTMLElement) => (
+    Array.from(
+      container.querySelectorAll<HTMLElement>(
+        PROVENANCE_CHECKBOX_SELECTOR
+      )
+    )
+  );
+
+  const handleExpandControlKeyDown = (
+    event: ReactKeyboardEvent<HTMLSpanElement>
+  ) => {
+    // Allow button activation while preventing the parent menu option from being selected.
+    if (event.key === "Enter" || event.key === " ") {
+      event.stopPropagation();
+      return;
+    }
+
+    // Move from the expand control into the first provenance checkbox when expanded.
+    if (event.key === "ArrowDown" && provenancePickerOpen) {
+      const container = event.currentTarget.closest<HTMLElement>(
+        ".tol-attribute-selector-menu-item"
+      );
+      if (!container) return;
+
+      const firstProvenanceCheckbox = getProvenanceFocusableCheckboxes(container)[0];
+      if (!firstProvenanceCheckbox) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      firstProvenanceCheckbox.focus();
+      return;
+    }
+
+    if (event.key !== "ArrowLeft") return;
+
+    // Move focus back to the parent menu option from the expand control.
+    event.preventDefault();
+    event.stopPropagation();
+
+    const menuItem = event.currentTarget.closest<HTMLElement>(
+      "li, [role='option'], [role='menuitem']"
+    );
+
+    if (!menuItem) return;
+
+    const focusableInItem = menuItem.querySelector<HTMLElement>("[tabindex]");
+    (focusableInItem || menuItem).focus();
+  };
+
+  const handleProvenancePickerKeyDown = (
+    event: ReactKeyboardEvent<HTMLDivElement>
+  ) => {
+    if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+
+    const pickerContainer = event.currentTarget.closest<HTMLElement>(
+      ".tol-attribute-selector-menu-item"
+    );
+    if (!pickerContainer) return;
+
+    const focusableCheckboxes = getProvenanceFocusableCheckboxes(pickerContainer);
+    if (!focusableCheckboxes.length) return;
+
+    const currentTarget = event.target as Node;
+    const currentIndex = focusableCheckboxes.findIndex(checkbox =>
+      checkbox === event.target || checkbox.contains(currentTarget)
+    );
+    if (currentIndex < 0) return;
+
+    const direction = event.key === "ArrowDown" ? 1 : -1;
+    const nextIndex = currentIndex + direction;
+
+    if (nextIndex >= 0 && nextIndex < focusableCheckboxes.length) {
+      // Consume ArrowUp/ArrowDown only when moving within the provenance list.
+      event.preventDefault();
+      event.stopPropagation();
+      focusableCheckboxes[nextIndex].focus();
+    }
+  };
 
   const disabled =
     disabledValues && Object.keys(disabledValues).includes(field);
@@ -117,7 +198,11 @@ export function MenuItem(props: PMenuItem) {
     HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>
   >((props, ref) => (
     <div {...props} ref={ref} onClick={e => e.stopPropagation()}>
-      <div className="tol-provenance-picker" role="listbox">
+      <div
+        className="tol-provenance-picker"
+        role="listbox"
+        onKeyDown={handleProvenancePickerKeyDown}
+      >
         {provenancesAvailable.map(provenance =>
           <span
             key={provenance}
@@ -144,21 +229,31 @@ export function MenuItem(props: PMenuItem) {
   ));
 
   return (
-    <Col className="tol-attribute-selector-menu-item">
+    <Col
+      className="tol-attribute-selector-menu-item"
+      data-provenance-open={provenancePickerOpen}
+    >
       <div key={field} className="tol-attribute-selector-menu-item-container">
         {MenuItemAttributeTitle}
         <span className="tol-attribute-selector-menu-item-right-container">
           {displaySource && source && <SourceTag source={source} />}
           {provenancesAvailable.length > 0 && (
-            <ExpandButton
-              expanded={provenancePickerOpen}
-              setExpanded={setProvenancePickerOpen}
-              tooltip={
-                provenancePickerOpen
-                  ? "Collapse Provenance Picker"
-                  : "Configure Provenance"
-              }
-            />
+            <span
+              // Prevent clicking the expand control from selecting the parent menu option
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={handleExpandControlKeyDown}
+            >
+              <ExpandButton
+                testid={`attribute-selector-provenance-toggle-${field}`}
+                expanded={provenancePickerOpen}
+                setExpanded={setProvenancePickerOpen}
+                tooltip={
+                  provenancePickerOpen
+                    ? "Collapse Provenance Picker"
+                    : "Configure Provenance"
+                }
+              />
+            </span>
           )}
         </span>
       </div>
