@@ -48,7 +48,7 @@ export interface IBoardFilter {
    * Whether the filter should be passed through to child entities.
    * If true, the filter will not be applied to child entities.
    */
-  excludeIncomingFilters?: boolean;
+  filterExcludeIncoming?: boolean;
 }
 
 export interface IComponentConfig {
@@ -85,6 +85,10 @@ export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
   data_source_instance_id?: string;
   dataspace?: TsDataSource;
   ui_api_details?: IDBDataSourceInstanceApiDetails;
+  /**
+   * Custom translations for incoming filters, used at the zone level.
+   */
+  translations?: Record<string, string>;
 }
 
 export interface IView extends IBoardParentEntity<IZone> {}
