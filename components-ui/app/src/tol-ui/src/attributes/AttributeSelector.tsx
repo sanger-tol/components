@@ -198,12 +198,10 @@ export function AttributeSelector(props: PAttributeSelector) {
       const menuItemContainer = attributeSelector.closest<HTMLElement>("[role='option']");
       const menuItem = menuItemContainer?.querySelector<HTMLElement>(".tol-attribute-selector-menu-item") || null;
       if (!menuItem) return;
-
       if (!menuItem.matches("[data-provenance-open='true']")) {
         // If the provenance picker isn't open, there's no point trying to select any of its checkboxes
         return;
       }
-
       const provenanceCheckboxes = menuItem.querySelectorAll<HTMLElement>(
         ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']"
       );
@@ -212,8 +210,8 @@ export function AttributeSelector(props: PAttributeSelector) {
       // If there are provenance entries in the sublist, enter it.
       // Further navigation up and down in this list is handled in MenuItem
       const targetCheckbox = event.key === "ArrowDown"
-        ? provenanceCheckboxes[0] // Navigating down from above
-        : provenanceCheckboxes[provenanceCheckboxes.length - 1]; // Navigating up from below
+        ? provenanceCheckboxes[0] // When navigating down from above
+        : provenanceCheckboxes[provenanceCheckboxes.length - 1]; // When navigating up from below
 
       // Override default behaviour
       event.preventDefault();
