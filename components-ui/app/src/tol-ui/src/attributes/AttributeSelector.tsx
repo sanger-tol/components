@@ -169,16 +169,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     );
   };
 
-  const getNearestMenuItemContainer = (target: HTMLElement) => {
-    // Prefer the local MenuItem container regardless of rsuite wrapper shape.
-    const directMenuItem = target.closest<HTMLElement>(".tol-attribute-selector-menu-item");
-    if (directMenuItem) return directMenuItem;
-
-    // Fallback: when focus is on a row wrapper, locate the MenuItem rendered inside it.
-    const rowContainer = target.closest<HTMLElement>(".rs-check-item, li, [role='option'], [role='menuitem']");
-    return rowContainer?.querySelector<HTMLElement>(".tol-attribute-selector-menu-item") || null;
-  };
-
   /**
    * Runs when a keydown event is detected on the attribute selector,
    * which adds keyboard navigation to provenance dropdowns.
@@ -204,7 +194,8 @@ export function AttributeSelector(props: PAttributeSelector) {
     // (handled by rsuite)
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       // Locate the provenance checkbox elements in this menu item's sublist
-      const menuItem = getNearestMenuItemContainer(attributeSelector);
+      const menuItemContainer = attributeSelector.closest<HTMLElement>("[role='option']");
+      const menuItem = menuItemContainer?.querySelector<HTMLElement>(".tol-attribute-selector-menu-item") || null;
       if (!menuItem) return;
 
       if (!menuItem.matches("[data-provenance-open='true']")) {
