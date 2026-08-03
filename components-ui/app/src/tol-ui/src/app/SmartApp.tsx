@@ -47,6 +47,7 @@ import {
   UserProfile,
   IUserProfileAdditionalConfigs,
   AppContextProvider,
+  PFooter,
 } from "..";
 
 export interface PSmartApp {
@@ -102,7 +103,7 @@ export interface PSmartApp {
   /**
    * If false, removes the footer from the application.
    */
-  footer?: boolean;
+  footer?: PFooter;
   /**
    * Optional configuration for the user profile form, including base and additional configs.
    * If not provided, the default configuration will be used.
@@ -126,7 +127,7 @@ export function SmartApp(props: PSmartApp) {
     register = false,
     configurableBoards = false,
     routePrefix,
-    footer = true,
+    footer,
     profileFormConfigs,
   } = props;
 
@@ -267,55 +268,55 @@ export function SmartApp(props: PSmartApp) {
   return (
     <AppContextProvider navConfig={navigation}>
       <div id="tol-smart-app-background">
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider
+          value={{
+            token,
+            setToken,
+            user,
+            setUser,
+          }}
+        >
+          <GlobalLoadingProvider
             value={{
-              token,
-              setToken,
-              user,
-              setUser,
+              globalLoading,
+              setGlobalLoading,
             }}
           >
-            <GlobalLoadingProvider
-              value={{
-                globalLoading,
-                setGlobalLoading,
-              }}
-            >
-              <Router>
-                <div className="tol-board-backing-fade" />
-                <Navigation {...navProps} />
-                <div className="tol-smart-app">
-                  <div className="tol-smart-app-content">
-                    {/* Switch also needs loading screen to ensure smooth transition */}
-                    {LoadingScreen}
-                    {!globalLoading && (
-                      <>
-                        <Switch>
-                          {collectRoutes(
-                            mergedNavigation,
-                            pageElements,
-                            configDataSource,
-                            actionsDataSource,
-                          )}
-                          <ReactRouter
-                            path={URL_PATHS.PAGE_NOT_FOUND}
-                            component={() => <PageNotFound />}
-                          />
-                          <ReactRouter path="*">
-                            <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />
-                          </ReactRouter>
-                        </Switch>
-                      </>
-                    )}
-                  </div>
+            <Router>
+              <div className="tol-board-backing-fade" />
+              <Navigation {...navProps} />
+              <div className="tol-smart-app">
+                <div className="tol-smart-app-content">
+                  {/* Switch also needs loading screen to ensure smooth transition */}
+                  {LoadingScreen}
+                  {!globalLoading && (
+                    <>
+                      <Switch>
+                        {collectRoutes(
+                          mergedNavigation,
+                          pageElements,
+                          configDataSource,
+                          actionsDataSource,
+                        )}
+                        <ReactRouter
+                          path={URL_PATHS.PAGE_NOT_FOUND}
+                          component={() => <PageNotFound />}
+                        />
+                        <ReactRouter path="*">
+                          <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />
+                        </ReactRouter>
+                      </Switch>
+                    </>
+                  )}
                 </div>
-                {footer && <Footer />}
-              </Router>
-            </GlobalLoadingProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </div>
+              </div>
+              <Footer {...footer} />
+            </Router>
+          </GlobalLoadingProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </div>
     </AppContextProvider>
   );
 }
