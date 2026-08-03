@@ -5,7 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { forwardRef, useState } from "react";
-import type { HTMLAttributes, KeyboardEvent as ReactKeyboardEvent } from "react";
+import type {
+  HTMLAttributes,
+  KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+} from "react";
 import { Animation as RSAnimation, Checkbox as RSCheckbox } from "rsuite";
 
 import {
@@ -169,6 +173,66 @@ export function MenuItem(props: PMenuItem) {
     }
   };
 
+  const toggleProvenance = (provenance: string) => {
+    const isSelected = provenancesSelected.includes(provenance);
+    onProvenancesChanged?.(
+      isSelected
+        ? provenancesSelected.filter(item => item !== provenance)
+        : [...provenancesSelected, provenance]
+    );
+  };
+
+  const restoreProvenanceCheckboxFocus = (
+    optionElement: HTMLSpanElement,
+    provenance: string
+  ) => {
+    const menuItem = optionElement.closest<HTMLElement>(".tol-attribute-selector-menu-item");
+    if (!menuItem) return;
+
+    // Re-focus the same checkbox after state updates to keep keyboard navigation active.
+    requestAnimationFrame(() => {
+      const refreshedOption = menuItem.querySelector<HTMLElement>(
+        `[data-provenance="${provenance}"]`
+      );
+      const checkboxInput = refreshedOption?.querySelector<HTMLInputElement>(
+        ".tol-provenance-picker-checkbox input[type='checkbox']"
+      );
+      checkboxInput?.focus();
+    });
+  };
+
+  const handleProvenanceEntryClick = (
+    event: ReactMouseEvent<HTMLSpanElement>,
+    provenance: string
+  ) => {
+    const target = event.target as HTMLElement | null;
+    if (!target) return;
+
+    // Handle interaction for any nested RSCheckbox target (label/span/input)
+    // without allowing the parent menu row to select.
+    if (!target.closest(".tol-provenance-picker-checkbox")) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    toggleProvenance(provenance);
+    restoreProvenanceCheckboxFocus(event.currentTarget, provenance);
+  };
+
+  const handleProvenanceEntryKeyDown = (
+    event: ReactKeyboardEvent<HTMLSpanElement>,
+    provenance: string
+  ) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+
+    const target = event.target as HTMLElement | null;
+    if (!target?.closest(".tol-provenance-picker-checkbox")) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    toggleProvenance(provenance);
+    restoreProvenanceCheckboxFocus(event.currentTarget, provenance);
+  };
+
   const disabled =
     disabledValues && Object.keys(disabledValues).includes(field);
 
@@ -208,15 +272,13 @@ export function MenuItem(props: PMenuItem) {
             key={provenance}
             className="tol-provenance-picker-entry"
             role="option"
+            data-provenance={provenance}
+            onClick={(event) => handleProvenanceEntryClick(event, provenance)}
+            onKeyDown={(event) => handleProvenanceEntryKeyDown(event, provenance)}
           >
             <RSCheckbox
               className="tol-provenance-picker-checkbox"
               checked={provenancesSelected.includes(provenance)}
-              onChange={(_value, checked) => onProvenancesChanged?.(
-                checked
-                  ? [...provenancesSelected, provenance]
-                  : provenancesSelected.filter(item => item !== provenance)
-              )}
             >
               <SourceTag
                 source={provenance}

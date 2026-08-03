@@ -217,7 +217,7 @@ export function AttributeSelector(props: PAttributeSelector) {
     // that sublist before moving to previous/next top-level rows of AttributeSelector
     // (handled by rsuite)
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      // Locate provenance checkbox elements in this menu item's sublist.
+      // Locate the provenance checkbox elements in this menu item's sublist
       const menuItem = getNearestMenuItemContainer(attributeSelector);
       if (!menuItem) return;
       const provenanceCheckboxes = getOpenProvenanceCheckboxesForMenuItem(menuItem);
