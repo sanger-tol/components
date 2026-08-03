@@ -100,26 +100,20 @@ export function MenuItem(props: PMenuItem) {
   
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  const PROVENANCE_CHECKBOX_SELECTOR =
-    ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']";
 
-  const getProvenanceFocusableCheckboxes = (container: HTMLElement) => (
+
+
+  
+
+  const getCheckboxesInProvenancePicker = (menuItem: HTMLElement) => (
     Array.from(
-      container.querySelectorAll<HTMLElement>(
-        PROVENANCE_CHECKBOX_SELECTOR
+      menuItem.querySelectorAll<HTMLElement>(
+        ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']"
       )
     )
   );
 
-  const handleExpandControlKeyDown = (
+  const handleExpandButtonKeyDownEvent = (
     event: ReactKeyboardEvent<HTMLSpanElement>
   ) => {
     // Allow button activation while preventing the parent menu option from being selected.
@@ -135,32 +129,33 @@ export function MenuItem(props: PMenuItem) {
       );
       if (!container) return;
 
-      const firstProvenanceCheckbox = getProvenanceFocusableCheckboxes(container)[0];
+      const firstProvenanceCheckbox = getCheckboxesInProvenancePicker(container)[0];
       if (!firstProvenanceCheckbox) return;
 
       event.preventDefault();
       event.stopPropagation();
       firstProvenanceCheckbox.focus();
-      return;
+    } else if (event.key === "ArrowLeft") {
+      // Move focus back to the parent menu option from the expand control.
+      event.preventDefault();
+      event.stopPropagation();
+
+      const menuItem = event.currentTarget.closest<HTMLElement>(
+        "li, [role='option'], [role='menuitem']"
+      );
+
+      if (!menuItem) return;
+
+      const focusableInItem = menuItem.querySelector<HTMLElement>("[tabindex]");
+      (focusableInItem || menuItem).focus();
     }
-
-    if (event.key !== "ArrowLeft") return;
-
-    // Move focus back to the parent menu option from the expand control.
-    event.preventDefault();
-    event.stopPropagation();
-
-    const menuItem = event.currentTarget.closest<HTMLElement>(
-      "li, [role='option'], [role='menuitem']"
-    );
-
-    if (!menuItem) return;
-
-    const focusableInItem = menuItem.querySelector<HTMLElement>("[tabindex]");
-    (focusableInItem || menuItem).focus();
   };
 
-  const handleProvenancePickerKeyDown = (
+  /**
+   * Used for keyboard navigation: the ArrowUp and ArrowDown buttons cycle through the entries
+   * in the provenance picker
+   */
+  const handleProvenancePickerKeyDownEvent = (
     event: ReactKeyboardEvent<HTMLDivElement>
   ) => {
     if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
@@ -170,7 +165,7 @@ export function MenuItem(props: PMenuItem) {
     );
     if (!pickerContainer) return;
 
-    const focusableCheckboxes = getProvenanceFocusableCheckboxes(pickerContainer);
+    const focusableCheckboxes = getCheckboxesInProvenancePicker(pickerContainer);
     if (!focusableCheckboxes.length) return;
 
     const currentTarget = event.target as Node;
@@ -190,6 +185,9 @@ export function MenuItem(props: PMenuItem) {
     }
   };
 
+  /**
+   * Toggles a provenance for this field
+   */
   const toggleProvenance = (provenance: string) => {
     const isSelected = provenancesSelected.includes(provenance);
     onProvenancesChanged?.(
@@ -199,7 +197,11 @@ export function MenuItem(props: PMenuItem) {
     );
   };
 
-  const restoreProvenanceCheckboxFocus = (
+  /**
+   * Sets the element in focus as the checkbox in a specific provenance entry
+   * in the provenance picker. Needed for keyboard navigation
+   */
+  const focusCheckboxInProvenanceEntry = (
     optionElement: HTMLSpanElement,
     provenance: string
   ) => {
@@ -218,6 +220,9 @@ export function MenuItem(props: PMenuItem) {
     });
   };
 
+  /**
+   * Selects or deselects a provenance option for this field when its provenance entry is clicked
+   */
   const handleProvenanceEntryClick = (
     event: ReactMouseEvent<HTMLSpanElement>,
     provenance: string
@@ -229,12 +234,21 @@ export function MenuItem(props: PMenuItem) {
     // without allowing the parent menu row to select.
     if (!target.closest(".tol-provenance-picker-checkbox")) return;
 
+    // Prevent weird interactions with the rsuite menu item
     event.stopPropagation();
+
+    // Select (or deselect) this provenance
     toggleProvenance(provenance);
-    restoreProvenanceCheckboxFocus(event.currentTarget, provenance);
+
+    // Because of keyboard navigation shenanigans, we need to go back to having specifically
+    // the checkbox in the provenance entry in focus
+    focusCheckboxInProvenanceEntry(event.currentTarget, provenance);
   };
 
-  const handleProvenanceEntryKeyDown = (
+  /**
+   * Use Enter or Space to select the provenance entry highlighted through keyboard navigation
+   */
+  const handleProvenanceEntryKeyDownEvent = (
     event: ReactKeyboardEvent<HTMLSpanElement>,
     provenance: string
   ) => {
@@ -243,10 +257,16 @@ export function MenuItem(props: PMenuItem) {
     const target = event.target as HTMLElement | null;
     if (!target?.closest(".tol-provenance-picker-checkbox")) return;
 
+    // Prevent weird interactions with the rsuite menu item
     event.preventDefault();
     event.stopPropagation();
+
+    // Select (or deselect) this provenance
     toggleProvenance(provenance);
-    restoreProvenanceCheckboxFocus(event.currentTarget, provenance);
+
+    // Because of keyboard navigation shenanigans, we need to go back to having specifically
+    // the checkbox in the provenance entry in focus
+    focusCheckboxInProvenanceEntry(event.currentTarget, provenance);
   };
 
   /**
@@ -280,7 +300,7 @@ export function MenuItem(props: PMenuItem) {
       <div
         className="tol-provenance-picker"
         role="listbox"
-        onKeyDown={handleProvenancePickerKeyDown}
+        onKeyDown={handleProvenancePickerKeyDownEvent}
       >
         {provenancesAvailable.map(provenance =>
           <span
@@ -289,7 +309,7 @@ export function MenuItem(props: PMenuItem) {
             role="option"
             data-provenance={provenance}
             onClick={(event) => handleProvenanceEntryClick(event, provenance)}
-            onKeyDown={(event) => handleProvenanceEntryKeyDown(event, provenance)}
+            onKeyDown={(event) => handleProvenanceEntryKeyDownEvent(event, provenance)}
           >
             <RSCheckbox
               className="tol-provenance-picker-checkbox"
@@ -318,7 +338,7 @@ export function MenuItem(props: PMenuItem) {
             <span
               // Prevent clicking the expand control from selecting the parent menu option
               onClick={(event) => event.stopPropagation()}
-              onKeyDown={handleExpandControlKeyDown}
+              onKeyDown={handleExpandButtonKeyDownEvent}
             >
               <ExpandButton
                 testid={`attribute-selector-provenance-toggle-${field}`}
