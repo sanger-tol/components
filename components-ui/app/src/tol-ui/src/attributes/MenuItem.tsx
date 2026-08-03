@@ -96,14 +96,6 @@ export function MenuItem(props: PMenuItem) {
     disabledValues && Object.keys(disabledValues).includes(field);
 
   const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
-  
-  
-  
-  
-
-
-
-  
 
   const getCheckboxesInProvenancePicker = (menuItem: HTMLElement) => (
     Array.from(
