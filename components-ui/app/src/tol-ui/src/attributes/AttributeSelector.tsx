@@ -169,19 +169,27 @@ export function AttributeSelector(props: PAttributeSelector) {
     );
   };
 
-  const SELECTABLE_ROW_SELECTOR = "li, [role='option'], [role='menuitem']";
   const EXPAND_BUTTON_SELECTOR = "[data-testid^='attribute-selector-provenance-toggle-']";
   const OPEN_PROVENANCE_SELECTOR =
     ".tol-attribute-selector-menu-item[data-provenance-open='true']";
   const PROVENANCE_CHECKBOX_SELECTOR =
     ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']";
 
-  const getOpenProvenanceCheckboxesForRow = (row: HTMLElement) => {
-    const expandedMenuItem = row.querySelector<HTMLElement>(OPEN_PROVENANCE_SELECTOR);
-    if (!expandedMenuItem) return [];
+  const getNearestMenuItemContainer = (target: HTMLElement) => {
+    // Prefer the local MenuItem container regardless of rsuite wrapper shape.
+    const directMenuItem = target.closest<HTMLElement>(".tol-attribute-selector-menu-item");
+    if (directMenuItem) return directMenuItem;
+
+    // Fallback: when focus is on a row wrapper, locate the MenuItem rendered inside it.
+    const rowContainer = target.closest<HTMLElement>(".rs-check-item, li, [role='option'], [role='menuitem']");
+    return rowContainer?.querySelector<HTMLElement>(".tol-attribute-selector-menu-item") || null;
+  };
+
+  const getOpenProvenanceCheckboxesForMenuItem = (menuItem: HTMLElement) => {
+    if (!menuItem.matches(OPEN_PROVENANCE_SELECTOR)) return [];
 
     return Array.from(
-      expandedMenuItem.querySelectorAll<HTMLElement>(PROVENANCE_CHECKBOX_SELECTOR)
+      menuItem.querySelectorAll<HTMLElement>(PROVENANCE_CHECKBOX_SELECTOR)
     );
   };
 
@@ -206,34 +214,37 @@ export function AttributeSelector(props: PAttributeSelector) {
     if (attributeSelector.closest(".tol-provenance-picker")) return;
 
     // When the row has an expanded provenance list, ArrowUp/ArrowDown should enter
-    // that sublist before moving to previous/next top-level rows
+    // that sublist before moving to previous/next top-level rows of AttributeSelector
+    // (handled by rsuite)
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      const selectableContainer = attributeSelector.closest<HTMLElement>(SELECTABLE_ROW_SELECTOR);
-      if (!selectableContainer) return;
-
-      const provenanceCheckboxes = getOpenProvenanceCheckboxesForRow(selectableContainer);
+      // Locate provenance checkbox elements in this menu item's sublist.
+      const menuItem = getNearestMenuItemContainer(attributeSelector);
+      if (!menuItem) return;
+      const provenanceCheckboxes = getOpenProvenanceCheckboxesForMenuItem(menuItem);
       if (!provenanceCheckboxes.length) return;
 
+      // If there are provenance entries in the sublist, enter it.
+      // Further navigation up and down in this list is handled in MenuItem
       const targetCheckbox = event.key === "ArrowDown"
-        ? provenanceCheckboxes[0]
-        : provenanceCheckboxes[provenanceCheckboxes.length - 1];
+        ? provenanceCheckboxes[0] // Navigating down from above
+        : provenanceCheckboxes[provenanceCheckboxes.length - 1]; // Navigating up from below
 
+      // Override default behaviour
       event.preventDefault();
       event.stopPropagation();
+
+      // Focus the provenance checkbox calculated above
       targetCheckbox.focus();
-      return;
+    } else if (event.key === "ArrowRight") {
+      // Get the provenance expand button element
+      const selectableContainer = attributeSelector.closest(".rs-check-item") || attributeSelector;
+      const expandButton = selectableContainer.querySelector<HTMLButtonElement>(EXPAND_BUTTON_SELECTOR);
+      if (!expandButton) return;
+
+      // Focus it
+      event.preventDefault();
+      expandButton.focus();
     }
-
-    if (event.key !== "ArrowRight") return;
-
-    const selectableContainer = attributeSelector.closest(SELECTABLE_ROW_SELECTOR) || attributeSelector;
-
-    const expandButton = selectableContainer.querySelector<HTMLButtonElement>(EXPAND_BUTTON_SELECTOR);
-
-    if (!expandButton) return;
-
-    event.preventDefault();
-    expandButton.focus();
   };
 
   if (loading) return <></>;
