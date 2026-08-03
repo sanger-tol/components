@@ -320,6 +320,7 @@ export async function upsertBoardEntity(
         attributes: attributes,
       },
     ],
+    params: { merge_collections: false },
   });
 }
 
