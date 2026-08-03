@@ -130,7 +130,8 @@ export function AttributeSelector(props: PAttributeSelector) {
   // TODO HARDCODED FOR TESTING
   const provenancesAvailable: Record<string, string[]> = {
     "species.scientific_name": ["goat", "sts", "tolqc"],
-    "grit_species.goat_scientific_name": ["goat", "sts", "tolqc"]
+    "grit_species.goat_scientific_name": ["goat", "sts", "tolqc"],
+    "goat_order_name": ["goat", "sts", "tolqc"]
   };
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
