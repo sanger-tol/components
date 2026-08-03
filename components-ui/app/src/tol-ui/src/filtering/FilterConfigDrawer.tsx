@@ -96,18 +96,21 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
 
   // Local state for the translations text area
   const getInitialTranslationsText = () =>
-    isZone && zone.translations
+    isZone && !isEmptyObject(zone.translations)
       ? JSON.stringify(zone.translations)
       : "";
-  const [translationsText, setTranslationsText] = useState<string>("");
+  const [translationsText, setTranslationsText] = useState<string>(getInitialTranslationsText);
   const initialTranslationsTextRef = useRef<string>(getInitialTranslationsText());
+
+  const getInitialCurrentFilterZone = (filter: IFilter | undefined) =>
+    defineZoneWithComponentList(
+      "dummy-object-for-remote-filters",
+      [{ id: id, filter: deepCopy(filter) }]
+    );
 
   // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone
   const [currentFilterZone, setCurrentFilterZone] = useState<IZone>(
-    defineZoneWithComponentList(
-      "dummy-object-for-remote-filters",
-      [{ id: id, filter: deepCopy(savedFilters) }]
-    ),
+    getInitialCurrentFilterZone(savedFilters),
   );
 
   // Getting the disabled filter values (currently all other entity filters)
@@ -140,9 +143,12 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   );
 
   useEffect(() => {
+    if (!open) return;
+
+    // Reset the state to the initial values when the drawer is opened
     const initialFilters = getInitialFilter();
-    setSavedFilters(initialFilters);
     initialFiltersRef.current = normaliseFilter(initialFilters);
+    setSavedFilters(initialFiltersRef.current);
     setAttributes(Object.keys(initialFilters?.and_ || {}));
     setDisabledFilterValues(
       removeCurrentEntityFiltersForDisabledFilters(
@@ -150,20 +156,18 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         initialFilters?.and_!,
       ),
     );
-    const initialPassThrough = isZone
-      ? false
-      : zone.children?.[id]?.filterPassThrough || false;
-    initialPassThroughRef.current = initialPassThrough;
-    setPassThrough(initialPassThrough);
-    const initialExcludeIncoming = getInitialExcludeIncoming();
-    initialExcludeIncomingRef.current = initialExcludeIncoming;
-    setExcludeIncoming(initialExcludeIncoming);
-    setCurrentFilterZone(
-      defineZoneWithComponentList(
-        "dummy-object-for-remote-filters",
-        [{ id: id, filter: deepCopy(initialFilters) }]
-      )
-    );
+
+    // Reset the toggles and text to their initial values
+    initialPassThroughRef.current = getInitialPassThrough();
+    setPassThrough(initialPassThroughRef.current);
+    initialExcludeIncomingRef.current = getInitialExcludeIncoming();
+    setExcludeIncoming(initialExcludeIncomingRef.current);
+    initialIsAdvancedTranslationsRef.current = getIsAdvancedTranslations();
+    setIsAdvancedTranslations(initialIsAdvancedTranslationsRef.current);
+    initialTranslationsTextRef.current = getInitialTranslationsText();
+    setTranslationsText(initialTranslationsTextRef.current);
+    
+    setCurrentFilterZone(getInitialCurrentFilterZone(initialFilters));
   }, [open]);
 
   const onSave = (filter: IFilter, passThrough: boolean, excludeIncoming: boolean) => {
@@ -175,6 +179,10 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
       zone.filterExcludeIncoming = excludeIncoming;
+      const parsedTranslations =
+        isAdvancedTranslations && translationsText ? JSON.parse(translationsText) : undefined;
+      zone.translations = parsedTranslations;
+      attributes.translations = parsedTranslations;
     } else {
       zone.children[id].filter = deepCopy(filter);
       zone.children[id].defaultFilter = deepCopy(filter);
@@ -299,7 +307,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         title={`Filtering on a ${objectType} ${boardObjectType}`}
         open={open}
         setOpen={setOpen}
-        onSave={() => onSave(currentFilters || { and_: {} }, passThrough)}
+        onSave={() => onSave(currentFilters || { and_: {} }, passThrough, excludeIncoming)}
         hasPendingChanges={hasPendingChanges}
         onSaveTestId="apply-filter-button"
       >
