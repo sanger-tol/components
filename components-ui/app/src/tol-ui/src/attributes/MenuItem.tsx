@@ -212,7 +212,6 @@ export function MenuItem(props: PMenuItem) {
     // without allowing the parent menu row to select.
     if (!target.closest(".tol-provenance-picker-checkbox")) return;
 
-    event.preventDefault();
     event.stopPropagation();
     toggleProvenance(provenance);
     restoreProvenanceCheckboxFocus(event.currentTarget, provenance);
@@ -261,7 +260,7 @@ export function MenuItem(props: PMenuItem) {
   const ProvenancePicker = forwardRef<
     HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>
   >((props, ref) => (
-    <div {...props} ref={ref} onClick={e => e.stopPropagation()}>
+    <div {...props} ref={ref}>
       <div
         className="tol-provenance-picker"
         role="listbox"
