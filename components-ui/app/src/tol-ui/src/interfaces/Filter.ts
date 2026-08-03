@@ -26,6 +26,8 @@ export interface IFilter {
   and_?: IAndAttributes;
 }
 
+export type TTranslators = Record<string, string>;
+
 export type TFilterDateRangeValue = [Date, Date] | null;
 
 export interface IFilterDateBounds {
@@ -53,5 +55,5 @@ export type IDBBoardEntityFilter = {
   /**
    * Custom translations for incoming filters, used at the zone level.
    */
-  translations?: Record<string, string>;
+  translations?: TTranslators;
 };

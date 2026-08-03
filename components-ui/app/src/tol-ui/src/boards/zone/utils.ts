@@ -6,8 +6,10 @@ SPDX-License-Identifier: MIT
 
 import {
   generateFilter,
+  generateTranslatedFilter,
   isAttribute,
   isRelationship,
+  mergeFilters,
   RELATIONSHIP_SEPARATOR,
 } from "../..";
 import type { IZone, IFilter, IFieldTranslationParams } from "../..";
@@ -85,14 +87,15 @@ async function removeOrChangeRelationshipPrefix({
  *
  * @param currentZone - The current zone for which the filter is being translated.
  * @param zoneAbove - The zone above the current zone from which the filter is being translated.
+ * @param translations - Optional custom translations for incoming filters.
  * @returns A promise that resolves to the translated filter for the current zone.
  */
 
 export async function translateZoneAboveFilter(
   currentZone: IZone,
-  zoneAbove?: IZone
+  zoneAbove?: IZone,
 ): Promise<IFilter> {
-  const translatedFilter: IFilter = { and_: {} };
+  let translatedFilter: IFilter = { and_: {} };
   const { object_type, dataspace } = currentZone;
 
   if (zoneAbove) {
@@ -108,7 +111,17 @@ export async function translateZoneAboveFilter(
     const paths = await dataspace?.relationshipPaths();
     const zoneAboveFilter = generateFilter(zoneAbove);
     if (paths && translatedFilter.and_ && zoneAboveFilter) {
+      /**
+       * Add the custom translations to the translated filter if they exist.
+       */
+      translatedFilter = mergeFilters(
+        translatedFilter,
+        generateTranslatedFilter(zoneAbove, currentZone.translations || {}),
+      );
+
       for (const [incomingField, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
+        // If the field already exists in the translated filter, skip automatic translation
+        if (incomingField in zoneAboveFilter.and_!) continue;
         if (
           /**
            * If the field is an attribute, the current zone's object type is on the
