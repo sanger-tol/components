@@ -90,13 +90,12 @@ async function removeOrChangeRelationshipPrefix({
  * @param translations - Optional custom translations for incoming filters.
  * @returns A promise that resolves to the translated filter for the current zone.
  */
-
 export async function translateZoneAboveFilter(
   currentZone: IZone,
   zoneAbove?: IZone,
 ): Promise<IFilter> {
-  let translatedFilter: IFilter = { and_: {} };
   const { object_type, dataspace } = currentZone;
+  let translatedFilter: IFilter = { and_: {} };
 
   if (zoneAbove) {
     /**
