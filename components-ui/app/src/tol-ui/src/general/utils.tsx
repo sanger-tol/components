@@ -469,3 +469,18 @@ export function deepestEqual(a: any, b: any): boolean {
   if (keysA.some((key, i) => key !== keysB[i])) return false;
   return keysA.every((key) => deepestEqual(a[key], b[key]));
 }
+
+/**
+ * Checks whether a given string is valid JSON.
+ *
+ * @param jsonString - The string to validate as JSON
+ * @returns `true` if the string is valid JSON, `false` otherwise
+ */
+export function isValidJson(jsonString: string): boolean {
+  try {
+    const parsed = JSON.parse(jsonString);
+    return typeof parsed === "object" && parsed !== null;
+  } catch (e) {
+    return false;
+  }
+}

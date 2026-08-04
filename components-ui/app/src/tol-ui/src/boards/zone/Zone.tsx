@@ -56,7 +56,7 @@ export function Zone(props: PZone) {
 
   useEffect(() => {
     updateTranslatedFilter();
-  }, [zoneAbove]);
+  }, [zoneAbove, zone.translations, editMode]);
 
   const updateTranslatedFilter = async () => {
     if (zoneAbove) {

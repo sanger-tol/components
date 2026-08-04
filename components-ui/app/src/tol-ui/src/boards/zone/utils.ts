@@ -95,6 +95,7 @@ export async function translateZoneAboveFilter(
   zoneAbove?: IZone,
 ): Promise<IFilter> {
   const { object_type, dataspace } = currentZone;
+  const customTranslations = currentZone.translations || {};
   let translatedFilter: IFilter = { and_: {} };
 
   if (zoneAbove) {
@@ -115,12 +116,12 @@ export async function translateZoneAboveFilter(
        */
       translatedFilter = mergeFilters(
         translatedFilter,
-        generateTranslatedFilter(zoneAbove, currentZone.translations || {}),
+        generateTranslatedFilter(zoneAbove, customTranslations),
       );
 
       for (const [incomingField, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
-        // If the field already exists in the translated filter, skip automatic translation
-        if (incomingField in zoneAboveFilter.and_!) continue;
+        // If the field already exists in the custom translations, skip automatic translation
+        if (incomingField in customTranslations) continue;
         if (
           /**
            * If the field is an attribute, the current zone's object type is on the
