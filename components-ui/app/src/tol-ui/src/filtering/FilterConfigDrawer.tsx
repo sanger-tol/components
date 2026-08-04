@@ -28,6 +28,7 @@ import {
   Button,
   BUTTONS,
   isEmptyObject,
+  isValidJson,
 } from ".."
 
 
@@ -140,7 +141,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     excludeIncoming !== initialExcludeIncomingRef.current ||
     isAdvancedTranslations !== initialIsAdvancedTranslationsRef.current ||
     translationsText !== initialTranslationsTextRef.current
-  );
+  ) && (!isAdvancedTranslations || isValidJson(translationsText));
 
   useEffect(() => {
     if (!open) return;
@@ -166,7 +167,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setIsAdvancedTranslations(initialIsAdvancedTranslationsRef.current);
     initialTranslationsTextRef.current = getInitialTranslationsText();
     setTranslationsText(initialTranslationsTextRef.current);
-    
+
     setCurrentFilterZone(getInitialCurrentFilterZone(initialFilters));
   }, [open]);
 
@@ -182,7 +183,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       const parsedTranslations =
         isAdvancedTranslations && translationsText ? JSON.parse(translationsText) : undefined;
       zone.translations = parsedTranslations;
-      attributes.translations = parsedTranslations;
+      // Cannot be undefined, so set to empty object if no translations are provided
+      attributes.translations = parsedTranslations ? parsedTranslations : {};
     } else {
       zone.children[id].filter = deepCopy(filter);
       zone.children[id].defaultFilter = deepCopy(filter);
