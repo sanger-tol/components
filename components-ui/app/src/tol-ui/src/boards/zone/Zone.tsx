@@ -18,6 +18,7 @@ import {
   BUTTONS,
   useBoardState,
   getSiblingBoardEntity,
+  mergeFilters,
 } from "../..";
 import type { IZone, IView, PButton, PBoard, IFilter } from "../..";
 import { translateZoneAboveFilter } from "./utils";
@@ -60,7 +61,10 @@ export function Zone(props: PZone) {
   const updateTranslatedFilter = async () => {
     if (zoneAbove) {
       const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
-      zone.filter = translatedFilter;
+
+      // Requires persisted filter to be merged with the 'live' translated filter
+      const compoundedFilter = mergeFilters(translatedFilter, zone.defaultFilter);
+      zone.filter = compoundedFilter;
       setZone({ ...zone });
     }
   };
