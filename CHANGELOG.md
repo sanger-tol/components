@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.8`
+
+30-07-2026
+
+- Add advanced translations to Zones
+- Add filter exclude incoming to Zones and Components
+
 ## tol-ui `4.0.7`
 
 30-07-2026
