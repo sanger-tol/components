@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import type { AnchorHTMLAttributes } from "react";
+import { type AnchorHTMLAttributes } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Breadcrumb } from "rsuite";
 import {
@@ -82,7 +82,7 @@ export function BreadcrumbNav(props: PBreadcrumbNav) {
   };
 
   return (
-    <Breadcrumb
+      <Breadcrumb
       separator={separator}
       maxItems={maxItems}
       className={`${size} ${isLoading ? "is-loading" : ""} ${links !== "auto" ? "not-auto-generated" : ""}`}
