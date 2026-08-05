@@ -8,14 +8,15 @@ import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
 import {
   PopUpMessage,
-  TPlateSize,
   ALPHABET,
   PLATE_DIMENSIONS,
-  IEntityMeta,
-  TDataObjectListOrNull,
-  TPlateData,
-  getFieldByName,
   RELATIONSHIP_SEPARATOR,
+  getFieldByName,
+  type IEntityMeta,
+  type TDataObjectListOrNull,
+  type TPlateData,
+  type TPlateSize,
+  type TsDataSource,
 } from "..";
 
 export function formatPath(name: string) {
@@ -475,4 +476,63 @@ export function deepestEqual(a: any, b: any): boolean {
   if (keysA.length !== keysB.length) return false;
   if (keysA.some((key, i) => key !== keysB[i])) return false;
   return keysA.every((key) => deepestEqual(a[key], b[key]));
+}
+
+export function splitPath(path: string): string[] {
+  const parts = path.split("/").filter((part) => part !== "");
+  return parts;
+}
+
+export function generateLinkFromRequestedPath(paths: string[]): string {
+  const parts = paths.join("/");
+  return `/${parts}`;
+}
+
+export async function fetchAttributes(
+  dataSource: TsDataSource,
+  objectType: string,
+  attributes: string[],
+  objectId: string,
+): Promise<TDataObjectListOrNull> {
+  return await dataSource
+    .getListPage({
+      objectType: objectType,
+      requestedFields: attributes,
+      filter: {
+        and_: {
+          id: {
+            eq: { value: objectId },
+          },
+        },
+      },
+    })
+    .then((res: TDataObjectListOrNull) => {
+      return attributes.map((attribute) => {
+        return res?.[0]?.[attribute] ?? null;
+      });
+    });
+}
+
+export function constructRemoteLinks(
+  objectAttributes: (string | null)[] | undefined,
+  attributes: string[],
+  urlConstructFn: (attribute: string, value: string) => string,
+): { text: string; url?: string }[] | null {
+  if (!objectAttributes || objectAttributes.length === 0) {
+    return null;
+  }
+
+  const links = objectAttributes.map((attributeValue, index) => {
+    const attributeName = attributes[index];
+    const url = attributeValue
+      ? urlConstructFn(attributeName, attributeValue)
+      : undefined;
+
+    return {
+      text: attributeValue ?? "Unknown",
+      url,
+    };
+  });
+
+  return links.filter((link) => link.text !== "Unknown");
 }

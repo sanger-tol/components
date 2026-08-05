@@ -7,41 +7,44 @@ SPDX-License-Identifier: MIT
 import type { AnchorHTMLAttributes } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Breadcrumb } from "rsuite";
-
-export interface IBreadcrumbLink {
-  text: string;
-  url?: string;
-  icon?: string;
-  onClick?: () => void;
-}
-
-export type TBreadcrumbLinks = IBreadcrumbLink[] | "auto";
-export type TBreadcrumbSize = "sm" | "md" | "lg";
+import {
+  splitPath,
+  generateLinkFromRequestedPath,
+  type TBreadcrumbLinks,
+  type IBreadcrumbLink,
+  type TBreadcrumbSize,
+} from "..";
 
 export interface PBreadcrumbNav {
+  /**
+   * The links to display in the breadcrumb navigation.
+   * If set to `"auto"`, the component will automatically generate links based on the current URL path.
+   */
   links?: TBreadcrumbLinks;
+  /**
+   * The separator to use between breadcrumb items. Defaults to `"/"`.
+   */
   separator?: string;
+  /**
+   * Whether the breadcrumb items should be clickable links. Defaults to `true`.
+   */
   linkable?: boolean;
+  /**
+   * Whether the last breadcrumb item should be clickable. Defaults to `false`.
+   */
   lastLinkable?: boolean;
+  /**
+   * The maximum number of breadcrumb items to display. Defaults to `5`.
+   */
   maxItems?: number;
+  /**
+   * The size of the breadcrumb items. Can be `"sm"`, `"md"`, or `"lg"`. Defaults to `"md"`.
+   */
   size?: TBreadcrumbSize;
-}
-
-export function splitPath(path: string): string[] {
-  const parts = path.split("/").filter((part) => part !== "");
-  return parts;
-}
-
-export function generateLinkFromRequestedPath(paths: string[]): string {
-  const parts = paths.join("/");
-  return `/${parts}`;
-}
-
-export function BreadcrumbRouterLink({
-  href,
-  ...props
-}: AnchorHTMLAttributes<HTMLAnchorElement>) {
-  return <Link to={href ?? "/"} {...props} />;
+  /**
+   * Whether the breadcrumb navigation is in a loading state. Defaults to `false`, mainly used in the Remote version.
+   */
+  isLoading?: boolean;
 }
 
 export function BreadcrumbNav(props: PBreadcrumbNav) {
@@ -52,7 +55,9 @@ export function BreadcrumbNav(props: PBreadcrumbNav) {
     lastLinkable = false,
     maxItems = 5,
     size = "md",
+    isLoading = false,
   } = props;
+
   const { pathname } = useLocation();
 
   const linksToRender =
@@ -63,11 +68,18 @@ export function BreadcrumbNav(props: PBreadcrumbNav) {
         }))
       : links;
 
+  const BreadcrumbRouterLink = ({
+    href,
+    ...props
+  }: AnchorHTMLAttributes<HTMLAnchorElement>) => {
+    return <Link to={href ?? "/"} {...props} />;
+  };
+
   return (
     <Breadcrumb
       separator={separator}
       maxItems={maxItems}
-      className={`${size} ${links !== "auto" ? "not-auto-generated" : ""}`}
+      className={`${size} ${isLoading ? "is-loading" : ""} ${links !== "auto" ? "not-auto-generated" : ""}`}
     >
       {linksToRender.map((link: IBreadcrumbLink, index: number) => {
         const isLast = index === linksToRender.length - 1;
