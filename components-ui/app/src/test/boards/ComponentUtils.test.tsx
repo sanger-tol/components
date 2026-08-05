@@ -45,6 +45,9 @@ describe("updateComponentConfigAndUpsert function", () => {
       {
         method: "POST",
         resource: "component:upsert",
+        params: {
+          merge_collections: false,
+        },
         body: {
           data: [
             {

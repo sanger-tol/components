@@ -60,7 +60,13 @@ export function Zone(props: PZone) {
       await updateTranslatedFilter();
       setTranslatedFilterReady(true);
     })();
-  }, [zoneAbove, zone.translations, editMode]);
+  }, [
+    zoneAbove,
+    zone.filterExcludeIncoming,
+    zone.defaultFilter,
+    zone.translations,
+    editMode
+  ]);
 
   const updateTranslatedFilter = async () => {
     if (zoneAbove) {

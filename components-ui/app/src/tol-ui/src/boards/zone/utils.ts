@@ -94,82 +94,89 @@ export async function translateZoneAboveFilter(
   currentZone: IZone,
   zoneAbove?: IZone,
 ): Promise<IFilter> {
+  /**
+   * If the current zone has filterExcludeIncoming set to true or there is no zone above,
+   * return an empty filter to prevent any incoming filters from being applied.
+   */
+  if (currentZone.filterExcludeIncoming || !zoneAbove) {
+    return { and_: {} };
+  }
+
   const { object_type, dataspace } = currentZone;
   const customTranslations = currentZone.translations || {};
   let translatedFilter: IFilter = { and_: {} };
 
-  if (zoneAbove) {
+  /**
+   * Paths are formatted from many-side to one-side.
+   * For instance:
+   * {
+   *   "specimen": {
+   *     "species": { ... }
+   *   }
+   * }
+   */
+  const paths = await dataspace?.relationshipPaths();
+  const zoneAboveFilter = generateFilter(zoneAbove);
+  if (paths && translatedFilter.and_ && zoneAboveFilter) {
     /**
-     * Paths are formatted from many-side to one-side.
-     * For instance:
-     * {
-     *   "specimen": {
-     *     "species": { ... }
-     *   }
-     * }
+     * Add the custom translations to the translated filter if they exist.
      */
-    const paths = await dataspace?.relationshipPaths();
-    const zoneAboveFilter = generateFilter(zoneAbove);
-    if (paths && translatedFilter.and_ && zoneAboveFilter) {
-      /**
-       * Add the custom translations to the translated filter if they exist.
-       */
-      translatedFilter = mergeFilters(
-        translatedFilter,
-        generateTranslatedFilter(zoneAbove, customTranslations),
-      );
+    translatedFilter = mergeFilters(
+      translatedFilter,
+      generateTranslatedFilter(zoneAbove, customTranslations),
+    );
 
-      for (const [incomingField, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
-        // If the field already exists in the custom translations, skip automatic translation
-        if (incomingField in customTranslations) continue;
-        if (
-          /**
-           * If the field is an attribute, the current zone's object type is on the
-           * one-side of the relationship, and the zone above's object type is on the
-           * many-side of the relationship - we can translate the filter by adding the
-           * first relationship path to the attribute.
-           */
-          isAttribute(incomingField) &&
-          object_type! in paths &&
-          zoneAbove.object_type! in paths[object_type!]
-        ) {
-          await addRelationshipPrefix({
-            incomingField,
-            filterValue,
-            objectType: object_type!,
-            zoneAboveObjectType: zoneAbove.object_type!,
-            paths,
-            dataspace,
-            translatedFilter
-          });
-        } else if (
-          /**
-           * If the field is a relationship, the current zone's object type
-           * is on the many-side of the relationship, or the zone above's
-           * object type is on the one-side of the relationship - we can
-           * can do either of the following:
-           * 1. If the relationship's object type matches the current zone's object type,
-           *    we can remove the relationship prefix.
-           * 2. If the relationship's object type does not match the current zone's object type,
-           *    we can translate the filter by removing the relationship prefix and adding
-           *    the first relationship path to the attribute.
-           */
-          isRelationship(incomingField) &&
-          (zoneAbove.object_type! in paths ||
-            object_type! in paths[zoneAbove.object_type!])
-        ) {
-          await removeOrChangeRelationshipPrefix({
-            incomingField,
-            filterValue,
-            objectType: object_type!,
-            zoneAboveObjectType: zoneAbove.object_type!,
-            paths,
-            dataspace,
-            translatedFilter
-          });
-        }
+    for (const [incomingField, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
+      // If the field already exists in the custom translations, skip automatic translation
+      if (incomingField in customTranslations) continue;
+      if (
+        /**
+         * If the field is an attribute, the current zone's object type is on the
+         * one-side of the relationship, and the zone above's object type is on the
+         * many-side of the relationship - we can translate the filter by adding the
+         * first relationship path to the attribute.
+         */
+        isAttribute(incomingField) &&
+        object_type! in paths &&
+        zoneAbove.object_type! in paths[object_type!]
+      ) {
+        await addRelationshipPrefix({
+          incomingField,
+          filterValue,
+          objectType: object_type!,
+          zoneAboveObjectType: zoneAbove.object_type!,
+          paths,
+          dataspace,
+          translatedFilter
+        });
+      } else if (
+        /**
+         * If the field is a relationship, the current zone's object type
+         * is on the many-side of the relationship, or the zone above's
+         * object type is on the one-side of the relationship - we can
+         * can do either of the following:
+         * 1. If the relationship's object type matches the current zone's object type,
+         *    we can remove the relationship prefix.
+         * 2. If the relationship's object type does not match the current zone's object type,
+         *    we can translate the filter by removing the relationship prefix and adding
+         *    the first relationship path to the attribute.
+         */
+        isRelationship(incomingField) &&
+        (zoneAbove.object_type! in paths ||
+          object_type! in paths[zoneAbove.object_type!])
+      ) {
+        await removeOrChangeRelationshipPrefix({
+          incomingField,
+          filterValue,
+          objectType: object_type!,
+          zoneAboveObjectType: zoneAbove.object_type!,
+          paths,
+          dataspace,
+          translatedFilter
+        });
       }
     }
   }
+
   return translatedFilter;
 }

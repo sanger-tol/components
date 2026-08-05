@@ -480,6 +480,9 @@ describe("Board entity endpoints", () => {
       {
         method: "POST",
         resource: `${BOARD_ENTITIES.ENTITIES.COMPONENT}:upsert`,
+        params: {
+          merge_collections: false,
+        },
         body: {
           data: [
             {
