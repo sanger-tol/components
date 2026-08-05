@@ -45,6 +45,14 @@ export interface PBreadcrumbNav {
   isLoading?: boolean;
 }
 
+/**
+ * @autodoc
+ *
+ * Renders breadcrumb navigation from either an explicit link list or the current route.
+ * It supports configurable separators, item sizing, loading styling, and whether
+ * intermediate or final breadcrumb items should remain clickable.
+ */
+
 export function BreadcrumbNav(props: PBreadcrumbNav) {
   const {
     links = "auto",

@@ -10,10 +10,8 @@ import {
   useQueryData,
   fetchAttributes,
   constructRemoteLinks,
-  type TsDataSource,
-  type PBreadcrumbNav,
-  type TDataObjectListOrNull,
 } from "..";
+import type { TsDataSource, PBreadcrumbNav, TDataObjectListOrNull, TDataObjectOrNull } from "..";
 
 export interface PRemoteBreadcrumbNav extends PBreadcrumbNav {
   /**
@@ -41,6 +39,13 @@ export interface PRemoteBreadcrumbNav extends PBreadcrumbNav {
   objectId?: string;
 }
 
+/**
+ * @autodoc
+ *
+ * RemoteBreadcrumbNav builds breadcrumb links from remotely fetched object attributes and passes 
+ * them to BreadcrumbNav, showing placeholder items while the breadcrumb labels are loading.
+ */
+
 export function RemoteBreadcrumbNav(props: PRemoteBreadcrumbNav) {
   const {
     dataSource,
@@ -57,7 +62,17 @@ export function RemoteBreadcrumbNav(props: PRemoteBreadcrumbNav) {
     useQueryData<TDataObjectListOrNull>(
       ["fetchNavAttributes", objectType, objectId],
       async () =>
-        await fetchAttributes(dataSource, objectType, attributes, objectId),
+        await dataSource
+          .getOne({
+            objectType: objectType,
+            requestedFields: attributes,
+            id: objectId,
+          })
+          .then((res: TDataObjectOrNull) => {
+            return attributes.map((attribute) => {
+              return res?.[attribute] ?? null;
+            });
+          }),
       { enabled: !!objectId },
     );
 

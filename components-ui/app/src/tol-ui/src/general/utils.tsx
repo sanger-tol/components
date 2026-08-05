@@ -12,11 +12,13 @@ import {
   PLATE_DIMENSIONS,
   RELATIONSHIP_SEPARATOR,
   getFieldByName,
-  type IEntityMeta,
-  type TDataObjectListOrNull,
-  type TPlateData,
-  type TPlateSize,
-  type TsDataSource,
+} from "..";
+import type {
+  IEntityMeta,
+  TPlateData,
+  TPlateSize,
+  TsDataSource,
+  TDataObjectOrNull,
 } from "..";
 
 export function formatPath(name: string) {
@@ -496,40 +498,6 @@ export function splitPath(path: string): string[] {
 export function generateLinkFromRequestedPath(paths: string[]): string {
   const parts = paths.join("/");
   return `/${parts}`;
-}
-
-/**
- * Fetches specific attribute values for a single object by ID.
- * @param dataSource - The data source to query.
- * @param objectType - The type of object to query.
- * @param attributes - The attribute names to retrieve.
- * @param objectId - The ID of the object to look up.
- * 
- * @returns An ordered array of values matching `attributes`, or `null` for missing ones.
- */
-export async function fetchAttributes(
-  dataSource: TsDataSource,
-  objectType: string,
-  attributes: string[],
-  objectId: string,
-): Promise<TDataObjectListOrNull> {
-  return await dataSource
-    .getListPage({
-      objectType: objectType,
-      requestedFields: attributes,
-      filter: {
-        and_: {
-          id: {
-            eq: { value: objectId },
-          },
-        },
-      },
-    })
-    .then((res: TDataObjectListOrNull) => {
-      return attributes.map((attribute) => {
-        return res?.[0]?.[attribute] ?? null;
-      });
-    });
 }
 
 /**
