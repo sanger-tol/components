@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 export * from "./API";
 export * from "./Attribute";
+export * from "./BreadcrumbNav";
 export * from "./Boards";
 export * from "./Buttons";
 export * from "./Cells";

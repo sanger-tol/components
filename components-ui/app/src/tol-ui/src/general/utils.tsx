@@ -8,14 +8,16 @@ import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
 import {
   PopUpMessage,
-  TPlateSize,
   ALPHABET,
   PLATE_DIMENSIONS,
-  IEntityMeta,
-  TDataObjectListOrNull,
-  TPlateData,
-  getFieldByName,
   RELATIONSHIP_SEPARATOR,
+  getFieldByName,
+} from "..";
+import type {
+  IEntityMeta,
+  TPlateData,
+  TPlateSize,
+  TDataObjectListOrNull,
 } from "..";
 
 export function formatPath(name: string) {
@@ -475,4 +477,58 @@ export function deepestEqual(a: any, b: any): boolean {
   if (keysA.length !== keysB.length) return false;
   if (keysA.some((key, i) => key !== keysB[i])) return false;
   return keysA.every((key) => deepestEqual(a[key], b[key]));
+}
+
+/**
+ * Splits a URL path into its non-empty segments.
+ * 
+ * @param path - The URL path string to split.
+ */
+export function splitPath(path: string): string[] {
+  const parts = path.split("/").filter((part) => part !== "");
+  return parts;
+}
+
+/**
+ * Joins path segments into an absolute URL path prefixed with `/`.
+ * 
+ * @param paths - Ordered array of path segments to join.
+ */
+export function generateLinkFromRequestedPath(paths: string[]): string {
+  const parts = paths.join("/");
+  return `/${parts}`;
+}
+
+/**
+ * Builds a list of `{ text, url }` link objects from attribute values.
+ * Entries with a `null` value are included without a URL; entries resolving to `"Unknown"` are omitted.
+ * 
+ * @param objectAttributes - Ordered attribute values fetched for the object.
+ * @param attributes - Attribute names corresponding to each value in `objectAttributes`.
+ * @param urlConstructFn - Function that builds a URL from an attribute name and its value.
+ * 
+ * @returns The filtered link list, or `null` if `objectAttributes` is empty.
+ */
+export function constructRemoteLinks(
+  objectAttributes: (string | null)[] | undefined,
+  attributes: string[],
+  urlConstructFn: (attribute: string, value: string) => string,
+): { text: string; url?: string }[] | null {
+  if (!objectAttributes || objectAttributes.length === 0) {
+    return null;
+  }
+
+  const links = objectAttributes.map((attributeValue, index) => {
+    const attributeName = attributes[index];
+    const url = attributeValue
+      ? urlConstructFn(attributeName, attributeValue)
+      : undefined;
+
+    return {
+      text: attributeValue ?? "Unknown",
+      url,
+    };
+  });
+
+  return links.filter((link) => link.text !== "Unknown");
 }
