@@ -8,7 +8,6 @@ import { useLocation } from "react-router-dom";
 import {
   BreadcrumbNav,
   useQueryData,
-  fetchAttributes,
   constructRemoteLinks,
 } from "..";
 import type { TsDataSource, PBreadcrumbNav, TDataObjectListOrNull, TDataObjectOrNull } from "..";

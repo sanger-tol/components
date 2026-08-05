@@ -17,8 +17,7 @@ import type {
   IEntityMeta,
   TPlateData,
   TPlateSize,
-  TsDataSource,
-  TDataObjectOrNull,
+  TDataObjectListOrNull,
 } from "..";
 
 export function formatPath(name: string) {
