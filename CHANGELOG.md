@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.8`
+
+05-08-2026
+
+- Added two new components `BreadcrumbNav` & `RemoteBreadcrumbNav`
+
 ## tol-ui `4.0.7`
 
 30-07-2026
