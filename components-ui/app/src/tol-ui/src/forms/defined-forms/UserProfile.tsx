@@ -22,9 +22,6 @@ import {
   USER,
   PRE_DEFINED_FORM_TYPES,
   FORM_MESSAGE_TEXT,
-  BreadcrumbNav,
-  RemoteBreadcrumbNav,
-  TsDataSource,
 } from "../..";
 import type {
   IUserProfileAdditionalConfigs,
@@ -128,42 +125,7 @@ export function UserProfile(props: PUserProfile) {
       component: isLoading ? (
         <TolLoader content="Loading profile..." vertical size="md" />
       ) : (
-        // ProfileForm
-        <RemoteBreadcrumbNav
-          size="lg"
-          separator=">"
-          // dataSource={LOCAL_DS}
-          dataSource={
-            new TsDataSource({
-              url: "https://portal.tol.sanger.ac.uk",
-              apiPath: "/api/v1",
-              apiDataPath: "/data",
-              dataspace: "tol_production",
-            })
-          }
-          objectType={"species"}
-          lastLinkable
-          // links={[
-          //   { text: "Chordata", url: "/explore?phylum=Chordata" },
-          //   { text: "Actinopterygii", url: "/explore?class=Actinopterygii" },
-          //   {
-          //     text: "Pleuronectiformes",
-          //     url: "/explore?order=Pleuronectiformes",
-          //   },
-          //   { text: "Soleidae", url: "/explore?family=Soleidae" },
-          // ]}
-          attributes={[
-            "goat_kingdom_name",
-            "goat_class_name",
-            "goat_order_name",
-            "goat_family_name",
-            "goat_scientific_name",
-          ]}
-          urlConstructFn={(attribute, value) =>
-            `/explore?${attribute}=${value}`
-          }
-          // objectId={"442079"}
-        />
+        ProfileForm
       ),
     },
   ];

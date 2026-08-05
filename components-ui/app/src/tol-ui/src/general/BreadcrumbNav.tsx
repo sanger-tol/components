@@ -9,11 +9,9 @@ import { Link, useLocation } from "react-router-dom";
 import { Breadcrumb } from "rsuite";
 import {
   splitPath,
-  generateLinkFromRequestedPath,
-  type TBreadcrumbLinks,
-  type IBreadcrumbLink,
-  type TBreadcrumbSize,
+  generateLinkFromRequestedPath
 } from "..";
+import type { TBreadcrumbSize, IBreadcrumbLink, TBreadcrumbLinks } from "..";
 
 export interface PBreadcrumbNav {
   /**
