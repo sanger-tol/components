@@ -8,8 +8,9 @@ SPDX-License-Identifier: MIT
 
 ## tol-ui `4.0.8`
 
-30-07-2026
+05-08-2026
 
+- Added two new components `BreadcrumbNav` & `RemoteBreadcrumbNav`
 - Add advanced translations to Zones
 - Add filter exclude incoming to Zones and Components
 
@@ -17,7 +18,7 @@ SPDX-License-Identifier: MIT
 
 30-07-2026
 
-- Added footer content override for SmartApp
+- Added footer content override for `SmartApp`
 
 ## tol-ui `4.0.6`
 
