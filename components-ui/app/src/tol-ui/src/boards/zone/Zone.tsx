@@ -20,7 +20,7 @@ import {
   getSiblingBoardEntity,
   mergeFilters,
 } from "../..";
-import type { IZone, IView, PButton, PBoard, IFilter } from "../..";
+import type { IZone, IView, PButton, PBoard } from "../..";
 import { translateZoneAboveFilter } from "./utils";
 
 
