@@ -50,21 +50,24 @@ export function Zone(props: PZone) {
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
   const [title, setTitle] = useState(zone?.title);
+  const [translatedFilterReady, setTranslatedFilterReady] = useState(false);
 
   const { object_type, dataspace, filter } = zone;
   const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;
 
   useEffect(() => {
-    updateTranslatedFilter();
+    (async () => {
+      await updateTranslatedFilter();
+      setTranslatedFilterReady(true);
+    })();
   }, [zoneAbove, zone.translations, editMode]);
 
   const updateTranslatedFilter = async () => {
     if (zoneAbove) {
-      const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
-
-      // Requires persisted filter to be merged with the 'live' translated filter
-      const compoundedFilter = mergeFilters(translatedFilter, zone.defaultFilter);
-      zone.filter = compoundedFilter;
+      zone.filter = mergeFilters(
+        await translateZoneAboveFilter(zone, zoneAbove),
+        zone.defaultFilter
+      );
       setZone({ ...zone });
     }
   };
@@ -129,14 +132,6 @@ export function Zone(props: PZone) {
     visible: editMode && !layoutMode,
   };
 
-  const translatorsButton: PButton = {
-    ...BUTTONS.TRANSLATORS,
-    //visible: editMode && !layoutMode,
-    // TODO FUTURE: Implement translators
-    visible: false,
-    onClick: () => { },
-  };
-
   const bar = (
     <div className="tol-zone-bar">
       <UtilityBar
@@ -166,8 +161,7 @@ export function Zone(props: PZone) {
           addButton,
           filtersButton,
           downButton,
-          upButton,
-          translatorsButton,
+          upButton
         ]}
       />
       <div id="component-modal">
@@ -181,6 +175,8 @@ export function Zone(props: PZone) {
       </div>
     </div>
   );
+
+  if (!translatedFilterReady) return;
 
   return (
     <div className="tol-zone" data-testid="zone">
