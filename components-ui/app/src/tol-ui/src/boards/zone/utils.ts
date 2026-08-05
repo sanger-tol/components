@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import {
+  generateDefaultFilter,
   generateFilter,
   generateTranslatedFilter,
   isAttribute,
@@ -99,12 +100,12 @@ export async function translateZoneAboveFilter(
    * return an empty filter to prevent any incoming filters from being applied.
    */
   if (currentZone.filterExcludeIncoming || !zoneAbove) {
-    return { and_: {} };
+    return generateDefaultFilter();
   }
 
   const { object_type, dataspace } = currentZone;
   const customTranslations = currentZone.translations || {};
-  let translatedFilter: IFilter = { and_: {} };
+  let translatedFilter: IFilter = generateDefaultFilter();
 
   /**
    * Paths are formatted from many-side to one-side.

@@ -20,6 +20,7 @@ import {
   IBoard,
   defineZoneWithComponentList,
   TTranslators,
+  generateDefaultFilter,
 } from "..";
 
 export function useZone(params: {
@@ -46,7 +47,7 @@ export function generateTranslatedFilter(
   excludeAfterId?: string,
 ) {
   const sourceFilter = generateFilter(sourceZone, excludeAfterId, true);
-  const translatedFilter = { and_: {} };
+  const translatedFilter = generateDefaultFilter();
   Object.entries(translations).map(([sourceAttribute, targetAttribute]) => {
     if (sourceFilter?.and_ && sourceAttribute in sourceFilter.and_) {
       translatedFilter.and_[targetAttribute] =
@@ -65,7 +66,7 @@ export function useTranslator(params: {
 }) {
   const { source, target, translations, defaultFilter, excludeAfterId } =
     params;
-  const prevFilter: any = useRef(defaultFilter ? defaultFilter : { and_: {} });
+  const prevFilter: any = useRef(defaultFilter ? defaultFilter : generateDefaultFilter());
 
   useEffectUpdate(() => {
     const translatedFilter = generateTranslatedFilter(

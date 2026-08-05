@@ -23,7 +23,17 @@ export interface IAndAttributes {
 }
 
 export interface IFilter {
+  /**
+   * Stores the filter conditions
+   */
   and_?: IAndAttributes;
+}
+
+export interface IFilterWithRequiredAnd {
+  /**
+   * Stores the filter conditions, with the "and_" attribute required.
+   */
+  and_: IAndAttributes;
 }
 
 export type TTranslators = Record<string, string>;

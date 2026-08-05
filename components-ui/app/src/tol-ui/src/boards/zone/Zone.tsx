@@ -46,11 +46,11 @@ export function Zone(props: PZone) {
   const { editMode, layoutMode } = useBoard();
 
   const [zone, setZone] = useBoardState<IView, IZone>(id, view, setView);
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [openFilters, setOpenFilters] = useState(false);
-  const [title, setTitle] = useState(zone?.title);
-  const [translatedFilterReady, setTranslatedFilterReady] = useState(false);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [openFilters, setOpenFilters] = useState<boolean>(false);
+  const [title, setTitle] = useState<string|undefined>(zone?.title);
+  const [translatedFilterReady, setTranslatedFilterReady] = useState<boolean>(false);
 
   const { object_type, dataspace, filter } = zone;
   const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;

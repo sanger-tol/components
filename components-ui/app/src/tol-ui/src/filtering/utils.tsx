@@ -16,8 +16,17 @@ import {
   isEmptyObject,
   TFilterOrUndefined,
   IComponent,
+  IFilterWithRequiredAnd,
 } from "..";
 
+
+/**
+ * Generates a default filter object with an empty "and_" attribute.
+ * @returns filter object with an empty "and_" attribute.
+ */
+export function generateDefaultFilter(): IFilterWithRequiredAnd {
+  return { and_: {} };
+};
 
 /**
  * Retrieves the identifier of the component located directly above the specified component in the given list.
@@ -326,7 +335,7 @@ export function setFilterInput(params: {
 
   // Initialise filter on the zone if it doesn't exist before taking a reference to and_.
   const component = z.children[componentId];
-  component.filter ??= { and_: {} };
+  component.filter ??= generateDefaultFilter();
   component.filter.and_ ??= {};
   const and_ = component.filter.and_;
 

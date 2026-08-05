@@ -33,6 +33,7 @@ import {
   FILTER_PASS_THROUGH,
   FILTER_EXCLUDE_INCOMING,
   ADVANCED_TRANSLATION,
+  generateDefaultFilter,
 } from ".."
 
 
@@ -316,7 +317,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         title={`Filtering on a ${objectType} ${boardObjectType}`}
         open={open}
         setOpen={setOpen}
-        onSave={() => onSave(currentFilters || { and_: {} }, passThrough, excludeIncoming)}
+        onSave={() => onSave(currentFilters || generateDefaultFilter(), passThrough, excludeIncoming)}
         hasPendingChanges={hasPendingChanges}
         onSaveTestId="apply-filter-button"
       >
