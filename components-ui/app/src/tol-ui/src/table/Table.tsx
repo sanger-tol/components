@@ -44,7 +44,6 @@ export interface PTable extends IRemoteTargetAndZone {
   height: any;
   loading: boolean;
   resizeableColumns?: boolean;
-  source?: string;
 
   page: number;
   setPage: any;
@@ -104,7 +103,6 @@ export function Table(props: PTable) {
     height,
     loading,
     resizeableColumns = false,
-    source,
 
     page,
     setPage,
@@ -424,7 +422,6 @@ export function Table(props: PTable) {
         componentId={id}
         open={downloadOpen}
         setOpen={setDownloadOpen}
-        source={source}
         requestedFields={fieldMeta?.order?.active}
         title={ubc.title}
         fieldMeta={fieldMeta}
