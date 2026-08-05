@@ -29,6 +29,8 @@ import {
   BUTTONS,
   isEmptyObject,
   isValidJson,
+  BOARD_ENTITY_HIERARCHY,
+  BOARD_ENTITIES,
 } from ".."
 
 
@@ -50,7 +52,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setOpen,
   } = props;
 
-  const isZone = boardObjectType === "zone";
+  const isZone = boardObjectType === BOARD_ENTITIES.ENTITIES.ZONE;
 
   const normaliseFilter = (filter?: IFilter) => {
     if (!filter?.and_ || Object.keys(filter.and_).length === 0) {
@@ -257,15 +259,20 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           key="tol-incoming-filters-toggle"
           onClick={() => {
             setExcludeIncoming(!excludeIncoming);
+            setIsAdvancedTranslations(false);
           }}
           checked={excludeIncoming}
         />
         <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
-          Exclude incoming filters.
+          {isZone
+            ? "Exclude incoming filters from the Zone above."
+            : "Exclude incoming filters from the Components above."}
         </span>
         <IconTooltip
           contents={
-            "Toggling this off means you will not use any incoming filters from the Zone above."
+            isZone
+              ? "Toggling this on means this Zone does not inherit filters from the Zone above."
+              : "Toggling this on means this Component does not inherit filters from the Components above. The Zone filters are still applied if applicable."
           }
         />
       </div>
@@ -284,7 +291,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
             </span>
             <IconTooltip
               contents={
-                "Toggling this allows you to specify a mapping of custom translations. These are prioritised over automatic translations."
+                `Toggling this allows you to specify a mapping of custom translations.
+                These are prioritised over automatic translations. This is formatted using JSON.`
               }
             />
           </>
@@ -294,7 +302,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
             className="tol-filter-translations-input"
             as="textarea"
             rows={translationsText ? 6 : 1}
-            placeholder={`{"incomingField": "currentField"}`}
+            placeholder={`{"above_zone_field_id": "current_zone_field_id"}`}
             value={translationsText}
             onChange={setTranslationsText}
           />

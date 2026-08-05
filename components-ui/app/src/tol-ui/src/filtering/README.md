@@ -34,6 +34,7 @@ This folder handles zone/component filtering.
 - `filter`: the active filter currently applied.
 - `defaultFilter`: the baseline filter used on reset and is a fall-back for non-self entries.
 - `subFilter`: an additional filter layered on top of the original filter. For example, the sunburst component uses it for the sub-sunburst.
-- `filterPassThrough`: when true, this entry isn't included in the generated filter downstream (except for self).
+- `filterPassThrough`: when true, this entity isn't included in the generated filter downstream (except for self).
+- `filterExcludeIncoming`: when true, this entity only uses its own filter. Please note that Components still use the Zone filter.
 
 Note: `defaultFilter` is runtime baseline behavior, not just initial UI state.
