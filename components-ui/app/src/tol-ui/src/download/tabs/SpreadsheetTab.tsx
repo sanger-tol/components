@@ -16,10 +16,10 @@ import {
   TsDataSource,
   Button,
   converterForElapsedTime,
+  IRemoteTarget,
 } from "../..";
 
-export interface PSpreadsheetTab {
-  objectType: string,
+export interface PSpreadsheetTab extends Omit<IRemoteTarget, "dataSource"> {
   requestedFields: string[]
   totalSize: number
   filter?: IFilter

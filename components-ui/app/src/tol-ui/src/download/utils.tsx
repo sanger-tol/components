@@ -31,27 +31,56 @@ const stringifyFilter = (filter: any) => {
     .replace(/"False"/g, "False");
 };
 
-export function generateSdkScript(source: string, filter: IFilter, objectType: string) {
+/**
+ * Generates a script that contains an example of how the SDK can be used to retrieve
+ * data from the specified data source, object type, and filter.
+ *
+ * This will need changing to use DataSourceUtils.get_datasource() once we support
+ * direct and via_api
+ * 
+ * @param dataSourceInstanceId - The ID of the data source instance.
+ * @param filter - The filter to apply when retrieving data.
+ * @param objectType - The object type to retrieve.
+ * @returns A string containing the SDK script.
+ */
+export function generateSdkScript(
+  dataSourceInstanceId: string | undefined,
+  filter: IFilter,
+  objectType: string
+) {
   return `from tol.core import DataSourceFilter
-from tol.sources.${source} import ${source}
+from tol.sources.portal import portal
 
-src = ${source}()
+ds = portal(dataspace='${dataSourceInstanceId || "tol_production"}')
 f = DataSourceFilter(
     and_ = ${stringifyFilter(filter?.and_)}
 )
-objs = src.get_list('${objectType}', object_filters=f) 
+objs = ds.get_list('${objectType}', object_filters=f)
   `;
 }
 
+/**
+ * Generates a CLI command that contains an example of how the SDK can be used to retrieve
+ * data from the specified data source, object type, and filter.
+ *
+ * This will need changing to use DataSourceUtils.get_datasource() in the CLI once we support
+ * direct and via_api
+ * 
+ * @param dataSourceInstanceId - The ID of the data source instance.
+ * @param filter - The filter to apply when retrieving data.
+ * @param objectType - The object type to retrieve.
+ * @param requestedFields - The fields to request when retrieving data.
+ * @returns A string containing the SDK script.
+ */
 export function generateCLICommand(
-  source: string,
+  dataSourceInstanceId: string | undefined,
   filter: IFilter,
   objectType: string,
   requestedFields: string[]
 ) {
   return `
 tol data \
---source=${source || "portal"} \
+--source=${dataSourceInstanceId || "tol_production"} \
 --operation=list \
 --type=${objectType} \
 --filter='${JSON.stringify(filter) || '{"and":{}}'}' \
