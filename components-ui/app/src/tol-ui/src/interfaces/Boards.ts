@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { TsDataSource, BOARD_ENTITIES } from "..";
-import type { IFieldMeta, PUtilityBar, IFilter, TComponentType } from "..";
+import type { IFieldMeta, PUtilityBar, IFilter, TComponentType, TTranslators } from "..";
 
 export interface TBoardEntityCore {
   /**
@@ -88,7 +88,7 @@ export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
   /**
    * Custom translations for incoming filters, used at the zone level.
    */
-  translations?: Record<string, string>;
+  translations?: TTranslators;
 }
 
 export interface IView extends IBoardParentEntity<IZone> {}

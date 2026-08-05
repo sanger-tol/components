@@ -30,6 +30,9 @@ import {
   isEmptyObject,
   isValidJson,
   BOARD_ENTITIES,
+  FILTER_PASS_THROUGH,
+  FILTER_EXCLUDE_INCOMING,
+  ADVANCED_TRANSLATION,
 } from ".."
 
 
@@ -241,73 +244,70 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         checked={passThrough}
       />
       <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
-        Apply these filters only to this Component.
+        {FILTER_PASS_THROUGH.LABEL}
       </span>
       <IconTooltip
         contents={
-          "Toggling this on means this filter does not affect other components in the heirarchy. Filters from above are still applied."
+          FILTER_PASS_THROUGH.TOOLTIP
         }
       />
     </div>
   )
 
   const ExcludeIncomingFiltersToggle = (
-    <>
-      <div className="tol-toggle-option">
-        <Toggle
-          key="tol-incoming-filters-toggle"
-          onClick={() => {
-            setExcludeIncoming(!excludeIncoming);
-            setIsAdvancedTranslations(false);
-          }}
-          checked={excludeIncoming}
-        />
-        <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
-          {isZone
-            ? "Exclude incoming filters from the Zone above."
-            : "Exclude incoming filters from the Components above."}
-        </span>
-        <IconTooltip
-          contents={
-            isZone
-              ? "Toggling this on means this Zone does not inherit filters from the Zone above."
-              : "Toggling this on means this Component does not inherit filters from the Components above. The Zone filters are still applied if applicable."
-          }
-        />
-      </div>
-      <div className="tol-toggle-option">
-        {!excludeIncoming && isZone && (
-          <>
-            <Toggle
-              key="tol-advanced-translations-toggle"
-              onClick={() => {
-                setIsAdvancedTranslations(!isAdvancedTranslations);
-              }}
-              checked={isAdvancedTranslations}
-            />
-            <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
-              Use advanced Zone translations.
-            </span>
-            <IconTooltip
-              contents={
-                `Toggling this allows you to specify a mapping of custom translations.
-                These are prioritised over automatic translations. This is formatted using JSON.`
-              }
-            />
-          </>
-        )}
-        {isAdvancedTranslations && (
-          <Input
-            className="tol-filter-translations-input"
-            as="textarea"
-            rows={translationsText ? 6 : 1}
-            placeholder={`{"above_zone_field_id": "current_zone_field_id"}`}
-            value={translationsText}
-            onChange={setTranslationsText}
+    <div className="tol-toggle-option">
+      <Toggle
+        key="tol-incoming-filters-toggle"
+        onClick={() => {
+          setExcludeIncoming(!excludeIncoming);
+          setIsAdvancedTranslations(false);
+        }}
+        checked={excludeIncoming}
+      />
+      <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+        {isZone
+          ? FILTER_EXCLUDE_INCOMING.LABEL_ZONE
+          : FILTER_EXCLUDE_INCOMING.LABEL_COMPONENT}
+      </span>
+      <IconTooltip
+        contents={
+          isZone
+            ? FILTER_EXCLUDE_INCOMING.TOOLTIP_ZONE
+            : FILTER_EXCLUDE_INCOMING.TOOLTIP_COMPONENT
+        }
+      />
+    </div>
+  )
+  const AdvancedTranslators = (
+    <div className="tol-toggle-option">
+      {!excludeIncoming && isZone && (
+        <>
+          <Toggle
+            key="tol-advanced-translations-toggle"
+            onClick={() => {
+              setIsAdvancedTranslations(!isAdvancedTranslations);
+            }}
+            checked={isAdvancedTranslations}
           />
-        )}
-      </div>
-    </>
+          <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+            {ADVANCED_TRANSLATION.LABEL}
+          </span>
+          <IconTooltip
+            contents={ADVANCED_TRANSLATION.TOOLTIP}
+          />
+        </>
+      )}
+      {isAdvancedTranslations && (
+        <Input
+          className="tol-filter-translations-input"
+          as="textarea"
+          rows={translationsText ? 6 : 1}
+          placeholder={`{"above_zone_field_id": "current_zone_field_id"}`}
+          value={translationsText}
+          onChange={setTranslationsText}
+        />
+      )}
+    </div>
   )
 
   return (
@@ -321,6 +321,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         onSaveTestId="apply-filter-button"
       >
         {ExcludeIncomingFiltersToggle}
+        {AdvancedTranslators}
         {!isZone && FilterPassThroughToggle}
         <hr style={{ marginTop: 24 }} />
         <AttributeSelector
