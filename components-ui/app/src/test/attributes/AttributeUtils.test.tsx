@@ -11,7 +11,8 @@ import {
   IFilter,
   IFilterOperatorOptions,
   TFilterOperatorType,
-  getProvenanceFieldName
+  getProvenanceFieldName,
+  isProvenanceAttribute
 } from "../../tol-ui/src";
 
 describe("getReadOnlyAndFilterText function", () => {
@@ -166,5 +167,31 @@ describe("getProvenanceFieldName function", () => {
     ).toBe(
       "abc_def_ghi.jkl_mno_pqr[provenance]"
     );
-  })
+  });
+});
+
+describe("isProvenanceAttribute function", () => {
+  test("A simple provenance field", () => {
+    expect(isProvenanceAttribute("field[provenance]")).toBe(true);
+  });
+
+  test("A provenance field with multiple underscores", () => {
+    expect(isProvenanceAttribute("field_with_multiple_underscores[provenance]")).toBe(true);
+  });
+
+  test("A provenance field with a relationship", () => {
+    expect(isProvenanceAttribute("relation.field[provenance]")).toBe(true);
+  });
+
+  test("A complicated provenance field", () => {
+    expect(isProvenanceAttribute("abc_def_ghi.jkl_mno_pqr[provenance]")).toBe(true);
+  });
+
+  test("A non-provenance field", () => {
+    expect(isProvenanceAttribute("non_provenance_field")).toBe(false);
+  });
+
+  test("An invalid field", () => {
+    expect(isProvenanceAttribute("lsdkfjglsidfdsf")).toBe(false);
+  });
 });
