@@ -143,8 +143,7 @@ export function getChartColour(index: number, opacity?: number) {
   if (opacity === undefined) {
     opacity = 1;
   }
-  const rgb = colours[index];
-  if (rgb === undefined) return "rgba(0, 0, 0, 1)";
+  const rgb = colours[index % colours.length];
   return rgbToString(rgb, opacity);
 }
 

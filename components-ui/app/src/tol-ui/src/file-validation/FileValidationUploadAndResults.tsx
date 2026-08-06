@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect, useRef, SetStateAction, Dispatch } from "react";
-import { Input, InputGroup } from "rsuite";
+import { Input, InputGroup, useToaster } from "rsuite";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   ValidateSteps,
@@ -107,6 +107,7 @@ export function FileValidationUploadAndResults(
   const { actions, policies } = useValidationPolicyModule();
   const user = getUserFromLocalStorage();
   const queryClient = useQueryClient();
+  const toaster = useToaster();
 
   const fetchLatestPipelineResults = async () => {
     const data = await fetchCurrentPipelineResults(
@@ -240,6 +241,7 @@ export function FileValidationUploadAndResults(
       setResetting(false);
       setUploadId("");
     }, 500);
+    toaster.clear();
   };
 
   const actionContext =
