@@ -11,7 +11,7 @@ SPDX-License-Identifier: MIT
 05-08-2026
 
 - Added two new components `BreadcrumbNav` & `RemoteBreadcrumbNav`
-- Added a function call to clear toaster messages on MVP reset.
+- Added a function call to clear `PopUpMessage` on MVP reset.
 
 ## tol-ui `4.0.7`
 
