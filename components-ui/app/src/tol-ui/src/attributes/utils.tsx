@@ -307,3 +307,7 @@ export function getProvenanceFieldName(baseField: string, provenance: string): s
 export function isProvenanceAttribute(attribute: string): boolean {
   return PROVENANCE_IN_FIELD_REGEX.test(attribute);
 }
+
+export function isProvenanceAttributeOfField(attribute: string, baseField: string): boolean {
+  return attribute.startsWith(`${baseField}[`);
+}

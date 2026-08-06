@@ -16,7 +16,7 @@ import {
   getProvenanceFieldName,
   handleSetAttribute,
   IconTooltip,
-  isProvenanceAttribute,
+  isProvenanceAttributeOfField,
   MenuItem,
   MultipleSelect,
   normaliseCaps,
@@ -121,7 +121,7 @@ export function AttributeSelector(props: PAttributeSelector) {
    */
   const handleProvenanceChange = (field: string, selectedProvenances: string[]) => {
     // Remove existing provenance entries for this field
-    const baseAttributes = attribute.filter(attribute => isProvenanceAttribute(attribute));
+    const baseAttributes = attribute.filter(attr => !isProvenanceAttributeOfField(attr, field));
     
     // Add new provenance entries
     const provenanceAttributes = selectedProvenances.map(
