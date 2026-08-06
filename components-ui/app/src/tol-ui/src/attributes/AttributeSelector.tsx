@@ -110,15 +110,19 @@ export function AttributeSelector(props: PAttributeSelector) {
     }
   }, [attribute, entityMeta, objectType, setAttributeMeta]);
 
-  const handleProvenanceChange = (field: string, selectedProvenance: string[]) => {
-    // TODO: The format of what's to be added is not final yet.
-    // Here is a placeholder (`${field}[${provenance}]`)
-  
+  /**
+   * Updates the `attributes` state to include all the selected provenances for `field`,
+   * where `selectedProvenances` are what's selected from the provenance picker for that attribute.
+   * 
+   * The provenance attributes added for this field are in the format `${field_name}[${provenance}]`,
+   * matching the format the backend accepts.
+   */
+  const handleProvenanceChange = (field: string, selectedProvenances: string[]) => {
     // Remove existing provenance entries for this field
     const baseAttributes = attribute.filter(attr => !attr.startsWith(`${field}[`));
     
     // Add new provenance entries
-    const provenanceAttributes = selectedProvenance.map(prov => `${field}[${prov}]`);
+    const provenanceAttributes = selectedProvenances.map(prov => `${field}[${prov}]`);
     
     // Update the attributes
     const newAttributes = [...baseAttributes, ...provenanceAttributes];
