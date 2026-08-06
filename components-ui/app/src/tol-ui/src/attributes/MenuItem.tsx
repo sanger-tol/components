@@ -91,7 +91,7 @@ export function MenuItem(props: PMenuItem) {
   } = props;
 
   const [provenancePickerOpen, setProvenancePickerOpen] = useState(false);
-  
+
   const disabled =
     disabledValues && Object.keys(disabledValues).includes(field);
 
