@@ -85,6 +85,10 @@ export function AttributeSelector(props: PAttributeSelector) {
     localStorage.getItem("attribute-selector-recommended-columns") === "true"
   );
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
+  // This is a map from base field (the field name with no provenance) to the provenances
+  // selected for that field. This is placed here instead of having it in `MenuItem` because when
+  // the `AttributeSelector` is closed, each menu item is destroyed.
+  const [selectedProvenancesByField, setSelectedProvenancesByField] = useState<Record<string, string[]>>({});
 
   const placeholder = maxSelections && maxSelections === 1
     ? "Select an attribute"
@@ -133,8 +137,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     setAttributes(newAttributes);
   };
 
-  // TODO VERY PRELIMINARY
-  const [provenances, setProvenances] = useState<Record<string, string[]>>({});
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
@@ -150,10 +152,10 @@ export function AttributeSelector(props: PAttributeSelector) {
         tooltipContent={tooltipContent}
         disabledValues={disabledValues}
         provenancesAvailable={metaData["source_order"] ?? []}
-        provenancesSelected={provenances[label]}
+        provenancesSelected={selectedProvenancesByField[label]}
         onProvenancesChanged={(newProvenances) => {
           handleProvenanceChange(label, newProvenances);
-          setProvenances({ ...provenances, [label]: newProvenances });
+          setSelectedProvenancesByField({ ...selectedProvenancesByField, [label]: newProvenances });
         }}
       />
     );
