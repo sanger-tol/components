@@ -64,62 +64,36 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     return filter;
   };
 
-  // The fixed filter present on the component
-  const getInitialFilter = () =>
+  // Initializers
+  const getInitialFilter = () => (
     deepCopy(
       isZone
         ? zone.defaultFilter
         : zone.children?.[id]?.defaultFilter,
-    );
-  const [savedFilters, setSavedFilters] = useState(getInitialFilter);
-
-  // The attributes currently selected for filtering on the component
-  const [attributes, setAttributes] = useState<string[]>(
-    Object.keys(savedFilters?.and_ || {})
+    )
   );
-
-  // Only apply filter to the current component
-  const getInitialPassThrough = () =>
-    isZone ? false : zone.children?.[id]?.filterPassThrough || false;
-
-  const [passThrough, setPassThrough] = useState<boolean>(getInitialPassThrough);
-  const initialPassThroughRef = useRef<boolean>(getInitialPassThrough());
-
-  // Ability to exclude incoming filters from the entity above
-  const getInitialExcludeIncoming = () =>
+  const getInitialPassThrough = () => (
+    isZone ? false : zone.children?.[id]?.filterPassThrough || false
+  );
+  const getInitialExcludeIncoming = () => (
     isZone
       ? zone.filterExcludeIncoming || false
-      : zone.children?.[id]?.filterExcludeIncoming || false;
-
-  const [excludeIncoming, setExcludeIncoming] = useState<boolean>(getInitialExcludeIncoming);
-  const initialExcludeIncomingRef = useRef<boolean>(getInitialExcludeIncoming());
-
-  // Toggle for if advanced translations are enabled
-  const getIsAdvancedTranslations = () =>
-    isZone ? !isEmptyObject(zone.translations) : false;
-  const [isAdvancedTranslations, setIsAdvancedTranslations] = useState<boolean>(getIsAdvancedTranslations);
-  const initialIsAdvancedTranslationsRef = useRef<boolean>(getIsAdvancedTranslations());
-
-  // Local state for the translations text area
-  const getInitialTranslationsText = () =>
+      : zone.children?.[id]?.filterExcludeIncoming || false
+  );
+  const getIsAdvancedTranslations = () => (
+    isZone ? !isEmptyObject(zone.translations) : false
+  );
+  const getInitialTranslationsText = () => (
     isZone && !isEmptyObject(zone.translations)
       ? JSON.stringify(zone.translations)
-      : "";
-  const [translationsText, setTranslationsText] = useState<string>(getInitialTranslationsText);
-  const initialTranslationsTextRef = useRef<string>(getInitialTranslationsText());
-
-  const getInitialCurrentFilterZone = (filter: IFilter | undefined) =>
+      : ""
+  );
+  const getInitialCurrentFilterZone = (filter: IFilter | undefined) => (
     defineZoneWithComponentList(
       "dummy-object-for-remote-filters",
       [{ id: id, filter: deepCopy(filter) }]
-    );
-
-  // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone
-  const [currentFilterZone, setCurrentFilterZone] = useState<IZone>(
-    getInitialCurrentFilterZone(savedFilters),
+    )
   );
-
-  // Getting the disabled filter values (currently all other entity filters)
   const removeCurrentEntityFiltersForDisabledFilters = (
     source: object = {},
     remove?: object,
@@ -129,6 +103,19 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       Object.entries(source).filter(([key]) => !keysToRemove.has(key)),
     );
   };
+
+  // State
+  const [savedFilters, setSavedFilters] = useState(getInitialFilter);
+  const [attributes, setAttributes] = useState<string[]>(
+    Object.keys(savedFilters?.and_ || {})
+  );
+  const [passThrough, setPassThrough] = useState<boolean>(getInitialPassThrough);
+  const [excludeIncoming, setExcludeIncoming] = useState<boolean>(getInitialExcludeIncoming);
+  const [isAdvancedTranslations, setIsAdvancedTranslations] = useState<boolean>(getIsAdvancedTranslations);
+  const [translationsText, setTranslationsText] = useState<string>(getInitialTranslationsText);
+  const [currentFilterZone, setCurrentFilterZone] = useState<IZone>(
+    getInitialCurrentFilterZone(savedFilters),
+  );
   const [disabledFilterValues, setDisabledFilterValues] = useState(
     removeCurrentEntityFiltersForDisabledFilters(
       generateFilter(currentFilterZone, undefined, true)?.and_!,
@@ -136,6 +123,11 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     ),
   );
 
+  // Refs
+  const initialPassThroughRef = useRef<boolean>(getInitialPassThrough());
+  const initialExcludeIncomingRef = useRef<boolean>(getInitialExcludeIncoming());
+  const initialIsAdvancedTranslationsRef = useRef<boolean>(getIsAdvancedTranslations());
+  const initialTranslationsTextRef = useRef<string>(getInitialTranslationsText());
   // Don't use `generateFilter` as it has a back-up of the defaultFilter
   const currentFilters = normaliseFilter(currentFilterZone.children?.[id]?.filter);
   const initialFiltersRef = useRef<IFilter | undefined>(normaliseFilter(getInitialFilter()));
@@ -244,7 +236,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         }}
         checked={passThrough}
       />
-      <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+      <span className="tol-pr-sm" onClick={(e) => e.stopPropagation()}>
         {FILTER_PASS_THROUGH.LABEL}
       </span>
       <IconTooltip
@@ -265,7 +257,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         }}
         checked={excludeIncoming}
       />
-      <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+      <span className="=tol-pr-sm" onClick={(e) => e.stopPropagation()}>
         {isZone
           ? FILTER_EXCLUDE_INCOMING.LABEL_ZONE
           : FILTER_EXCLUDE_INCOMING.LABEL_COMPONENT}
@@ -290,7 +282,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
             }}
             checked={isAdvancedTranslations}
           />
-          <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
+          <span className="tol-pr-sm" onClick={(e) => e.stopPropagation()}>
             {ADVANCED_TRANSLATION.LABEL}
           </span>
           <IconTooltip
@@ -312,7 +304,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   )
 
   return (
-    <div>
+    <div className="tol-filter-config-drawer">
       <Drawer
         title={`Filtering on a ${objectType} ${boardObjectType}`}
         open={open}
@@ -324,7 +316,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         {ExcludeIncomingFiltersToggle}
         {AdvancedTranslators}
         {!isZone && FilterPassThroughToggle}
-        <hr style={{ marginTop: 24 }} />
+        <hr />
         <AttributeSelector
           {...props}
           displaySource
