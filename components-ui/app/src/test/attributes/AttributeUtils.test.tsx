@@ -10,7 +10,8 @@ import {
   generateFilterDescriptions,
   IFilter,
   IFilterOperatorOptions,
-  TFilterOperatorType
+  TFilterOperatorType,
+  getProvenanceFieldName
 } from "../../tol-ui/src";
 
 describe("getReadOnlyAndFilterText function", () => {
@@ -140,4 +141,30 @@ describe("getReadOnlyFiltersText function", () => {
 
     expect(generatedObject).toEqual(expectedObject);
   });
+});
+
+describe("getProvenanceFieldName function", () => {
+  test("A simple field", () => {
+    expect(getProvenanceFieldName("field", "provenance")).toBe("field[provenance]");
+  });
+
+  test("A field with multiple underscores", () => {
+    expect(
+      getProvenanceFieldName("field_with_multiple_underscores", "provenance")
+    ).toBe(
+      "field_with_multiple_underscores[provenance]"
+    );
+  });
+
+  test("A field with a relationship", () => {
+    expect(getProvenanceFieldName("relation.field", "provenance")).toBe("relation.field[provenance]");
+  });
+
+  test("A complicated field", () => {
+    expect(
+      getProvenanceFieldName("abc_def_ghi.jkl_mno_pqr", "provenance")
+    ).toBe(
+      "abc_def_ghi.jkl_mno_pqr[provenance]"
+    );
+  })
 });
