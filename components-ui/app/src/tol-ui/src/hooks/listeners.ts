@@ -6,15 +6,25 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useLayoutEffect, useRef } from "react";
 
+export function isDarkMode(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    !!window.matchMedia?.("(prefers-color-scheme: dark)").matches
+  );
+}
+
 export function themeListener(fn) {
   useEffect(() => {
     fn();
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = () => fn();
+
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
   }, []);
-  window
-    .matchMedia("(prefers-color-scheme: dark)")
-    .addEventListener("change", () => {
-      return fn();
-    });
 }
 
 export function resizeListener(fn: () => void): void {
