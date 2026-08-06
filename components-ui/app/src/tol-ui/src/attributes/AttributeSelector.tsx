@@ -13,8 +13,10 @@ import {
   filterAttributes,
   getAllAttributeData,
   getFlattenedMetaData,
+  getProvenanceFieldName,
   handleSetAttribute,
   IconTooltip,
+  isProvenanceAttribute,
   MenuItem,
   MultipleSelect,
   normaliseCaps,
@@ -119,10 +121,12 @@ export function AttributeSelector(props: PAttributeSelector) {
    */
   const handleProvenanceChange = (field: string, selectedProvenances: string[]) => {
     // Remove existing provenance entries for this field
-    const baseAttributes = attribute.filter(attr => !attr.startsWith(`${field}[`));
+    const baseAttributes = attribute.filter(attribute => isProvenanceAttribute(attribute));
     
     // Add new provenance entries
-    const provenanceAttributes = selectedProvenances.map(prov => `${field}[${prov}]`);
+    const provenanceAttributes = selectedProvenances.map(
+      provenance => getProvenanceFieldName(field, provenance)
+    );
     
     // Update the attributes
     const newAttributes = [...baseAttributes, ...provenanceAttributes];

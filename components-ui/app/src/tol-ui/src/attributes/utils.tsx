@@ -13,6 +13,7 @@ import {
   TFilterOperatorType,
   IFilter,
   TDescribedFilters,
+  PROVENANCE_IN_FIELD_REGEX,
 } from "..";
 
 export function getFlattenedMetaData(
@@ -297,4 +298,12 @@ export function generateFilterDescriptions(filter?: IFilter): TDescribedFilters 
   }
 
   return describedFilters;
+}
+
+export function getProvenanceFieldName(baseField: string, provenance: string): string {
+  return `${baseField}[${provenance}]`;
+}
+
+export function isProvenanceAttribute(attribute: string): boolean {
+  return PROVENANCE_IN_FIELD_REGEX.test(attribute);
 }
