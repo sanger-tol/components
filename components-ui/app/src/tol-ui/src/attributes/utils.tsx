@@ -300,14 +300,26 @@ export function generateFilterDescriptions(filter?: IFilter): TDescribedFilters 
   return describedFilters;
 }
 
+/**
+ * Devises the provenance version of an attribute, in the format the API understands:
+ * the field (`baseField`) alongside the chosen `provenance`.
+ * In the front-end, these are treated like they're attributes themselves.
+ */
 export function getProvenanceFieldName(baseField: string, provenance: string): string {
   return `${baseField}[${provenance}]`;
 }
 
+/**
+ * Checks whether the provided `attribute` is a normal attribute or a provenance specification
+ * of an attribute
+ */
 export function isProvenanceAttribute(attribute: string): boolean {
   return PROVENANCE_IN_FIELD_REGEX.test(attribute);
 }
 
+/**
+ * Checks whether the provided `attribute` is specifically a provenance specification of `baseField`
+ */
 export function isProvenanceAttributeOfField(attribute: string, baseField: string): boolean {
   return attribute.startsWith(`${baseField}[`);
 }
