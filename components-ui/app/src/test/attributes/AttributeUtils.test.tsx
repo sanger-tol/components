@@ -26,7 +26,7 @@ describe("getReadOnlyAndFilterText function", () => {
    * @param expectedProse The prose expected to be returned by getReadOnlyAndFilterText. Where the
    * operator value is expected, use `VALUE`
    */
-  function generalizedTest(
+  function generalisedTest(
     operatorType: TFilterOperatorType,
     negate: boolean,
     expectedProse: string
@@ -49,20 +49,20 @@ describe("getReadOnlyAndFilterText function", () => {
     );
   }
 
-  generalizedTest("exists", false, "must exist");
-  generalizedTest("exists", true, "must not exist");
-  generalizedTest("contains", false, "must have a value containing VALUE");
-  generalizedTest("contains", true, "must not have a value containing VALUE");
-  generalizedTest("eq", false, "must equal VALUE");
-  generalizedTest("eq", true, "must not equal VALUE");
-  generalizedTest("gt", false, "must be greater than VALUE");
-  generalizedTest("gt", true, "must not be greater than VALUE");
-  generalizedTest("gte", false, "must be greater than or equal to VALUE");
-  generalizedTest("gte", true, "must not be greater than or equal to VALUE");
-  generalizedTest("lt", false, "must be less than VALUE");
-  generalizedTest("lt", true, "must not be less than VALUE");
-  generalizedTest("lte", false, "must be less than or equal to VALUE");
-  generalizedTest("lte", true, "must not be less than or equal to VALUE");
+  generalisedTest("exists", false, "must exist");
+  generalisedTest("exists", true, "must not exist");
+  generalisedTest("contains", false, "must have a value containing VALUE");
+  generalisedTest("contains", true, "must not have a value containing VALUE");
+  generalisedTest("eq", false, "must equal VALUE");
+  generalisedTest("eq", true, "must not equal VALUE");
+  generalisedTest("gt", false, "must be greater than VALUE");
+  generalisedTest("gt", true, "must not be greater than VALUE");
+  generalisedTest("gte", false, "must be greater than or equal to VALUE");
+  generalisedTest("gte", true, "must not be greater than or equal to VALUE");
+  generalisedTest("lt", false, "must be less than VALUE");
+  generalisedTest("lt", true, "must not be less than VALUE");
+  generalisedTest("lte", false, "must be less than or equal to VALUE");
+  generalisedTest("lte", true, "must not be less than or equal to VALUE");
 
   test("Filter operator in_list generates correct prose", () => {
     const filterOperator: [TFilterOperatorType, IFilterOperatorOptions] = [
