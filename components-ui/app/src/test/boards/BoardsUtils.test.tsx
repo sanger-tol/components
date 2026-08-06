@@ -213,6 +213,7 @@ describe(
         },
         filter: { and_: {} },
         defaultFilter: { and_: {} },
+        filterExcludeIncoming: false,
         title: "",
         order: [],
         children: {
