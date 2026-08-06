@@ -123,7 +123,7 @@ export function AttributeSelector(props: PAttributeSelector) {
    * The provenance attributes added for this field are in the format `${field_name}[${provenance}]`,
    * matching the format the backend accepts.
    */
-  const handleProvenanceChange = (field: string, selectedProvenances: string[]) => {
+  const updateProvenanceAttributes = (field: string, selectedProvenances: string[]) => {
     // Remove existing provenance entries for this field
     const baseAttributes = attribute.filter(attr => !isProvenanceAttributeOfField(attr, field));
     
@@ -154,7 +154,7 @@ export function AttributeSelector(props: PAttributeSelector) {
         provenancesAvailable={metaData["source_order"] ?? []}
         provenancesSelected={selectedProvenancesByField[label]}
         onProvenancesChanged={(newProvenances) => {
-          handleProvenanceChange(label, newProvenances);
+          updateProvenanceAttributes(label, newProvenances);
           setSelectedProvenancesByField({ ...selectedProvenancesByField, [label]: newProvenances });
         }}
       />
@@ -237,6 +237,11 @@ export function AttributeSelector(props: PAttributeSelector) {
     }
   };
 
+  const handleClean = () => {
+    onClean?.();
+    setSelectedProvenancesByField({});
+  };
+
   if (loading) return <></>;
 
   return (
@@ -305,8 +310,7 @@ export function AttributeSelector(props: PAttributeSelector) {
           return attributeSelectorSearchBy(keyWord, label, entityMeta, objectType);
         }}
         sticky={sticky}
-        // TODO here
-        onClean={() => {onClean?.(); setProvenances({});}}
+        onClean={handleClean}
         onClose={() => setSelectedSources([])}
       />
       {recommendedFilterAvailable && (
