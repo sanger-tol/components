@@ -39,7 +39,7 @@ export function IconTooltip(props: PIconTooltip) {
   }
 
   return (
-    <span className={`tol-icon-tooltip ${className && className}`} onClick={(e) => e.stopPropagation()}>
+    <span className={`tol-icon-tooltip${className ? ` ${className}` : ""}`} onClick={(e) => e.stopPropagation()}>
       <HoverOverlay contents={renderedContents}>
         <span className="tooltip-wrapper">
           {icon}

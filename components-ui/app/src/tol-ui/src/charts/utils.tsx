@@ -17,7 +17,8 @@ import {
   ISunburstSectionClickedData,
   mergeAndFilters,
   NO_DATA_FOUND_MESSAGE,
-  TAggregationResult
+  TAggregationResult,
+  generateDefaultFilter
 } from "..";
 
 // ------------------//
@@ -537,7 +538,7 @@ export function generateChartFilterFromBar(
   xAxis: string,
   type: HistogramGrouping,
 ) {
-  const localFilters = { and_: {} };
+  const localFilters = generateDefaultFilter();
 
   // Set the breakdown filter if a bucket is present
   if (barData["bucket"] !== undefined) {

@@ -126,6 +126,7 @@ describe(
         },
         filter: { and_: {} },
         defaultFilter: { and_: {} },
+        filterExcludeIncoming: false,
         filterPassThrough: false,
         title: ""
       };
@@ -156,6 +157,7 @@ describe(
         },
         filter: { and_: {} },
         defaultFilter: { and_: {} },
+        filterExcludeIncoming: false,
         title: "",
 
         // Difference from previous test (from additional if clause)
@@ -211,6 +213,7 @@ describe(
         },
         filter: { and_: {} },
         defaultFilter: { and_: {} },
+        filterExcludeIncoming: false,
         title: "",
         order: [],
         children: {
@@ -225,6 +228,7 @@ describe(
             },
             filter: { and_: {} },
             defaultFilter: { and_: {} },
+            filterExcludeIncoming: false,
             filterPassThrough: false,
             title: "",
           },
@@ -239,6 +243,7 @@ describe(
             },
             filter: { and_: {} },
             defaultFilter: { and_: {} },
+            filterExcludeIncoming: false,
             filterPassThrough: false,
             title: "",
           }
@@ -294,6 +299,7 @@ describe(
             },
             filter: { and_: {} },
             defaultFilter: { and_: {} },
+            filterExcludeIncoming: false,
             filterPassThrough: false,
             title: ""
           }
@@ -369,6 +375,7 @@ describe(
                 title: "",
                 filter: { and_: {} },
                 defaultFilter: { and_: {} },
+                filterExcludeIncoming: false,
                 data_source_instance_id: "test",
                 order: ["c_jlhdYFA89", "c_687YLHdga"],
                 ui_api_details: {
@@ -383,6 +390,7 @@ describe(
                     title: "",
                     filter: { and_: {} },
                     defaultFilter: { and_: {} },
+                    filterExcludeIncoming: false,
                     filterPassThrough: false,
                     data_source_instance_id: "test",
                     ui_api_details: {
@@ -397,6 +405,7 @@ describe(
                     title: "",
                     filter: { and_: {} },
                     defaultFilter: { and_: {} },
+                    filterExcludeIncoming: false,
                     filterPassThrough: false,
                     data_source_instance_id: "test",
                     ui_api_details: {
@@ -480,6 +489,9 @@ describe("Board entity endpoints", () => {
       {
         method: "POST",
         resource: `${BOARD_ENTITIES.ENTITIES.COMPONENT}:upsert`,
+        params: {
+          merge_collections: false,
+        },
         body: {
           data: [
             {
