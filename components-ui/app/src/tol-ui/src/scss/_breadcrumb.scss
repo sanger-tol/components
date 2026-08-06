@@ -1,0 +1,59 @@
+/*
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+.tol-breadcrumb {
+  .rs-breadcrumb {
+    &.sm {
+      font-size: 14px;
+    }
+
+    &.md {
+      font-size: 16px;
+    }
+
+    &.lg {
+      font-size: 18px;
+    }
+
+    .rs-breadcrumb-item-active {
+      color: var(--tol-grey-light);
+    }
+
+    &.not-auto-generated {
+      .rs-breadcrumb-item {
+        a {
+          color: var(--tol-text);
+          text-decoration: none;
+
+          &:hover {
+            color: var(--tol-primary);
+            text-decoration: underline;
+          }
+        }
+        span {
+          margin: 0 8px;
+        }
+      }
+    }
+
+    &.is-loading {
+      .rs-breadcrumb-item {
+        animation: tol-breadcrumb-loading-flash 1.2s ease-in-out infinite;
+      }
+    }
+  }
+}
+
+@keyframes tol-breadcrumb-loading-flash {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+}

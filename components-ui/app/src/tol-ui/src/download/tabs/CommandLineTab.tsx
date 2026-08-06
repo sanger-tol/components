@@ -8,28 +8,30 @@ import { CodeBlock } from "react-code-blocks";
 import {
   Button,
   IFilter,
+  IRemoteTarget,
   copyToClipboard,
   generateCLICommand
 } from "../..";
 import { SdkInstructions } from ".";
 
-export interface PCommandLineTab {
-  source: string,
+export interface PCommandLineTab extends IRemoteTarget {
   filter: IFilter,
-  objectType: string
   requestedFields: string[]
 }
 
 export function CommandLineTab(props: PCommandLineTab) {
   const {
-    source,
+    dataSource,
     filter,
     objectType,
     requestedFields
   } = props;
-  const sourceToUse = source || "portal";
-
-  const CLICommand = generateCLICommand(sourceToUse, filter, objectType, requestedFields)
+  const CLICommand = generateCLICommand(
+    dataSource.getDataSourceInstanceId(),
+    filter,
+    objectType,
+    requestedFields
+  )
 
   return (
     <>

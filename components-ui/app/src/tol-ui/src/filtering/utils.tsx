@@ -16,8 +16,17 @@ import {
   isEmptyObject,
   TFilterOrUndefined,
   IComponent,
+  IFilterWithRequiredAnd,
 } from "..";
 
+
+/**
+ * Generates a default filter object with an empty "and_" attribute.
+ * @returns filter object with an empty "and_" attribute.
+ */
+export function generateDefaultFilter(): IFilterWithRequiredAnd {
+  return { and_: {} };
+};
 
 /**
  * Retrieves the identifier of the component located directly above the specified component in the given list.
@@ -140,6 +149,21 @@ function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThro
 }
 
 /**
+ * Determines whether incoming filters from components above should be excluded.
+ *
+ * @param zone The current zone.
+ * @param id The current component identifier.
+ * @returns `true` when only zone-level and current-component filters should be applied.
+ */
+export function shouldFilterExcludeIncoming(
+  zone?: IZone,
+  id?: string,
+) {
+  if (!id) return false;
+  return zone?.children?.[id]?.filterExcludeIncoming || false;
+}
+
+/**
  * Generates a compounded filter for a given zone or component.
  * 
  * @param zone - The zone object containing components and their filters.
@@ -156,8 +180,14 @@ export function generateFilter(
 ) {
   if (!zone) return undefined;
 
+  const excludeIncoming = shouldFilterExcludeIncoming(zone, id);
+
   // Get the list of components above the current component in the zone's order, including itself
-  const aboveComponents = id ? getComponentsAbove(id, zone.order, includeSelf) : zone.order;
+  const aboveComponents = id
+    ? (excludeIncoming
+      ? (includeSelf ? [id] : [])
+      : getComponentsAbove(id, zone.order, includeSelf))
+    : zone.order;
 
   // Start with zone filter
   let compoundedFilter: IFilter = zone.filter || {};
@@ -305,7 +335,7 @@ export function setFilterInput(params: {
 
   // Initialise filter on the zone if it doesn't exist before taking a reference to and_.
   const component = z.children[componentId];
-  component.filter ??= { and_: {} };
+  component.filter ??= generateDefaultFilter();
   component.filter.and_ ??= {};
   const and_ = component.filter.and_;
 
@@ -439,6 +469,8 @@ export function filterListener(
     zoneToValue,
   } = params;
 
+  const excludeIncoming = shouldFilterExcludeIncoming(zone, componentId);
+
   // Use a layout effect so values/disabled state derived from the zone filter
   // are applied before the browser paints, avoiding a flash of the
   // empty/enabled input state.
@@ -467,7 +499,9 @@ export function filterListener(
     });
 
     // Be aware of components above in the hierarchy, including itself by default
-    const aboveComponents = getComponentsAbove(componentId, zone.order);
+    const aboveComponents = excludeIncoming
+      ? [componentId]
+      : getComponentsAbove(componentId, zone.order);
 
     // Loop through 'above' components and perform updates based on their filters, including itself by default
     for (const currentId of aboveComponents) {

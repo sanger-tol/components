@@ -8,14 +8,17 @@ import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
 import {
   PopUpMessage,
-  TPlateSize,
   ALPHABET,
   PLATE_DIMENSIONS,
-  IEntityMeta,
-  TDataObjectListOrNull,
-  TPlateData,
-  getFieldByName,
   RELATIONSHIP_SEPARATOR,
+  getFieldByName,
+  generateDefaultFilter,
+} from "..";
+import type {
+  IEntityMeta,
+  TPlateData,
+  TPlateSize,
+  TDataObjectListOrNull,
 } from "..";
 
 export function formatPath(name: string) {
@@ -48,14 +51,7 @@ export function isPropDefined(prop: any) {
   return prop !== undefined;
 }
 
-export function falseIfUndefined(prop: any) {
-  if (prop) {
-    return true;
-  }
-  return false;
-}
-
-export function isEmptyObject(x: object|unknown[]|undefined) {
+export function isEmptyObject(x: object | unknown[] | undefined) {
   return Object.keys(x || {}).length === 0;
 }
 
@@ -334,7 +330,7 @@ export function generateWellFilter(
   clickedOnWellId: string | undefined,
   wellPositionAttribute: string
 ) {
-  const localFilters = { and_: {} };
+  const localFilters = generateDefaultFilter();
   localFilters["and_"][wellPositionAttribute] = {
     eq: { value: clickedOnWellId },
   };
@@ -416,7 +412,7 @@ export function normaliseNumber(value: number) {
   // Handles whole numbers
   if (value > 999999) {
     return normaliseLargeNumber(value);
-  // Handles decimals
+    // Handles decimals
   } else if (value < 0.01 && value !== 0) {
     return normaliseDecimalNumber(value);
   } else {
@@ -475,4 +471,73 @@ export function deepestEqual(a: any, b: any): boolean {
   if (keysA.length !== keysB.length) return false;
   if (keysA.some((key, i) => key !== keysB[i])) return false;
   return keysA.every((key) => deepestEqual(a[key], b[key]));
+}
+
+/**
+ * Checks whether a given string is valid JSON.
+ *
+ * @param jsonString - The string to validate as JSON
+ * @returns `true` if the string is valid JSON, `false` otherwise
+ */
+export function isValidJson(jsonString: string): boolean {
+  try {
+    const parsed = JSON.parse(jsonString);
+    return typeof parsed === "object" && parsed !== null;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Splits a URL path into its non-empty segments.
+ * 
+ * @param path - The URL path string to split.
+ */
+export function splitPath(path: string): string[] {
+  const parts = path.split("/").filter((part) => part !== "");
+  return parts;
+}
+
+/**
+ * Joins path segments into an absolute URL path prefixed with `/`.
+ * 
+ * @param paths - Ordered array of path segments to join.
+ */
+export function generateLinkFromRequestedPath(paths: string[]): string {
+  const parts = paths.join("/");
+  return `/${parts}`;
+}
+
+/**
+ * Builds a list of `{ text, url }` link objects from attribute values.
+ * Entries with a `null` value are included without a URL; entries resolving to `"Unknown"` are omitted.
+ * 
+ * @param objectAttributes - Ordered attribute values fetched for the object.
+ * @param attributes - Attribute names corresponding to each value in `objectAttributes`.
+ * @param urlConstructFn - Function that builds a URL from an attribute name and its value.
+ * 
+ * @returns The filtered link list, or `null` if `objectAttributes` is empty.
+ */
+export function constructRemoteLinks(
+  objectAttributes: (string | null)[] | undefined,
+  attributes: string[],
+  urlConstructFn: (attribute: string, value: string) => string,
+): { text: string; url?: string }[] | null {
+  if (!objectAttributes || objectAttributes.length === 0) {
+    return null;
+  }
+
+  const links = objectAttributes.map((attributeValue, index) => {
+    const attributeName = attributes[index];
+    const url = attributeValue
+      ? urlConstructFn(attributeName, attributeValue)
+      : undefined;
+
+    return {
+      text: attributeValue ?? "Unknown",
+      url,
+    };
+  });
+
+  return links.filter((link) => link.text !== "Unknown");
 }

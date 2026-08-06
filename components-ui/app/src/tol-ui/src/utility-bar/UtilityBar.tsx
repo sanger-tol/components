@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Fragment, ReactNode, useState } from "react";
+import { Fragment, ReactNode, useLayoutEffect, useRef, useState } from "react";
 import {
   ClickOverlay,
   EditableTitle,
@@ -13,7 +13,6 @@ import {
   Button,
   DeprecatedDropdownButtons,
   PDeprecatedDropdownButtons,
-  resizeListener,
   IconTooltip,
   PDropdownButton,
   DropdownButton,
@@ -63,13 +62,24 @@ export interface PUtilityBar {
 export function UtilityBar(props: PUtilityBar) {
   const { id, title, description, buttons, elements, noLeftSide, className } = props;
 
-  const wrapperId = "tol-utility-bar-wrapper-" + id; // gets width on mount
+  const wrapperId = "tol-utility-bar-wrapper-" + id;
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
 
-  resizeListener(() => {
-    const width = document.getElementById(wrapperId)?.offsetWidth;
-    if (width !== undefined) setSmallBreakpoint(width < 600);
-  });
+  useLayoutEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    const updateBreakpoint = () => {
+      setSmallBreakpoint(wrapper.offsetWidth < 600);
+    };
+
+    updateBreakpoint();
+    const observer = new ResizeObserver(updateBreakpoint);
+    observer.observe(wrapper);
+
+    return () => observer.disconnect();
+  }, []);
 
   // Separate dropdown buttons from regular buttons
   const regularButtons = buttons?.filter(button => button && !("dropdownButtons" in button) && !("toggle" in button));
@@ -131,7 +141,7 @@ export function UtilityBar(props: PUtilityBar) {
 
   return (
     <div className={noLeftSide ? "tol-utility-bar-no-left-side" : ""}>
-      <div className={`tol-utility-bar ${className ?? ""}`} data-testid={id} id={wrapperId}>
+      <div ref={wrapperRef} className={`tol-utility-bar ${className ?? ""}`} data-testid={id} id={wrapperId}>
         {!noLeftSide && title && <EditableTitle {...title} />}
         {!noLeftSide && description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
         {elements && elements.map(

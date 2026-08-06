@@ -1,0 +1,36 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+:root {
+  --tol-spacing-xs: 0.25rem;
+  --tol-spacing-sm: 0.5rem;
+  --tol-spacing-md: 1rem;
+  --tol-spacing-lg: 2rem;
+  --tol-spacing-xl: 4rem;
+  --tol-spacing-xxl: 8rem;
+}
+
+// Margin utilities
+@each $i, $val in (xs: var(--tol-spacing-xs), sm: var(--tol-spacing-sm), md: var(--tol-spacing-md), lg: var(--tol-spacing-lg), xl: var(--tol-spacing-xl), xxl: var(--tol-spacing-xxl)) {
+  .tol-m-#{$i}  { margin: $val; }
+  .tol-mt-#{$i} { margin-top: $val; }
+  .tol-mr-#{$i} { margin-right: $val; }
+  .tol-mb-#{$i} { margin-bottom: $val; }
+  .tol-ml-#{$i} { margin-left: $val; }
+  .tol-mx-#{$i} { margin-left: $val; margin-right: $val; }
+  .tol-my-#{$i} { margin-top: $val; margin-bottom: $val; }
+}
+
+// Padding utilities
+@each $i, $val in (xs: var(--tol-spacing-xs), sm: var(--tol-spacing-sm), md: var(--tol-spacing-md), lg: var(--tol-spacing-lg), xl: var(--tol-spacing-xl), xxl: var(--tol-spacing-xxl)) {
+  .tol-p-#{$i}  { padding: $val; }
+  .tol-pt-#{$i} { padding-top: $val; }
+  .tol-pr-#{$i} { padding-right: $val; }
+  .tol-pb-#{$i} { padding-bottom: $val; }
+  .tol-pl-#{$i} { padding-left: $val; }
+  .tol-px-#{$i} { padding-left: $val; padding-right: $val; }
+  .tol-py-#{$i} { padding-top: $val; padding-bottom: $val; }
+}

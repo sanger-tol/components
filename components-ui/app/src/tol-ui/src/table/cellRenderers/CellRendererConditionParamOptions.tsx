@@ -11,6 +11,7 @@ import {
   BUTTONS,
   cellRendererParams,
   deepCopy,
+  generateDefaultFilter,
   defineZoneWithComponentList,
   generateFilter,
   isEmptyObject,
@@ -73,7 +74,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   const zoneFilterId = "cell-renderer-component";
   const [filterZone, setFilterZone] = useState<IZone>(
     defineZoneWithComponentList("dummy-object-for-remote-filters", [
-      { id: zoneFilterId, filter: renderer?.props?.[paramName!] as IFilter || { and_: {} } },
+      { id: zoneFilterId, filter: renderer?.props?.[paramName!] as IFilter || generateDefaultFilter() },
     ]),
   );
   // The filters used for this condition
@@ -91,7 +92,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   useEffect(() => {
     if (renderer?.props?.[paramName!] && paramName) {
       const paramValue = renderer.props[paramName];
-      const filterValue = typeof paramValue === 'object' ? paramValue as IFilter : { and_: {} };
+      const filterValue = typeof paramValue === 'object' ? paramValue as IFilter : generateDefaultFilter();
       setAttributes(Object.keys(filterValue.and_ || {}) || []);
       setFilterConditions(filterValue);
       setPreviousFilterConditions(previousRenderer?.props?.[paramName] as IFilter | undefined);
@@ -100,8 +101,8 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       ]));
     } else {
       setAttributes([]);
-      setFilterConditions({ and_: {} });
-      setPreviousFilterConditions({ and_: {} });
+      setFilterConditions(generateDefaultFilter());
+      setPreviousFilterConditions(generateDefaultFilter());
     }
   }, [paramName]);
 
@@ -119,7 +120,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   // Needed for the BottomButtons. Either adding the parameter or going back means that the filter
   // making up the parameter should be cleared (it gets tied to the renderer somehow!)
   const resetFilterZone = () => setFilterZone(defineZoneWithComponentList("dummy-object-for-remote-filters", [
-    { id: zoneFilterId, filter: { and_: {} } },
+    { id: zoneFilterId, filter: generateDefaultFilter() },
   ]));
 
   const handleBack = () => {

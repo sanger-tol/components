@@ -17,7 +17,8 @@ import {
   ISunburstSectionClickedData,
   mergeAndFilters,
   NO_DATA_FOUND_MESSAGE,
-  TAggregationResult
+  TAggregationResult,
+  generateDefaultFilter
 } from "..";
 
 // ------------------//
@@ -142,8 +143,7 @@ export function getChartColour(index: number, opacity?: number) {
   if (opacity === undefined) {
     opacity = 1;
   }
-  const rgb = colours[index];
-  if (rgb === undefined) return "rgba(0, 0, 0, 1)";
+  const rgb = colours[index % colours.length];
   return rgbToString(rgb, opacity);
 }
 
@@ -537,7 +537,7 @@ export function generateChartFilterFromBar(
   xAxis: string,
   type: HistogramGrouping,
 ) {
-  const localFilters = { and_: {} };
+  const localFilters = generateDefaultFilter();
 
   // Set the breakdown filter if a bucket is present
   if (barData["bucket"] !== undefined) {

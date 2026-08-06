@@ -9,25 +9,27 @@ import {
   Button,
   generateSdkScript,
   IFilter,
+  IRemoteTarget,
   copyToClipboard
 } from "../..";
 import { SdkInstructions } from ".";
 
-export interface PSdkTab {
-  source: string,
+export interface PSdkTab extends IRemoteTarget {
   filter: IFilter,
-  objectType: string
 }
 
 export function SdkTab(props: PSdkTab) {
   const {
-    source,
+    dataSource,
     filter,
     objectType
   } = props;
-  const sourceToUse = source || "portal";
 
-  const SDKText = generateSdkScript(sourceToUse, filter, objectType)
+  const SDKText = generateSdkScript(
+    dataSource.getDataSourceInstanceId(),
+    filter,
+    objectType
+  )
 
   return (
     <>

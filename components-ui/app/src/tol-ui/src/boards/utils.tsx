@@ -11,6 +11,7 @@ import {
   BOARD_MESSAGE_TEXT,
   BOARDS_API,
   deepCopy,
+  generateDefaultFilter,
   HTTP_STATUS_CODES,
   isEmptyObject,
   MESSAGE_TYPE,
@@ -18,8 +19,6 @@ import {
   TsDataSource,
 } from "..";
 import type {
-  IComponent,
-  IZone,
   TBoardChildren,
   TBoardEntity,
   TBoardEntityType,
@@ -132,8 +131,8 @@ export function defineBoardEntity(
     objectType === BOARD_ENTITIES.ENTITIES.COMPONENT ||
     objectType === BOARD_ENTITIES.ENTITIES.ZONE
   ) {
-    const definedEntity = entity as Partial<IZone> | Partial<IComponent>;
-    const initialFilter = definedEntity.filter ?? { and_: {} };
+    const definedEntity = entity as any; // Partial<IZone> | Partial<IComponent>;
+    const initialFilter = definedEntity.filter ?? generateDefaultFilter();
     entity = {
       ...entity,
       filter: deepCopy(initialFilter),
@@ -143,13 +142,13 @@ export function defineBoardEntity(
         dataSourceInstanceId: definedEntity.data_source_instance_id,
         ...definedEntity.ui_api_details,
       }),
+      // TODO: Temp fix due to different casing
+      filterExcludeIncoming: definedEntity.filter_exclude_incoming ?? false,
     };
   }
 
   // TODO: Temp fix due to different casing
-  if (
-    objectType === BOARD_ENTITIES.ENTITIES.COMPONENT
-  ) {
+  if (objectType === BOARD_ENTITIES.ENTITIES.COMPONENT) {
     const definedEntity = entity as any;
     entity = {
       ...entity,
@@ -320,6 +319,7 @@ export async function upsertBoardEntity(
         attributes: attributes,
       },
     ],
+    params: { merge_collections: false },
   });
 }
 

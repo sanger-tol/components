@@ -7,19 +7,24 @@ SPDX-License-Identifier: MIT
 import { useState, useRef, useEffect } from "react";
 import {
   Button,
+  IRemoteTarget,
   Modal,
-  TsDataSource,
   PEditableTitle,
   IFieldMeta,
   Tabs,
   IChartDataset,
   TDisabledTab,
   deepCopy,
+  TsDataSource,
 } from "..";
 import { CommandLineTab, ImageTab, SdkTab, SpreadsheetTab } from "./tabs";
 
-export interface PDownloadModal {
 
+export interface PDownloadModal extends Omit<IRemoteTarget, "dataSource"> {
+  /**
+   * Data source used for CLI & SDK tabs
+   */
+  dataSource?: TsDataSource;
   /**
    * List of tabs to disable
    */
@@ -63,24 +68,10 @@ export interface PDownloadModal {
    */
   title?: PEditableTitle;
 
-  // Tabe specific props 
-  /**
-   * Object type of the data being downloaded
-   */
-  objectType: string;
   /**
    * Any filters applied to the component itself, used when retrieving data for download
    */
   filter?: any;
-  /**
-   * DataSource used to retrieve data,
-   * needed for SDK and CLI tabs to generate appropriate commands and scripts
-   */
-  source?: string;
-  /**
-   * The actual TSDataSource instance, used for fetching metadata and data for downloads when necessary (Table Only)
-   */
-  dataSource?: TsDataSource;
   /**
    * Specifies the fields to be requested for download (Table Only)
    */
@@ -113,7 +104,7 @@ export function DownloadModal(props: PDownloadModal) {
     setOpen,
     objectType,
     filter,
-    source,
+    dataSource,
     requestedFields,
     title,
     componentId,
@@ -121,8 +112,6 @@ export function DownloadModal(props: PDownloadModal) {
     downloadInProgress,
     totalSize,
   } = props;
-
-  const sourceToUse = source || "portal";
 
   // Spreadsheet progress state lives here so it survives the modal being closed/unmounted
   const [fetchCount, setFetchCount] = useState<number>(0);
@@ -197,14 +186,14 @@ export function DownloadModal(props: PDownloadModal) {
               />
             </Tabs.Tab>
           )}
-          {disabledTabs?.includes("SDK") ? null : (
+          {!disabledTabs?.includes("SDK") && dataSource && (
             <Tabs.Tab eventKey="2" title="SDK">
-              <SdkTab source={sourceToUse} objectType={objectType} filter={filter} />
+              <SdkTab dataSource={dataSource} objectType={objectType} filter={filter} />
             </Tabs.Tab>
           )}
-          {disabledTabs?.includes("CLI") ? null : (
+          {!disabledTabs?.includes("CLI") && dataSource && (
             <Tabs.Tab eventKey="3" title="CLI">
-              <CommandLineTab source={sourceToUse} objectType={objectType} filter={filter} requestedFields={requestedFields} />
+              <CommandLineTab dataSource={dataSource} objectType={objectType} filter={filter} requestedFields={requestedFields} />
             </Tabs.Tab>
           )}
           {disabledTabs?.includes("Image") ? null : (
