@@ -14,6 +14,7 @@ SPDX-License-Identifier: MIT
 - Added a function call to clear `PopUpMessage` on MVP reset.
 - Add advanced translations to Zones
 - Add filter exclude incoming to Zones and Components
+- Increase 'allowed cardinality' for break down by on charts
 
 ## tol-ui `4.0.7`
 
