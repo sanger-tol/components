@@ -12,7 +12,8 @@ import {
   IFilterOperatorOptions,
   TFilterOperatorType,
   getProvenanceFieldName,
-  isProvenanceAttribute
+  isProvenanceAttribute,
+  isProvenanceAttributeOfField
 } from "../../tol-ui/src";
 
 describe("getReadOnlyAndFilterText function", () => {
@@ -193,5 +194,45 @@ describe("isProvenanceAttribute function", () => {
 
   test("An invalid field", () => {
     expect(isProvenanceAttribute("lsdkfjglsidfdsf")).toBe(false);
+  });
+});
+
+describe("isProvenanceAttributeOfField function", () => {
+  test("A simple provenance field", () => {
+    expect(isProvenanceAttributeOfField("field[provenance]", "field")).toBe(true);
+  });
+
+  test("A provenance field with multiple underscores", () => {
+    expect(
+      isProvenanceAttributeOfField("field_with_multiple_underscores[provenance]", "field_with_multiple_underscores")
+    ).toBe(true);
+  });
+
+  test("A provenance field with a relationship", () => {
+    expect(
+      isProvenanceAttributeOfField("relation.field[provenance]", "relation.field")
+    ).toBe(true);
+  });
+
+  test("A complicated provenance field", () => {
+    expect(
+      isProvenanceAttributeOfField("abc_def_ghi.jkl_mno_pqr[provenance]", "abc_def_ghi.jkl_mno_pqr")
+    ).toBe(true);
+  });
+
+  test("A non-provenance field", () => {
+    expect(
+      isProvenanceAttributeOfField("non_provenance_field", "non_provenance_field")
+    ).toBe(false);
+  });
+
+  test("A provenance field of the incorrect base field", () => {
+    expect(
+      isProvenanceAttributeOfField("completely_different_field[provenance]", "field")
+    ).toBe(false);
+  });
+
+  test("An invalid field", () => {
+    expect(isProvenanceAttributeOfField("lsdkfjglsidfdsf", "field")).toBe(false);
   });
 });
