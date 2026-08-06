@@ -5,8 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 .tol-tag {
+  align-items: center;
   background-color: var(--tol-grey-translucent);
   color: var(--tol-emphasis);
+  display: inline-flex;
+  gap: 0.375rem;
   border-radius: var(--tol-border-radius);
   padding: 0.5rem;
   margin: 2px;

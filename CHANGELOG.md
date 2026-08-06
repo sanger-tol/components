@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.9`
+
+06-08-2026
+
+- Added optional icon and tooltip support to the `Tag` component
+
 ## tol-ui `4.0.8`
 
 05-08-2026
