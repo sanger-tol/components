@@ -12,12 +12,14 @@ SPDX-License-Identifier: MIT
 
 - Added two new components `BreadcrumbNav` & `RemoteBreadcrumbNav`
 - Added a function call to clear `PopUpMessage` on MVP reset.
+- Add advanced translations to Zones
+- Add filter exclude incoming to Zones and Components
 
 ## tol-ui `4.0.7`
 
 30-07-2026
 
-- Added footer content override for SmartApp
+- Added footer content override for `SmartApp`
 
 ## tol-ui `4.0.6`
 

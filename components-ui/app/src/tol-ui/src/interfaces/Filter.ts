@@ -23,8 +23,20 @@ export interface IAndAttributes {
 }
 
 export interface IFilter {
+  /**
+   * Stores the filter conditions
+   */
   and_?: IAndAttributes;
 }
+
+export interface IFilterWithRequiredAnd {
+  /**
+   * Stores the filter conditions, with the "and_" attribute required.
+   */
+  and_: IAndAttributes;
+}
+
+export type TTranslators = Record<string, string>;
 
 export type TFilterDateRangeValue = [Date, Date] | null;
 
@@ -38,6 +50,20 @@ export type TFilterOrUndefined = IFilter | undefined;
 export type TDescribedFilters = Record<string, string[]>;
 
 export type IDBBoardEntityFilter = {
+  /**
+   * The filter directly related to this entity.
+   */
   filter: IFilter;
+  /**
+   * Whether the filter should be passed on to child entities.
+   */
   filter_pass_through?: boolean;
-}
+  /**
+   * Whether an entity should use the incoming filters from the parent entity.
+   */
+  filter_exclude_incoming?: boolean;
+  /**
+   * Custom translations for incoming filters, used at the zone level.
+   */
+  translations?: TTranslators;
+};
