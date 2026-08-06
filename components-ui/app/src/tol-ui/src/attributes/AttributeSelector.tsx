@@ -127,12 +127,6 @@ export function AttributeSelector(props: PAttributeSelector) {
 
   // TODO VERY PRELIMINARY
   const [provenances, setProvenances] = useState<Record<string, string[]>>({});
-  // TODO HARDCODED FOR TESTING
-  const provenancesAvailable: Record<string, string[]> = {
-    "species.scientific_name": ["goat", "sts", "tolqc"],
-    "grit_species.goat_scientific_name": ["goat", "sts", "tolqc"],
-    "goat_order_name": ["goat", "sts", "tolqc"]
-  };
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
@@ -147,7 +141,7 @@ export function AttributeSelector(props: PAttributeSelector) {
         displaySource={displaySource}
         tooltipContent={tooltipContent}
         disabledValues={disabledValues}
-        provenancesAvailable={provenancesAvailable[label]}
+        provenancesAvailable={metaData["source_order"] ?? []}
         provenancesSelected={provenances[label]}
         onProvenancesChanged={(newProvenances) => {
           handleProvenanceChange(label, newProvenances);
