@@ -5,8 +5,8 @@
 import sql from "../../../db";
 globalThis.crypto ??= require("node:crypto").webcrypto
 import { createBoardId, createViewId, createZoneId, createComponentId } from ".";
-import { Page } from "@playwright/test";
 import { DATASOURCE_INSTANCE_ID, OBJECT_TYPE, randomInt } from "../..";
+import type { Page } from "@playwright/test";
 import type {
   ICreateBoardReturn,
   ICreateBoardAndViewReturn,
@@ -37,7 +37,7 @@ async function insertBoardToDB({
     let query = `
       INSERT INTO "board"
       VALUES ('${boardId}', '${boardTitle}', '{"and_":{}}', ${userId});
-    `
+    `;
 
     if (viewId) {
       query += `
@@ -45,7 +45,7 @@ async function insertBoardToDB({
         VALUES ('${viewId}', '${viewTitle}', '{"and_":{}}', ${userId});
         INSERT INTO "view_board"
         VALUES (${randomInt()}, '1', '${viewId}', '${boardId}');
-      `
+      `;
     }
 
     if (viewId && zoneId && zoneObjectType) {
@@ -54,7 +54,7 @@ async function insertBoardToDB({
       VALUES ('${zoneId}', '${zoneTitle}', '${zoneObjectType}', '{"and_":{}}', ${userId}, '${DATASOURCE_INSTANCE_ID}');
       INSERT INTO "zone_view"
       VALUES (${randomInt()}, '1', '${zoneId}', '${viewId}');
-      `
+      `;
     }
 
     await sql.unsafe(query).simple();

@@ -1,10 +1,11 @@
 // SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 //
 // SPDX-License-Identifier: MIT
-import { expect, Page } from "@playwright/test";
 
 import { enterEditMode, exitEditMode } from ".";
 import { DATASOURCE_INSTANCE_ID } from "../../constants/board";
+import type { expect, Page } from "@playwright/test";
+
 
 const createShortId = (prefix: string) => `${prefix}_${crypto.randomUUID().slice(0, 12)}`;
 
