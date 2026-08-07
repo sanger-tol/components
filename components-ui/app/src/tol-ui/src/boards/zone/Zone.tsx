@@ -18,8 +18,9 @@ import {
   BUTTONS,
   useBoardState,
   getSiblingBoardEntity,
+  mergeFilters,
 } from "../..";
-import type { IZone, IView, PButton, PBoard, IFilter } from "../..";
+import type { IZone, IView, PButton, PBoard } from "../..";
 import { translateZoneAboveFilter } from "./utils";
 
 
@@ -45,37 +46,37 @@ export function Zone(props: PZone) {
   const { editMode, layoutMode } = useBoard();
 
   const [zone, setZone] = useBoardState<IView, IZone>(id, view, setView);
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [openFilters, setOpenFilters] = useState(false);
-  const [title, setTitle] = useState(zone?.title);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [openFilters, setOpenFilters] = useState<boolean>(false);
+  const [title, setTitle] = useState<string|undefined>(zone?.title);
+  const [translatedFilterReady, setTranslatedFilterReady] = useState<boolean>(false);
 
   const { object_type, dataspace, filter } = zone;
   const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;
 
-  /**
-   * Translates the preceding zone's compounded filter for this zone whenever
-   * that zone changes. Translation performs asynchronous datasource lookups,
-   * so the cleanup prevents an obsolete request from overwriting newer state.
-   */
   useEffect(() => {
-    let cancelled = false;
+    (async () => {
+      await updateTranslatedFilter();
+      setTranslatedFilterReady(true);
+    })();
+  }, [
+    zoneAbove,
+    zone.filterExcludeIncoming,
+    zone.defaultFilter,
+    zone.translations,
+    editMode
+  ]);
 
-    const updateTranslatedFilter = async () => {
-      if (zoneAbove) {
-        const translatedFilter: IFilter = await translateZoneAboveFilter(zone, zoneAbove);
-        if (!cancelled) {
-          setZone({ ...zone, filter: translatedFilter });
-        }
-      }
-    };
-
-    updateTranslatedFilter();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [zoneAbove]);
+  const updateTranslatedFilter = async () => {
+    if (zoneAbove) {
+      zone.filter = mergeFilters(
+        await translateZoneAboveFilter(zone, zoneAbove),
+        zone.defaultFilter
+      );
+      setZone({ ...zone });
+    }
+  };
 
   const onAddComponent = () => {
     setOpen(true);
@@ -137,14 +138,6 @@ export function Zone(props: PZone) {
     visible: editMode && !layoutMode,
   };
 
-  const translatorsButton: PButton = {
-    ...BUTTONS.TRANSLATORS,
-    //visible: editMode && !layoutMode,
-    // TODO FUTURE: Implement translators
-    visible: false,
-    onClick: () => { },
-  };
-
   const bar = (
     <div className="tol-zone-bar">
       <UtilityBar
@@ -174,8 +167,7 @@ export function Zone(props: PZone) {
           addButton,
           filtersButton,
           downButton,
-          upButton,
-          translatorsButton,
+          upButton
         ]}
       />
       <div id="component-modal">
@@ -189,6 +181,8 @@ export function Zone(props: PZone) {
       </div>
     </div>
   );
+
+  if (!translatedFilterReady) return;
 
   return (
     <div className="tol-zone" data-testid="zone">

@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 export * from "./Accordion";
 export * from "./BoardStatistics";
 export * from "./BoardMarkdown";
+export * from "./BreadcrumbNav";
 export * from "./CenterContent";
 export * from "./ClickOverlay";
 export * from "./CustomIcons";
@@ -23,6 +24,7 @@ export * from "./Markdown";
 export * from "./ObjectDetail";
 export * from "./Placeholder";
 export * from "./Plate";
+export * from "./RemoteBreadcrumbNav";
 export * from "./RemoteStatistics";
 export * from "./RemoteGet";
 export * from "./SourceTag";

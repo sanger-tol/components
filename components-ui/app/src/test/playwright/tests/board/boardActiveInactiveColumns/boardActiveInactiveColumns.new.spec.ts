@@ -78,7 +78,7 @@ const ensureLimitedColumnVisibilityEnabled = async (page: Page) => {
   if (await activeTab(page).isVisible().catch(() => false)) {
     return;
   }
-  await page.locator(".tol-pass-through-toggle .rs-toggle").click();
+  await page.locator(".tol-toggle-option .rs-toggle").click();
   await expect(activeTab(page)).toBeVisible();
   await expect(inactiveTab(page)).toBeVisible();
 };
