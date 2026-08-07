@@ -10,6 +10,7 @@ import {
   appendKeywordIfNeeded,
   IChartData,
   getCssVarValue,
+  isDarkMode,
   IAggregation,
   IChartDataset,
   IFilter,
@@ -1042,9 +1043,8 @@ export function removeSliceBySingles(sliceBy: string[], depth: number) {
 
 export function downloadItem(chartId: string, chartTitle: string) {
   // use light/dark mode background color to determine background color of item
-  const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
   const bodyColor = getComputedStyle(document.body).backgroundColor;
-  const bgColor = darkModeQuery.matches ? bodyColor : "#ffffff";
+  const bgColor = isDarkMode() ? bodyColor : "#ffffff";
 
   // create link element and  get chart by id
   const canvasLink = document.createElement("a");
