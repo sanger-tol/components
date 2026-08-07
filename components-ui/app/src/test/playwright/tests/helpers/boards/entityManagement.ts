@@ -4,7 +4,7 @@
 
 import { enterEditMode, exitEditMode } from ".";
 import { DATASOURCE_INSTANCE_ID } from "../../constants/board";
-import type { expect, Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 
 const createShortId = (prefix: string) => `${prefix}_${crypto.randomUUID().slice(0, 12)}`;
