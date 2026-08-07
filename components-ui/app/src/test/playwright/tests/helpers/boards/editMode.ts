@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 /**
  * Enters Edit Mode on a board (when not already in Edit mode)

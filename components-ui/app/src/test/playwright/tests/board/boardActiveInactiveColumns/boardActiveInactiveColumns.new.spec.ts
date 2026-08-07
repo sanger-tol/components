@@ -6,22 +6,18 @@ import { expect, Page, test } from "@playwright/test";
 import {
   addComponent,
   clickUtilityBarButton,
-  createBoardId,
   enterEditMode,
   exitEditMode,
   isInHeadlessMode,
   setAuth,
-  setBoard,
+  createPopulatedBoardAndGoToPage,
 } from "../../helpers";
-
-let BOARD_ID: string;
 
 test.use({ headless: isInHeadlessMode });
 
 test.beforeEach(async ({ page }) => {
-  BOARD_ID = createBoardId();
   await setAuth(page);
-  await setBoard(page, BOARD_ID);
+  await createPopulatedBoardAndGoToPage(page);
   await enterEditMode(page);
   await addComponent(page, page.getByTestId("zone").first(), "table", "large");
 });

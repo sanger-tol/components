@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 //
 // SPDX-License-Identifier: MIT
-import { Page } from "@playwright/test";
 
 import { enterEditMode, exitEditMode } from ".";
+import { DATASOURCE_INSTANCE_ID } from "../../constants/board";
+import { expect, type Page } from "@playwright/test";
+
 
 const createShortId = (prefix: string) => `${prefix}_${crypto.randomUUID().slice(0, 12)}`;
 
@@ -32,11 +34,13 @@ export const createZone = async (page: Page) => {
   const addZoneButton = await page.getByTestId("open-add-zone-modal-button");
   await addZoneButton.click();
 
-  // choose the dataspace picker
-  await page.getByTestId("dataspace-picker").click();
+  // wait for the asynchronous dataspace options before opening the picker
+  const dataspacePicker = page.getByTestId("dataspace-picker");
+  await expect(dataspacePicker).not.toHaveClass(/rs-picker-loading/);
+  await dataspacePicker.click();
 
   // select the dataspace;
-  await page.locator("[data-key=\"tol_production\"]").click();
+  await page.locator(`[data-key="${DATASOURCE_INSTANCE_ID}"]`).click();
 
   // choose the object type picker
   const objectTypePicker = page.getByTestId("object-type-picker");
