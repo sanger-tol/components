@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.9`
+
+06-08-2026
+
+- Added optional icon and tooltip support to the `Tag` component.
+- Added automatic dark/light mode support via shared `isDarkMode` usage and media-query listener cleanup.
+
 ## tol-ui `4.0.8`
 
 05-08-2026

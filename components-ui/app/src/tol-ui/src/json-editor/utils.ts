@@ -5,6 +5,7 @@
  */
 
 import { githubDarkTheme, githubLightTheme } from "json-edit-react";
+import { isDarkMode } from "..";
 
 /**
  * Returns the Json Editor theme configuration based on the user's preferred color scheme.
@@ -13,10 +14,7 @@ import { githubDarkTheme, githubLightTheme } from "json-edit-react";
  * that matches the ToL background token. In light mode, this returns the GitHub light theme.
  */
 export const getJsonEditorTheme = () => {
-  const darkModeQuery =
-    window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
-
-  return darkModeQuery.matches
+  return isDarkMode()
     ? [
         githubDarkTheme,
         { styles: { container: { backgroundColor: "var(--tol-bg)" } } },
