@@ -78,8 +78,6 @@ export function MyBoards(props: PBoard) {
     }
   }
 
-  if (loading) return <LoadingContent text={"Finding your Boards..."} />;
-
   const NoBoards = (
     <div style={{ textAlign: "center" }}>
       <div style={{ marginTop: "60px" }}>
@@ -108,7 +106,9 @@ export function MyBoards(props: PBoard) {
     ? boardDetails.filter((board) => isBoardInNavConfig(navConfig, board.id))
     : boardDetails;
 
-  const Content = (
+  const Content = loading ? (
+    <LoadingContent text={"Finding your Boards..."} />
+  ) : (
     <div className="my-boards-container">
       {hasLiveBoards && (
         <label className="tol-my-boards-live-toggle">

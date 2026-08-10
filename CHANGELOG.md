@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.9`
+
+06-08-2026
+
+- Added optional icon and tooltip support to the `Tag` component.
+- Added automatic dark/light mode support via shared `isDarkMode` usage and media-query listener cleanup.
+
 ## tol-ui `4.0.8`
 
 05-08-2026
@@ -21,6 +28,12 @@ SPDX-License-Identifier: MIT
 30-07-2026
 
 - Added footer content override for `SmartApp`
+
+## tol-ui `4.0.6`
+
+28-07-2026
+
+- Updated table download modal to use dataSource
 
 ## tol-ui `4.0.6`
 

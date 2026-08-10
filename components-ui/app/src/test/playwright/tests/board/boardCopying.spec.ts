@@ -6,10 +6,10 @@ import { expect, test } from "@playwright/test";
 import {
   setAuth,
   addUserToDB,
-  createBoardForUser,
+  createBoardAndViewAndZone,
   isInHeadlessMode,
-  insertComponentToBoard,
-  setBoard,
+  createComponentInZone,
+  createPopulatedBoardAndGoToPage,
   createBoardId,
   enterEditMode,
 } from "../helpers";
@@ -28,12 +28,12 @@ const setupBoardWithComponent = async (page) => {
   // Add a new user and give them a board in the DB
   // This is not the same user as our browser session
   const { userId } = await addUserToDB();
-  const { boardId, zoneId } = await createBoardForUser({
+  const { boardId, zoneId } = await createBoardAndViewAndZone({
     userId: String(userId),
     zoneObjectType: "species",
   });
 
-  await insertComponentToBoard(
+  await createComponentInZone(
     {
       userId: String(userId),
       componentTitle: "Test Table",
@@ -82,8 +82,7 @@ test("User can copy another users view", async ({ page }) => {
   await copyBoardButton.click();
 
   // Create a new board for the view to be imported into
-  const userBoardId = createBoardId()
-  await setBoard(page, userBoardId);
+  await createPopulatedBoardAndGoToPage(page);
 
   await enterEditMode(page);
 

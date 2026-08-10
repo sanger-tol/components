@@ -5,8 +5,8 @@
 import { Page } from '@playwright/test';
 import sql from '../../db';
 globalThis.crypto ??= require("node:crypto").webcrypto
+import { randomInt } from '..';
 
-const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
 const getRoleId = async (roleName: string) => {
   try {
@@ -30,6 +30,7 @@ const createRoleBindingQuery = async (userId: number, roleNames: string[]) => {
 };
 
 const insertAuthToDB = async (userId: number, token: string, orcidId: string, roles?: string[]) => {
+  console.log(`Inserting user with ID ${userId} and token ${token} into the database.`);
 
   const roleBindingInserts = await createRoleBindingQuery(userId, roles ?? ["tol"]);
 
@@ -53,6 +54,9 @@ export const setAuth = async (page: Page, roles?: string[]) => {
   const userID = randomInt();
   const token = crypto.randomUUID();
   const orcidID = `https://orcid.org/${crypto.randomUUID()}`;
+  const name = "Test User";
+  const email = `${userID}@example.com`;
+  const workplace = "Test Workplace";
 
   await insertAuthToDB(userID, token, orcidID, roles);
 
@@ -62,6 +66,9 @@ export const setAuth = async (page: Page, roles?: string[]) => {
       "token_created_at": "2025-03-31T14:13:36.345558",
       "token_expires_at": "2090-04-07T14:13:36.345581",
       "id": userID,
+      "name": name,
+      "email": email,
+      "workplace": workplace,
       "roles": roles ?? ["tol"],
     },
     "token": token,
@@ -71,16 +78,19 @@ export const setAuth = async (page: Page, roles?: string[]) => {
     "token": token,
   });
 
-  await page.goto("/");
-
-  await page.evaluate((data) => {
-    Object.keys(data).forEach((key) => {
-      localStorage.setItem(key, JSON.stringify(data[key]));
-    });
+  // Seed auth state before app scripts execute to avoid first-load unauthenticated races in CI.
+  await page.addInitScript((data) => {
+    localStorage.setItem("user", JSON.stringify(data.user));
+    // App expects token as a raw string (not JSON-encoded) in localStorage.
+    localStorage.setItem("token", data.token);
   }, storageData);
 
-  await page.reload();
+  await page.goto("/");
+  await page.waitForFunction(() => {
+    return Boolean(localStorage.getItem("token") && localStorage.getItem("user"));
+  });
   await page.waitForLoadState("load");
+  await page.getByTestId("profile-dropdown").waitFor({ state: "visible" });
 };
 
 /**
