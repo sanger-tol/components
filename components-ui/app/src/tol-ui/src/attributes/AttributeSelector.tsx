@@ -85,10 +85,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     localStorage.getItem("attribute-selector-recommended-columns") === "true"
   );
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
-  // This is a map from base field (the field name with no provenance) to the provenances
-  // selected for that field. This is placed here instead of having it in `MenuItem` because when
-  // the `AttributeSelector` is closed, each menu item is destroyed.
-  const [selectedProvenancesByField, setSelectedProvenancesByField] = useState<Record<string, string[]>>({});
 
   const placeholder = maxSelections && maxSelections === 1
     ? "Select an attribute"
@@ -137,6 +133,17 @@ export function AttributeSelector(props: PAttributeSelector) {
     setAttributes(newAttributes);
   };
 
+  /**
+   * @returns An array of provenances selected for the field `field`
+   */
+  const extractProvenancesForField = (field: string): string[] =>
+    attribute
+      .filter(att => att.startsWith(`${field}[`))
+      .flatMap(att => {
+        const match = att.match(PROVENANCE_IN_FIELD_REGEX);
+        return match?.[1] ? [match[1]] : [];
+      });
+
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
@@ -152,11 +159,8 @@ export function AttributeSelector(props: PAttributeSelector) {
         tooltipContent={tooltipContent}
         disabledValues={disabledValues}
         provenancesAvailable={metaData["source_order"] ?? []}
-        provenancesSelected={selectedProvenancesByField[label]}
-        onProvenancesChanged={(newProvenances) => {
-          updateProvenanceAttributes(label, newProvenances);
-          setSelectedProvenancesByField({ ...selectedProvenancesByField, [label]: newProvenances });
-        }}
+        provenancesSelected={extractProvenancesForField(label)}
+        onProvenancesChanged={(newProvenances) => updateProvenanceAttributes(label, newProvenances)}
       />
     );
   };
@@ -237,11 +241,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     }
   };
 
-  const handleClean = () => {
-    onClean?.();
-    setSelectedProvenancesByField({});
-  };
-
   if (loading) return <></>;
 
   return (
@@ -310,7 +309,7 @@ export function AttributeSelector(props: PAttributeSelector) {
           return attributeSelectorSearchBy(keyWord, label, entityMeta, objectType);
         }}
         sticky={sticky}
-        onClean={handleClean}
+        onClean={onClean}
         onClose={() => setSelectedSources([])}
       />
       {recommendedFilterAvailable && (
