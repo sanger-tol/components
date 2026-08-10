@@ -17,6 +17,7 @@ import {
   handleSetAttribute,
   IconTooltip,
   isProvenanceAttributeOfField,
+  isRelationship,
   MenuItem,
   MultipleSelect,
   normaliseCaps,
@@ -147,6 +148,13 @@ export function AttributeSelector(props: PAttributeSelector) {
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
+
+    // Only allow selecting provenance on direct attributes of this object
+    const isDirectAttribute = !isRelationship(label);
+    const provenancesAvailable = isDirectAttribute
+      ? (metaData["source_order"] ?? [])
+      : [];
+
     return (
       <MenuItem
         key={`${label}-${index}`}
@@ -158,7 +166,7 @@ export function AttributeSelector(props: PAttributeSelector) {
         displaySource={displaySource}
         tooltipContent={tooltipContent}
         disabledValues={disabledValues}
-        provenancesAvailable={metaData["source_order"] ?? []}
+        provenancesAvailable={provenancesAvailable}
         provenancesSelected={extractProvenancesForField(label)}
         onProvenancesChanged={(newProvenances) => updateProvenanceAttributes(label, newProvenances)}
       />
