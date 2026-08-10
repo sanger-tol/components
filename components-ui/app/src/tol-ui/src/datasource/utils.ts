@@ -5,11 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import {
+  ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX,
   RELATIONSHIP_SEPARATOR,
+} from "..";
+import type {
   TDataObjectOrNull,
   TDataObjectListOrNull,
-  PROVENANCE_IN_FIELD_REGEX,
-  ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX,
 } from "..";
 
 /**
