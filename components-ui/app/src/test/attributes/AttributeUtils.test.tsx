@@ -6,14 +6,16 @@ SPDX-License-Identifier: MIT
 
 import { expect, test, describe } from "vitest";
 import {
-  getReadOnlyAndFilterText,
   generateFilterDescriptions,
-  IFilter,
-  IFilterOperatorOptions,
-  TFilterOperatorType,
   getProvenanceFieldName,
+  getReadOnlyAndFilterText,
   isProvenanceAttribute,
   isProvenanceAttributeOfField
+} from "../../tol-ui/src";
+import type {
+  IFilter,
+  IFilterOperatorOptions,
+  TFilterOperatorType
 } from "../../tol-ui/src";
 
 describe("getReadOnlyAndFilterText function", () => {
