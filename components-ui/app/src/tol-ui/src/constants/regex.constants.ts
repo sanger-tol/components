@@ -12,4 +12,5 @@ export const CELL_RENDERER_SPREAD_OPERATOR: string = "...";
 export const CELL_RENDERER_PARENT_OPERATOR = "~";
 
 export const PROVENANCE_IN_FIELD_REGEX = /\[(.*)\]/;
+export const ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX = /(.+)\[(.*)\]/;
 export const PROVENANCE_IN_FIELD_REGEX_GLOBAL = /\[(.*)\]/g;
