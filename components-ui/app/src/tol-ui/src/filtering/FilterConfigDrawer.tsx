@@ -257,7 +257,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         }}
         checked={excludeIncoming}
       />
-      <span className="=tol-pr-sm" onClick={(e) => e.stopPropagation()}>
+      <span className="tol-pr-sm" onClick={(e) => e.stopPropagation()}>
         {isZone
           ? FILTER_EXCLUDE_INCOMING.LABEL_ZONE
           : FILTER_EXCLUDE_INCOMING.LABEL_COMPONENT}
