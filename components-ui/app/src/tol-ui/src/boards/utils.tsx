@@ -137,6 +137,7 @@ export function defineBoardEntity(
       ...entity,
       filter: deepCopy(initialFilter),
       defaultFilter: deepCopy(initialFilter),
+      filterPassThrough: definedEntity.filter_pass_through ?? false,
       title: definedEntity.title || "",
       dataspace: new TsDataSource({
         dataSourceInstanceId: definedEntity.data_source_instance_id,
@@ -144,15 +145,6 @@ export function defineBoardEntity(
       }),
       // TODO: Temp fix due to different casing
       filterExcludeIncoming: definedEntity.filter_exclude_incoming ?? false,
-    };
-  }
-
-  // TODO: Temp fix due to different casing
-  if (objectType === BOARD_ENTITIES.ENTITIES.COMPONENT) {
-    const definedEntity = entity as any;
-    entity = {
-      ...entity,
-      filterPassThrough: definedEntity.filter_pass_through ?? false,
     };
   }
 

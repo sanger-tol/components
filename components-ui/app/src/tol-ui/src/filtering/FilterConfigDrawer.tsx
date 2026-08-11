@@ -73,7 +73,9 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     )
   );
   const getInitialPassThrough = () => (
-    isZone ? false : zone.children?.[id]?.filterPassThrough || false
+    isZone
+      ? zone.filterPassThrough || false
+      : zone.children?.[id]?.filterPassThrough || false
   );
   const getInitialExcludeIncoming = () => (
     isZone
@@ -172,11 +174,13 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     let attributes: IDBBoardEntityFilter = {
       filter: filter,
       filter_exclude_incoming: excludeIncoming,
+      filter_pass_through: passThrough,
     };
     if (isZone) {
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
       zone.filterExcludeIncoming = excludeIncoming;
+      zone.filterPassThrough = passThrough;
       const parsedTranslations =
         isAdvancedTranslations && translationsText ? JSON.parse(translationsText) : undefined;
       zone.translations = parsedTranslations;
@@ -187,7 +191,6 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       zone.children[id].defaultFilter = deepCopy(filter);
       zone.children[id].filterPassThrough = passThrough;
       zone.children[id].filterExcludeIncoming = excludeIncoming;
-      attributes.filter_pass_through = passThrough;
     }
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
@@ -315,7 +318,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       >
         {ExcludeIncomingFiltersToggle}
         {AdvancedTranslators}
-        {!isZone && FilterPassThroughToggle}
+        {FilterPassThroughToggle}
         <hr />
         <AttributeSelector
           {...props}

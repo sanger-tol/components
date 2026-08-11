@@ -8,13 +8,31 @@ import {
   generateDefaultFilter,
   generateFilter,
   generateTranslatedFilter,
+  getSiblingBoardEntity,
   isAttribute,
   isRelationship,
   mergeFilters,
   RELATIONSHIP_SEPARATOR,
 } from "../..";
-import type { IZone, IFilter, IFieldTranslationParams } from "../..";
+import type { IZone, IFilter, IFieldTranslationParams, IView } from "../..";
 
+
+/**
+ * Returns the nearest zone above the given zone (in the zone order) that does not
+ * have `filterPassThrough` enabled. Zones with `filterPassThrough` are skipped
+ * because they do not propagate their filter to zones below them.
+ *
+ * @param id - The id of the current zone.
+ * @param view - The view containing all sibling zones.
+ * @returns The nearest qualifying zone above, or `null` if none exists.
+ */
+export function getTranslatorZone(id: string, view: IView): IZone | null {
+  for (let offset = -1; ; offset--) {
+    const candidate = getSiblingBoardEntity(id, view, offset) as IZone | null;
+    if (!candidate) return null;
+    if (!candidate.filterPassThrough) return candidate;
+  }
+}
 
 /**
  * Translates an attribute filter from the zone above into a relationship-prefixed

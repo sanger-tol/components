@@ -49,6 +49,11 @@ export interface IBoardFilter {
    * If true, the filter will not be applied to child entities.
    */
   filterExcludeIncoming?: boolean;
+  /**
+   * Whether this entity's filter applies only to itself.
+   * If true, the filter does not affect other entities in the hierarchy.
+   */
+  filterPassThrough?: boolean;
 }
 
 export interface IComponentConfig {
@@ -57,7 +62,6 @@ export interface IComponentConfig {
 
 export interface IComponent extends TBoardEntityCore, IBoardFilter {
   subFilter?: IFilter;
-  filterPassThrough?: boolean;
   component_type?: TComponentType;
   widget_type?: string;
 

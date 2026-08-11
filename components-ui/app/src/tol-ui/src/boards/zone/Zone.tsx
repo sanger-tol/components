@@ -17,11 +17,10 @@ import {
   TitleTooltip,
   BUTTONS,
   useBoardState,
-  getSiblingBoardEntity,
   mergeFilters,
 } from "../..";
 import type { IZone, IView, PButton, PBoard } from "../..";
-import { translateZoneAboveFilter } from "./utils";
+import { getTranslatorZone, translateZoneAboveFilter } from "./utils";
 
 
 export interface PZone extends PBoard {
@@ -49,20 +48,24 @@ export function Zone(props: PZone) {
   const [confirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [openFilters, setOpenFilters] = useState<boolean>(false);
-  const [title, setTitle] = useState<string|undefined>(zone?.title);
+  const [title, setTitle] = useState<string | undefined>(zone?.title);
   const [translatedFilterReady, setTranslatedFilterReady] = useState<boolean>(false);
 
   const { object_type, dataspace, filter } = zone;
-  const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;
+
+  // Find the last zone above that doesn't pass through its filter
+  const zoneAbove = getTranslatorZone(id, view);
 
   useEffect(() => {
     (async () => {
       await updateTranslatedFilter();
       setTranslatedFilterReady(true);
+      console.log("Zone:", zone.title, "| Translator zone above:", zoneAbove?.title ?? null);
     })();
   }, [
     zoneAbove,
     zone.filterExcludeIncoming,
+    zone.filterPassThrough,
     zone.defaultFilter,
     zone.translations,
     editMode
