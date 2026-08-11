@@ -7,6 +7,7 @@ Create Date: 2026-08-11 10:55:00.090531
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 # revision identifiers, used by Alembic.
@@ -17,12 +18,17 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # Add column with default value
-    op.add_column('zone', sa.Column('filter_pass_through', sa.Boolean(), nullable=False, server_default=sa.false()))
+    # Translations
+    op.alter_column('zone', 'translations', new_column_name='attribute_translations')
+    op.add_column('zone', sa.Column('relationship_translations', JSONB, nullable=False, server_default='{}'))
+    op.add_column('zone', sa.Column('auto_translations', sa.Boolean(), nullable=False, server_default=sa.true()))
 
-    # Update existing rows to ensure consistency
-    op.execute("UPDATE zone SET filter_pass_through = FALSE")
+    # Filter pass through
+    op.add_column('zone', sa.Column('filter_pass_through', sa.Boolean(), nullable=False, server_default=sa.false()))
 
 
 def downgrade() -> None:
     op.drop_column('zone', 'filter_pass_through')
+    op.drop_column('zone', 'auto_translations')
+    op.drop_column('zone', 'relationship_translations')
+    op.alter_column('zone', 'attribute_translations', new_column_name='translations')
