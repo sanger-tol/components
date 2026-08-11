@@ -60,7 +60,6 @@ export function Zone(props: PZone) {
     (async () => {
       await updateTranslatedFilter();
       setTranslatedFilterReady(true);
-      console.log("Zone:", zone.title, "| Translator zone above:", zoneAbove?.title ?? null);
     })();
   }, [
     zoneAbove,
