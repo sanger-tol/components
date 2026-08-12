@@ -148,6 +148,18 @@ export function defineBoardEntity(
     };
   }
 
+  if (
+    objectType === BOARD_ENTITIES.ENTITIES.ZONE
+  ) {
+    const definedEntity = entity as any;
+    entity = {
+      ...entity,
+      attributeTranslations: definedEntity.attribute_translations,
+      relationshipTranslations: definedEntity.relationship_translations,
+      autoTranslations: definedEntity.auto_translations,
+    }
+  }
+
   // If the objectType is not component, we need to set up an empty object for the child board level
   // and an empty order array in the parent board entity
   if (objectType !== BOARD_ENTITIES.ENTITIES.COMPONENT) {
