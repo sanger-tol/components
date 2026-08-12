@@ -149,7 +149,7 @@ export function UtilityBar(props: PUtilityBar) {
         )}
         <div className="tol-utility-bar-buttons">
           {smallBreakpoint && regularButtons &&
-            regularButtons.filter((button) => button?.["visible"] !== false).length > 2
+            regularButtons.filter((button) => button?.["visible"] !== false).length > 3
             ? CondensedButtons
             : ButtonsComponent
           }
