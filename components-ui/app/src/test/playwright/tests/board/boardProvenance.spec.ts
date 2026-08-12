@@ -2,11 +2,13 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import {
   addComponent,
+  configureTable,
   createBoardAndViewAndZone,
   enterEditMode,
+  exitEditMode,
   isInHeadlessMode,
   setAuth,
 } from "../helpers";
@@ -29,4 +31,20 @@ test("User can select provenances in a table", async ({ page }) => {
 
   // Add a table to the zone
   await addComponent(page, page.getByTestId("zone"), "table");
+
+  // Add a scientific column, and 3 others for each specific source
+  await configureTable(
+    page,
+    page.getByTestId("board-component-table"),
+    {
+      activeColumns: ["Scientific Name"],
+      provenances: {
+        "Scientific Name": ["calc", "goat", "sts", "tolqc"]
+      }
+    }
+  )
+  await exitEditMode(page);
+
+  // Check all 4 columns are visible
+  await expect(await page.getByText("Scientific Name").count()).toBe(4);
 });
