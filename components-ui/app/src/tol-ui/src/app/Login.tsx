@@ -6,6 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { useCallback, useEffect } from "react";
 import { Redirect } from "react-router-dom";
+import { Capacitor } from "@capacitor/core";
+import { Browser } from "@capacitor/browser";
 import {
   useAuth,
   getUrlLogin,
@@ -29,14 +31,16 @@ export function Login(props: Props) {
   }, []);
 
   const login = useCallback(() => {
-    setReturnUrlFromLocalStorage(returnUrl || window.location.pathname);
-    getUrlLogin().then((data) => {
-      //@ts-ignore
-      setUser(data.userData);
-      //@ts-ignore
+  setReturnUrlFromLocalStorage(returnUrl || window.location.pathname);
+  getUrlLogin().then((data) => {
+    setUser(data.userData);
+    if (Capacitor.isNativePlatform()) {
+      Browser.open({ url: data.loginUrl });
+    } else {
       window.location.href = data.loginUrl;
-    });
-  }, []);
+    }
+  });
+}, []);
 
   return tokenHasExpired() ? (
     buttonIcon(login)
