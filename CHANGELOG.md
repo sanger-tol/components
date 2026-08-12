@@ -10,7 +10,7 @@ SPDX-License-Identifier: MIT
 
 06-08-2026
 
-- Fixed bug: defaultFilter acting as a base stopping live filters being removed.
+- Fixed bug: defaultFilter acting as a base stopping live filters being removed
 
 ## tol-ui `4.0.9`
 
