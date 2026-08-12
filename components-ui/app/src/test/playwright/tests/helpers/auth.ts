@@ -49,6 +49,7 @@ const insertAuthToDB = async (userId: number, token: string, orcidId: string, ro
  * Sets up authentication for the account used in the tests on the browser.
  * Call this function before a test to create an authenticated session for the test user.
  * @param page The Playwright page handle
+ * @returns The ID of the new user created
  */
 export const setAuth = async (page: Page, roles?: string[]) => {
   const userID = randomInt();
@@ -91,6 +92,8 @@ export const setAuth = async (page: Page, roles?: string[]) => {
   });
   await page.waitForLoadState("load");
   await page.getByTestId("profile-dropdown").waitFor({ state: "visible" });
+
+  return String(userID);
 };
 
 /**
