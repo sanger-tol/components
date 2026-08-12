@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.11`
+
+12-08-2026
+
+- Added capacitor functionality to Login component to allow mobile app redirects
+
 ## tol-ui `4.0.10`
 
 06-08-2026
