@@ -1,0 +1,32 @@
+// SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+//
+// SPDX-License-Identifier: MIT
+
+import { test } from "@playwright/test";
+import {
+  addComponent,
+  createBoardAndViewAndZone,
+  enterEditMode,
+  isInHeadlessMode,
+  setAuth,
+} from "../helpers";
+
+test.use({ headless: isInHeadlessMode });
+
+test("User can select provenances in a table", async ({ page }) => {
+  // Set up a new user session
+  const userId = await setAuth(page);
+  
+  // Use a zone with an object type that has provenance
+  const { boardId } = await createBoardAndViewAndZone({
+    userId,
+    zoneObjectType: "species"
+  });
+
+  // Navigate to the newly created board and enter edit mode
+  await page.goto(`/board/${boardId}`);
+  await enterEditMode(page);
+
+  // Add a table to the zone
+  await addComponent(page, page.getByTestId("zone"), "table");
+});
