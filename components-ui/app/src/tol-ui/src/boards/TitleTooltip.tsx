@@ -30,8 +30,8 @@ export function TitleTooltip(props: PTitleTooltip) {
   const Id = (
     <p>
       <b>ID:</b> {id}
-      &nbsp;
       <Icon
+        className="tol-ml-sm"
         icon="copy"
         tooltip="Copy"
         onClick={() => copyToClipboard(id)}
