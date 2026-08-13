@@ -34,9 +34,7 @@ export function TitleTooltip(props: PTitleTooltip) {
       <Icon
         icon="copy"
         tooltip="Copy"
-        onClick={() => {
-          copyToClipboard(id);
-        }}
+        onClick={() => copyToClipboard(id)}
       />
     </p>
   );
