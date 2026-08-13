@@ -21,7 +21,6 @@ test("User can select provenances in a table", async ({ page }) => {
   // Use a zone with an object type that has provenance
   const { boardId } = await createBoardAndViewAndZone({
     userId,
-    zoneDataSourceInstanceId: "tol_building", // TODO Change to tol_production when provenance is available there
     zoneObjectType: "species"
   });
 
