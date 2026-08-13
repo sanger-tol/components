@@ -13,6 +13,7 @@ SPDX-License-Identifier: MIT
 - Fixed dates being erroneously displayed in the TitleTooltip when filtering an integer field
 - Fixed strange wrapping in the TitleTooltip when long field names are present
 - Added a button to TitleTooltip to copy the ID of the current entity
+- Removed old ID fix for entitymeta
 
 ## tol-ui `4.0.11`
 
