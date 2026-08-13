@@ -13,6 +13,7 @@ import {
   TFilterOperatorType,
   IFilter,
   TDescribedFilters,
+  isValidDate,
 } from "..";
 
 export function getFlattenedMetaData(
@@ -198,21 +199,17 @@ export function renderTotalSelectedItems(
 /**
  * Generates user-readable text ("prose") describing an `and_` filter
  * 
- * @param param0 An object entry representing one operator in a filter
+ * @param operator An object entry representing one operator in a filter
  * @returns Prose to be displayed next to the operator in the filter
  */
 export function getReadOnlyAndFilterText(
   [operatorType, operatorOptions]: [TFilterOperatorType, IFilterOperatorOptions]
 ): string {
   // Account for date edge case.
-  // To avoid false positives, only format as a date if the date is in ISO format
-  const valueAsDate = new Date(operatorOptions.value);
-  const valueIsValidDate =
-    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(operatorOptions.value)
-    && !isNaN(valueAsDate.getTime())
-    && valueAsDate.toISOString() == operatorOptions.value;
-
-  const formattedValue = valueIsValidDate ? valueAsDate.toLocaleDateString() : operatorOptions.value;
+  // To avoid false positives, only format as a date if it's in a recognised format
+  const formattedValue = isValidDate(operatorOptions.value)
+    ? new Date(operatorOptions.value).toLocaleDateString()
+    : operatorOptions.value;
 
   // All proses start with "must" or "must not" to describe an operator
   // (depending on whether it's negated)

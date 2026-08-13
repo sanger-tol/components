@@ -28,7 +28,7 @@ export function ReadOnlyFilters(props: PReadOnlyFilters) {
               objectType={objectType}
               dataSource={dataSource}
               attributeId={attributeId}
-              titleElement="b"
+              titleElement="span"
             />
             {proses.map((prose, index) => <Fragment key={index}>
               &nbsp;{prose}{index != proses.length - 1 && " and"}
