@@ -148,11 +148,14 @@ export function AttributeSelector(props: PAttributeSelector) {
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
+    const sourceOrder = typeof metaData["source_order"] == "string"
+      ? []
+      : metaData["source_order"] ?? [];
 
     // Only allow selecting provenance on direct attributes of this object
     const isDirectAttribute = !isRelationship(label);
     const provenancesAvailable = isDirectAttribute
-      ? (metaData["source_order"] ?? [])
+      ? sourceOrder
       : [];
 
     return (
