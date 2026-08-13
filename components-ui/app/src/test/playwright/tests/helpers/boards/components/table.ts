@@ -5,7 +5,7 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { clickUtilityBarButton } from "../../utility-bar";
-import { selectFromDropdown, sleep } from "../..";
+import { selectFromAttributeSelector, selectFromDropdown } from "../..";
 
 /**
  * Configured the provided table component with the given config,
@@ -16,6 +16,10 @@ import { selectFromDropdown, sleep } from "../..";
  * @param limitColumnVisibility Whether to enable the 'Limit Column Visibility' slider
  * @param activeColumns The columns to choose in the 'Active Columns' dropdown. Columns are added
  * in the order provided in this array.
+ * @param provenances Specifies the provenance option selected for fields in `activeColumns`.
+ * If a field in `activeColumns` is a key in this record, it selects the sources in the given
+ * array. "calc" is used as the collated provenance source, while the rest are usual sources like
+ * "sts".
  */
 export const configureTable = async (
   page: Page,
@@ -24,6 +28,7 @@ export const configureTable = async (
     defaultSort?: string,
     limitColumnVisibility?: boolean,
     activeColumns?: string[],
+    provenances?: Record<string, string[]>
   }
 ) => {
   // Click the Configure Table button
@@ -49,11 +54,12 @@ export const configureTable = async (
 
   // Add the active columns if they were provided
   if (config.activeColumns) {    
-    await selectFromDropdown(
+    await selectFromAttributeSelector(
       page,
       configDrawer.getByRole("combobox").nth(1),
-      config.activeColumns
-    );
+      config.activeColumns,
+      config.provenances,
+    )
   }
 
   // Save the table
