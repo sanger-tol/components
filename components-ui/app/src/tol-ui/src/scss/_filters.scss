@@ -351,8 +351,10 @@
 }
 
 .tol-read-only-filters {
-  .tol-read-only-filter {
-    display: flex;
+  list-style: none;
+
+  .tol-read-only-filter > * {
+    display: inline;
   }
 }
 
