@@ -41,19 +41,30 @@ export function useZone(params: {
   } as IUseZoneMeta;
 }
 
-export function generateTranslatedFilter(
+export function generateAttributeTranslations(
   sourceZone: IZone,
-  translations: TTranslations,
+  attributeTranslations?: TTranslations,
   excludeAfterId?: string,
 ) {
   const sourceFilter = generateFilter(sourceZone, excludeAfterId, true);
   const translatedFilter = createEmptyFilter();
-  Object.entries(translations).map(([sourceAttribute, targetAttribute]) => {
-    if (sourceFilter?.and_ && sourceAttribute in sourceFilter.and_) {
-      translatedFilter.and_[targetAttribute] =
-        sourceFilter.and_[sourceAttribute];
-    }
-  });
+  if (attributeTranslations) {
+    Object.entries(attributeTranslations).map(([sourceAttribute, targetAttribute]) => {
+      if (sourceFilter?.and_ && sourceAttribute in sourceFilter.and_) {
+        translatedFilter.and_[targetAttribute] =
+          sourceFilter.and_[sourceAttribute];
+      }
+    });
+  }
+  return translatedFilter;
+}
+
+export function generateRelationshipTranslations(
+  sourceZone: IZone,
+  relationshipTranslations?: TTranslations,
+  excludeAfterId?: string,
+) {
+  const translatedFilter = createEmptyFilter();
   return translatedFilter;
 }
 
@@ -69,7 +80,7 @@ export function useTranslator(params: {
   const prevFilter: any = useRef(defaultFilter ? defaultFilter : createEmptyFilter());
 
   useEffectUpdate(() => {
-    const translatedFilter = generateTranslatedFilter(
+    const translatedFilter = generateAttributeTranslations(
       source.zone,
       translations,
       excludeAfterId,

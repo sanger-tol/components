@@ -7,7 +7,8 @@ SPDX-License-Identifier: MIT
 import {
   createEmptyFilter,
   generateFilter,
-  generateTranslatedFilter,
+  generateAttributeTranslations,
+  generateRelationshipTranslations,
   getSiblingBoardEntity,
   isAttribute,
   isRelationship,
@@ -113,18 +114,14 @@ export async function translateZoneAboveFilter(
   currentZone: IZone,
   zoneAbove?: IZone,
 ): Promise<IFilter> {
+  const { object_type, dataspace } = currentZone;
+  let translatedFilter: IFilter = createEmptyFilter();
+
   /**
    * If the current zone has filterExcludeIncoming set to true or there is no zone above,
    * return an empty filter to prevent any incoming filters from being applied.
    */
-  if (currentZone.filterExcludeIncoming || !zoneAbove) {
-    return createEmptyFilter();
-  }
-
-  const { object_type, dataspace } = currentZone;
-  const customTranslations = currentZone.attributeTranslations || {};
-  const useAutoTranslations = currentZone.autoTranslations;
-  let translatedFilter: IFilter = createEmptyFilter();
+  if (currentZone.filterExcludeIncoming || !zoneAbove) return translatedFilter;
 
   /**
    * Paths are formatted from many-side to one-side.
@@ -142,15 +139,15 @@ export async function translateZoneAboveFilter(
      * Add the custom translations to the translated filter if they exist.
      */
     translatedFilter = mergeFilters(
-      translatedFilter,
-      generateTranslatedFilter(zoneAbove, customTranslations),
+      generateAttributeTranslations(zoneAbove, currentZone.attributeTranslations),
+      generateRelationshipTranslations(zoneAbove, currentZone.relationshipTranslations),
     );
 
-    if (useAutoTranslations) {
+    if (currentZone.autoTranslations) {
 
       for (const [incomingField, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
         // If the field already exists in the custom translations, skip automatic translation
-        if (incomingField in customTranslations) continue;
+        if (incomingField in translatedFilter) continue;
         if (
           /**
            * If the field is an attribute, the current zone's object type is on the
