@@ -36,6 +36,7 @@ export function ExpandButton(props: PExpandButton) {
       outline
       icon={expanded ? "angle-up" : "angle-down"}
       tooltip={expanded ? "Collapse" : "Expand"}
+      className="tol-expand-button"
       {...propsToPassOn}
     />
   )

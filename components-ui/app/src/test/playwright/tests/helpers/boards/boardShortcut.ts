@@ -31,6 +31,7 @@ async function insertBoardToDB({
   viewTitle,
   zoneId,
   zoneTitle,
+  zoneDataSourceInstanceId = DATASOURCE_INSTANCE_ID,
   zoneObjectType,
 }: ICreateBoard): Promise<ICreateBoardReturn> {
   try {
@@ -51,7 +52,7 @@ async function insertBoardToDB({
     if (viewId && zoneId && zoneObjectType) {
       query += `
       INSERT INTO "zone"
-      VALUES ('${zoneId}', '${zoneTitle}', '${zoneObjectType}', '{"and_":{}}', ${userId}, '${DATASOURCE_INSTANCE_ID}');
+      VALUES ('${zoneId}', '${zoneTitle}', '${zoneObjectType}', '{"and_":{}}', ${userId}, '${zoneDataSourceInstanceId}');
       INSERT INTO "zone_view"
       VALUES (${randomInt()}, '1', '${zoneId}', '${viewId}');
       `;
