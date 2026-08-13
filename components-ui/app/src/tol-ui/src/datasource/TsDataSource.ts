@@ -10,9 +10,7 @@ import {
   API_METHODS,
   API_OPERATIONS,
   deepCopy,
-  httpClient,
-  normaliseCaps,
-  isEmptyObject,
+  httpClient,  isEmptyObject,
 } from "..";
 import type {
   IAttributeDescriptor,
