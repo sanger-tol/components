@@ -204,9 +204,13 @@ export function renderTotalSelectedItems(
 export function getReadOnlyAndFilterText(
   [operatorType, operatorOptions]: [TFilterOperatorType, IFilterOperatorOptions]
 ): string {
-  // Account for date edge case
+  // Account for date edge case.
+  // To avoid false positives, only format as a date if the date is in ISO format
   const valueAsDate = new Date(operatorOptions.value);
-  const valueIsValidDate = valueAsDate instanceof Date && !isNaN(valueAsDate as any);
+  const valueIsValidDate =
+    /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(operatorOptions.value)
+    && !isNaN(valueAsDate.getTime())
+    && valueAsDate.toISOString() == operatorOptions.value;
 
   const formattedValue = valueIsValidDate ? valueAsDate.toLocaleDateString() : operatorOptions.value;
 
