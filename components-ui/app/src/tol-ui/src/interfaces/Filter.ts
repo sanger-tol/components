@@ -67,6 +67,10 @@ export type IDBBoardEntityFilter = {
    */
   attribute_translations?: TTranslations;
   /**
+   * Custom relationship translations for incoming filters, used at the zone level.
+   */
+  relationship_translations?: TTranslations;
+  /**
    * Whether automatic incoming-filter translation is enabled for the zone.
    */
   auto_translations?: boolean;

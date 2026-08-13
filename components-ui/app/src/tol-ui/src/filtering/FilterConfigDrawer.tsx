@@ -32,6 +32,8 @@ import {
   BOARD_ENTITIES,
   FILTER_PASS_THROUGH,
   FILTER_EXCLUDE_INCOMING,
+  ATTRIBUTE_TRANSLATIONS_PLACEHOLDER,
+  RELATIONSHIP_TRANSLATIONS_PLACEHOLDER,
   AUTO_TRANSLATION,
   ADVANCED_TRANSLATION,
   createEmptyFilter,
@@ -88,11 +90,16 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     isZone ? zone.autoTranslations ?? true : false
   );
   const getIsAdvancedTranslations = () => (
-    isZone ? !isEmptyObject(zone.attributeTranslations) : false
+    isZone ? !isEmptyObject(zone.attributeTranslations) || !isEmptyObject(zone.relationshipTranslations) : false
   );
-  const getInitialTranslationsText = () => (
+  const getInitialAttributeTranslationsText = () => (
     isZone && !isEmptyObject(zone.attributeTranslations)
       ? JSON.stringify(zone.attributeTranslations)
+      : ""
+  );
+  const getInitialRelationshipTranslationsText = () => (
+    isZone && !isEmptyObject(zone.relationshipTranslations)
+      ? JSON.stringify(zone.relationshipTranslations)
       : ""
   );
   const getInitialCurrentFilterZone = (filter: IFilter | undefined) => (
@@ -120,7 +127,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const [excludeIncoming, setExcludeIncoming] = useState<boolean>(getInitialExcludeIncoming);
   const [autoTranslations, setAutoTranslations] = useState<boolean>(getInitialAutoTranslations);
   const [isAdvancedTranslations, setIsAdvancedTranslations] = useState<boolean>(getIsAdvancedTranslations);
-  const [translationsText, setTranslationsText] = useState<string>(getInitialTranslationsText);
+  const [attributeTranslationsText, setAttributeTranslationsText] = useState<string>(getInitialAttributeTranslationsText);
+  const [relationshipTranslationsText, setRelationshipTranslationsText] = useState<string>(getInitialRelationshipTranslationsText);
   const [currentFilterZone, setCurrentFilterZone] = useState<IZone>(
     getInitialCurrentFilterZone(savedFilters),
   );
@@ -136,7 +144,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const initialExcludeIncomingRef = useRef<boolean>(getInitialExcludeIncoming());
   const initialAutoTranslationsRef = useRef<boolean>(getInitialAutoTranslations());
   const initialIsAdvancedTranslationsRef = useRef<boolean>(getIsAdvancedTranslations());
-  const initialTranslationsTextRef = useRef<string>(getInitialTranslationsText());
+  const initialAttributeTranslationsTextRef = useRef<string>(getInitialAttributeTranslationsText());
+  const initialRelationshipTranslationsTextRef = useRef<string>(getInitialRelationshipTranslationsText());
   // Don't use `generateFilter` as it has a back-up of the defaultFilter
   const currentFilters = normaliseFilter(currentFilterZone.children?.[id]?.filter);
   const initialFiltersRef = useRef<IFilter | undefined>(normaliseFilter(getInitialFilter()));
@@ -147,8 +156,13 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     excludeIncoming !== initialExcludeIncomingRef.current ||
     autoTranslations !== initialAutoTranslationsRef.current ||
     isAdvancedTranslations !== initialIsAdvancedTranslationsRef.current ||
-    translationsText !== initialTranslationsTextRef.current
-  ) && (!isAdvancedTranslations || isValidJson(translationsText));
+    attributeTranslationsText !== initialAttributeTranslationsTextRef.current ||
+    relationshipTranslationsText !== initialRelationshipTranslationsTextRef.current
+  ) && (
+    !isAdvancedTranslations ||
+    isValidJson(attributeTranslationsText) ||
+    isValidJson(relationshipTranslationsText)
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -174,8 +188,10 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setAutoTranslations(initialAutoTranslationsRef.current);
     initialIsAdvancedTranslationsRef.current = getIsAdvancedTranslations();
     setIsAdvancedTranslations(initialIsAdvancedTranslationsRef.current);
-    initialTranslationsTextRef.current = getInitialTranslationsText();
-    setTranslationsText(initialTranslationsTextRef.current);
+    initialAttributeTranslationsTextRef.current = getInitialAttributeTranslationsText();
+    setAttributeTranslationsText(initialAttributeTranslationsTextRef.current);
+    initialRelationshipTranslationsTextRef.current = getInitialRelationshipTranslationsText();
+    setRelationshipTranslationsText(initialRelationshipTranslationsTextRef.current);
 
     setCurrentFilterZone(getInitialCurrentFilterZone(initialFilters));
   }, [open]);
@@ -192,12 +208,20 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       zone.filterExcludeIncoming = excludeIncoming;
       zone.filterPassThrough = passThrough;
       zone.autoTranslations = autoTranslations;
-      const parsedTranslations =
-        isAdvancedTranslations && translationsText ? JSON.parse(translationsText) : undefined;
-      zone.attributeTranslations = parsedTranslations;
+      const parsedAttributeTranslations =
+        isAdvancedTranslations && attributeTranslationsText
+          ? JSON.parse(attributeTranslationsText)
+          : undefined;
+      const parsedRelationshipTranslations =
+        isAdvancedTranslations && relationshipTranslationsText
+          ? JSON.parse(relationshipTranslationsText)
+          : undefined;
+      zone.attributeTranslations = parsedAttributeTranslations;
+      zone.relationshipTranslations = parsedRelationshipTranslations;
       attributes.auto_translations = autoTranslations;
       // Cannot be undefined, so set to empty object if no translations are provided
-      attributes.attribute_translations = parsedTranslations ? parsedTranslations : {};
+      attributes.attribute_translations = parsedAttributeTranslations ? parsedAttributeTranslations : {};
+      attributes.relationship_translations = parsedRelationshipTranslations ? parsedRelationshipTranslations : {};
     } else {
       zone.children[id].filter = deepCopy(filter);
       zone.children[id].defaultFilter = deepCopy(filter);
@@ -269,21 +293,33 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         }}
         checked={isAdvancedTranslations}
       />
-      <span className="tol-pr-sm" onClick={(e) => e.stopPropagation()}>
+      <span className="tol-pr-sm tol-mb-md" onClick={(e) => e.stopPropagation()}>
         {ADVANCED_TRANSLATION.LABEL}
       </span>
       <IconTooltip
         contents={ADVANCED_TRANSLATION.TOOLTIP}
       />
       {isAdvancedTranslations && (
-        <Input
-          className="tol-filter-translations-input"
-          as="textarea"
-          rows={translationsText ? 6 : 1}
-          placeholder={`{"above_zone_field_id": "current_zone_field_id"}`}
-          value={translationsText}
-          onChange={setTranslationsText}
-        />
+        <div className="tol-mt-md tol-ml-md">
+          <div className="tol-mt-sm">Attribute Translations</div>
+          <Input
+            className="tol-mb-md"
+            as="textarea"
+            rows={attributeTranslationsText ? 4 : 1}
+            placeholder={ATTRIBUTE_TRANSLATIONS_PLACEHOLDER}
+            value={attributeTranslationsText}
+            onChange={setAttributeTranslationsText}
+          />
+          <div className="tol-mt-sm">Relationship Translations</div>
+          <Input
+            className="tol-mb-md"
+            as="textarea"
+            rows={relationshipTranslationsText ? 4 : 1}
+            placeholder={RELATIONSHIP_TRANSLATIONS_PLACEHOLDER}
+            value={relationshipTranslationsText}
+            onChange={setRelationshipTranslationsText}
+          />
+        </div>
       )}
     </div>
   )

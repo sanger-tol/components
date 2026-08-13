@@ -11,6 +11,12 @@ export const FILTER_ALREADY_EXISTS =
 
 export const FILTER_INPUT_DELAY = 800;
 
+export const ATTRIBUTE_TRANSLATIONS_PLACEHOLDER =
+	'{"above_zone_field_id": "current_zone_field_id"}';
+
+export const RELATIONSHIP_TRANSLATIONS_PLACEHOLDER =
+	'{"above_zone_relationship_path": "current_zone_relationship_path"}';
+
 export const FILTER_PASS_THROUGH = {
 	LABEL: (type: string) => `Apply the following filters only to this ${type}.`,
 	TOOLTIP:
