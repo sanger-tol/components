@@ -8,7 +8,6 @@ import {
   createPopulatedBoardAndGoToPage,
   setAuth,
   addComponentFilter,
-  sleep,
   deleteComponent,
   enterEditMode,
   exitEditMode,
@@ -42,7 +41,7 @@ const filterStatisticsComponent = async (page: Page) => {
 
   // check the count has changed
   // TODO This sleep should be removed at some point
-  await sleep(200);
+  await page.waitForTimeout(200);
   const countAfter = await page.locator(".tol-count").textContent();
   expect(countAfter).not.toBe(countBefore);
 }

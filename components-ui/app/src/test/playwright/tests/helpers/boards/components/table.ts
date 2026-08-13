@@ -31,7 +31,7 @@ export const configureTable = async (
   const configDrawer = page.locator(".tol-drawer");
 
   // I unfortunately couldn't find a suitable waiting condition for the opening animation to finish
-  await sleep(200)
+  await page.waitForTimeout(200);
 
   // Add the default sort attribute if one was provided
   if (config.defaultSort) {
