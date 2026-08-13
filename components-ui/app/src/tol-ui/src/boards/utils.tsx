@@ -11,7 +11,7 @@ import {
   BOARD_MESSAGE_TEXT,
   BOARDS_API,
   deepCopy,
-  generateDefaultFilter,
+  createEmptyFilter,
   HTTP_STATUS_CODES,
   isEmptyObject,
   MESSAGE_TYPE,
@@ -132,7 +132,7 @@ export function defineBoardEntity(
     objectType === BOARD_ENTITIES.ENTITIES.ZONE
   ) {
     const definedEntity = entity as any; // Partial<IZone> | Partial<IComponent>;
-    const initialFilter = definedEntity.filter ?? generateDefaultFilter();
+    const initialFilter = definedEntity.filter ?? createEmptyFilter();
     entity = {
       ...entity,
       filter: deepCopy(initialFilter),

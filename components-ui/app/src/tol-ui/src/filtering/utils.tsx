@@ -24,7 +24,7 @@ import {
  * Generates a default filter object with an empty "and_" attribute.
  * @returns filter object with an empty "and_" attribute.
  */
-export function generateDefaultFilter(): IFilterWithRequiredAnd {
+export function createEmptyFilter(): IFilterWithRequiredAnd {
   return { and_: {} };
 };
 
@@ -335,7 +335,7 @@ export function setFilterInput(params: {
 
   // Initialise filter on the zone if it doesn't exist before taking a reference to and_.
   const component = z.children[componentId];
-  component.filter ??= generateDefaultFilter();
+  component.filter ??= createEmptyFilter();
   component.filter.and_ ??= {};
   const and_ = component.filter.and_;
 

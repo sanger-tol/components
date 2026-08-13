@@ -12,7 +12,7 @@ export const FILTER_ALREADY_EXISTS =
 export const FILTER_INPUT_DELAY = 800;
 
 export const FILTER_PASS_THROUGH = {
-	LABEL: "Apply these filters only to this item.",
+	LABEL: (type: string) => `Apply the following filters only to this ${type}.`,
 	TOOLTIP:
 		"Toggling this on means this filter does not affect other items in the hierarchy. Filters from above are still applied.",
 };
@@ -30,4 +30,10 @@ export const ADVANCED_TRANSLATION = {
 	LABEL: "Use advanced translations.",
 	TOOLTIP:
 		"Toggling this allows you to specify a mapping of custom translations. These are prioritised over automatic translations. This is formatted using JSON.",
+};
+
+export const AUTO_TRANSLATION = {
+	LABEL: "Use automatic translations.",
+	TOOLTIP:
+		"Toggling this on enables automatic translation of incoming filters between related zones.",
 };

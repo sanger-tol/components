@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { TsDataSource, BOARD_ENTITIES } from "..";
-import type { IFieldMeta, PUtilityBar, IFilter, TComponentType, TTranslators } from "..";
+import type { IFieldMeta, PUtilityBar, IFilter, TComponentType, TTranslations } from "..";
 
 export interface TBoardEntityCore {
   /**
@@ -79,20 +79,32 @@ export interface IComponent extends TBoardEntityCore, IBoardFilter {
 export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
   /**
    * The object type of the zone
-   * All components in a zone use this object type
    */
   object_type?: string;
   /**
    * The user ID of the board owner, used to determine permissions for editing the board.
-   * Note: Not required for dev pages when using useZone
    */
   data_source_instance_id?: string;
+  /**
+   * The data source instance for the zone, used to fetch data for the zone and its components.
+   */
   dataspace?: TsDataSource;
+  /**
+   * The API details for the data source instance, used to fetch data for the zone and its components.
+   */
   ui_api_details?: IDBDataSourceInstanceApiDetails;
   /**
-   * Custom translations for incoming filters, used at the zone level.
+   * Custom translations for specific attributes
    */
-  translations?: TTranslators;
+  attributeTranslations?: TTranslations;
+  /**
+   * Custom translations for specific relationships
+   */
+  relationshipTranslations?: TTranslations;
+  /**
+   * Whether to use automatic translations where possible
+   */
+  autoTranslations?: boolean;
 }
 
 export interface IView extends IBoardParentEntity<IZone> {}

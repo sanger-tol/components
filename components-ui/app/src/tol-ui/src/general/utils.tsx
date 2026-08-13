@@ -12,7 +12,7 @@ import {
   PLATE_DIMENSIONS,
   RELATIONSHIP_SEPARATOR,
   getFieldByName,
-  generateDefaultFilter,
+  createEmptyFilter,
 } from "..";
 import type {
   IEntityMeta,
@@ -330,7 +330,7 @@ export function generateWellFilter(
   clickedOnWellId: string | undefined,
   wellPositionAttribute: string
 ) {
-  const localFilters = generateDefaultFilter();
+  const localFilters = createEmptyFilter();
   localFilters["and_"][wellPositionAttribute] = {
     eq: { value: clickedOnWellId },
   };

@@ -36,7 +36,7 @@ export interface IFilterWithRequiredAnd {
   and_: IAndAttributes;
 }
 
-export type TTranslators = Record<string, string>;
+export type TTranslations = Record<string, string>;
 
 export type TFilterDateRangeValue = [Date, Date] | null;
 
@@ -65,5 +65,9 @@ export type IDBBoardEntityFilter = {
   /**
    * Custom translations for incoming filters, used at the zone level.
    */
-  translations?: TTranslators;
+  attribute_translations?: TTranslations;
+  /**
+   * Whether automatic incoming-filter translation is enabled for the zone.
+   */
+  auto_translations?: boolean;
 };

@@ -66,7 +66,7 @@ export function Zone(props: PZone) {
     zone.filterExcludeIncoming,
     zone.filterPassThrough,
     zone.defaultFilter,
-    zone.translations,
+    zone.attributeTranslations,
     editMode
   ]);
 

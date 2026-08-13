@@ -32,8 +32,10 @@ import {
   BOARD_ENTITIES,
   FILTER_PASS_THROUGH,
   FILTER_EXCLUDE_INCOMING,
+  AUTO_TRANSLATION,
   ADVANCED_TRANSLATION,
-  generateDefaultFilter,
+  createEmptyFilter,
+  normaliseCaps,
 } from ".."
 
 
@@ -82,12 +84,15 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       ? zone.filterExcludeIncoming || false
       : zone.children?.[id]?.filterExcludeIncoming || false
   );
+  const getInitialAutoTranslations = () => (
+    isZone ? zone.autoTranslations ?? true : false
+  );
   const getIsAdvancedTranslations = () => (
-    isZone ? !isEmptyObject(zone.translations) : false
+    isZone ? !isEmptyObject(zone.attributeTranslations) : false
   );
   const getInitialTranslationsText = () => (
-    isZone && !isEmptyObject(zone.translations)
-      ? JSON.stringify(zone.translations)
+    isZone && !isEmptyObject(zone.attributeTranslations)
+      ? JSON.stringify(zone.attributeTranslations)
       : ""
   );
   const getInitialCurrentFilterZone = (filter: IFilter | undefined) => (
@@ -113,6 +118,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   );
   const [passThrough, setPassThrough] = useState<boolean>(getInitialPassThrough);
   const [excludeIncoming, setExcludeIncoming] = useState<boolean>(getInitialExcludeIncoming);
+  const [autoTranslations, setAutoTranslations] = useState<boolean>(getInitialAutoTranslations);
   const [isAdvancedTranslations, setIsAdvancedTranslations] = useState<boolean>(getIsAdvancedTranslations);
   const [translationsText, setTranslationsText] = useState<string>(getInitialTranslationsText);
   const [currentFilterZone, setCurrentFilterZone] = useState<IZone>(
@@ -128,6 +134,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   // Refs
   const initialPassThroughRef = useRef<boolean>(getInitialPassThrough());
   const initialExcludeIncomingRef = useRef<boolean>(getInitialExcludeIncoming());
+  const initialAutoTranslationsRef = useRef<boolean>(getInitialAutoTranslations());
   const initialIsAdvancedTranslationsRef = useRef<boolean>(getIsAdvancedTranslations());
   const initialTranslationsTextRef = useRef<string>(getInitialTranslationsText());
   // Don't use `generateFilter` as it has a back-up of the defaultFilter
@@ -138,6 +145,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     !deepEqual(currentFilters, initialFiltersRef.current) ||
     passThrough !== initialPassThroughRef.current ||
     excludeIncoming !== initialExcludeIncomingRef.current ||
+    autoTranslations !== initialAutoTranslationsRef.current ||
     isAdvancedTranslations !== initialIsAdvancedTranslationsRef.current ||
     translationsText !== initialTranslationsTextRef.current
   ) && (!isAdvancedTranslations || isValidJson(translationsText));
@@ -162,6 +170,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setPassThrough(initialPassThroughRef.current);
     initialExcludeIncomingRef.current = getInitialExcludeIncoming();
     setExcludeIncoming(initialExcludeIncomingRef.current);
+    initialAutoTranslationsRef.current = getInitialAutoTranslations();
+    setAutoTranslations(initialAutoTranslationsRef.current);
     initialIsAdvancedTranslationsRef.current = getIsAdvancedTranslations();
     setIsAdvancedTranslations(initialIsAdvancedTranslationsRef.current);
     initialTranslationsTextRef.current = getInitialTranslationsText();
@@ -181,11 +191,13 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       zone.defaultFilter = deepCopy(filter);
       zone.filterExcludeIncoming = excludeIncoming;
       zone.filterPassThrough = passThrough;
+      zone.autoTranslations = autoTranslations;
       const parsedTranslations =
         isAdvancedTranslations && translationsText ? JSON.parse(translationsText) : undefined;
-      zone.translations = parsedTranslations;
+      zone.attributeTranslations = parsedTranslations;
+      attributes.auto_translations = autoTranslations;
       // Cannot be undefined, so set to empty object if no translations are provided
-      attributes.translations = parsedTranslations ? parsedTranslations : {};
+      attributes.attribute_translations = parsedTranslations ? parsedTranslations : {};
     } else {
       zone.children[id].filter = deepCopy(filter);
       zone.children[id].defaultFilter = deepCopy(filter);
@@ -230,23 +242,49 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     <Button {...BUTTONS.REMOVE} onClick={() => removeFilter(attribute)} />
   );
 
-  const FilterPassThroughToggle = (
+  const AutoTranslators = (
     <div className="tol-toggle-option">
       <Toggle
-        key="tol-filter-pass-through-toggle"
+        key="tol-auto-translations-toggle"
         onClick={() => {
-          setPassThrough(!passThrough);
+          setAutoTranslations(!autoTranslations);
         }}
-        checked={passThrough}
+        checked={autoTranslations}
       />
       <span className="tol-pr-sm" onClick={(e) => e.stopPropagation()}>
-        {FILTER_PASS_THROUGH.LABEL}
+        {AUTO_TRANSLATION.LABEL}
       </span>
       <IconTooltip
-        contents={
-          FILTER_PASS_THROUGH.TOOLTIP
-        }
+        contents={AUTO_TRANSLATION.TOOLTIP}
       />
+    </div>
+  )
+
+  const AdvancedTranslators = (
+    <div className="tol-toggle-option">
+      <Toggle
+        key="tol-advanced-translations-toggle"
+        onClick={() => {
+          setIsAdvancedTranslations(!isAdvancedTranslations);
+        }}
+        checked={isAdvancedTranslations}
+      />
+      <span className="tol-pr-sm" onClick={(e) => e.stopPropagation()}>
+        {ADVANCED_TRANSLATION.LABEL}
+      </span>
+      <IconTooltip
+        contents={ADVANCED_TRANSLATION.TOOLTIP}
+      />
+      {isAdvancedTranslations && (
+        <Input
+          className="tol-filter-translations-input"
+          as="textarea"
+          rows={translationsText ? 6 : 1}
+          placeholder={`{"above_zone_field_id": "current_zone_field_id"}`}
+          value={translationsText}
+          onChange={setTranslationsText}
+        />
+      )}
     </div>
   )
 
@@ -256,6 +294,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         key="tol-incoming-filters-toggle"
         onClick={() => {
           setExcludeIncoming(!excludeIncoming);
+          setAutoTranslations(false);
           setIsAdvancedTranslations(false);
         }}
         checked={excludeIncoming}
@@ -274,52 +313,44 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       />
     </div>
   )
-  const AdvancedTranslators = (
+
+  const FilterPassThroughToggle = (
     <div className="tol-toggle-option">
-      {!excludeIncoming && isZone && (
-        <>
-          <Toggle
-            key="tol-advanced-translations-toggle"
-            onClick={() => {
-              setIsAdvancedTranslations(!isAdvancedTranslations);
-            }}
-            checked={isAdvancedTranslations}
-          />
-          <span className="tol-pr-sm" onClick={(e) => e.stopPropagation()}>
-            {ADVANCED_TRANSLATION.LABEL}
-          </span>
-          <IconTooltip
-            contents={ADVANCED_TRANSLATION.TOOLTIP}
-          />
-        </>
-      )}
-      {isAdvancedTranslations && (
-        <Input
-          className="tol-filter-translations-input"
-          as="textarea"
-          rows={translationsText ? 6 : 1}
-          placeholder={`{"above_zone_field_id": "current_zone_field_id"}`}
-          value={translationsText}
-          onChange={setTranslationsText}
-        />
-      )}
+      <Toggle
+        key="tol-filter-pass-through-toggle"
+        onClick={() => {
+          setPassThrough(!passThrough);
+        }}
+        checked={passThrough}
+      />
+      <span className="tol-pr-sm" onClick={(e) => e.stopPropagation()}>
+        {FILTER_PASS_THROUGH.LABEL(normaliseCaps(boardObjectType))}
+      </span>
+      <IconTooltip
+        contents={
+          FILTER_PASS_THROUGH.TOOLTIP
+        }
+      />
     </div>
   )
+
+  const showTranslationToggles = isZone && !excludeIncoming;
 
   return (
     <div className="tol-filter-config-drawer">
       <Drawer
-        title={`Filtering on a ${objectType} ${boardObjectType}`}
+        title={`Filtering on a ${normaliseCaps(objectType)} ${normaliseCaps(boardObjectType)}`}
         open={open}
         setOpen={setOpen}
-        onSave={() => onSave(currentFilters || generateDefaultFilter(), passThrough, excludeIncoming)}
+        onSave={() => onSave(currentFilters || createEmptyFilter(), passThrough, excludeIncoming)}
         hasPendingChanges={hasPendingChanges}
         onSaveTestId="apply-filter-button"
       >
+        {showTranslationToggles && AutoTranslators}
+        {showTranslationToggles && AdvancedTranslators}
+        {isZone && <hr />}
         {ExcludeIncomingFiltersToggle}
-        {AdvancedTranslators}
         {FilterPassThroughToggle}
-        <hr />
         <AttributeSelector
           {...props}
           displaySource

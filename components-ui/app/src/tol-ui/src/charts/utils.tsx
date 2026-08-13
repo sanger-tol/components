@@ -19,7 +19,7 @@ import {
   mergeAndFilters,
   NO_DATA_FOUND_MESSAGE,
   TAggregationResult,
-  generateDefaultFilter
+  createEmptyFilter
 } from "..";
 
 // ------------------//
@@ -538,7 +538,7 @@ export function generateChartFilterFromBar(
   xAxis: string,
   type: HistogramGrouping,
 ) {
-  const localFilters = generateDefaultFilter();
+  const localFilters = createEmptyFilter();
 
   // Set the breakdown filter if a bucket is present
   if (barData["bucket"] !== undefined) {
