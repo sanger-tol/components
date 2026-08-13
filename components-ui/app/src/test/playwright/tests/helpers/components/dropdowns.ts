@@ -4,15 +4,12 @@
 
 import type { Locator, Page } from "@playwright/test";
 
-import { sleep } from "../sleep";
-
-/**
- * Selects the requested values from a dropdown
- * @param page The Playwright page handle
- * @param dropdown Playwright locator handle to the dropdown
- * @param values The values to select
- */
-export const selectFromDropdown = async (page: Page, dropdown: Locator, values: string[]) => {
+export const selectFromAttributeSelector = async (
+  page: Page,
+  dropdown: Locator,
+  values: string[],
+  provenances?: Record<string, string[]>
+) => {
   // Make sure the dropdown is ready to be used
   await dropdown.waitFor({ state: "visible" });
   
@@ -36,8 +33,42 @@ export const selectFromDropdown = async (page: Page, dropdown: Locator, values: 
       await textbox.fill(value);
     }
 
+    const option = await listbox.getByRole("option", { name: value }).first();
+
+    // Select the main option if either:
+    // * This is not a field where provenance is considered or available
+    // * This is a provenance field, and we want to select the main option
+    //   (denoted by the "calc" source)
     // Match by option text in this listbox so similarly named controls cannot conflict.
-    await listbox.getByRole("option", { name: value }).first().click();
+    if (!provenances?.[value] || provenances[value].includes("calc")) {
+      await option.click();
+
+    }
+
+    // Get the provenances provided to select for this value.
+    // Remove the "calc" provenance if present, because that refers to the main entry
+    const provenancesToSelect = 
+      provenances?.[value].filter((provenance) => provenance != "calc") || [];
+
+    // Open the provenance picker and select the desired provenance options if they were provdied
+    if (provenancesToSelect.length > 0) {
+      // Click the expand button to open the sub-dropdown
+      await option.locator(".tol-expand-button").first().click();
+
+      // Wait for the expand animation to complete
+      await option.locator(".rs-anim-in").waitFor({ state: "visible" });
+
+      // Click each desired provenance option
+      for (const provenance of provenancesToSelect) {
+        await option.locator(`[data-provenance="${provenance}"] label`).click();
+      }
+
+      // Click the expand button to close the sub-dropdown
+      await option.locator(".tol-expand-button").first().click();
+
+      // Wait for the animation to complete
+      await option.locator(".rs-anim-collapse").waitFor({ state: "hidden" });
+    }
   }
 
   // Close the dropdown.
@@ -45,4 +76,16 @@ export const selectFromDropdown = async (page: Page, dropdown: Locator, values: 
   // a manual sleep is needed.
   await dropdown.click();
   await page.waitForTimeout(200);
+}
+
+/**
+ * Selects the requested values from a dropdown
+ * @param page The Playwright page handle
+ * @param dropdown Playwright locator handle to the dropdown
+ * @param values The values to select
+ */
+export const selectFromDropdown = async (page: Page, dropdown: Locator, values: string[]) => {
+  // The same logic is used to select from an attribute selector, so we can reuse this function.
+  // If no provenance options are provided, it does the same thing.
+  await selectFromAttributeSelector(page, dropdown, values);
 }
