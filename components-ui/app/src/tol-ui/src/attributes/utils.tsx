@@ -202,7 +202,7 @@ export function renderTotalSelectedItems(
  * @param operator An object entry representing one operator in a filter
  * @returns Prose to be displayed next to the operator in the filter
  */
-export function getReadOnlyAndFilterText(
+export function getProseForAndFilters(
   [operatorType, operatorOptions]: [TFilterOperatorType, IFilterOperatorOptions]
 ): string {
   // Account for date edge case.
@@ -290,7 +290,7 @@ export function generateFilterDescriptions(filter?: IFilter): TDescribedFilters 
       for (const operator of Object.entries(operators)) {
         if (!describedFilters[attribute]) describedFilters[attribute] = [];
 
-        describedFilters[attribute].push(getReadOnlyAndFilterText(
+        describedFilters[attribute].push(getProseForAndFilters(
           operator as [TFilterOperatorType, IFilterOperatorOptions]
         ));
       }
