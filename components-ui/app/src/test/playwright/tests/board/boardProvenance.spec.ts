@@ -8,7 +8,6 @@ import {
   configureTable,
   createBoardAndViewAndZone,
   enterEditMode,
-  exitEditMode,
   isInHeadlessMode,
   setAuth,
 } from "../helpers";
@@ -43,10 +42,7 @@ test("User can select provenances in a table", async ({ page }) => {
         "scientific_name": ["calc", "goat", "sts", "tolqc"]
       }
     }
-  )
-  await exitEditMode(page);
-
+  );
   // Check all 4 columns are visible
-  await page.waitForTimeout(2_000)
   await expect(await page.getByText("Scientific Name").count()).toBe(4);
 });
