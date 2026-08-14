@@ -74,7 +74,7 @@ export const cellRendererParams: IBoardCellRenderers = {
         rename: "URL",
         required: true,
         description: "The URL to link to. Ensure external links prefix with 'http://' or 'https://'",
-        placeholder: "www.example.com"
+        placeholder: "https://www.example.com"
       },
       text: {
         type: "string",
