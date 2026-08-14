@@ -97,75 +97,135 @@ export const cellRendererParams: IBoardCellRenderers = {
         rename: "Group 1 Title",
         description: "The title of the first link group"
       },
-      firstGroupFirstLink: {
+      firstGroupFirstLinkUrl: {
         type: "string",
-        rename: "🔗 Link 1",
-        description: "The first link in group one"
+        rename: "🔗 Link 1 URL",
+        description: "The URL of the first link in group one"
       },
-      firstGroupSecondLink: {
+      firstGroupFirstLinkText: {
         type: "string",
-        rename: "🔗 Link 2",
-        description: "The second link in group one"
+        rename: "✏️ Link 1 Text",
+        description: "The text to display for the first link in group one"
       },
-      firstGroupThirdLink: {
+      firstGroupSecondLinkUrl: {
         type: "string",
-        rename: "🔗 Link 3",
-        description: "The third link in group one"
+        rename: "🔗 Link 2 URL",
+        description: "The URL of the second link in group one"
       },
-      firstGroupFourthLink: {
+      firstGroupSecondLinkText: {
         type: "string",
-        rename: "🔗 Link 4",
-        description: "The fourth link in group one"
+        rename: "✏️ Link 2 Text",
+        description: "The text to display for the second link in group one"
+      },
+      firstGroupThirdLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 3 URL",
+        description: "The URL of the third link in group one"
+      },
+      firstGroupThirdLinkText: {
+        type: "string",
+        rename: "✏️ Link 3 Text",
+        description: "The text to display for the third link in group one"
+      },
+      firstGroupFourthLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 4 URL",
+        description: "The URL of the fourth link in group one"
+      },
+      firstGroupFourthLinkText: {
+        type: "string",
+        rename: "✏️ Link 4 Text",
+        description: "The text to display for the fourth link in group one"
       },
       secondGroupTitle: {
         type: "string",
         rename: "Group 2 Title",
         description: "The title of the second link group"
       },
-      secondGroupFirstLink: {
+      secondGroupFirstLinkUrl: {
         type: "string",
-        rename: "🔗 Link 1",
-        description: "The first link in group two"
+        rename: "🔗 Link 1 URL",
+        description: "The URL of the first link in group two"
       },
-      secondGroupSecondLink: {
+      secondGroupFirstLinkText: {
         type: "string",
-        rename: "🔗 Link 2",
-        description: "The second link in group two"
+        rename: "✏️ Link 1 Text",
+        description: "The text to display for the first link in group two"
       },
-      secondGroupThirdLink: {
+      secondGroupSecondLinkUrl: {
         type: "string",
-        rename: "🔗 Link 3",
-        description: "The third link in group two"
+        rename: "🔗 Link 2 URL",
+        description: "The URL of the second link in group two"
       },
-      secondGroupFourthLink: {
+      secondGroupSecondLinkText: {
         type: "string",
-        rename: "🔗 Link 4",
-        description: "The fourth link in group two"
+        rename: "✏️ Link 2 Text",
+        description: "The text to display for the second link in group two"
+      },
+      secondGroupThirdLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 3 URL",
+        description: "The URL of the third link in group two"
+      },
+      secondGroupThirdLinkText: {
+        type: "string",
+        rename: "✏️ Link 3 Text",
+        description: "The text to display for the third link in group two"
+      },
+      secondGroupFourthLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 4 URL",
+        description: "The URL of the fourth link in group two"
+      },
+      secondGroupFourthLinkText: {
+        type: "string",
+        rename: "✏️ Link 4 Text",
+        description: "The text to display for the fourth link in group two"
       },
       thirdGroupTitle: {
         type: "string",
         rename: "Group 3 Title",
         description: "The title of the third link group"
       },
-      thirdGroupFirstLink: {
+      thirdGroupFirstLinkUrl: {
         type: "string",
-        rename: "🔗 Link 1",
-        description: "The first link in group three"
+        rename: "🔗 Link 1 URL",
+        description: "The URL of the first link in group three"
       },
-      thirdGroupSecondLink: {
+      thirdGroupFirstLinkText: {
         type: "string",
-        rename: "🔗 Link 2",
-        description: "The second link in group three"
+        rename: "✏️ Link 1 Text",
+        description: "The text to display for the first link in group three"
       },
-      thirdGroupThirdLink: {
+      thirdGroupSecondLinkUrl: {
         type: "string",
-        rename: "🔗 Link 3",
-        description: "The third link in group three"
+        rename: "🔗 Link 2 URL",
+        description: "The URL of the second link in group three"
       },
-      thirdGroupFourthLink: {
+      thirdGroupSecondLinkText: {
         type: "string",
-        rename: "🔗 Link 4",
-        description: "The fourth link in group three"
+        rename: "✏️ Link 2 Text",
+        description: "The text to display for the second link in group three"
+      },
+      thirdGroupThirdLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 3 URL",
+        description: "The URL of the third link in group three"
+      },
+      thirdGroupThirdLinkText: {
+        type: "string",
+        rename: "✏️ Link 3 Text",
+        description: "The text to display for the third link in group three"
+      },
+      thirdGroupFourthLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 4 URL",
+        description: "The URL of the fourth link in group three"
+      },
+      thirdGroupFourthLinkText: {
+        type: "string",
+        rename: "✏️ Link 4 Text",
+        description: "The text to display for the fourth link in group three"
       },
     }
   },
