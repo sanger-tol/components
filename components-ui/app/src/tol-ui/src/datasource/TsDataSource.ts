@@ -11,7 +11,6 @@ import {
   API_OPERATIONS,
   deepCopy,
   httpClient,
-  normaliseCaps,
   isEmptyObject,
 } from "..";
 import type {
@@ -368,20 +367,6 @@ export class TsDataSource {
     return attributeDescriptor?.available_on_relationships ?? false;
   }
 
-  private addIds(attributes: IAttributes) {
-    for (const [objectType, attr] of Object.entries(attributes)) {
-      attr["id"] = {
-        authoritative: true,
-        available_on_relationships: true,
-        cardinality: 99999,
-        description: null,
-        display_name: normaliseCaps("id", objectType),
-        python_type: "str",
-        source: null,
-      };
-    }
-  }
-
   private addObjectTypeToAttributes = (attributes: IAttributes) => {
     for (const [objectType, meta] of Object.entries(attributes)) {
       for (const [, value] of Object.entries(meta)) {
@@ -394,7 +379,6 @@ export class TsDataSource {
     attributes: IAttributes,
     relationships: IRelationships
   ) {
-    this.addIds(attributes);
     const newAttributes: IAttributes = deepCopy(attributes);
     this.addObjectTypeToAttributes(newAttributes);
     for (const entity in relationships) {
@@ -404,12 +388,6 @@ export class TsDataSource {
         for (const [relationship, objType] of Object.entries(
           oneRelationships
         )) {
-          newAttributes[entity][`${relationship}.id`] = {
-            available_on_relationships: true,
-            python_type: "str",
-            object_type: objType,
-            relationship_name: relationship,
-          };
           for (const [key, meta] of Object.entries(attributes[objType])) {
             const metaCopy = deepCopy(meta);
             metaCopy.object_type = objType;

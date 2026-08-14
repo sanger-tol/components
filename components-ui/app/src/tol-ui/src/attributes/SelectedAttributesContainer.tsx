@@ -124,19 +124,19 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
             className={"tol-active-column-btn"}
             onClick={() => moveAttributeUp(index)}
           >
-            <Icon icon="arrow-up" />
+            <Icon icon="arrow-up" tooltip="Move Column Up" />
           </div>
           <div
             className={"tol-active-column-btn"}
             onClick={() => moveAttributeDown(index)}
           >
-            <Icon icon="arrow-down" />
+            <Icon icon="arrow-down" tooltip="Move Column Down" />
           </div>
           <div
             className="tol-active-column-btn delete"
             onClick={() => removeAttribute(index)}
           >
-            <Icon icon="close" />
+            <Icon icon="close" tooltip="Delete Column" />
           </div>
         </div>
       </div>

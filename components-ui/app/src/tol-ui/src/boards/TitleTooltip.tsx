@@ -4,12 +4,13 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReadOnlyFilters, TsDataSource, normaliseCaps, IFilter } from "..";
+import { copyToClipboard, Icon, normaliseCaps, ReadOnlyFilters, TsDataSource } from "..";
+import type { IFilter } from "..";
 
 export interface PTitleTooltip {
   /**
- * The ID of the thing (e.g. Component or Zone) that this tooltip is displayed on
- * */
+   * The ID of the thing (e.g. Component or Zone) that this tooltip is displayed on
+   * */
   id?: any;
   title: string;
   objectType: string;
@@ -26,6 +27,18 @@ export function TitleTooltip(props: PTitleTooltip) {
     filter,
   } = props;
 
+  const Id = (
+    <p>
+      <b>ID:</b> {id}
+      <Icon
+        className="tol-ml-sm"
+        icon="copy"
+        tooltip="Copy"
+        onClick={() => copyToClipboard(id)}
+      />
+    </p>
+  );
+
   return (
     <div className="tol-utility-bar-title-tooltip">
       {title && <h6>{title}</h6>}
@@ -37,7 +50,7 @@ export function TitleTooltip(props: PTitleTooltip) {
         objectType={objectType!}
         dataSource={dataSource!}
       />
-      {id && <p><b>ID: </b> {id}</p>}
+      {id && Id}
     </div>
   )
 }
