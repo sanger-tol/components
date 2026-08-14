@@ -90,7 +90,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     isZone ? zone.autoTranslations ?? true : false
   );
   const getIsAdvancedTranslations = () => (
-    isZone ? !isEmptyObject(zone.attributeTranslations) || !isEmptyObject(zone.relationshipTranslations) : false
+    isZone ? !isEmptyObject(zone.attributeTranslations) || (zone.translationPath?.trim().length ?? 0) > 0 : false
   );
   const getInitialAttributeTranslationsText = () => (
     isZone && !isEmptyObject(zone.attributeTranslations)
@@ -98,9 +98,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       : ""
   );
   const getInitialRelationshipTranslationsText = () => (
-    isZone && !isEmptyObject(zone.relationshipTranslations)
-      ? JSON.stringify(zone.relationshipTranslations)
-      : ""
+    isZone && zone.translationPath ? zone.translationPath : ""
   );
   const getInitialCurrentFilterZone = (filter: IFilter | undefined) => (
     defineZoneWithComponentList(
@@ -160,8 +158,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     relationshipTranslationsText !== initialRelationshipTranslationsTextRef.current
   ) && (
     !isAdvancedTranslations ||
-    isValidJson(attributeTranslationsText) ||
-    isValidJson(relationshipTranslationsText)
+    isValidJson(attributeTranslationsText)
   );
 
   useEffect(() => {
@@ -214,14 +211,14 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           : undefined;
       const parsedRelationshipTranslations =
         isAdvancedTranslations && relationshipTranslationsText
-          ? JSON.parse(relationshipTranslationsText)
+          ? relationshipTranslationsText.trim()
           : undefined;
       zone.attributeTranslations = parsedAttributeTranslations;
-      zone.relationshipTranslations = parsedRelationshipTranslations;
+      zone.translationPath = parsedRelationshipTranslations;
       attributes.auto_translations = autoTranslations;
       // Cannot be undefined, so set to empty object if no translations are provided
       attributes.attribute_translations = parsedAttributeTranslations ? parsedAttributeTranslations : {};
-      attributes.relationship_translations = parsedRelationshipTranslations ? parsedRelationshipTranslations : {};
+      attributes.translation_path = parsedRelationshipTranslations || undefined;
     } else {
       zone.children[id].filter = deepCopy(filter);
       zone.children[id].defaultFilter = deepCopy(filter);

@@ -59,15 +59,6 @@ export function generateAttributeTranslations(
   return translatedFilter;
 }
 
-export function generateRelationshipTranslations(
-  sourceZone: IZone,
-  relationshipTranslations?: TTranslations,
-  excludeAfterId?: string,
-) {
-  const translatedFilter = createEmptyFilter();
-  return translatedFilter;
-}
-
 export function useTranslator(params: {
   source: IUseZoneMeta;
   target: IUseZoneMeta;

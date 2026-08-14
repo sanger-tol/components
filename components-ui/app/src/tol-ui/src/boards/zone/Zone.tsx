@@ -67,7 +67,7 @@ export function Zone(props: PZone) {
     zone.filterPassThrough,
     zone.defaultFilter,
     zone.attributeTranslations,
-    zone.relationshipTranslations,
+    zone.translationPath,
     editMode
   ]);
 

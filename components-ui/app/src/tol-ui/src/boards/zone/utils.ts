@@ -8,11 +8,9 @@ import {
   createEmptyFilter,
   generateFilter,
   generateAttributeTranslations,
-  generateRelationshipTranslations,
   getSiblingBoardEntity,
   isAttribute,
   isRelationship,
-  mergeFilters,
   RELATIONSHIP_SEPARATOR,
 } from "../..";
 import type { IZone, IFilter, IFieldTranslationParams, IView } from "../..";
@@ -138,10 +136,8 @@ export async function translateZoneAboveFilter(
     /**
      * Add the custom translations to the translated filter if they exist.
      */
-    translatedFilter = mergeFilters(
-      generateAttributeTranslations(zoneAbove, currentZone.attributeTranslations),
-      generateRelationshipTranslations(zoneAbove, currentZone.relationshipTranslations),
-    );
+    translatedFilter = 
+      generateAttributeTranslations(zoneAbove, currentZone.attributeTranslations)
 
     if (currentZone.autoTranslations) {
 

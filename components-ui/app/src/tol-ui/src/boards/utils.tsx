@@ -155,7 +155,7 @@ export function defineBoardEntity(
     entity = {
       ...entity,
       attributeTranslations: definedEntity.attribute_translations,
-      relationshipTranslations: definedEntity.relationship_translations,
+      translationPath: definedEntity.translation_path,
       autoTranslations: definedEntity.auto_translations,
     }
   }

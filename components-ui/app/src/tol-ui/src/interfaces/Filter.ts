@@ -67,9 +67,10 @@ export type IDBBoardEntityFilter = {
    */
   attribute_translations?: TTranslations;
   /**
-   * Custom relationship translations for incoming filters, used at the zone level.
+   * Custom relationship translation path for incoming filters, used at the zone level.
+   * This is a single path string (e.g., "specimen.species") that can be used to translate.
    */
-  relationship_translations?: TTranslations;
+  translation_path?: string;
   /**
    * Whether automatic incoming-filter translation is enabled for the zone.
    */

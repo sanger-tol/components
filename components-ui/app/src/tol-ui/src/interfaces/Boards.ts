@@ -98,9 +98,10 @@ export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
    */
   attributeTranslations?: TTranslations;
   /**
-   * Custom translations for specific relationships
+   * Custom relationship translation path for incoming filters, used at the zone level.
+   * This is a single path string (e.g., "specimen.species") that can be used to translate.
    */
-  relationshipTranslations?: TTranslations;
+  translationPath?: string;
   /**
    * Whether to use automatic translations where possible
    */
