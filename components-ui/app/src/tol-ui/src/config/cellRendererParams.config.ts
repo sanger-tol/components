@@ -85,6 +85,90 @@ export const cellRendererParams: IBoardCellRenderers = {
       },
     }
   },
+  linkGroups: {
+    rename: "Link Groups",
+    description: (
+      "A means of displaying multiple links in one cell, " +
+      "organised by group. All fields are optional."
+    ),
+    params: {
+      firstGroupTitle: {
+        type: "string",
+        rename: "Group 1 Title",
+        description: "The title of the first link group"
+      },
+      firstGroupFirstLink: {
+        type: "string",
+        rename: "🔗 Link 1",
+        description: "The first link in group one"
+      },
+      firstGroupSecondLink: {
+        type: "string",
+        rename: "🔗 Link 2",
+        description: "The second link in group one"
+      },
+      firstGroupThirdLink: {
+        type: "string",
+        rename: "🔗 Link 3",
+        description: "The third link in group one"
+      },
+      firstGroupFourthLink: {
+        type: "string",
+        rename: "🔗 Link 4",
+        description: "The fourth link in group one"
+      },
+      secondGroupTitle: {
+        type: "string",
+        rename: "Group 2 Title",
+        description: "The title of the second link group"
+      },
+      secondGroupFirstLink: {
+        type: "string",
+        rename: "🔗 Link 1",
+        description: "The first link in group two"
+      },
+      secondGroupSecondLink: {
+        type: "string",
+        rename: "🔗 Link 2",
+        description: "The second link in group two"
+      },
+      secondGroupThirdLink: {
+        type: "string",
+        rename: "🔗 Link 3",
+        description: "The third link in group two"
+      },
+      secondGroupFourthLink: {
+        type: "string",
+        rename: "🔗 Link 4",
+        description: "The fourth link in group two"
+      },
+      thirdGroupTitle: {
+        type: "string",
+        rename: "Group 3 Title",
+        description: "The title of the third link group"
+      },
+      thirdGroupFirstLink: {
+        type: "string",
+        rename: "🔗 Link 1",
+        description: "The first link in group three"
+      },
+      thirdGroupSecondLink: {
+        type: "string",
+        rename: "🔗 Link 2",
+        description: "The second link in group three"
+      },
+      thirdGroupThirdLink: {
+        type: "string",
+        rename: "🔗 Link 3",
+        description: "The third link in group three"
+      },
+      thirdGroupFourthLink: {
+        type: "string",
+        rename: "🔗 Link 4",
+        description: "The fourth link in group three"
+      },
+    }
+  },
   longText: {
     rename: "Long Text",
     allowedDataTypes: ["str", "float", "int"],
