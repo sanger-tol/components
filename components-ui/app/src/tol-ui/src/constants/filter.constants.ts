@@ -15,7 +15,7 @@ export const ATTRIBUTE_TRANSLATIONS_PLACEHOLDER =
 	'{"above_zone_field_id": "current_zone_field_id"}';
 
 export const RELATIONSHIP_TRANSLATIONS_PLACEHOLDER =
-	'{"above_zone_relationship_path": "current_zone_relationship_path"}';
+	"relationship.path.to.above.zone";
 
 export const FILTER_PASS_THROUGH = {
 	LABEL: (type: string) => `Apply the following filters only to this ${type}.`,
@@ -33,13 +33,13 @@ export const FILTER_EXCLUDE_INCOMING = {
 };
 
 export const ADVANCED_TRANSLATION = {
-	LABEL: "Use advanced translations.",
+	LABEL: "Use attribute translations.",
 	TOOLTIP:
 		"Toggling this allows you to specify a mapping of custom translations. These are prioritised over automatic translations. This is formatted using JSON.",
 };
 
-export const AUTO_TRANSLATION = {
-	LABEL: "Use automatic translations.",
+export const RELATIONSHIP_TRANSLATION = {
+	LABEL: "Use relationship translations.",
 	TOOLTIP:
-		"Toggling this on enables automatic translation of incoming filters between related zones.",
+		"Toggling this on enables relationship translation of incoming filters between related zones.",
 };

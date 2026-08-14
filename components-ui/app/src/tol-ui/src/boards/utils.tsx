@@ -154,9 +154,9 @@ export function defineBoardEntity(
     const definedEntity = entity as any;
     entity = {
       ...entity,
-      attributeTranslations: definedEntity.attribute_translations,
+      relationshipTranslation: definedEntity.relationship_translation,
       translationPath: definedEntity.translation_path,
-      autoTranslations: definedEntity.auto_translations,
+      attributeTranslations: definedEntity.attribute_translations,
     }
   }
 

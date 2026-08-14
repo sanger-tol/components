@@ -327,34 +327,6 @@ export class TsDataSource {
   }
 
   /**
-   * Generates a lookup table for relationship paths between object types
-   * using the relationship config from the current datasource instance.
-   * 
-   * @returns A lookup table for relationship paths between object types.
-   */
-  public async relationshipPaths(): Promise<TRelationshipPaths> {
-    if (!isEmptyObject(relationshipPathsCache)) return relationshipPathsCache;
-
-    const relationships = await this.relationshipConfig();
-
-    for (const [sourceObjectType, relations] of Object.entries(relationships)) {
-      const oneRelationships = Object.entries(relations.one ?? {});
-      if (oneRelationships.length === 0) continue;
-
-      const sourceLookup = (relationshipPathsCache[sourceObjectType] ??= {});
-
-      for (const [relationship, targetObjectType] of oneRelationships) {
-        const translator = (sourceLookup[targetObjectType] ??= {
-          paths: new Set<string>(),
-        });
-
-        translator.paths.add(relationship);
-      }
-    }
-    return relationshipPathsCache;
-  }
-
-  /**
    * Determines whether a given field is available on relationships for an object type.
    *
    * @param field - The field name to check.
@@ -758,5 +730,94 @@ export class TsDataSource {
       }
     }
     return null;
+  }
+
+  /**
+   * Finds the shortest relationship path between two object types using breadth-first search over
+   * the relationship config. Both `one` and `many` relationships are traversed.
+   *
+   * @param sourceObjectType - The object type to start from (e.g. `"sample"`).
+   * @param targetObjectType - The object type to reach (e.g. `"species"`).
+   * @returns A dot-separated path string (e.g. `"specimen.species"`), or `null` if
+   *   no path exists between the two object types.
+   */
+  public async findShortedRelationshipPath(
+    sourceObjectType: string,
+    targetObjectType: string
+  ): Promise<string | null> {
+    if (sourceObjectType === targetObjectType) return "";
+
+    const relationshipConfig = await this.relationshipConfig();
+
+    // Each queue entry holds the current object type and the path of relationship names taken to reach it
+    const queue: Array<[string, string[]]> = [[sourceObjectType, []]];
+    // Track visited types to avoid cycles
+    const visited = new Set<string>([sourceObjectType]);
+
+    while (queue.length > 0) {
+      const [currentType, currentPath] = queue.shift()!;
+      const relationships = relationshipConfig[currentType];
+
+      for (const side of ["one", "many"] as const) {
+        for (const [relationshipName, relatedType] of Object.entries(relationships?.[side] ?? {})) {
+          if (visited.has(relatedType)) continue;
+          const newPath = [...currentPath, relationshipName];
+          // Because we're using breadth-first search, the first time we reach the target is the shortest path
+          if (relatedType === targetObjectType) {
+            return newPath.join(".");
+          }
+          visited.add(relatedType);
+          queue.push([relatedType, newPath]);
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Rewrites a relationship field to use the shortest relationship path while preserving
+   * the final attribute name.
+   *
+   * For example, if `field` is `specimens.samples.species.name` and the shortest path
+   * from `sourceObjectType` to `species` is `species`, this returns `species.name`.
+   *
+   * @param sourceObjectType - The object type that the field should be relative to.
+   * @param field - A field that may include relationship segments followed by an attribute.
+   * @returns The shortest equivalent field, or the original field when no shorter path can be resolved.
+   */
+  public async findShortestRelationshipField(
+    sourceObjectType: string,
+    field: string
+  ): Promise<string> {
+    const splitField = field.split(".");
+    if (splitField.length <= 1) return field;
+
+    const relationshipConfig = await this.relationshipConfig();
+    const attribute = splitField[splitField.length - 1];
+
+    // Resolve the final object type reached by the full relationship chain.
+    let currentObjectType = sourceObjectType;
+    for (const relationshipName of splitField.slice(0, -1)) {
+      const nextObjectType =
+        relationshipConfig[currentObjectType]?.one?.[relationshipName] ??
+        relationshipConfig[currentObjectType]?.many?.[relationshipName];
+      if (!nextObjectType) return field;
+      currentObjectType = nextObjectType;
+    }
+
+    const relatedObjectType = currentObjectType;
+
+    if (!relatedObjectType) return field;
+
+    const shortestPath = await this.findShortedRelationshipPath(
+      sourceObjectType,
+      relatedObjectType
+    );
+
+    if (shortestPath === null) return field;
+    if (shortestPath === "") return attribute;
+
+    return `${shortestPath}.${attribute}`;
   }
 }

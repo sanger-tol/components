@@ -339,10 +339,10 @@
 }
 
 .tol-toggle-option {
-  margin-bottom: 26px;
+  margin-bottom: var(--tol-spacing-md);
 
   .rs-toggle {
-    margin-right: 10px;
+    margin-right: var(--tol-spacing-sm);
   }
 }
 

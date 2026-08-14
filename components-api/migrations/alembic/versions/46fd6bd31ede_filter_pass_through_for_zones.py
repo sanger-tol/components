@@ -19,8 +19,8 @@ depends_on = None
 def upgrade() -> None:
     # Translations
     op.alter_column('zone', 'translations', new_column_name='attribute_translations')
+    op.add_column('zone', sa.Column('relationship_translation', sa.Boolean(), nullable=False, server_default=sa.true()))
     op.add_column('zone', sa.Column('translation_path', sa.TEXT, nullable=True))
-    op.add_column('zone', sa.Column('auto_translations', sa.Boolean(), nullable=False, server_default=sa.true()))
 
     # Filter pass through
     op.add_column('zone', sa.Column('filter_pass_through', sa.Boolean(), nullable=False, server_default=sa.false()))
@@ -28,6 +28,6 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_column('zone', 'filter_pass_through')
-    op.drop_column('zone', 'auto_translations')
+    op.drop_column('zone', 'relationship_translation')
     op.drop_column('zone', 'translation_path')
     op.alter_column('zone', 'attribute_translations', new_column_name='translations')

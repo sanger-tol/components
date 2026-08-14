@@ -66,8 +66,9 @@ export function Zone(props: PZone) {
     zone.filterExcludeIncoming,
     zone.filterPassThrough,
     zone.defaultFilter,
-    zone.attributeTranslations,
+    zone.relationshipTranslation,
     zone.translationPath,
+    zone.attributeTranslations,
     editMode
   ]);
 
@@ -226,6 +227,7 @@ export function Zone(props: PZone) {
         setOpen={setOpenFilters}
         zone={zone}
         setZone={setZone}
+        aboveZone={zoneAbove}
       />
     </div>
   );
