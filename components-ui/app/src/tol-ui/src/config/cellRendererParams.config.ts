@@ -107,6 +107,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         rename: "✏️ Link 1 Text",
         description: "The text to display for the first link in group one"
       },
+      firstGroupFirstLinkCondition: {
+        type: "condition",
+        rename: "Link 1 Condition",
+        description: "The condition used to know whether to show this link"
+      },
       firstGroupSecondLinkUrl: {
         type: "string",
         rename: "🔗 Link 2 URL",
@@ -116,6 +121,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         type: "string",
         rename: "✏️ Link 2 Text",
         description: "The text to display for the second link in group one"
+      },
+      firstGroupSecondLinkCondition: {
+        type: "condition",
+        rename: "Link 2 Condition",
+        description: "The condition used to know whether to show this link"
       },
       firstGroupThirdLinkUrl: {
         type: "string",
@@ -127,6 +137,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         rename: "✏️ Link 3 Text",
         description: "The text to display for the third link in group one"
       },
+      firstGroupThirdLinkCondition: {
+        type: "condition",
+        rename: "Link 3 Condition",
+        description: "The condition used to know whether to show this link"
+      },
       firstGroupFourthLinkUrl: {
         type: "string",
         rename: "🔗 Link 4 URL",
@@ -136,6 +151,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         type: "string",
         rename: "✏️ Link 4 Text",
         description: "The text to display for the fourth link in group one"
+      },
+      firstGroupFourthLinkCondition: {
+        type: "condition",
+        rename: "Link 4 Condition",
+        description: "The condition used to know whether to show this link"
       },
       secondGroupTitle: {
         type: "string",
@@ -152,6 +172,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         rename: "✏️ Link 1 Text",
         description: "The text to display for the first link in group two"
       },
+      secondGroupFirstLinkCondition: {
+        type: "condition",
+        rename: "Link 1 Condition",
+        description: "The condition used to know whether to show this link"
+      },
       secondGroupSecondLinkUrl: {
         type: "string",
         rename: "🔗 Link 2 URL",
@@ -161,6 +186,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         type: "string",
         rename: "✏️ Link 2 Text",
         description: "The text to display for the second link in group two"
+      },
+      secondGroupSecondLinkCondition: {
+        type: "condition",
+        rename: "Link 2 Condition",
+        description: "The condition used to know whether to show this link"
       },
       secondGroupThirdLinkUrl: {
         type: "string",
@@ -172,6 +202,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         rename: "✏️ Link 3 Text",
         description: "The text to display for the third link in group two"
       },
+      secondGroupThirdLinkCondition: {
+        type: "condition",
+        rename: "Link 3 Condition",
+        description: "The condition used to know whether to show this link"
+      },
       secondGroupFourthLinkUrl: {
         type: "string",
         rename: "🔗 Link 4 URL",
@@ -181,6 +216,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         type: "string",
         rename: "✏️ Link 4 Text",
         description: "The text to display for the fourth link in group two"
+      },
+      secondGroupFourthLinkCondition: {
+        type: "condition",
+        rename: "Link 4 Condition",
+        description: "The condition used to know whether to show this link"
       },
       thirdGroupTitle: {
         type: "string",
@@ -197,6 +237,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         rename: "✏️ Link 1 Text",
         description: "The text to display for the first link in group three"
       },
+      thirdGroupFirstLinkCondition: {
+        type: "condition",
+        rename: "Link 1 Condition",
+        description: "The condition used to know whether to show this link"
+      },
       thirdGroupSecondLinkUrl: {
         type: "string",
         rename: "🔗 Link 2 URL",
@@ -206,6 +251,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         type: "string",
         rename: "✏️ Link 2 Text",
         description: "The text to display for the second link in group three"
+      },
+      thirdGroupSecondLinkCondition: {
+        type: "condition",
+        rename: "Link 2 Condition",
+        description: "The condition used to know whether to show this link"
       },
       thirdGroupThirdLinkUrl: {
         type: "string",
@@ -217,6 +267,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         rename: "✏️ Link 3 Text",
         description: "The text to display for the third link in group three"
       },
+      thirdGroupThirdLinkCondition: {
+        type: "condition",
+        rename: "Link 3 Condition",
+        description: "The condition used to know whether to show this link"
+      },
       thirdGroupFourthLinkUrl: {
         type: "string",
         rename: "🔗 Link 4 URL",
@@ -226,6 +281,11 @@ export const cellRendererParams: IBoardCellRenderers = {
         type: "string",
         rename: "✏️ Link 4 Text",
         description: "The text to display for the fourth link in group three"
+      },
+      thirdGroupFourthLinkCondition: {
+        type: "condition",
+        rename: "Link 4 Condition",
+        description: "The condition used to know whether to show this link"
       },
     }
   },
