@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+//
+// SPDX-License-Identifier: MIT
+
 export interface IConfigureTable {
   /**
    * The field to choose in the 'Default Sort' select
