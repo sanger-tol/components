@@ -29,6 +29,10 @@
   margin-left: 6px;
 }
 
+.tol-data-point-renderer-modal-bottom-buttons {
+  @extend .tol-mt-md;
+}
+
 .tol-data-point-renderer-modal-condition-param-options {
   overflow: hidden;
 
@@ -115,4 +119,20 @@
   display: block;
   clear: both;
   /* important with float:left tol-tag */
+}
+
+.tol-data-point-link-group-group {
+  @extend .tol-mb-sm;
+
+  ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    padding-inline-start: 0;
+    gap: var(--tol-spacing-xs);
+  }
+}
+
+.tol-data-point-link-group-link {
+  display: inline;
 }

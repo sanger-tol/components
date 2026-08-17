@@ -46,7 +46,7 @@ export function CellRendererConfigurer(props: PCellRendererConfigurer) {
       }
       onClick={() => setModalOpen(true)}
     >
-      <Icon icon="palette"/>
+      <Icon icon="palette" tooltip="Configure DataPoint Renderer" />
     </div>
   );
 
