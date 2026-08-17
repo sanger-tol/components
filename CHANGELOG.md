@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.13`
+
+17-08-2026
+
+- Added new LinkGroups data point renderer
+
 ## tol-ui `4.0.12`
 
 13-08-2026
