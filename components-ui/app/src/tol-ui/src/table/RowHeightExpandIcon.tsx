@@ -20,6 +20,7 @@ export function RowHeightExpandIcon(props: PRowHeightExpandIcon) {
       icon={expanded ? "arrow-up-long" : "arrow-down-long"}
       className="tol-row-expand-btn"
       onClick={onClick}
+      tooltip="Expand Row"
     />
   );
 }
