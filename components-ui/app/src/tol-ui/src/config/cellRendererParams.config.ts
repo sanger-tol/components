@@ -100,12 +100,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       firstGroupFirstLinkUrl: {
         type: "string",
         rename: "🔗 Link 1 URL",
-        description: "The URL of the first link in group one"
+        description: "The URL of the first link in group one",
+        placeholder: "https://www.example.com"
       },
       firstGroupFirstLinkText: {
         type: "string",
         rename: "✏️ Link 1 Text",
-        description: "The text to display for the first link in group one"
+        description: "The text to display for the first link in group one",
+        placeholder: "Link Name"
       },
       firstGroupFirstLinkCondition: {
         type: "condition",
@@ -115,12 +117,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       firstGroupSecondLinkUrl: {
         type: "string",
         rename: "🔗 Link 2 URL",
-        description: "The URL of the second link in group one"
+        description: "The URL of the second link in group one",
+        placeholder: "https://www.example.com"
       },
       firstGroupSecondLinkText: {
         type: "string",
         rename: "✏️ Link 2 Text",
-        description: "The text to display for the second link in group one"
+        description: "The text to display for the second link in group one",
+        placeholder: "Link Name"
       },
       firstGroupSecondLinkCondition: {
         type: "condition",
@@ -130,12 +134,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       firstGroupThirdLinkUrl: {
         type: "string",
         rename: "🔗 Link 3 URL",
-        description: "The URL of the third link in group one"
+        description: "The URL of the third link in group one",
+        placeholder: "https://www.example.com"
       },
       firstGroupThirdLinkText: {
         type: "string",
         rename: "✏️ Link 3 Text",
-        description: "The text to display for the third link in group one"
+        description: "The text to display for the third link in group one",
+        placeholder: "Link Name"
       },
       firstGroupThirdLinkCondition: {
         type: "condition",
@@ -145,12 +151,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       firstGroupFourthLinkUrl: {
         type: "string",
         rename: "🔗 Link 4 URL",
-        description: "The URL of the fourth link in group one"
+        description: "The URL of the fourth link in group one",
+        placeholder: "https://www.example.com"
       },
       firstGroupFourthLinkText: {
         type: "string",
         rename: "✏️ Link 4 Text",
-        description: "The text to display for the fourth link in group one"
+        description: "The text to display for the fourth link in group one",
+        placeholder: "Link Name"
       },
       firstGroupFourthLinkCondition: {
         type: "condition",
@@ -165,12 +173,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       secondGroupFirstLinkUrl: {
         type: "string",
         rename: "🔗 Link 1 URL",
-        description: "The URL of the first link in group two"
+        description: "The URL of the first link in group two",
+        placeholder: "https://www.example.com"
       },
       secondGroupFirstLinkText: {
         type: "string",
         rename: "✏️ Link 1 Text",
-        description: "The text to display for the first link in group two"
+        description: "The text to display for the first link in group two",
+        placeholder: "Link Name"
       },
       secondGroupFirstLinkCondition: {
         type: "condition",
@@ -180,12 +190,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       secondGroupSecondLinkUrl: {
         type: "string",
         rename: "🔗 Link 2 URL",
-        description: "The URL of the second link in group two"
+        description: "The URL of the second link in group two",
+        placeholder: "https://www.example.com"
       },
       secondGroupSecondLinkText: {
         type: "string",
         rename: "✏️ Link 2 Text",
-        description: "The text to display for the second link in group two"
+        description: "The text to display for the second link in group two",
+        placeholder: "Link Name"
       },
       secondGroupSecondLinkCondition: {
         type: "condition",
@@ -195,12 +207,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       secondGroupThirdLinkUrl: {
         type: "string",
         rename: "🔗 Link 3 URL",
-        description: "The URL of the third link in group two"
+        description: "The URL of the third link in group two",
+        placeholder: "https://www.example.com"
       },
       secondGroupThirdLinkText: {
         type: "string",
         rename: "✏️ Link 3 Text",
-        description: "The text to display for the third link in group two"
+        description: "The text to display for the third link in group two",
+        placeholder: "Link Name"
       },
       secondGroupThirdLinkCondition: {
         type: "condition",
@@ -210,12 +224,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       secondGroupFourthLinkUrl: {
         type: "string",
         rename: "🔗 Link 4 URL",
-        description: "The URL of the fourth link in group two"
+        description: "The URL of the fourth link in group two",
+        placeholder: "https://www.example.com"
       },
       secondGroupFourthLinkText: {
         type: "string",
         rename: "✏️ Link 4 Text",
-        description: "The text to display for the fourth link in group two"
+        description: "The text to display for the fourth link in group two",
+        placeholder: "Link Name"
       },
       secondGroupFourthLinkCondition: {
         type: "condition",
@@ -230,12 +246,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       thirdGroupFirstLinkUrl: {
         type: "string",
         rename: "🔗 Link 1 URL",
-        description: "The URL of the first link in group three"
+        description: "The URL of the first link in group three",
+        placeholder: "https://www.example.com"
       },
       thirdGroupFirstLinkText: {
         type: "string",
         rename: "✏️ Link 1 Text",
-        description: "The text to display for the first link in group three"
+        description: "The text to display for the first link in group three",
+        placeholder: "Link Name"
       },
       thirdGroupFirstLinkCondition: {
         type: "condition",
@@ -245,12 +263,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       thirdGroupSecondLinkUrl: {
         type: "string",
         rename: "🔗 Link 2 URL",
-        description: "The URL of the second link in group three"
+        description: "The URL of the second link in group three",
+        placeholder: "https://www.example.com"
       },
       thirdGroupSecondLinkText: {
         type: "string",
         rename: "✏️ Link 2 Text",
-        description: "The text to display for the second link in group three"
+        description: "The text to display for the second link in group three",
+        placeholder: "Link Name"
       },
       thirdGroupSecondLinkCondition: {
         type: "condition",
@@ -260,12 +280,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       thirdGroupThirdLinkUrl: {
         type: "string",
         rename: "🔗 Link 3 URL",
-        description: "The URL of the third link in group three"
+        description: "The URL of the third link in group three",
+        placeholder: "https://www.example.com"
       },
       thirdGroupThirdLinkText: {
         type: "string",
         rename: "✏️ Link 3 Text",
-        description: "The text to display for the third link in group three"
+        description: "The text to display for the third link in group three",
+        placeholder: "Link Name"
       },
       thirdGroupThirdLinkCondition: {
         type: "condition",
@@ -275,12 +297,14 @@ export const cellRendererParams: IBoardCellRenderers = {
       thirdGroupFourthLinkUrl: {
         type: "string",
         rename: "🔗 Link 4 URL",
-        description: "The URL of the fourth link in group three"
+        description: "The URL of the fourth link in group three",
+        placeholder: "https://www.example.com"
       },
       thirdGroupFourthLinkText: {
         type: "string",
         rename: "✏️ Link 4 Text",
-        description: "The text to display for the fourth link in group three"
+        description: "The text to display for the fourth link in group three",
+        placeholder: "Link Name"
       },
       thirdGroupFourthLinkCondition: {
         type: "condition",
