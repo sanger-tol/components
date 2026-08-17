@@ -48,44 +48,58 @@ export interface PLinkGroups {
   thirdGroupFourthLinkCondition?: boolean;
 }
 
+const Link = ({
+  rendererProps,
+  placement,
+  groupPlacement,
+}: {
+  rendererProps: PLinkGroups,
+  placement: string,
+  groupPlacement: string,
+}) => {
+  const linkUrl = rendererProps[`${groupPlacement}Group${placement}LinkUrl`] as string | undefined;
+  const linkText = rendererProps[`${groupPlacement}Group${placement}LinkText`] as string | undefined;
+  const linkConditionPassed = (
+    rendererProps[`${groupPlacement}Group${placement}LinkCondition`] as boolean | undefined
+  ) ?? true;
+
+  return linkUrl && linkConditionPassed && (
+    <Button
+      wrapperClassName="tol-data-point-link-group-link"
+      text={linkText ?? "Link"}
+      onClick={() => window.open(linkUrl, "_blank")}
+    />
+  );
+};
+
+const LinkGroup = ({
+  rendererProps,
+  placement,
+}: {
+  rendererProps: PLinkGroups,
+  placement: string,
+}) => {
+  const groupTitle = rendererProps[`${placement}GroupTitle`];
+
+  return groupTitle && (
+    <div className="tol-data-point-link-group-group">
+      <h6>{groupTitle}</h6>
+      <ul>
+        <li><Link rendererProps={rendererProps} placement="First" groupPlacement={placement} /></li>
+        <li><Link rendererProps={rendererProps} placement="Second" groupPlacement={placement} /></li>
+        <li><Link rendererProps={rendererProps} placement="Third" groupPlacement={placement} /></li>
+        <li><Link rendererProps={rendererProps} placement="Fourth" groupPlacement={placement} /></li>
+      </ul>
+    </div>
+  );
+};
+
 export function LinkGroups(props: PLinkGroups) {
-  const Link = ({ placement, groupPlacement }: { placement: string, groupPlacement: string }) => {
-    const linkUrl = props[`${groupPlacement}Group${placement}LinkUrl`] as string | undefined;
-    const linkText = props[`${groupPlacement}Group${placement}LinkText`] as string | undefined;
-    const linkConditionPassed = (
-      props[`${groupPlacement}Group${placement}LinkCondition`] as boolean | undefined
-    ) ?? true;
-
-    return linkUrl && linkConditionPassed && (
-      <Button
-        wrapperClassName="tol-data-point-link-group-link"
-        text={linkText ?? "Link"}
-        onClick={() => window.open(linkUrl, "_blank")}
-      />
-    );
-  };
-
-  const LinkGroup = ({ placement }: { placement: string }) => {
-    const groupTitle = props[`${placement}GroupTitle`];
-
-    return groupTitle && (
-      <div className="tol-data-point-link-group-group">
-        <h6>{groupTitle}</h6>
-        <ul>
-          <li><Link placement="First" groupPlacement={placement} /></li>
-          <li><Link placement="Second" groupPlacement={placement} /></li>
-          <li><Link placement="Third" groupPlacement={placement} /></li>
-          <li><Link placement="Fourth" groupPlacement={placement} /></li>
-        </ul>
-      </div>
-    );
-  };
-
   return (
     <>
-      <LinkGroup placement="first" />
-      <LinkGroup placement="second" />
-      <LinkGroup placement="third" />
+      <LinkGroup rendererProps={props} placement="first" />
+      <LinkGroup rendererProps={props} placement="second" />
+      <LinkGroup rendererProps={props} placement="third" />
     </>
   );
 }
