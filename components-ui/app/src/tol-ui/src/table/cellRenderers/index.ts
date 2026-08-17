@@ -20,5 +20,6 @@ export * from "./OldImage";
 export * from "./Integer";
 export * from "./Priority";
 export * from "./Link";
+export * from "./LinkGroups";
 export * from "./TrafficLightStatus";
 export * from "./utils";

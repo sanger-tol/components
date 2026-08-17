@@ -69,7 +69,7 @@ export function CellRendererMarkdownParamOptions(props: PCellRendererMarkdownPar
   };
 
   const BottomButtons = (
-    <>
+    <div className="tol-data-point-renderer-modal-bottom-buttons">
       <Button
         {...BUTTONS.ADD}
         disabled={!hasPendingChanges}
@@ -79,7 +79,7 @@ export function CellRendererMarkdownParamOptions(props: PCellRendererMarkdownPar
         {...BUTTONS.RETURN}
         onClick={handleBack}
       />
-    </>
+    </div>
   );
 
   return (

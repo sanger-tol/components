@@ -13,6 +13,7 @@ import {
   Integer,
   Priority,
   Link,
+  LinkGroups,
   LongText,
   getCellRendererPropValue,
   TrafficLightStatus,
@@ -39,6 +40,7 @@ const preDefinedElements = {
   integer: Integer,
   priority: Priority,
   link: Link,
+  linkGroups: LinkGroups,
   longText: LongText,
   trafficLightStatus: TrafficLightStatus,
 };
