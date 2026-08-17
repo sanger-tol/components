@@ -69,12 +69,14 @@ export function LinkGroups(props: PLinkGroups) {
     const groupTitle = props[`${placement}GroupTitle`];
 
     return groupTitle && (
-      <div className="tol-mb-sm">
+      <div className="tol-data-point-link-group-group">
         <h6>{groupTitle}</h6>
-        <Link placement="First" groupPlacement={placement} />
-        <Link placement="Second" groupPlacement={placement} />
-        <Link placement="Third" groupPlacement={placement} />
-        <Link placement="Fourth" groupPlacement={placement} />
+        <ul>
+          <li><Link placement="First" groupPlacement={placement} /></li>
+          <li><Link placement="Second" groupPlacement={placement} /></li>
+          <li><Link placement="Third" groupPlacement={placement} /></li>
+          <li><Link placement="Fourth" groupPlacement={placement} /></li>
+        </ul>
       </div>
     );
   };
