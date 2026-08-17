@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.13`
+
+17-08-2026
+
+- Added `CONFLICT` (409) to `HTTP_STATUS_CODES`
+- Added `IApiResponse`, `IApiDataResponse`, and `IErrorResponse` interfaces
+
 ## tol-ui `4.0.12`
 
 13-08-2026
