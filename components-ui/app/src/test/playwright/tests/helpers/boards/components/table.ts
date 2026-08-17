@@ -6,30 +6,19 @@ import type { Locator, Page } from "@playwright/test";
 
 import { clickUtilityBarButton } from "../../utility-bar";
 import { selectFromAttributeSelector, selectFromDropdown } from "../..";
+import type { IConfigureTable } from "../../../interfaces";
 
 /**
  * Configured the provided table component with the given config,
  * with the assumption that the table is newly created (currently empty; non-configured).
  * @param page The Playwright page handle
  * @param table Playwright locator handle to the table to configure
- * @param defaultSort The field to choose in the 'Default Sort' select
- * @param limitColumnVisibility Whether to enable the 'Limit Column Visibility' slider
- * @param activeColumns The columns to choose in the 'Active Columns' dropdown. Columns are added
- * in the order provided in this array.
- * @param provenances Specifies the provenance option selected for fields in `activeColumns`.
- * If a field in `activeColumns` is a key in this record, it selects the sources in the given
- * array. "calc" is used as the collated provenance source, while the rest are usual sources like
- * "sts".
+ * @param config Table configuration options
  */
 export const configureTable = async (
   page: Page,
   table: Locator,
-  config: {
-    defaultSort?: string,
-    limitColumnVisibility?: boolean,
-    activeColumns?: string[],
-    provenances?: Record<string, string[]>
-  }
+  config: IConfigureTable,
 ) => {
   // Click the Configure Table button
   await clickUtilityBarButton(page, table, "table-config-button");

@@ -3,3 +3,4 @@
 // SPDX-License-Identifier: MIT
 
 export * from "./board";
+export * from "./table";
