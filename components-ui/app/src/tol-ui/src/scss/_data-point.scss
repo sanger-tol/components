@@ -29,6 +29,10 @@
   margin-left: 6px;
 }
 
+.tol-data-point-renderer-modal-bottom-buttons {
+  @extend .tol-mt-md;
+}
+
 .tol-data-point-renderer-modal-condition-param-options {
   overflow: hidden;
 
