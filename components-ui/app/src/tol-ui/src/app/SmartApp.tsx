@@ -48,6 +48,7 @@ import {
   IUserProfileAdditionalConfigs,
   AppContextProvider,
   PFooter,
+  IMobileNav,
 } from "..";
 
 export interface PSmartApp {
@@ -104,6 +105,10 @@ export interface PSmartApp {
    * If false, removes the footer from the application.
    */
   footer?: PFooter;
+  /**
+   * Flag to set mobile first navigation
+   */
+  mobileNav?: IMobileNav;
   /**
    * Optional configuration for the user profile form, including base and additional configs.
    * If not provided, the default configuration will be used.

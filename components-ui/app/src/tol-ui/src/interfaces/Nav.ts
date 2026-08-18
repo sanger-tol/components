@@ -81,6 +81,10 @@ export interface INavCollection<TItem> {
    * Order of items to be displayed in the navigation
    */
   order: string[];
+  /**
+   * Optional list of pages to hide the navigation bar for.
+   */
+  hideNavFor?: string[];
 }
 
 /**
@@ -121,3 +125,14 @@ export interface INavDestination {
    */
   target?: string;
 }
+
+/**
+ * Configuration for mobile navbar.
+ */
+export interface IMobileNav {
+  /**
+   * Key value pair of nav item display name and the font awesome icon name (similar to buttons).
+   */
+  icons: Record<string, string>;
+}
+

@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode } from "react";
 import { Nav, NavDropdown } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   TsDataSource,
   PRIVILEGE,
@@ -24,6 +25,7 @@ import {
   INavDestination,
   formatPath,
   API_PATHS,
+  IMobileNav,
 } from "..";
 
 
@@ -328,12 +330,15 @@ export function getNavDestination(path: unknown): INavDestination {
  * Iterates over `navigation.order` to maintain the specified order of items and to control what can be seen in the nav.
  *
  * @param navigation - Navigation configuration to render. If `undefined`, returns an empty array.
+ * @param mobileNav - Mobile navigation configuration. Optional.
  * 
  * @returns An array of React nodes representing navigation links and dropdowns in the configured order.
  */
-export function collectNavigationItems(navigation: TNavConfig | undefined): ReactNode[] {
+export function collectNavigationItems(
+  navigation: TNavConfig | undefined,
+  mobileNav?: IMobileNav
+): ReactNode[] {
   const navButtons: ReactNode[] = [];
-
   navigation?.order.map((navItemName: string) => {
     const navItem = navigation.data[navItemName];
 
@@ -344,7 +349,7 @@ export function collectNavigationItems(navigation: TNavConfig | undefined): Reac
           key={navItemName}
           title={navItemName}
         >
-          {collectNavigationItems(navItem.pages)}
+          {collectNavigationItems(navItem.pages, mobileNav)}
         </NavDropdown>
       )
       // Single page nav item
@@ -357,7 +362,7 @@ export function collectNavigationItems(navigation: TNavConfig | undefined): Reac
           href={destination}
           target={target}
         >
-          {navItemName}
+          {mobileNav?.icons[navItemName] ? <FontAwesomeIcon icon={mobileNav.icons[navItemName]} /> : navItemName}
         </Nav.Link>
       )
     }
