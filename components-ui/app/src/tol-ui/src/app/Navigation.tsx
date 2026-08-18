@@ -104,6 +104,13 @@ function Navigation(props: PNavigation) {
     history.push("/");
   };
 
+  // Hides the navigation bar for specific pages if specified in the navigation configuration.
+  const currentPath = history.location.pathname;
+  const hideNavFor = navigation.hideNavFor ?? [];
+  if (hideNavFor.includes(currentPath)) {
+    return null;
+  }
+
   if (!mobileNav) {
     return (
       <div className="tol-navigation">

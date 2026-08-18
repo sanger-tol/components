@@ -138,7 +138,7 @@ export function clearUnusedLocalStorage() {
  */
 export function generateRoutePath(
   displayName: string,
-  path: IPageElement | undefined,
+  path?: IPageElement | undefined,
   routePrefix: string = "",
 ): string {
   const mainRoute: string = isRoute(path) ? path.route! : formatPath(displayName);
@@ -196,6 +196,24 @@ export function normaliseNavConfig(
     (id) => Object.prototype.hasOwnProperty.call(result.data, id)
   );
 
+  if (source.hideNavFor) {
+    result.hideNavFor = source.hideNavFor
+      .map(
+        (id) => {
+          if (
+            Object.prototype.hasOwnProperty.call(result.data, id)
+          ) {
+            if (isRoute(result.data[id].path)) {
+              return result.data[id].path?.route;
+            }
+            // Accounts for if path isn't set in the config
+            return generateRoutePath(id);
+          }
+        }
+      )
+      .filter((route) => route !== undefined) as string[];
+  }
+
   return result;
 }
 
@@ -216,7 +234,8 @@ export function mergeNavConfigs(
       ...baseConfig?.data,
       ...additionalConfig?.data,
     },
-    order: [...baseConfig?.order ?? [], ...additionalConfig?.order ?? []]
+    order: [...baseConfig?.order ?? [], ...additionalConfig?.order ?? []],
+    hideNavFor: [...(baseConfig?.hideNavFor ?? []), ...(additionalConfig?.hideNavFor ?? [])],
   };
   return mergedConfig;
 }
