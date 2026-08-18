@@ -143,6 +143,13 @@ export const BUTTONS: Record<string, PButton> = {
     icon: "question",
     tooltip: "Take the tour",
     position: "right",
+  },
+  RESET: {
+    outline: true,
+    type: "primary",
+    icon: "rotate-left",
+    tooltip: "Reset",
+    position: "right",
   }
 };
 

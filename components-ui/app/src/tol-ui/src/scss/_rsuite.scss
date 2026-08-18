@@ -53,6 +53,7 @@
   .rs-input-group-addon,
   .rs-input-group-btn,
   .rs-input-number-btn-group-vertical,
+  .rs-picker-input,
   .rs-panel {
     border-radius: var(--tol-border-radius) !important;
   }
@@ -477,4 +478,9 @@
       fill: var(--tol-danger) !important;
     }
   }
+}
+
+// picker tags
+.rs-tag {
+  border-radius: var(--tol-border-radius) !important;
 }

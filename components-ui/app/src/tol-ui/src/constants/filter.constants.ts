@@ -15,7 +15,7 @@ export const ATTRIBUTE_TRANSLATIONS_PLACEHOLDER =
 	'{"above_zone_field_id": "current_zone_field_id"}';
 
 export const RELATIONSHIP_TRANSLATIONS_PLACEHOLDER =
-	"relationship.path.to.above.zone";
+	"Select a relationship path";
 
 export const FILTER_PASS_THROUGH = {
 	LABEL: (type: string) => `Apply the following filters only to this ${type}.`,
@@ -43,3 +43,5 @@ export const RELATIONSHIP_TRANSLATION = {
 	TOOLTIP:
 		"Toggling this on enables relationship translation of incoming filters between related zones.",
 };
+
+export const RELATIONSHIP_PATH_PLACEHOLDER = "Select a relationship to start building the path";

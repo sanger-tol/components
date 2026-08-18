@@ -11,8 +11,6 @@ import {
   API_OPERATIONS,
   deepCopy,
   httpClient,
-  normaliseCaps,
-  isEmptyObject,
 } from "..";
 import type {
   IAttributeDescriptor,
@@ -35,19 +33,18 @@ import type {
   IJsonApiResponse,
   IJsonApiResponseData,
   IRelationshipPointer,
-  TRelationshipPaths,
   IRelationships,
   ISourceDataObject,
   IUpsert,
   TCursorObjectOrNull,
   TDataObjectListOrNull,
   TDataObjectOrNull,
+  TRelationshipValues,
 } from "..";
 
 
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
-const relationshipPathsCache: TRelationshipPaths = {};
 
 export class TsDataSource {
   private client: TClient;
@@ -608,7 +605,7 @@ export class TsDataSource {
   ): Promise<IAttributeDescriptor | undefined> {
     const attributes = await this.attributeMetadata();
     const splitField = field.split(".");
-    const combinedRelationships = await this.combineRelationships(objectType);
+    const combinedRelationships = await this.getMergedRelationshipConfig(objectType);
     if (splitField.length > 1 && combinedRelationships) {
       // Checks if the object type exists in the relationships of previous "jump"
       // If relationship exists, get the related object type and continue down the field path
@@ -634,9 +631,9 @@ export class TsDataSource {
     );
   }
 
-  private async combineRelationships(
+  public async getMergedRelationshipConfig(
     objectType: string
-  ): Promise<{ [key: string]: string } | undefined> {
+  ): Promise<TRelationshipValues> {
     const relationships = await this.relationshipConfig();
     const objectRelationships = relationships[objectType];
     const one = objectRelationships?.one ?? {};
@@ -650,7 +647,7 @@ export class TsDataSource {
     objectType: string
   ): Promise<string[] | undefined> {
     const splitField = field.split(".");
-    const combinedRelationships = await this.combineRelationships(objectType);
+    const combinedRelationships = await this.getMergedRelationshipConfig(objectType);
     if (splitField.length > 1 && combinedRelationships) {
       if (splitField[0] in combinedRelationships) {
         const relatedObjectType = combinedRelationships[splitField[0]];
@@ -660,7 +657,7 @@ export class TsDataSource {
     } else if (splitField.length === 1) {
       if (!combinedRelationships) return undefined;
       const finalRelationshipObject = combinedRelationships[splitField[0]];
-      const availableRelationshipsObject = await this.combineRelationships(finalRelationshipObject);
+      const availableRelationshipsObject = await this.getMergedRelationshipConfig(finalRelationshipObject);
       return availableRelationshipsObject ? Object.keys(availableRelationshipsObject) : undefined;
     }
   }
@@ -779,8 +776,9 @@ export class TsDataSource {
    * Rewrites a relationship field to use the shortest relationship path while preserving
    * the final attribute name.
    *
-   * For example, if `field` is `specimens.samples.species.name` and the shortest path
-   * from `sourceObjectType` to `species` is `species`, this returns `species.name`.
+    * For example, if `sourceObjectType` is `species` and `field` is
+    * `specimens.samples.specimen.species.name`, the relationship chain resolves back to
+    * `species`, so this returns `name`.
    *
    * @param sourceObjectType - The object type that the field should be relative to.
    * @param field - A field that may include relationship segments followed by an attribute.

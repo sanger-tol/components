@@ -28,6 +28,7 @@ export * from "./Messaging";
 export * from "./Nav";
 export * from "./Plate";
 export * from "./Privilege";
+export * from "./Relationship";
 export * from "./Sunburst";
 export * from "./SocialViewer";
 export * from "./Table";
