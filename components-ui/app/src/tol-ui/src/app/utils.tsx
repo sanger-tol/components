@@ -381,6 +381,7 @@ export function collectNavigationItems(
           href={destination}
           target={target}
         >
+          {/*@ts-ignore*/}
           {mobileNav?.icons[navItemName] ? <FontAwesomeIcon icon={mobileNav.icons[navItemName]} /> : navItemName}
         </Nav.Link>
       )

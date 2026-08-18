@@ -41,7 +41,7 @@ export interface PNavigation extends PSmartApp, RouteComponentProps {
   /**
    * Boolean flag to use mobile version of nav
   */
-  mobileNav: IMobileNav;
+  mobileNav?: IMobileNav;
 }
 
 /**
