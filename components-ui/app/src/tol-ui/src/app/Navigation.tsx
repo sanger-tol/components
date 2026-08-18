@@ -168,12 +168,12 @@ function Navigation(props: PNavigation) {
     );
   } else {
     return (
-      <div className="tol-navigation">
+      <div className="tol-navigation tol-navigation-mobile">
         <div className="tol-navbar-offset" style={{ height: navbarOffset }}></div>
         <Navbar
           id="tol-navbar"
           className={
-            "navbar-dark " + getNavBackgroundClass(environment) + " tol-navbar"
+            "navbar-dark " + getNavBackgroundClass(environment) + " tol-navbar tol-navbar-mobile"
           }
           expand="lg"
         >
@@ -189,7 +189,7 @@ function Navigation(props: PNavigation) {
                   />
                 </Nav.Link>
               ) : null}
-              {props.login && tokenHasExpired() ? (
+              {props.login && tokenHasExpired() && mobileNav.login ? (
                 <Nav.Link
                   className={!props.register ? "nav-right" : ""}
                   key="Login"

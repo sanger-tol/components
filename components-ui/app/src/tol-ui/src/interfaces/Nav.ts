@@ -134,5 +134,9 @@ export interface IMobileNav {
    * Key value pair of nav item display name and the font awesome icon name (similar to buttons).
    */
   icons: Record<string, string>;
+  /**
+   * Boolean to enable login on the navbar
+   */
+  login?: boolean;
 }
 
