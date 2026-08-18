@@ -100,19 +100,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
   }, [dataSource, field, filter, isNumeric, objectType, stats]);
 
   const statsContents = useMemo(() => {
-    if (!isNumeric) return null;
-
-    if (loading) {
-      return <span className="tooltip-value-none">Loading...</span>;
-    }
-
-    if (statsError) {
-      return <span className="tooltip-value-none">{statsError}</span>;
-    }
-
-    if (!stats) {
-      return null;
-    }
+    if (!stats) return null;
 
     return (
       <div className="tol-attribute-tooltip-stats-grid">
@@ -137,7 +125,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     );
   }, [isNumeric, loading, stats, statsError]);
 
-  if (!isNumeric) return null;
+  if (!isNumeric || statsError) return null;
 
   return (
     <div className="tol-attribute-tooltip-stats-box">
@@ -148,9 +136,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
       </div>
       <div
         onClick={(event) => event.stopPropagation()}
-        style={{
-          marginTop: "8px",
-        }}
+        className="tol-tm-md"
       >
         {statsContents}
       </div>

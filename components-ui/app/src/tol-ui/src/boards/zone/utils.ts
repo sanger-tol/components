@@ -62,9 +62,12 @@ export async function translateZoneAboveFilter(
       generateAttributeTranslations(zoneAbove, currentZone.attributeTranslations);
 
     if (currentZone.relationshipTranslation) {
-      for (const [incomingField, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
-        // If the field already exists in the custom translations, skip automatic translation
+      for (let [incomingField, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
+        // If the field already exists in the attribute translations, skip automatic translation
         if (incomingField in (translatedFilter.and_ || {})) continue;
+
+        // Add the translation path to the field
+        incomingField = `${currentZone.translationPath}.${incomingField}`;
 
         // Attempt to find a relationship path for the incoming field
         const relationshipPath = await dataspace?.findShortestRelationshipField(

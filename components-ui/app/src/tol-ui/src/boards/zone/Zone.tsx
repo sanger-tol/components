@@ -58,8 +58,11 @@ export function Zone(props: PZone) {
 
   useEffect(() => {
     (async () => {
-      await updateTranslatedFilter();
-      setTranslatedFilterReady(true);
+      getTranslationPath()
+        .then(async () => {
+          await updateTranslatedFilter()
+            .finally(() => setTranslatedFilterReady(true));
+        })
     })();
   }, [
     zoneAbove,
@@ -71,6 +74,19 @@ export function Zone(props: PZone) {
     zone.attributeTranslations,
     editMode
   ]);
+
+  const getTranslationPath = async () => {
+    if (zoneAbove) {
+      // If the zone has a custom translation path, use that
+      if (zone.relationshipTranslation && zone.translationPath) return zone.translationPath
+      // Otherwise, find the shortest path between the two zone object types
+      const shortestPath = await zone.dataspace!.findShortedRelationshipPath(
+        zone.object_type!,
+        zoneAbove.object_type!,
+      );
+      if (shortestPath) zone.translationPath = shortestPath;
+    }
+  }
 
   const updateTranslatedFilter = async () => {
     if (zoneAbove) {
