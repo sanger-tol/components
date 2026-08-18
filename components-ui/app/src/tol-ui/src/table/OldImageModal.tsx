@@ -25,11 +25,16 @@ export function OldImageModal(props: POldImageModal) {
       setOpen={setOpen}
     >
       <div className="tol-data-point-old-image-modal-container">
-        <img
-          src={encodeImageSrc(value)}
-          className="tol-table-image-modal-image"
-          title={value}
-        />
+        {/*
+        There needs to be a span wrapping the image so it doesn't try to grow to fill the flexbox
+        */}
+        <span>
+          <img
+            src={encodeImageSrc(value)}
+            className="tol-table-image-modal-image"
+            title={value}
+          />
+        </span>
         <p className="tol-table-image-modal-caption">
           {caption}
         </p>

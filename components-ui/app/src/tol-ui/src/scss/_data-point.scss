@@ -138,7 +138,13 @@
 }
 
 .tol-data-point-old-image-modal-container {
+  // Centre the image and caption
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   img {
-    max-width: 100%;
+    max-width: 100%; // Prevents the image from growing to a silly size
+    max-height: 68vh; // Sizes the image to fit snug within the modal on most screens
   }
 }
