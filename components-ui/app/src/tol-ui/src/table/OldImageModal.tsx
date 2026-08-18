@@ -19,11 +19,12 @@ export function OldImageModal(props: POldImageModal) {
 
   return (
     <Modal
+      className="tol-data-point-old-image-modal"
       size="lg"
       open={open}
       setOpen={setOpen}
     >
-      <div style={{ textAlign: "center" }}>
+      <div className="tol-data-point-old-image-modal-container">
         <img
           src={encodeImageSrc(value)}
           className="tol-table-image-modal-image"
