@@ -7,14 +7,14 @@ SPDX-License-Identifier: MIT
 import { Modal, encodeImageSrc } from "..";
 
 
-export interface POldImageModal {
+export interface PImageCellModal {
   value: string;
   caption: string;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function OldImageModal(props: POldImageModal) {
+export function ImageCellModal(props: PImageCellModal) {
   const { value, caption, open, setOpen } = props;
 
   return (

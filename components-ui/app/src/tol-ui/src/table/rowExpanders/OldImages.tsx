@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { OldImageModal } from "../..";
+import { ImageCellModal } from "../..";
 
 
 export interface POldImages {
@@ -22,7 +22,7 @@ export function OldImages(props: POldImages) {
   const urlList = Array.isArray(value) ? value : [value];
   return (
     <div className="tol-table-expanded-row">
-      <OldImageModal
+      <ImageCellModal
         value={value}
         caption={captions}
         open={open}
