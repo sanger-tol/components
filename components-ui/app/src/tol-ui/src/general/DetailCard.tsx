@@ -43,14 +43,16 @@ export function DetailCard({
         </div>
       )}
       {visibleFields.length > 0 && (
-        <dl className="tol-detail-card__fields">
+        <div className="tol-detail-card__fields">
           {visibleFields.map((field, index) => (
-            <div key={field.id ?? index}>
-              <dt>{field.label}</dt>
-              <dd>{field.value}</dd>
+            <div key={field.id ?? index} className="tol-detail-card__field">
+              <strong className="tol-detail-card__label">
+                {field.label}:
+              </strong>
+              <span className="tol-detail-card__value">{field.value}</span>
             </div>
           ))}
-        </dl>
+        </div>
       )}
       {children && <div className="tol-detail-card__body">{children}</div>}
     </div>

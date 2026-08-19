@@ -35,6 +35,7 @@ export * from "./StatisticsConfigDrawer";
 export * from "./Tabs";
 export * from "./SortableTabs";
 export * from "./Tag";
+export * from "./TagList";
 export * from "./TolLoader";
 export * from "./utils";
 export * from "./Well";

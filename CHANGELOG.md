@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 
 - Added PageSectionNavigation for in-page section links and active-state tracking
 - Added DetailCard for reusable structured record and metadata displays
+- Added TagList for consistently spaced, wrapping collections of tags
 
 ## tol-ui `4.0.13`
 

@@ -38,27 +38,26 @@ SPDX-License-Identifier: MIT
   gap: 0.5rem 2rem;
   margin: 0;
   padding: 0 1rem 1rem;
+}
 
-  > div {
-    display: flex;
-    min-width: 0;
-    gap: 0.65rem;
-  }
+.tol-detail-card__field {
+  display: flex;
+  min-width: 0;
+  gap: 0.65rem;
+}
 
-  dt {
-    flex: 0 0 auto;
-    color: var(--tol-grey);
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
+.tol-detail-card__label {
+  flex: 0 0 auto;
+  color: var(--tol-grey);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
 
-  dd {
-    min-width: 0;
-    margin: 0;
-    overflow-wrap: anywhere;
-  }
+.tol-detail-card__value {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .tol-detail-card__body {
