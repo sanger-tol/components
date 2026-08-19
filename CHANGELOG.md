@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.0.14`
+
+19-08-2026
+
+- Added PageSectionNavigation for in-page section links and active-state tracking
+
 ## tol-ui `4.0.13`
 
 17-08-2026

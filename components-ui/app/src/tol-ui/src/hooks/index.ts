@@ -14,3 +14,4 @@ export * from "./useStateFallback";
 export * from "./useQueryData";
 export * from "./useTimeout";
 export * from "./useFormData";
+export * from "./usePageSectionNavigation";

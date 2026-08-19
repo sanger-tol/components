@@ -22,6 +22,7 @@ export * from "./EditableTitle";
 export * from "./LoadingContent";
 export * from "./Markdown";
 export * from "./ObjectDetail";
+export * from "./PageSectionNavigation";
 export * from "./Placeholder";
 export * from "./Plate";
 export * from "./RemoteBreadcrumbNav";
