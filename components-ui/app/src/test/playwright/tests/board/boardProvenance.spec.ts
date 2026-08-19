@@ -44,5 +44,5 @@ test("User can select provenances in a table", async ({ page }) => {
     }
   );
   // Check all 4 columns are visible
-  await expect(await page.getByText("Scientific Name").count()).toBe(3);
+  await expect(await page.getByText("Big String").count()).toBe(3);
 });
