@@ -21,7 +21,8 @@ test("User can select provenances in a table", async ({ page }) => {
   // Use a zone with an object type that has provenance
   const { boardId } = await createBoardAndViewAndZone({
     userId,
-    zoneObjectType: "species"
+    zoneDataSourceInstanceId: "test",
+    zoneObjectType: "record",
   });
 
   // Navigate to the newly created board and enter edit mode
@@ -36,12 +37,12 @@ test("User can select provenances in a table", async ({ page }) => {
     page,
     page.getByTestId("board-component-table"),
     {
-      activeColumns: ["scientific_name"],
+      activeColumns: ["big_string"],
       provenances: {
-        "scientific_name": ["calc", "goat", "sts", "tolqc"]
+        "big_string": ["calc", "source1", "source2"]
       }
     }
   );
   // Check all 4 columns are visible
-  await expect(await page.getByText("Scientific Name").count()).toBe(4);
+  await expect(await page.getByText("Scientific Name").count()).toBe(3);
 });
