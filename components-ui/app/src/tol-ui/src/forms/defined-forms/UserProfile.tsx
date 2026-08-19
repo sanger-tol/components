@@ -22,6 +22,7 @@ import {
   USER,
   PRE_DEFINED_FORM_TYPES,
   FORM_MESSAGE_TEXT,
+  Button,
 } from "../..";
 import type {
   IUserProfileAdditionalConfigs,
@@ -29,6 +30,7 @@ import type {
   IUserProfileFormData,
   TUserProfileFormDataOrNull,
 } from "../..";
+import { useLogout } from "src/app/Logout";
 
 export interface PUserProfile {
   /**
@@ -41,6 +43,10 @@ export interface PUserProfile {
    * including additional fields, their positions, and field mappings.
    */
   additionalConfigs?: IUserProfileAdditionalConfigs;
+  /**
+   * Optional boolean flag to indicate whether to show a logout button in the profile page.
+   */
+  logout?: boolean;
 }
 
 export function UserProfile(props: PUserProfile) {
@@ -73,6 +79,7 @@ export function UserProfile(props: PUserProfile) {
   });
   const history = useHistory();
   const location = useLocation<{ from?: string }>();
+  const handleLogout = useLogout();
 
   const baseConfig =
     props.baseConfig ?? BASE_PROFILE_FORM_CONFIG(hasUnsavedChanges);
@@ -130,5 +137,20 @@ export function UserProfile(props: PUserProfile) {
     },
   ];
 
-  return <Widgets components={components} />;
+  return (
+    <div>
+      <Widgets components={components} />
+      {props.logout && (
+        <div style={{ marginTop: "10vh"}}>
+          <Button
+            text="Logout"
+            onClick={handleLogout}
+            type="error"
+            position='center'
+            icon='fa-solid fa-right-from-bracket'
+          />
+        </div>
+      )}
+    </div>
+  );
 }

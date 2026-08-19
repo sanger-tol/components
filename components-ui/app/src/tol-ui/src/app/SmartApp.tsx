@@ -117,6 +117,10 @@ export interface PSmartApp {
     baseConfig?: any;
     additionalConfigs?: IUserProfileAdditionalConfigs;
   };
+  /**
+   * Optional boolean flag to indicate whether to show a logout button in the profile page.
+   */
+  profileLogoutButton?: boolean;
 }
 
 /**
@@ -134,6 +138,7 @@ export function SmartApp(props: PSmartApp) {
     routePrefix,
     footer,
     profileFormConfigs,
+    profileLogoutButton
   } = props;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
@@ -247,7 +252,7 @@ export function SmartApp(props: PSmartApp) {
       />
     ),
     validationResultsDetail: <ValidationResultsViewer />,
-    profile: <UserProfile {...profileFormConfigs} />,
+    profile: <UserProfile {...profileFormConfigs} logout={profileLogoutButton} />,
     callback: <Callback {...props} />,
     ...(props.pageElements ?? {}),
   };
