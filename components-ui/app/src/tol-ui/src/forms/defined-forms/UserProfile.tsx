@@ -23,6 +23,7 @@ import {
   PRE_DEFINED_FORM_TYPES,
   FORM_MESSAGE_TEXT,
   Button,
+  useLogout,
 } from "../..";
 import type {
   IUserProfileAdditionalConfigs,
@@ -30,7 +31,7 @@ import type {
   IUserProfileFormData,
   TUserProfileFormDataOrNull,
 } from "../..";
-import { useLogout } from "src/app/Logout";
+
 
 export interface PUserProfile {
   /**
