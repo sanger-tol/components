@@ -740,7 +740,7 @@ export class TsDataSource {
    */
   public async findShortedRelationshipPath(
     sourceObjectType: string,
-    targetObjectType: string
+    targetObjectType?: string
   ): Promise<string | null> {
     if (sourceObjectType === targetObjectType) return "";
 

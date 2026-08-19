@@ -40,6 +40,8 @@ import {
   createEmptyFilter,
   normaliseCaps,
   Icon,
+  TRANSLATOR_DISABLED_TEXT,
+  Message,
 } from ".."
 
 
@@ -108,17 +110,23 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   );
 
   // This is the shortest path between the 2 zone object types
-  const setDefaultRelationshipTranslationPath = async () => {
+  const setupRelationshipTranslationPath = async (initialisePath?: boolean) => {
     const shortestPath = await zone.dataspace!.findShortedRelationshipPath(
       zone.object_type!,
-      aboveZone!.object_type!,
+      aboveZone?.object_type!,
     );
     if (!shortestPath) return;
-    initialRelationshipTranslationsTextRef.current = shortestPath;
-    setRelationshipTranslationsText(shortestPath);
+    // Set the shortest path as the default
+    setDefaultRelationshipTranslationPath(shortestPath);
+
+    // If the initial relationship translation path is not set, set it to the shortest path
+    if (initialisePath) {
+      initialRelationshipTranslationPathRef.current = shortestPath;
+      setRelationshipTranslationPath(shortestPath);
+    }
   };
 
-  const getInitialRelationshipTranslationsText = () => (
+  const getInitialRelationshipTranslationPath = () => (
     isZone && zone.translationPath ? zone.translationPath : ""
   );
 
@@ -149,7 +157,9 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const [relationshipTranslation, setRelationshipTranslation] = useState<boolean>(getInitialRelationshipTranslation);
   const [attributeTranslationsToggle, setAttributeTranslationsToggle] = useState<boolean>(getInitialAttributeTranslationsToggle);
   const [attributeTranslationsText, setAttributeTranslationsText] = useState<string>(getInitialAttributeTranslationsText);
-  const [relationshipTranslationsText, setRelationshipTranslationsText] = useState<string>(getInitialRelationshipTranslationsText);
+  const [relationshipTranslationPath, setRelationshipTranslationPath] = useState<string>(getInitialRelationshipTranslationPath);
+  const [defaultRelationshipTranslationPath, setDefaultRelationshipTranslationPath] = useState<string>(getInitialRelationshipTranslationPath);
+  const [relationshipPathComplete, setRelationshipPathComplete] = useState<boolean>(false);
   const [currentFilterZone, setCurrentFilterZone] = useState<IZone>(
     getInitialCurrentFilterZone(savedFilters),
   );
@@ -166,7 +176,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const initialRelationshipTranslationRef = useRef<boolean>(getInitialRelationshipTranslation());
   const initialAttributeTranslationsToggleRef = useRef<boolean>(getInitialAttributeTranslationsToggle());
   const initialAttributeTranslationsTextRef = useRef<string>(getInitialAttributeTranslationsText());
-  const initialRelationshipTranslationsTextRef = useRef<string>(getInitialRelationshipTranslationsText());
+  const initialRelationshipTranslationPathRef = useRef<string>(getInitialRelationshipTranslationPath());
   // Don't use `generateFilter` as it has a back-up of the defaultFilter
   const currentFilters = normaliseFilter(currentFilterZone.children?.[id]?.filter);
   const initialFiltersRef = useRef<IFilter | undefined>(normaliseFilter(getInitialFilter()));
@@ -179,7 +189,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     attributeTranslationsToggle !== initialAttributeTranslationsToggleRef.current ||
     attributeTranslationsText !== initialAttributeTranslationsTextRef.current ||
     // Check if the relationship translation path has changed and is not empty
-    (relationshipTranslationsText !== initialRelationshipTranslationsTextRef.current && relationshipTranslationsText.trim() !== "")
+    (relationshipTranslationPath !== initialRelationshipTranslationPathRef.current && relationshipPathComplete)
   ) && (
       !attributeTranslationsToggle ||
       isValidJson(attributeTranslationsText)
@@ -211,14 +221,14 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setAttributeTranslationsToggle(initialAttributeTranslationsToggleRef.current);
     initialAttributeTranslationsTextRef.current = getInitialAttributeTranslationsText();
     setAttributeTranslationsText(initialAttributeTranslationsTextRef.current);
-    initialRelationshipTranslationsTextRef.current = getInitialRelationshipTranslationsText();
-    setRelationshipTranslationsText(initialRelationshipTranslationsTextRef.current);
+    initialRelationshipTranslationPathRef.current = getInitialRelationshipTranslationPath();
+    setRelationshipTranslationPath(initialRelationshipTranslationPathRef.current);
     setCurrentFilterZone(getInitialCurrentFilterZone(initialFilters));
 
     // Set the default relationship translation path if it hasn't been set yet
-    if (!initialRelationshipTranslationsTextRef.current.trim()) {
-      setDefaultRelationshipTranslationPath();
-    }
+    setupRelationshipTranslationPath(
+      !initialRelationshipTranslationPathRef.current.trim()
+    );
   }, [open]);
 
 
@@ -235,8 +245,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       zone.filterPassThrough = passThrough;
       zone.relationshipTranslation = relationshipTranslation;
       const parsedRelationshipTranslations =
-        relationshipTranslation && relationshipTranslationsText
-          ? relationshipTranslationsText.trim()
+        relationshipTranslationPath
+          ? relationshipTranslationPath.trim()
           : undefined;
       zone.translationPath = parsedRelationshipTranslations;
       const parsedAttributeTranslations =
@@ -311,21 +321,33 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       </div>
       {relationshipTranslation && (
         <div className="tol-ml-md">
-          <span className="tol-mb-xs">Translation Path</span>
-          <Icon icon="rotate-left" className="tol-ml-xs" onClick={() => setDefaultRelationshipTranslationPath()} />
+          <span className="tol-mb-xs">
+            Translation Path for {normaliseCaps(zone.object_type)} to {normaliseCaps(aboveZone?.object_type)}
+          </span>
           <Input
             className="tol-mb-md"
             placeholder={RELATIONSHIP_TRANSLATIONS_PLACEHOLDER}
-            value={relationshipTranslationsText}
-            onChange={setRelationshipTranslationsText}
+            value={relationshipTranslationPath}
+            onChange={setRelationshipTranslationPath}
           />
-          {/* <RelationshipSelector
+          <RelationshipSelector
             className="tol-mb-md"
             dataSource={zone.dataspace!}
             objectType={zone.object_type!}
-            path={relationshipTranslationsText}
-            onChange={setRelationshipTranslationsText}
-          /> */}
+            path={relationshipTranslationPath}
+            onChange={setRelationshipTranslationPath}
+            targetObjectType={aboveZone?.object_type}
+            pathComplete={relationshipPathComplete}
+            setPathComplete={setRelationshipPathComplete}
+          />
+          <Button
+            {...BUTTONS.RESET}
+            text="Reset to shortest path if available"
+            position="none"
+            className="tol-mb-md"
+            onClick={setupRelationshipTranslationPath}
+            visible={relationshipTranslationPath !== defaultRelationshipTranslationPath}
+          />
         </div>
       )}
     </>
@@ -370,8 +392,6 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         key="tol-incoming-filters-toggle"
         onClick={() => {
           setExcludeIncoming(!excludeIncoming);
-          setRelationshipTranslation(false);
-          setAttributeTranslationsToggle(false);
         }}
         checked={excludeIncoming}
       />
@@ -410,7 +430,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     </div>
   )
 
-  const showTranslationToggles = isZone && !excludeIncoming && aboveZone;
+  const showTranslationToggles = isZone && aboveZone && !excludeIncoming && !aboveZone.filterPassThrough;
 
   return (
     <div className="tol-filter-config-drawer">
@@ -422,9 +442,27 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         hasPendingChanges={hasPendingChanges}
         onSaveTestId="apply-filter-button"
       >
-        {showTranslationToggles && RelationshipTranslatorWithPath}
-        {showTranslationToggles && AttributeTranslationsToggle}
-        {showTranslationToggles && <hr />}
+        {showTranslationToggles ?
+          <>
+            {RelationshipTranslatorWithPath}
+            {AttributeTranslationsToggle}
+            <hr />
+          </>
+          : isZone ?
+            <div className="tol-mb-lg">
+              <Message
+                type="info"
+                showIcon
+                bordered
+                header={false}
+                closable={false}
+                hidePrefix
+              >
+                {TRANSLATOR_DISABLED_TEXT}
+              </Message>
+            </div>
+            : null
+        }
         {ExcludeIncomingFiltersToggle}
         {FilterPassThroughToggle}
         <AttributeSelector

@@ -59,7 +59,7 @@ export function appendKeywordIfNeeded(field: string): string {
   return field.startsWith("calc_") ? field : `${field}.keyword`;
 }
 
-export function normaliseCaps(name: string, prefix?: string) {
+export function normaliseCaps(name?: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
   if (prefix && name === "id") return normaliseCaps(prefix) + " ID";
@@ -352,7 +352,7 @@ export function updateContents(contents: object) {
     }
     // make nulls show a faded 'None'
     if (value === null || value === undefined) {
-      contents[key] = <span className="tooltip-value-none">None</span>;
+      contents[key] = <span className="tol-none-value">None</span>;
     }
   }
   return contents;

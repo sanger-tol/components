@@ -102,7 +102,7 @@ export function CellDisplay(props: PCellDisplay) {
   }
 
   if (value === null || value === undefined) {
-    Display = <span className="tol-display-empty">None</span>;
+    Display = <span className="tol-none-value">None</span>;
   }
 
   /**
