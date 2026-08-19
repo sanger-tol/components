@@ -4,8 +4,10 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Modal, encodeImageSrc } from "..";
+import { useState } from "react";
+import type { MouseEventHandler } from "react";
 
+import { Modal, encodeImageSrc } from "..";
 
 export interface PImageCellModal {
   value: string;
@@ -16,6 +18,18 @@ export interface PImageCellModal {
 
 export function ImageCellModal(props: PImageCellModal) {
   const { value, caption, open, setOpen } = props;
+
+  const [isImageFullscreen, setIsImageFullscreen] = useState(false)
+
+  const handleFullscreenImage: MouseEventHandler<HTMLImageElement> = (event) => {
+    if (isImageFullscreen) {
+      document.exitFullscreen();
+    } else {
+      (event.target as HTMLImageElement).requestFullscreen();
+    }
+
+    setIsImageFullscreen(!isImageFullscreen);
+  }
 
   return (
     <Modal
@@ -33,6 +47,8 @@ export function ImageCellModal(props: PImageCellModal) {
             src={encodeImageSrc(value)}
             className="tol-table-image-modal-image"
             title={value}
+            onClick={handleFullscreenImage}
+            data-fullscreen={isImageFullscreen}
           />
         </span>
         <p className="tol-table-image-modal-caption">
