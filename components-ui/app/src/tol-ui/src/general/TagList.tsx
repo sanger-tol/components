@@ -30,7 +30,7 @@ export function TagList({ items }: PTagList) {
   if (items.length === 0) return null;
 
   return (
-    <ul>
+    <ul className="tol-tag-list">
       {items.map(({ id, label, ...tagProps }) => (
         <li key={id}>
           <Tag {...tagProps}>{label}</Tag>

@@ -19,6 +19,7 @@ export * from "./Header";
 export * from "./HoverOverlay";
 export * from "./Icon";
 export * from "./IconTooltip";
+export * from "./KeyValueTable";
 export * from "./EditableTitle";
 export * from "./LoadingContent";
 export * from "./Markdown";

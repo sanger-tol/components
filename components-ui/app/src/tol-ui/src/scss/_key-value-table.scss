@@ -1,0 +1,21 @@
+/*
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+.tol-key-value-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tol-key-value-table th,
+.tol-key-value-table td {
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.tol-key-value-table tbody th {
+  font-weight: 600;
+}
