@@ -11,6 +11,7 @@ SPDX-License-Identifier: MIT
 19-08-2026
 
 - Added PageSectionNavigation for in-page section links and active-state tracking
+- Added DetailCard for reusable structured record and metadata displays
 
 ## tol-ui `4.0.13`
 

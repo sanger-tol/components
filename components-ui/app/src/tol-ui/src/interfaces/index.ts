@@ -13,6 +13,7 @@ export * from "./Cells";
 export * from "./Chart";
 export * from "./Colours";
 export * from "./Drawer";
+export * from "./DetailCard";
 export * from "./Download";
 export * from "./EntityMeta";
 export * from "./Field";

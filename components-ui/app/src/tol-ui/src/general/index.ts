@@ -11,6 +11,7 @@ export * from "./BreadcrumbNav";
 export * from "./CenterContent";
 export * from "./ClickOverlay";
 export * from "./CustomIcons";
+export * from "./DetailCard";
 export * from "./ErrorBoundary";
 export * from "./Footer";
 export * from "./FormatTooltip";
