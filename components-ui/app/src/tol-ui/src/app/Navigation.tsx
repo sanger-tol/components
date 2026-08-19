@@ -181,7 +181,7 @@ function Navigation(props: PNavigation) {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               {collectNavigationItems(navigation, mobileNav)}
-              {props.register && tokenHasExpired() ? (
+              {props.register && tokenHasExpired() && mobileNav.register ? (
                 <Nav.Link className="nav-right" key="Register">
                   <Login
                     buttonIcon={RegisterIcon}
@@ -200,7 +200,7 @@ function Navigation(props: PNavigation) {
                     returnUrl={getReturnUrlFromLocalStorage()}
                   />
                 </Nav.Link>
-              ) : props.login && user && (
+              ) : props.login && user && mobileNav.profile && (
                 <div className="nav-right">
                   <ProfileDropdown
                     user={user}

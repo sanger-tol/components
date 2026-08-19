@@ -138,5 +138,13 @@ export interface IMobileNav {
    * Boolean to enable login on the navbar
    */
   login?: boolean;
+  /**
+   * Boolean to enable register on the navbar
+   */
+  register?: boolean;
+  /**
+   * Boolean to enable profile on the navbar
+   */
+  profile?: boolean;
 }
 
