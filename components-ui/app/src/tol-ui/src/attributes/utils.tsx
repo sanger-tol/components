@@ -305,22 +305,29 @@ export function generateFilterDescriptions(filter?: IFilter): TDescribedFilters 
  * Devises the provenance version of an attribute, in the format the API understands:
  * the field (`baseField`) alongside the chosen `provenance`.
  * In the front-end, these are treated like they're attributes themselves.
+ * @param baseAttribute The attribute to get a provenance version of
+ * @param provenance Which provenance this is
+ * @returns A provenanced field made from the base attribute `baseAttribute` and source `provenance`
  */
-export function getProvenanceFieldName(baseField: string, provenance: string): string {
-  return `${baseField}[${provenance}]`;
+export function getProvenanceFieldName(baseAttribute: string, provenance: string): string {
+  return `${baseAttribute}[${provenance}]`;
 }
 
 /**
- * Checks whether the provided `attribute` is a normal attribute or a provenance specification
+ * Checks whether the provided `field` is a normal attribute or a provenance specification
  * of an attribute
+ * @param field The field to check
+ * @returns The boolean indicating whether it is a provenance field
  */
-export function isProvenanceAttribute(attribute: string): boolean {
-  return PROVENANCE_IN_FIELD_REGEX.test(attribute);
+export function isProvenanceField(field: string): boolean {
+  return PROVENANCE_IN_FIELD_REGEX.test(field);
 }
 
 /**
- * Checks whether the provided `attribute` is specifically a provenance specification of `baseField`
+ * Checks whether the provided `field` is specifically a provenance specification of `baseAttribute`
+ * @param field The field to check
+ * @param baseAttribute The attribute we want to see if `field` is a provenance version of
  */
-export function isProvenanceAttributeOfField(attribute: string, baseField: string): boolean {
-  return attribute.startsWith(`${baseField}[`);
+export function isProvenanceAttributeOfField(field: string, baseAttribute: string): boolean {
+  return field.startsWith(`${baseAttribute}[`);
 }
