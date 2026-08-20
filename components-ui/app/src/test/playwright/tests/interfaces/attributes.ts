@@ -2,6 +2,4 @@
 //
 // SPDX-License-Identifier: MIT
 
-export * from "./attributes";
-export * from "./board";
-export * from "./table";
+export type TAttributeAndProvenanceList = Record<string, string[] | null>;
