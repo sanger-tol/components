@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { Checkbox } from "rsuite";
+
 import {
   AdvanceSearchTab,
   attributeSelectorSearchBy,
@@ -14,6 +14,7 @@ import {
   getAllAttributeData,
   getFlattenedMetaData,
   getProvenanceFieldName,
+  handleAttributeSelectorKeyNavigation,
   handleSetAttribute,
   IconTooltip,
   isProvenanceAttributeOfField,
@@ -187,69 +188,6 @@ export function AttributeSelector(props: PAttributeSelector) {
         <SourceTag source={provenance || metaData["source"]} />
       </span>
     );
-  };
-
-  /**
-   * Runs when a keydown event is detected on the attribute selector,
-   * which adds keyboard navigation to provenance dropdowns.
-   * 
-   * On a menu item, ArrowRight will focus the provenance toggle expand button.
-   * Focus can be placed back on the menu item with ArrowLeft.
-   * If this button is pressed to open the provenance picker, the entries in the provenance pickers
-   * will be considered at the same level as the base menu items
-   * (so they can all be cycled through with ArrowUp and ArrowDown).
-   */
-  const handleAttributeSelectorKeyNavigation = (
-    event: ReactKeyboardEvent<HTMLDivElement>
-  ) => {
-    const attributeSelector = event.target as HTMLElement | null;
-    if (!attributeSelector) return;
-
-    // If we're within the provenance picker, return early.
-    // Handling of keyboard navigation from within the picker is done in MenuItem
-    if (attributeSelector.closest(".tol-provenance-picker")) return;
-
-    // When the row has an expanded provenance list, ArrowUp/ArrowDown should enter
-    // that sublist before moving to previous/next top-level rows of AttributeSelector
-    // (handled by rsuite)
-    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-      // Locate the provenance checkbox elements in this menu item's sublist
-      const menuItemContainer = attributeSelector.closest<HTMLElement>("[role='option']");
-      const menuItem = menuItemContainer?.querySelector<HTMLElement>(".tol-attribute-selector-menu-item") || null;
-      if (!menuItem) return;
-      if (!menuItem.matches("[data-provenance-open='true']")) {
-        // If the provenance picker isn't open, there's no point trying to select any of its checkboxes
-        return;
-      }
-      const provenanceCheckboxes = menuItem.querySelectorAll<HTMLElement>(
-        ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']"
-      );
-      if (!provenanceCheckboxes.length) return;
-
-      // If there are provenance entries in the sublist, enter it.
-      // Further navigation up and down in this list is handled in MenuItem
-      const targetCheckbox = event.key === "ArrowDown"
-        ? provenanceCheckboxes[0] // When navigating down from above
-        : provenanceCheckboxes[provenanceCheckboxes.length - 1]; // When navigating up from below
-
-      // Override default behaviour
-      event.preventDefault();
-      event.stopPropagation();
-
-      // Focus the provenance checkbox calculated above
-      targetCheckbox.focus();
-    } else if (event.key === "ArrowRight") {
-      // Get the provenance expand button element
-      const selectableContainer = attributeSelector.closest(".rs-check-item") || attributeSelector;
-      const expandButton = selectableContainer.querySelector<HTMLButtonElement>(
-        "[data-testid^='attribute-selector-provenance-toggle-']"
-      );
-      if (!expandButton) return;
-
-      // Focus it
-      event.preventDefault();
-      expandButton.focus();
-    }
   };
 
   if (loading) return <></>;
