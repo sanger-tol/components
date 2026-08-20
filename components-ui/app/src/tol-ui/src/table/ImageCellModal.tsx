@@ -11,7 +11,7 @@ import { Modal, encodeImageSrc } from "..";
 
 export interface PImageCellModal {
   /**
-   * URL of the image to show in the
+   * URL of the image to show in the ImageCellModal
    */
   imageUrl: string;
   /**
