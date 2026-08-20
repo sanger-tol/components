@@ -37,8 +37,7 @@ test("User can select provenances in a table", async ({ page }) => {
     page,
     page.getByTestId("board-component-table"),
     {
-      activeColumns: ["big_string"],
-      provenances: {
+      fields: {
         "big_string": ["calc", "source1", "source2"]
       }
     }

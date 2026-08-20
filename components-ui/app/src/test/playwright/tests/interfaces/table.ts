@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
+import type { TAttributeAndProvenanceList } from "..";
+
 export interface IConfigureTable {
   /**
    * The field to choose in the 'Default Sort' select
@@ -12,15 +14,9 @@ export interface IConfigureTable {
    */
   limitColumnVisibility?: boolean;
   /**
-   * The columns to choose in the 'Active Columns' dropdown.
-   * Columns are added in the order provided in this array.
+   * Specifies the attributes to pick, and which provenances to pick for those attributes
+   * (if applicable). A provenances value of `null` means none, and including "calc" in the
+   * list means to choose the original field as well. See documentation for this type.
    */
-  activeColumns?: string[];
-  /**
-   * Specifies the provenance option selected for fields in `activeColumns`.
-   * If a field in `activeColumns` is a key in this record, it selects the sources in the given
-   * array. "calc" is used as the collated provenance source, while the rest are usual sources like
-   * "sts".
-   */
-  provenances?: Record<string, string[]>;
+  fields?: TAttributeAndProvenanceList;
 }

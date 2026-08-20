@@ -42,12 +42,11 @@ export const configureTable = async (
   }
 
   // Add the active columns if they were provided
-  if (config.activeColumns) {    
+  if (config.fields) {    
     await selectFromAttributeSelector(
       page,
       configDrawer.getByRole("combobox").nth(1),
-      config.activeColumns,
-      config.provenances,
+      config.fields
     )
   }
 
