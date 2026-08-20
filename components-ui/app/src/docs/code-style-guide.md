@@ -106,7 +106,21 @@ This includes code in `tol-ui`, as well as the UI of any of our apps.
 * Anything that holds or directly returns a JSX element must be PascalCase (e.g., `ConfigButton`).  
 * Test files should be named in pascal case, containing their area (+ ‘Utils’ if it’s testing a `utils.tsx` file), and ending with ‘.test.tsx’. (e.g. `AttributeUtils.test.tsx`) 
 
-## 8. Most Misc Miscellaneous Miscellanea:
+## 8. Accessibility (a11y)
+
+* Prefer semantic elements. If this is infeasible due to styling, or there is no element that does this, use the `role` property
+* Use ARIA tags where possible (e.g. `aria-describedby`)
+  * There are some areas where RSuite expects these tags. e.g.:
+  ```tsx
+  <Modal aria-labelledby="modal-title">
+    <h3 id="modal-title">Are you sure?</h3>
+    <button>Yeah</button>
+    <button>Nah</button>
+  </Modal>
+  ```
+* Consider keyboard navigability when making custom elements
+
+## 9. Most Misc Miscellaneous Miscellanea:
 
 * End every statement with a semicolon  
 * Code sections should be separated with exactly one new line  
