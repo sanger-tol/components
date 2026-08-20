@@ -16,7 +16,7 @@ export * from "./Datetime";
 export * from "./DataPointDefaultDisplay";
 export * from "./LongText";
 export * from "./Float";
-export * from "./OldImage";
+export * from "./ImageCell";
 export * from "./Integer";
 export * from "./Priority";
 export * from "./Link";
