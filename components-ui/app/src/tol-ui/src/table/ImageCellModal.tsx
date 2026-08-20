@@ -10,16 +10,28 @@ import type { MouseEventHandler } from "react";
 import { Modal, encodeImageSrc } from "..";
 
 export interface PImageCellModal {
-  value: string;
+  /**
+   * URL of the image to show in the
+   */
+  imageUrl: string;
+  /**
+   * Caption to show under the image
+   */
   caption: string;
+  /**
+   * Whether the modal is open
+   */
   open: boolean;
+  /**
+   * State setter for the modal being open
+   */
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function ImageCellModal(props: PImageCellModal) {
-  const { value, caption, open, setOpen } = props;
+  const { imageUrl, caption, open, setOpen } = props;
 
-  const [isImageFullscreen, setIsImageFullscreen] = useState(false)
+  const [isImageFullscreen, setIsImageFullscreen] = useState<boolean>(false)
 
   const handleFullscreenImage: MouseEventHandler<HTMLImageElement> = (event) => {
     if (isImageFullscreen) {
@@ -44,9 +56,9 @@ export function ImageCellModal(props: PImageCellModal) {
         */}
         <span>
           <img
-            src={encodeImageSrc(value)}
+            src={encodeImageSrc(imageUrl)}
             className="tol-table-image-modal-image"
-            title={value}
+            title={imageUrl}
             onClick={handleFullscreenImage}
             data-fullscreen={isImageFullscreen}
           />

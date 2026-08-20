@@ -23,7 +23,7 @@ export function OldImages(props: POldImages) {
   return (
     <div className="tol-table-expanded-row">
       <ImageCellModal
-        value={value}
+        imageUrl={value}
         caption={captions}
         open={open}
         setOpen={setOpen}

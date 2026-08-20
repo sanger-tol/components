@@ -8,6 +8,9 @@ import { ImageCellModal, PCellDisplay, encodeImageSrc } from "../..";
 import { useState } from "react";
 
 export interface PImageCell extends PCellDisplay {
+  /**
+   * The captions to display under the image in the ImageCellModal
+   */
   captions: string; // kept as plural to avoid alembic upgrade for now
 }
 
@@ -19,7 +22,7 @@ export function ImageCell(props: PImageCell) {
   return (
     <div>
       <ImageCellModal
-        value={value}
+        imageUrl={value}
         caption={captions}
         open={open}
         setOpen={setOpen}
