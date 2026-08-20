@@ -4,18 +4,18 @@
 
 import type { Locator, Page } from "@playwright/test";
 
-import type { TAttributeAndProvenanceList } from "../..";
+import { BASE_ATTRIBUTE_PROVENANCE_INDICATOR } from "../../";
 
 /**
  * Selects the requested attributes from an AttributeSelector
  * @param page The Playwright page handle
  * @param dropdown Playwright locator handle to the AttributeSelector dropdown
- * @param fieldsRecord The fields to select from this AttributeSelector (including the main field and any provenance options)
+ * @param fields List of fields to select. This can include provenanced fields (i.e. `attribute[source]`)
  */
 export async function selectFromAttributeSelector (
   page: Page,
   dropdown: Locator,
-  fieldsRecord: TAttributeAndProvenanceList,
+  fields: string[],
 ) {
   // Make sure the dropdown is ready to be used
   await dropdown.waitFor({ state: "visible" });
@@ -33,31 +33,51 @@ export async function selectFromAttributeSelector (
   const listbox = page.locator(`[id="${listboxId}"]`);
   await listbox.waitFor({ state: "visible" });
 
-  for (const value of Object.keys(fieldsRecord)) {
+  // `fields` contains an entry for each field separately;
+  // reformat it into a record for what to select for each attribute.
+  // Each key is the attribute name (has its own MenuItem),
+  // each value is the array of provenances to select, where the BASE_ATTRIBUTE_PROVENANCE_INDICATOR
+  // constant means the main field entry itself.
+  const provenancesForEachAttribute: Record<string, string[]> = {};
+  for (const field of fields) {
+    // Match the attribute and source part
+    const match = field.match(/^(?<attribute>[A-Za-z_]+)(?:\[(?<source>[\S]+)\])?$/);
+    if (!(match && match.groups)) {
+      throw new Error(`Invalid format: expected '${field}' to be a field`);
+    }
+
+    // Add this attribute to the record if it's not there already
+    if (!(match.groups.attribute in provenancesForEachAttribute)) {
+      provenancesForEachAttribute[match.groups.attribute] = [];
+    }
+
+    // Add the provenance (or a special value if the field referring to the base attribute)
+    provenancesForEachAttribute[match.groups.attribute].push(
+      match.groups.source ?? BASE_ATTRIBUTE_PROVENANCE_INDICATOR
+    );
+  }
+
+  for (const attribute of Object.keys(provenancesForEachAttribute)) {
     // When the combobox exposes a textbox, fill it with the search term
     const textbox = dropdown.getByRole("textbox");
     if (await textbox.count()) {
-      await textbox.fill(value);
+      await textbox.fill(attribute);
     }
 
-    const option = await listbox.getByRole("option", { name: value }).first();
+    const option = await listbox.getByRole("option", { name: attribute }).first();
 
-    // Select the main option if either:
-    // * This is not a field where provenance is considered or available
-    // * This is a provenance field, and we want to select the main option
-    //   (denoted by the "calc" source)
+    // Select the main option if required.
     // Match by option text in this listbox so similarly named controls cannot conflict.
-    if (!(fieldsRecord?.[value]) || fieldsRecord[value]?.includes("calc")) {
+    if (provenancesForEachAttribute[attribute].includes(BASE_ATTRIBUTE_PROVENANCE_INDICATOR)) {
       await option.click();
     }
 
     // Get the provenances provided to select for this value.
-    // Remove the "calc" provenance if present, because that refers to the main entry.
-    // Same if the provenances is `null`, as that indicates this isn't a provenanced attribute (so just select the normal one)
-    console.log(`${fieldsRecord[value]}, ${Boolean(fieldsRecord[value])}`)
-    const provenancesToSelect = fieldsRecord[value]
-      ? fieldsRecord[value].filter(provenance => provenance != "calc")
-      : [];
+    // Remove the value that indicates the base attribute option should be selected,
+    // as these are only the options in the provenance picker
+    const provenancesToSelect = provenancesForEachAttribute[attribute].filter(
+      provenance => provenance != BASE_ATTRIBUTE_PROVENANCE_INDICATOR
+    );
 
     // Open the provenance picker and select the desired provenance options if they were provdied
     if (provenancesToSelect.length > 0) {
@@ -101,6 +121,6 @@ export async function selectFromDropdown (page: Page, dropdown: Locator, values:
   await selectFromAttributeSelector(
     page,
     dropdown,
-    Object.fromEntries(values.map(value => [value, null]))
+    values
   );
 }

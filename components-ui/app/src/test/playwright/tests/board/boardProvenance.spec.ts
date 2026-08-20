@@ -37,9 +37,7 @@ test("User can select provenances in a table", async ({ page }) => {
     page,
     page.getByTestId("board-component-table"),
     {
-      fields: {
-        "big_string": ["calc", "source1", "source2"]
-      }
+      activeColumns: ["big_string", "big_string[source1]", "big_string[source2]"]
     }
   );
   // Check all 4 columns are visible
