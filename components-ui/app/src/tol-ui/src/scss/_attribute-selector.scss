@@ -214,9 +214,9 @@ SPDX-License-Identifier: MIT
 }
 
 .tol-provenance-picker {
-  margin-top: 8px;
-  background-color: var(--tol-bg);
-  border-radius: var(--tol-border-radius-sm);
+  margin-top: var(--tol-spacing-sm);
+  background-color: var(--tol-grey-translucent);
+  border-radius: var(--tol-border-radius);
   display: flex;
   flex-direction: column;
 
@@ -227,8 +227,7 @@ SPDX-License-Identifier: MIT
 
 .tol-provenance-picker-entry {
   padding: 0.2rem;
-  border-radius: 0.4rem !important;
-  background-color: var(--tol-bg);
+  border-radius: var(--tol-border-radius) !important;
   color: var(--tol-text);
   font-weight: normal;
 
