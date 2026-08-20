@@ -12,11 +12,11 @@ import type { TAttributeAndProvenanceList } from "../..";
  * @param dropdown Playwright locator handle to the AttributeSelector dropdown
  * @param fieldsRecord The fields to select from this AttributeSelector (including the main field and any provenance options)
  */
-export const selectFromAttributeSelector = async (
+export async function selectFromAttributeSelector (
   page: Page,
   dropdown: Locator,
   fieldsRecord: TAttributeAndProvenanceList,
-) => {
+) {
   // Make sure the dropdown is ready to be used
   await dropdown.waitFor({ state: "visible" });
   
@@ -93,7 +93,7 @@ export const selectFromAttributeSelector = async (
  * @param dropdown Playwright locator handle to the dropdown
  * @param values The values to select
  */
-export const selectFromDropdown = async (page: Page, dropdown: Locator, values: string[]) => {
+export async function selectFromDropdown (page: Page, dropdown: Locator, values: string[]) {
   // The same logic is used to select from an attribute selector, so we can reuse this function.
   // If no provenance options are provided, we make every attribute in the `fieldsRecord` have
   // `null` for provenances selected, which just means "select only the field itself, not any of its provenances",

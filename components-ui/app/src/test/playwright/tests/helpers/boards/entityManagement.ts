@@ -7,26 +7,36 @@ import { DATASOURCE_INSTANCE_ID } from "../../constants/board";
 import { expect, type Page } from "@playwright/test";
 
 
-const createShortId = (prefix: string) => `${prefix}_${crypto.randomUUID().slice(0, 12)}`;
+function createShortId(prefix: string) {
+  return `${prefix}_${crypto.randomUUID().slice(0, 12)}`;
+}
 
 /**
  * @returns A random Board ID
  */
-export const createBoardId = () => createShortId("b");
+export function createBoardId() {
+  return createShortId("b");
+}
 /**
  * @returns A random View ID
  */
-export const createViewId = () => createShortId("v");
+export function createViewId() {
+  return createShortId("v");
+}
 /**
  * @returns A random Zone ID
  */
-export const createZoneId = () => createShortId("z");
+export function createZoneId() {
+  return createShortId("z");
+}
 /**
  * @returns A random Component ID
  */
-export const createComponentId = () => createShortId("c");
+export function createComponentId() {
+  return createShortId("c");
+}
 
-export const createZone = async (page: Page) => {
+export async function createZone(page: Page) {
   // enter edit mode
   await enterEditMode(page);
 
@@ -62,7 +72,7 @@ export const createZone = async (page: Page) => {
   await exitEditMode(page);
 };
 
-export const deleteBoard = async ({ page, boardID }) => {
+export async function deleteBoard({ page, boardID }) {
   await page.goto("/my-boards");
 
   // find the correct board row
@@ -76,9 +86,9 @@ export const deleteBoard = async ({ page, boardID }) => {
 
   // click the confirm button
   await page.getByTestId("confirm-delete-button").click();
-};
+}
 
-export const addView = async (page: Page) => {
+export async function addView(page: Page) {
   // click add view button
   const addViewButton = await page.getByTestId("board-add-view-button");
   await addViewButton.click();
@@ -88,4 +98,4 @@ export const addView = async (page: Page) => {
 
   // exit edit mode
   await exitEditMode(page);
-};
+}

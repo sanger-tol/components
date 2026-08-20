@@ -13,7 +13,7 @@ import { clickWithRetries } from "..";
  * @param component Playwright locator handle to the component containing the utility bar
  * @param testId Test ID of the target button
  */
-export const clickUtilityBarButton = async (page: Page, component: Locator, testId: string) => {
+export async function clickUtilityBarButton(page: Page, component: Locator, testId: string) {
   // A utility bar button will either be in a utility bar at the top of a component,
   // or it will be hidden in an rs-popover that appears when the condensed utility bar button
   // is clicked.
@@ -31,4 +31,4 @@ export const clickUtilityBarButton = async (page: Page, component: Locator, test
     // Directly click the requested button
     await clickWithRetries(page, () => component.getByTestId(testId));
   }
-};
+}

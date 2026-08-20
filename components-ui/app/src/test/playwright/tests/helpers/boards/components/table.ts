@@ -15,11 +15,11 @@ import type { IConfigureTable } from "../../../interfaces";
  * @param table Playwright locator handle to the table to configure
  * @param config Table configuration options
  */
-export const configureTable = async (
+export async function configureTable(
   page: Page,
   table: Locator,
   config: IConfigureTable,
-) => {
+) {
   // Click the Configure Table button
   await clickUtilityBarButton(page, table, "table-config-button");
   const configDrawer = page.locator(".tol-drawer");

@@ -11,12 +11,12 @@ import type { Page, Locator } from "@playwright/test";
  * @param attempts How many times to try clicking before giving up
  * @param timeoutMs The value in miliseconds to use for all timeouts in this helper
  */
-export const clickWithRetries = async (
+export async function clickWithRetries(
   page: Page,
   getLocator: () => Locator,
   attempts: number = 5,
   timeoutMs: number = 1_500,
-) => {
+) {
   let lastError: unknown;
 
   for (let attempt = 0; attempt < attempts; attempt++) {
