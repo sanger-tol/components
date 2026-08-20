@@ -64,11 +64,13 @@ const Link = ({
   ) ?? true;
 
   return linkUrl && linkConditionPassed && (
-    <Button
-      wrapperClassName="tol-data-point-link-group-link"
-      text={linkText ?? "Link"}
-      onClick={() => window.open(linkUrl, "_blank")}
-    />
+    <li>
+      <Button
+        wrapperClassName="tol-data-point-link-group-link"
+        text={linkText ?? "Link"}
+        onClick={() => window.open(linkUrl, "_blank")}
+      />
+    </li>
   );
 };
 
@@ -85,10 +87,10 @@ const LinkGroup = ({
     <div className="tol-data-point-link-group-group">
       <h6>{groupTitle}</h6>
       <ul>
-        <li><Link rendererProps={rendererProps} placement="First" groupPlacement={placement} /></li>
-        <li><Link rendererProps={rendererProps} placement="Second" groupPlacement={placement} /></li>
-        <li><Link rendererProps={rendererProps} placement="Third" groupPlacement={placement} /></li>
-        <li><Link rendererProps={rendererProps} placement="Fourth" groupPlacement={placement} /></li>
+        <Link rendererProps={rendererProps} placement="First" groupPlacement={placement} />
+        <Link rendererProps={rendererProps} placement="Second" groupPlacement={placement} />
+        <Link rendererProps={rendererProps} placement="Third" groupPlacement={placement} />
+        <Link rendererProps={rendererProps} placement="Fourth" groupPlacement={placement} />
       </ul>
     </div>
   );
