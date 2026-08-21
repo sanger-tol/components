@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import type { Dispatch, SetStateAction } from "react";
+
 export interface IPageSectionNavigationItem {
   /** ID of the section element and the resulting URL hash. */
   id: string;
@@ -20,5 +22,5 @@ export interface IUsePageSectionNavigationArgs {
 
 export interface IUsePageSectionNavigationResult {
   activeId: string;
-  setActiveId: (id: string) => void;
+  setActiveId: Dispatch<SetStateAction<string>>;
 }

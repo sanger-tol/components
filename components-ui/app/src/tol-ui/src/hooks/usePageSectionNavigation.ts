@@ -16,9 +16,10 @@ export function usePageSectionNavigation({
   items,
   activeOffsetRatio = 1 / 3,
 }: IUsePageSectionNavigationArgs): IUsePageSectionNavigationResult {
-  const [activeId, setActiveId] = useState(
-    () => window.location.hash.slice(1) || items[0]?.id || "",
-  );
+  const [activeId, setActiveId] = useState(() => {
+    if (typeof window === "undefined") return items[0]?.id || "";
+    return window.location.hash.slice(1) || items[0]?.id || "";
+  });
 
   useEffect(() => {
     let frame = 0;

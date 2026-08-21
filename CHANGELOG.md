@@ -10,6 +10,8 @@ SPDX-License-Identifier: MIT
 
 19-08-2026
 
+- Updated the Image data-point renderer so that the image fits in the modal
+- Added the option to view the image in fullscreen in the Image data-point renderer
 - Added PageSectionNavigation for in-page section links and active-state tracking
 - Added DetailCard for reusable structured record and metadata displays
 - Added TagList for consistently spaced, wrapping collections of tags

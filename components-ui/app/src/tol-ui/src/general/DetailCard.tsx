@@ -10,9 +10,9 @@ import type { IDetailCardField } from "..";
 
 export interface PDetailCard {
   /** Card heading. */
-  title?: ReactNode;
+  title?: string;
   /** Supporting text displayed below the heading. */
-  description?: ReactNode;
+  description?: string;
   /** Structured label-value details. Nullish values are omitted. */
   fields?: IDetailCardField[];
   /** Additional card content. */
@@ -46,9 +46,7 @@ export function DetailCard({
         <div className="tol-detail-card__fields">
           {visibleFields.map((field, index) => (
             <div key={field.id ?? index} className="tol-detail-card__field">
-              <strong className="tol-detail-card__label">
-                {field.label}:
-              </strong>
+              <span className="tol-detail-card__label">{field.label}:</span>
               <span className="tol-detail-card__value">{field.value}</span>
             </div>
           ))}
