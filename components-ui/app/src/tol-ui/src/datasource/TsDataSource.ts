@@ -791,13 +791,16 @@ export class TsDataSource {
     sourceObjectType: string,
     targetObjectType: string,
     relationshipConfig?: IRelationships
-  ): Promise<string> {
+  ): Promise<string | null> {
     const shortestPath = await this.findShortestRelationshipPath(
       sourceObjectType,
       targetObjectType,
       relationshipConfig
     );
-    if (shortestPath === null || shortestPath === "") return field;
+    // If no path exists, return null to indicate that the field cannot be resolved from the source object type.
+    if (shortestPath === null) return null;
+    
+    if (shortestPath === "") return field;
     return `${shortestPath}.${field}`;
   }
 
@@ -824,7 +827,7 @@ export class TsDataSource {
       const nextObjectType =
         resolvedRelationshipConfig[currentObjectType]?.one?.[relationshipName] ??
         resolvedRelationshipConfig[currentObjectType]?.many?.[relationshipName];
-      if (!nextObjectType) return field;
+      if (!nextObjectType) return null;
       currentObjectType = nextObjectType;
     }
 
