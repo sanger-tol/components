@@ -10,7 +10,10 @@ import {
   API_METHODS,
   API_OPERATIONS,
   deepCopy,
+  getAttributeNameByField,
   httpClient,
+  isAttributeField,
+  splitRelationshipsForField,
 } from "..";
 import type {
   IAttributeDescriptor,
@@ -735,16 +738,19 @@ export class TsDataSource {
    *
    * @param sourceObjectType - The object type to start from (e.g. `"sample"`).
    * @param targetObjectType - The object type to reach (e.g. `"species"`).
+   * @param relationshipConfig - Optional injected relationship config override.
    * @returns A dot-separated path string (e.g. `"specimen.species"`), or `null` if
    *   no path exists between the two object types.
    */
-  public async findShortedRelationshipPath(
+  public async findShortestRelationshipPath(
     sourceObjectType: string,
-    targetObjectType?: string
+    targetObjectType?: string,
+    relationshipConfig?: IRelationships
   ): Promise<string | null> {
     if (sourceObjectType === targetObjectType) return "";
 
-    const relationshipConfig = await this.relationshipConfig();
+    const resolvedRelationshipConfig =
+      relationshipConfig ?? await this.relationshipConfig();
 
     // Each queue entry holds the current object type and the path of relationship names taken to reach it
     const queue: Array<[string, string[]]> = [[sourceObjectType, []]];
@@ -753,7 +759,7 @@ export class TsDataSource {
 
     while (queue.length > 0) {
       const [currentType, currentPath] = queue.shift()!;
-      const relationships = relationshipConfig[currentType];
+      const relationships = resolvedRelationshipConfig[currentType];
 
       for (const side of ["one", "many"] as const) {
         for (const [relationshipName, relatedType] of Object.entries(relationships?.[side] ?? {})) {
@@ -773,49 +779,100 @@ export class TsDataSource {
   }
 
   /**
-   * Rewrites a relationship field to use the shortest relationship path while preserving
-   * the final attribute name.
+   * Prefixes an attribute field with the shortest relationship path between two object types.
    *
-    * For example, if `sourceObjectType` is `species` and `field` is
-    * `specimens.samples.specimen.species.name`, the relationship chain resolves back to
-    * `species`, so this returns `name`.
-   *
-   * @param sourceObjectType - The object type that the field should be relative to.
-   * @param field - A field that may include relationship segments followed by an attribute.
-   * @returns The shortest equivalent field, or the original field when no shorter path can be resolved.
+   * @param field - Attribute field name without relationship segments.
+   * @param sourceObjectType - Object type to start from.
+   * @param targetObjectType - Object type that owns the attribute field.
+   * @returns The prefixed field when a path exists, otherwise the original field.
    */
-  public async findShortestRelationshipField(
+  private async addShortestPathToAttributeField(
+    field: string,
     sourceObjectType: string,
-    field: string
+    targetObjectType: string,
+    relationshipConfig?: IRelationships
   ): Promise<string> {
-    const splitField = field.split(".");
-    if (splitField.length <= 1) return field;
+    const shortestPath = await this.findShortestRelationshipPath(
+      sourceObjectType,
+      targetObjectType,
+      relationshipConfig
+    );
+    if (shortestPath === null || shortestPath === "") return field;
+    return `${shortestPath}.${field}`;
+  }
 
-    const relationshipConfig = await this.relationshipConfig();
-    const attribute = splitField[splitField.length - 1];
+  /**
+   * Rewrites a relationship field to use the shortest relationship path while
+   * preserving the final attribute segment.
+   *
+   * @param field - Original relationship field (e.g. `"specimens.samples.name"`).
+   * @param sourceObjectType - Object type the field should be relative to.
+   * @param resolvedRelationshipConfig - Relationship config to use for traversal.
+   * @returns Shortened relationship field, `null` if no path exists, or the
+   *   bare attribute name if source and target are the same type.
+   */
+  private async addShortestPathToRelationshipField(
+    field: string,
+    sourceObjectType: string,
+    resolvedRelationshipConfig: IRelationships
+  ): Promise<string | null> {
+    const attribute = getAttributeNameByField(field);
 
     // Resolve the final object type reached by the full relationship chain.
     let currentObjectType = sourceObjectType;
-    for (const relationshipName of splitField.slice(0, -1)) {
+    for (const relationshipName of splitRelationshipsForField(field)) {
       const nextObjectType =
-        relationshipConfig[currentObjectType]?.one?.[relationshipName] ??
-        relationshipConfig[currentObjectType]?.many?.[relationshipName];
+        resolvedRelationshipConfig[currentObjectType]?.one?.[relationshipName] ??
+        resolvedRelationshipConfig[currentObjectType]?.many?.[relationshipName];
       if (!nextObjectType) return field;
       currentObjectType = nextObjectType;
     }
 
-    const relatedObjectType = currentObjectType;
-
-    if (!relatedObjectType) return field;
-
-    const shortestPath = await this.findShortedRelationshipPath(
+    const shortestPath = await this.findShortestRelationshipPath(
       sourceObjectType,
-      relatedObjectType
+      currentObjectType,
+      resolvedRelationshipConfig
     );
 
-    if (shortestPath === null) return field;
+    if (shortestPath === null) return null;
     if (shortestPath === "") return attribute;
 
     return `${shortestPath}.${attribute}`;
+  }
+
+  /**
+    * Returns a field that uses the shortest relationship path from `sourceObjectType`.
+    *
+    * @param field - Field name, with or without relationship segments.
+    * @param sourceObjectType - The object type that the field should be relative to.
+    * @param targetObjectType - Object type that owns `field` when `field` has no relationship segments.
+    * @param relationshipConfig - Optional injected relationship config override.
+    * @returns Shortened field, or the original field if no valid path is found.
+   */
+  public async findShortestRelationshipField(
+    field: string,
+    sourceObjectType: string,
+    targetObjectType: string,
+    relationshipConfig?: IRelationships
+  ): Promise<string | null> {
+    const resolvedRelationshipConfig =
+      relationshipConfig ?? await this.relationshipConfig();
+
+    // For attributes just add the shortest relationship path
+    if (isAttributeField(field)) {
+      return this.addShortestPathToAttributeField(
+        field,
+        sourceObjectType,
+        targetObjectType,
+        resolvedRelationshipConfig
+      );
+    }
+
+    // For relationship fields, find the shortest path to the final object type and preserve the attribute segment
+    return this.addShortestPathToRelationshipField(
+      field,
+      sourceObjectType,
+      resolvedRelationshipConfig
+    );
   }
 }

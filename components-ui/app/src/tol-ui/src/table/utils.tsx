@@ -30,7 +30,7 @@ import {
   MESSAGE_TYPE,
   BOARD_MESSAGE_TEXT,
   updateComponentConfigAndUpsert,
-  isRelationship,
+  isRelationshipField,
   TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
   TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
   CELL_RENDERER_PROP_TAG_START,
@@ -192,7 +192,7 @@ export function addDefaultsFromEntityMeta(
   const defaults = {
     cellRenderer: addDefaultCellRenderer(meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
-    isAttribute: isRelationship(key),
+    isAttribute: isRelationshipField(key),
     rename: meta.display_name || normaliseCaps(key),
     sort: true,
     type: meta.python_type,

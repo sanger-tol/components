@@ -40,7 +40,7 @@ export function getTranslatorZone(id: string, view: IView): IZone | null {
  */
 export async function translateZoneAboveFilter(
   currentZone: IZone,
-  zoneAbove?: IZone,
+  zoneAbove: IZone,
 ): Promise<IFilter> {
   let translatedFilter: IFilter = createEmptyFilter();
 
@@ -52,8 +52,8 @@ export async function translateZoneAboveFilter(
 
   // Get various properties needed for translation
   const { object_type, dataspace } = currentZone;
-
   const zoneAboveFilter = generateFilter(zoneAbove);
+
   if (zoneAboveFilter) {
     /**
      * Add the custom translations to the translated filter if they exist.
@@ -66,17 +66,15 @@ export async function translateZoneAboveFilter(
         // If the field already exists in the attribute translations, skip automatic translation
         if (incomingField in (translatedFilter.and_ || {})) continue;
 
-        // Add the translation path to the field
-        incomingField = `${currentZone.translationPath}.${incomingField}`;
-
         // Attempt to find a relationship path for the incoming field
         const relationshipPath = await dataspace?.findShortestRelationshipField(
+          incomingField,
           object_type!,
-          incomingField
+          zoneAbove.object_type!
         );
 
+        // If a relationship path is found, add the translated field to the translated filter
         if (relationshipPath && translatedFilter.and_) {
-          // If a relationship path is found, add the translated field to the translated filter
           translatedFilter.and_[relationshipPath] = filterValue;
         }
       }

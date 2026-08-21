@@ -33,7 +33,7 @@ export const FILTER_EXCLUDE_INCOMING = {
 };
 
 export const ADVANCED_TRANSLATION = {
-	LABEL: "Attribute specific translations",
+	LABEL: "Attribute translation",
 	TOOLTIP:
 		"Toggling this allows you to specify a mapping of custom translations. These are prioritised over automatic translations. This is formatted using JSON.",
 };
