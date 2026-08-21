@@ -227,7 +227,7 @@ export function Zone(props: PZone) {
         setOpen={setOpenFilters}
         zone={zone}
         setZone={setZone}
-        aboveZone={zoneAbove}
+        aboveZone={zoneAbove!}
       />
     </div>
   );

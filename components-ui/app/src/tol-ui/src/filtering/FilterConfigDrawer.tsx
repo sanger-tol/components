@@ -46,7 +46,7 @@ export interface PFilterConfigDrawer extends IBoardTargetAndZone {
   id: string;
   open: boolean;
   setOpen: (open: boolean) => void;
-  aboveZone: IZone | null;
+  aboveZone?: IZone;
 }
 
 export function FilterConfigDrawer(props: PFilterConfigDrawer) {
