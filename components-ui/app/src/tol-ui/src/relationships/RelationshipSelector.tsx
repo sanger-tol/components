@@ -49,6 +49,7 @@ export interface PRelationshipSelector extends IRemoteTarget {
 }
 
 /**
+ * TODO: Ensure this is complete and is stress-tested before use (future).
  * Builds a relationship path using a dropdown of choices for the next section of the path
  */
 export function RelationshipSelector(props: PRelationshipSelector) {
