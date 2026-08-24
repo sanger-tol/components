@@ -409,39 +409,48 @@ export function handleAttributeSelectorKeyNavigation(
   const attributeSelector = event.target as HTMLElement | null;
   if (!attributeSelector) return;
 
-  // If we're within the provenance picker, return early.
-  // Handling of keyboard navigation from within the picker is done in MenuItem
+  // The picker owns navigation between its checkboxes and back out to the menu.
+  // Leaving those events here as well would move focus twice for a single key press.
   if (attributeSelector.closest(".tol-provenance-picker")) return;
 
-  // When the row has an expanded provenance list, ArrowUp/ArrowDown should enter
-  // that sublist before moving to previous/next top-level rows of AttributeSelector
-  // (handled by rsuite)
+  // Flatten each expanded picker into the menu's focus order directly after its parent row.
+  // This keeps arrows predictable without exposing the visual nesting to keyboard users.
   if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-    // Locate the provenance checkbox elements in this menu item's sublist
-    const menuItemContainer = attributeSelector.closest<HTMLElement>("[role='option']");
-    const menuItem = menuItemContainer?.querySelector<HTMLElement>(".tol-attribute-selector-menu-item") || null;
-    if (!menuItem) return;
-    if (!menuItem.matches("[data-provenance-open='true']")) {
-      // If the provenance picker isn't open, there's no point trying to select any of its checkboxes
-      return;
+    // Work from RSuite's outer row rather than a nested label or checkbox, since the event target
+    // differs depending on which part of the row currently has focus.
+    const currentMenuItem = attributeSelector.closest<HTMLElement>(".rs-check-item");
+    if (!currentMenuItem) return;
+
+    const menuItems = getAttributeSelectorMenuItems(attributeSelector);
+    const currentMenuItemIndex = menuItems.indexOf(currentMenuItem);
+    if (currentMenuItemIndex < 0) return;
+
+    let target: HTMLElement | undefined;
+    if (event.key === "ArrowDown") {
+      // Provenances visually follow their parent, so enter an open picker before the next row.
+      const provenanceCheckboxes = getCheckboxesInProvenancePicker(currentMenuItem);
+      target = provenanceCheckboxes[0] ?? menuItems[currentMenuItemIndex + 1];
+    } else {
+      // An open picker on the previous row is likewise the item immediately above this row.
+      const previousMenuItem = menuItems[currentMenuItemIndex - 1];
+      const previousProvenanceCheckboxes = previousMenuItem
+        ? getCheckboxesInProvenancePicker(previousMenuItem)
+        : [];
+      target = previousProvenanceCheckboxes[previousProvenanceCheckboxes.length - 1]
+        ?? previousMenuItem;
     }
-    const provenanceCheckboxes = menuItem.querySelectorAll<HTMLElement>(
-      ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']"
-    );
-    if (!provenanceCheckboxes.length) return;
+    if (!target) return;
 
-    // If there are provenance entries in the sublist, enter it.
-    // Further navigation up and down in this list is handled in MenuItem
-    const targetCheckbox = event.key === "ArrowDown"
-      ? provenanceCheckboxes[0] // When navigating down from above
-      : provenanceCheckboxes[provenanceCheckboxes.length - 1]; // When navigating up from below
-
-    // Override default behaviour
+    // RSuite only knows about its own menu rows, so suppress its navigation when moving through
+    // the combined row-and-provenance focus order.
     event.preventDefault();
     event.stopPropagation();
 
-    // Focus the provenance checkbox calculated above
-    targetCheckbox.focus();
+    if (target.classList.contains("rs-check-item")) {
+      focusAttributeSelectorMenuItem(target);
+    } else {
+      target.focus();
+    }
   } else if (event.key === "ArrowRight") {
     // Get the provenance expand button element
     const selectableContainer = attributeSelector.closest(".rs-check-item") || attributeSelector;
@@ -462,13 +471,33 @@ export function handleAttributeSelectorKeyNavigation(
  * @param menuItem A reference to the menu item containing the provenance picker we're interested in
  * @returns An array of references to checkboxes in the provenance picker
  */
-export function getCheckboxesInProvenancePicker (menuItem: HTMLElement) {
+function getCheckboxesInProvenancePicker (menuItem: HTMLElement) {
   return Array.from(
     menuItem.querySelectorAll<HTMLElement>(
       ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']"
     )
   )
 };
+
+function getAttributeSelectorMenuItems(element: HTMLElement) {
+  const currentMenuItem = element.closest<HTMLElement>(".rs-check-item");
+  if (!currentMenuItem) return [];
+
+  // The parent fallback keeps this helper useful in tests and in unwrapped RSuite menu layouts.
+  const menu = currentMenuItem.closest<HTMLElement>(".rs-picker-check-menu")
+    ?? currentMenuItem.parentElement;
+  if (!menu) return [];
+
+  // Restrict the result to AttributeSelector rows in case the RSuite menu contains other controls.
+  return Array.from(menu.querySelectorAll<HTMLElement>(".rs-check-item"))
+    .filter(menuItem => menuItem.querySelector(".tol-attribute-selector-menu-item"));
+}
+
+function focusAttributeSelectorMenuItem(menuItem: HTMLElement) {
+  // RSuite often places the tab stop on an input inside the row rather than on the row itself.
+  const focusableInItem = menuItem.querySelector<HTMLElement>("[tabindex]");
+  (focusableInItem ?? menuItem).focus();
+}
 
 /**
  * Handles keyboard navigation for the expand button in MenuItem that opens the ProvenancePicker
@@ -538,12 +567,30 @@ export function handleProvenancePickerKeyDownEvent(
   const direction = event.key === "ArrowDown" ? 1 : -1;
   const nextIndex = currentIndex + direction;
 
+  // Navigation within the picker is independent of RSuite's top-level menu navigation.
   if (nextIndex >= 0 && nextIndex < focusableCheckboxes.length) {
-    // Consume ArrowUp/ArrowDown only when moving within the provenance list.
     event.preventDefault();
     event.stopPropagation();
     focusableCheckboxes[nextIndex].focus();
+    return;
   }
+
+  // At a picker boundary, move focus explicitly instead of allowing the event to reach RSuite.
+  // Provenance entries use role="option", so RSuite otherwise mistakes them for top-level rows
+  // and cycles through the picker instead of exiting it.
+  const menuItems = getAttributeSelectorMenuItems(event.currentTarget);
+  const currentMenuItem = event.currentTarget.closest<HTMLElement>(".rs-check-item");
+  if (!currentMenuItem) return;
+
+  const currentMenuItemIndex = menuItems.indexOf(currentMenuItem);
+  const targetMenuItem = event.key === "ArrowUp"
+    ? currentMenuItem
+    : menuItems[currentMenuItemIndex + 1];
+  if (!targetMenuItem) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+  focusAttributeSelectorMenuItem(targetMenuItem);
 };
 
 /**
