@@ -140,7 +140,7 @@ export function AttributeSelector(props: PAttributeSelector) {
    */
   const extractProvenancesForField = (field: string): string[] =>
     attribute
-      .filter(att => att.startsWith(`${field}[`))
+      .filter(att => isProvenanceAttributeOfField(field, att))
       .flatMap(att => {
         const match = att.match(PROVENANCE_IN_FIELD_REGEX);
         return match?.[1] ? [match[1]] : [];
