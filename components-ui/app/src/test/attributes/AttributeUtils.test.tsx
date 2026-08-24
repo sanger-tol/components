@@ -10,7 +10,7 @@ import {
   generateFilterDescriptions,
   getProvenanceFieldName,
   isProvenanceField,
-  isProvenanceAttributeOfField
+  isProvenanceFieldOfAttribute,
 } from "../../tol-ui/src";
 import type {
   IFilter,
@@ -201,40 +201,40 @@ describe("isProvenanceAttribute function", () => {
 
 describe("isProvenanceAttributeOfField function", () => {
   test("A simple provenance field", () => {
-    expect(isProvenanceAttributeOfField("field[provenance]", "field")).toBe(true);
+    expect(isProvenanceFieldOfAttribute("field[provenance]", "field")).toBe(true);
   });
 
   test("A provenance field with multiple underscores", () => {
     expect(
-      isProvenanceAttributeOfField("field_with_multiple_underscores[provenance]", "field_with_multiple_underscores")
+      isProvenanceFieldOfAttribute("field_with_multiple_underscores[provenance]", "field_with_multiple_underscores")
     ).toBe(true);
   });
 
   test("A provenance field with a relationship", () => {
     expect(
-      isProvenanceAttributeOfField("relation.field[provenance]", "relation.field")
+      isProvenanceFieldOfAttribute("relation.field[provenance]", "relation.field")
     ).toBe(true);
   });
 
   test("A complicated provenance field", () => {
     expect(
-      isProvenanceAttributeOfField("abc_def_ghi.jkl_mno_pqr[provenance]", "abc_def_ghi.jkl_mno_pqr")
+      isProvenanceFieldOfAttribute("abc_def_ghi.jkl_mno_pqr[provenance]", "abc_def_ghi.jkl_mno_pqr")
     ).toBe(true);
   });
 
   test("A non-provenance field", () => {
     expect(
-      isProvenanceAttributeOfField("non_provenance_field", "non_provenance_field")
+      isProvenanceFieldOfAttribute("non_provenance_field", "non_provenance_field")
     ).toBe(false);
   });
 
   test("A provenance field of the incorrect base field", () => {
     expect(
-      isProvenanceAttributeOfField("completely_different_field[provenance]", "field")
+      isProvenanceFieldOfAttribute("completely_different_field[provenance]", "field")
     ).toBe(false);
   });
 
   test("An invalid field", () => {
-    expect(isProvenanceAttributeOfField("lsdkfjglsidfdsf", "field")).toBe(false);
+    expect(isProvenanceFieldOfAttribute("lsdkfjglsidfdsf", "field")).toBe(false);
   });
 });
