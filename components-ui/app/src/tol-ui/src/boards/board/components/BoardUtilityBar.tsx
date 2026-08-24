@@ -134,7 +134,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
         });
       }
 
-      processTour("editMode", EDIT_MODE_TOUR, user?.id ?? null, true);
+      processTour("editMode", EDIT_MODE_TOUR, user?.id ?? null);
     }
 
     clearAllFilters();
