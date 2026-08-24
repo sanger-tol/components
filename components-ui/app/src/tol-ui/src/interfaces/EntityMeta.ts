@@ -4,6 +4,9 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import type { IAttributeDescriptor } from "..";
+
+
 /**
  * Relationship mappings keyed by relationship name.
  */
@@ -30,7 +33,7 @@ export interface IObjectRelationships {
 /**
  * Attribute metadata keyed by attribute name.
  */
-export type TAttributeData = Record<string, string>;
+export type TAttributeData = Record<string, IAttributeDescriptor>;
 
 /**
  * Attribute metadata keyed by object type.

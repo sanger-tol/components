@@ -140,6 +140,7 @@ export interface ISourceDataObject extends IDataObject, IJsonApiDataExtra {
 
 export interface IAttributeDescriptor {
   authoritative: boolean;
+  acts_as?: string;
   available_on_relationships: boolean;
   cardinality?: number;
   description?: string;
