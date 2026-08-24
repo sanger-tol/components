@@ -27,5 +27,5 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_column('zone', 'filter_pass_through')
-    op.drop_column('zone', 'translation_path')
+    op.drop_column('zone', 'relationship_translation')
     op.alter_column('zone', 'attribute_translations', new_column_name='translations')

@@ -39,7 +39,7 @@ import {
 } from "..";
 import type {
   TsDataSource,
-  IAttributeData,
+  TAttributeData,
   TDataObjectListOrNull,
   ITableData,
   ITableRecord,
@@ -185,7 +185,7 @@ function sortFieldsByRename(fieldMeta: IFieldMeta) {
 
 export function addDefaultsFromEntityMeta(
   key: string,
-  meta: IAttributeData,
+  meta: TAttributeData,
   fieldMeta: IFieldMeta,
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};

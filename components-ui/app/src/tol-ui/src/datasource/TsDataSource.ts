@@ -36,7 +36,7 @@ import type {
   IJsonApiResponse,
   IJsonApiResponseData,
   IRelationshipPointer,
-  IRelationships,
+  TRelationships,
   ISourceDataObject,
   IUpsert,
   TCursorObjectOrNull,
@@ -322,8 +322,8 @@ export class TsDataSource {
     return this.getConfig("_config/attribute_metadata") as Promise<IAttributes>;
   }
 
-  public async relationshipConfig(): Promise<IRelationships> {
-    return this.getConfig("_config/relationships") as Promise<IRelationships>;
+  public async relationshipConfig(): Promise<TRelationships> {
+    return this.getConfig("_config/relationships") as Promise<TRelationships>;
   }
 
   /**
@@ -350,7 +350,7 @@ export class TsDataSource {
 
   private flattenAttributes(
     attributes: IAttributes,
-    relationships: IRelationships
+    relationships: TRelationships
   ) {
     const newAttributes: IAttributes = deepCopy(attributes);
     this.addObjectTypeToAttributes(newAttributes);
@@ -396,7 +396,7 @@ export class TsDataSource {
             data: {
               flatAttributes: this.flattenAttributes(
                 attributes as IAttributes,
-                relationships as IRelationships
+                relationships as TRelationships
               ),
               relationships,
             },
@@ -686,7 +686,7 @@ export class TsDataSource {
     objectType: string,
     field: string
   ): Promise<boolean> {
-    const relationshipConfig = await this.relationshipConfig() as IRelationships;
+    const relationshipConfig = await this.relationshipConfig() as TRelationships;
     const [relationship, ...rest] = field.split(".");
     const hasMoreRelationshipJumps = rest.length > 1;
 
@@ -812,7 +812,7 @@ export class TsDataSource {
   private async addShortestPathToRelationshipField(
     field: string,
     sourceObjectType: string,
-    resolvedRelationshipConfig: IRelationships
+    resolvedRelationshipConfig: TRelationships
   ): Promise<string | null> {
     const attribute = getAttributeNameByField(field);
 
