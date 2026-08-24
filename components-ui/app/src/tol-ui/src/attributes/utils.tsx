@@ -332,7 +332,7 @@ export function isProvenanceField(field: string): boolean {
  * @param field The field to check
  * @param baseAttribute The attribute we want to see if `field` is a provenance version of
  */
-export function isProvenanceAttributeOfField(field: string, baseAttribute: string): boolean {
+export function isProvenanceFieldOfAttribute(field: string, baseAttribute: string): boolean {
   return field.startsWith(`${baseAttribute}[`);
 }
 
@@ -347,7 +347,7 @@ export function isProvenanceAttributeOfField(field: string, baseAttribute: strin
  */
 export function extractProvenancesForAttribute(fields: string[], attribute: string): string[] {
   return fields
-    .filter(field => isProvenanceAttributeOfField(field, attribute))
+    .filter(field => isProvenanceFieldOfAttribute(field, attribute))
     .flatMap(field => {
       const match = field.match(PROVENANCE_IN_FIELD_REGEX);
       return match?.[1] ? [match[1]] : [];
