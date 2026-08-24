@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `4.1.0`
+
+24-08-2026
+
+- Added multi-hop translations for relationships
+- Added filterPassThrough to Zones
+
 ## tol-ui `4.0.13`
 
 17-08-2026

@@ -56,6 +56,10 @@ export function Zone(props: PZone) {
   // Find the first zone above that doesn't have filterPassThrough enabled
   const zoneAbove = getTranslatorZone(id, view);
 
+  // Translation is only possible if the zone above is in the same dataspace as this zone
+  const zonesMatchDataspace =
+    zoneAbove?.dataspace?.getDataSourceInstanceId() === zone.dataspace?.getDataSourceInstanceId();
+
   useEffect(() => {
     (async () => {
       await updateTranslatedFilter()
@@ -73,7 +77,7 @@ export function Zone(props: PZone) {
   ]);
 
   const updateTranslatedFilter = async () => {
-    if (zoneAbove) {
+    if (zoneAbove && zonesMatchDataspace) {
       zone.filter = mergeFilters(
         await translateZoneAboveFilter(zone, zoneAbove),
         zone.defaultFilter
