@@ -18,7 +18,6 @@ export interface PFilterBlockConfigDrawer extends IRemoteTarget {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
-  displaySource?: boolean;
   sticky?: boolean;
   filterBlockConfig: string[];
   customAttributeSelection?: string[];
@@ -61,7 +60,6 @@ export function FilterBlockConfigDrawer(props: PFilterBlockConfigDrawer) {
           sticky
           recommendedFilterAvailable
           renderSearchBySource
-          displaySource
           placeholder="Select filters to display..."
           attribute={attributes}
           setAttributes={setAttributes}

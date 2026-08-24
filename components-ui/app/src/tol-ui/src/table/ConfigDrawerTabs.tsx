@@ -44,7 +44,6 @@ export function ConfigDrawerTabs(props: PConfigDrawerTabs) {
             sticky
             recommendedFilterAvailable
             renderSearchBySource
-            displaySource
             placeholder="Select columns to display..."
             attribute={attributes}
             setAttributes={(nextActive) => {
@@ -75,7 +74,6 @@ export function ConfigDrawerTabs(props: PConfigDrawerTabs) {
             sticky
             recommendedFilterAvailable
             renderSearchBySource
-            displaySource
             placeholder="Select columns to make them visible for users..."
             attribute={inactiveAttributes}
             setAttributes={setInactiveAttributes}

@@ -60,7 +60,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Optional label or description of the data source, shown where supported by `Table`
    */
   source?: string;
-
   /**
    * Initial field metadata for columns; overridden by any saved configuration for this table `id`
    */
@@ -117,7 +116,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Called when the user resizes the width of a column
    */
   onResizeColumn?: (columnWidth: number, dataKey: string) => void;
-
   /**
    * Initial page size if none is stored already for this table `id`
    */
@@ -126,11 +124,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Initial filter bar visibility if none is stored already
    */
   filterVisibility?: boolean;
-  /**
-   * If true, allows the UI to display the `source` information where supported
-   */
-  displaySource?: boolean;
-
   /**
    * If true, hides or disables the filter UI for this table
    */
@@ -213,7 +206,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * This is used in conjunction with `showConfigReset`
    */
   resetConfigDifferences?: IConfigDifferences;
-
   /**
    * Test ID used to identify this table in Playwright tests
    */

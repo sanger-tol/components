@@ -29,7 +29,6 @@ export interface IChartConfigDrawer extends IRemoteTargetAndZone {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
-  displaySource?: boolean;
   sticky?: boolean;
   config: IChartConfig;
   onConfigSave: (config: object) => void;
@@ -194,7 +193,6 @@ export function ChartConfigDrawer(props: IChartConfigDrawer) {
           {...props}
           sticky
           renderSearchBySource
-          displaySource
           placeholder="Select X-Axis Attribute..."
           attribute={xAxis}
           setAttributes={setXAxis}
@@ -234,7 +232,6 @@ export function ChartConfigDrawer(props: IChartConfigDrawer) {
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
           renderSearchBySource={true}
-          displaySource={true}
           sticky={true}
           allowedCardinality={{ operator: "<=", value: 50 }}
         />

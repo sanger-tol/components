@@ -19,14 +19,13 @@ export interface PMenuItem {
   authoritative: boolean,
   objectType: string,
   dataSource: TsDataSource,
-  displaySource?: boolean,
   tooltipContent?: string,
   disabledValues?: any,
 }
 
 export function MenuItem(props: PMenuItem) {
   const { source, field, authoritative, disabledValues,
-    objectType, dataSource, displaySource } = props;
+    objectType, dataSource } = props;
 
   const disabled =
     disabledValues && Object.keys(disabledValues).includes(field);
@@ -49,7 +48,7 @@ export function MenuItem(props: PMenuItem) {
           </div>
         </div>
       </div>
-      {displaySource && source && <SourceTag source={source} />}
+      {source && <SourceTag source={source} />}
     </div>
   );
 }

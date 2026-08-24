@@ -54,10 +54,6 @@ export interface PColumnConfigDrawer extends IRemoteTarget {
    */
   fieldMeta: IFieldMeta;
   /**
-   * Whether to display source badges.
-   */
-  displaySource?: boolean;
-  /**
    * Whether selectors should remain sticky.
    */
   sticky?: boolean;
@@ -295,7 +291,6 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         populatedFieldType={"column"}
         additionalPopulatedFieldData={"."}
         renderSearchBySource={true}
-        displaySource={true}
         customAttributeSelection={customAttributeSelection}
         sticky={true}
       />
@@ -360,7 +355,6 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
               sticky
               recommendedFilterAvailable
               renderSearchBySource
-              displaySource
               placeholder="Select columns to display..."
               attribute={attributes}
               setAttributes={setAttributes}

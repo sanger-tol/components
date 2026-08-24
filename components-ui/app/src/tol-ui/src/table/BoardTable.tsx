@@ -311,7 +311,6 @@ export function BoardTable(props: PBoardTable) {
         resetConfigDifferences={diffState.configDifferences}
         advanceTab
         editableCells
-        displaySource
         fields={diffState.currentConfig?.fieldMeta}
         baseFieldMeta={componentData?.config?.fieldMeta}
         pageSize={diffState.currentConfig?.pageSize}

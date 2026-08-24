@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Table as RSTable } from "rsuite";
 import {
   Placeholder,
@@ -30,45 +30,34 @@ import {
   RowToolsColumn,
   DataColumn,
   mergeUtilityBarConfigs,
+  getTableRowClassName,
   NoAttributesPlaceholder,
   IConfigDifferences,
   TableResetConfirmationModal,
   Pagination,
   IFilter,
+  PPagination,
+  IComponentBasics,
+  ITableRecord,
 } from "..";
 
-export interface PTable extends IRemoteTargetAndZone {
-  id: string;
+export interface PTable extends IRemoteTargetAndZone, IComponentBasics, PPagination {
   data: any;
   fieldMeta: IFieldMeta;
   baseFieldMeta?: Partial<IFieldMeta>;
-  height: any;
-  loading: boolean;
   resizeableColumns?: boolean;
-
-  page: number;
-  setPage: any;
-  pageSize: number;
-  setPageSize: any;
-  totalSize: number;
-  displaySource?: boolean;
-
   filterVisibility?: boolean;
   setFilterVisibility?: any;
-
   sortByAttribute?: string;
   sortByType?: any;
   defaultSortByAttribute?: string;
   defaultSortByType?: string;
   onSortColumn?: (dataKey: string, sortType?: "asc" | "desc") => void;
-
   filter: IFilter;
   copySeparator?: string;
   fieldDropdownChoices?: TFieldDropdownChoices;
-
   onConfigSave: (config: ITableConfigSave) => void;
   onResizeColumn?: (columnWidth?: number, dataKey?: string) => void;
-
   noFilter?: boolean;
   noPagination?: boolean;
   noSorting?: boolean;
@@ -76,7 +65,6 @@ export interface PTable extends IRemoteTargetAndZone {
   noDownload?: boolean;
   rowSelection?: boolean;
   rowExpansion?: boolean;
-
   actions?: IDropdownButtonConfig[];
   actionChoices?: string[];
   actionsFooter?: IDropdownButtonConfig;
@@ -84,10 +72,7 @@ export interface PTable extends IRemoteTargetAndZone {
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
   expandedRows?: string[];
-
-  contents?: ReactNode;
   groupBy?: boolean;
-
   downloadInProgress: boolean;
   setDownloadInProgress: (downloadInProgress: boolean) => void;
   onReset?: () => void;
@@ -109,7 +94,6 @@ export function Table(props: PTable) {
     pageSize,
     setPageSize,
     totalSize,
-    displaySource,
     filterVisibility,
     setFilterVisibility,
     sortByAttribute,
@@ -380,7 +364,6 @@ export function Table(props: PTable) {
         groupBy={groupBy}
         setOpen={setOpen}
         editMode={editMode}
-        displaySource={displaySource}
         onReset={
           !noConfigModal && !editMode && showConfigReset
             ? () => setResetConfirmationOpen(true)
@@ -419,20 +402,11 @@ export function Table(props: PTable) {
                   expandedRowKeys={expandedRows}
                   renderRowExpanded={RowExpander}
                   shouldUpdateScroll={false}
-                  rowClassName={(rowData: any) => {
-                    if (rowData) {
-                      if (bulkSelect) {
-                        return "tol-selected-row disabled";
-                      } else if (
-                        selectedRows.some(
-                          (item) => Object.keys(item)[0] === rowData.key,
-                        )
-                      ) {
-                        return "tol-selected-row";
-                      }
-                    }
-                    return "";
-                  }}
+                  rowClassName={(rowData: ITableRecord) => getTableRowClassName(
+                    rowData,
+                    bulkSelect,
+                    selectedRows,
+                  )}
                   rowHeight={(rowData: any) => {
                     const rowId = rowData?.key;
                     const row = cellHeights[rowId];

@@ -240,6 +240,32 @@ export function createSort(sortColumn?: string, sortType?: string) {
   return sortColumn;
 }
 
+/**
+ * Resolves the CSS class for a table row based on selection state.
+ *
+ * @param rowData The row record provided by `rsuite` table.
+ * @param bulkSelect Whether bulk selection mode is active.
+ * @param selectedRows The currently selected rows keyed by row id.
+ * @returns The row class string to apply.
+ */
+export function getTableRowClassName(
+  rowData: ITableRecord | null | undefined,
+  bulkSelect: boolean,
+  selectedRows: any[],
+): string {
+  if (!rowData) return "";
+
+  if (bulkSelect) {
+    return "tol-selected-row disabled";
+  }
+
+  if (selectedRows.some((item) => Object.keys(item)[0] === rowData.key)) {
+    return "tol-selected-row";
+  }
+
+  return "";
+}
+
 export function optimiseFieldMetaForSave(fieldMeta?: IFieldMeta) {
   const fm = deepCopy(fieldMeta);
   delete fm.dataWithDefaults;
