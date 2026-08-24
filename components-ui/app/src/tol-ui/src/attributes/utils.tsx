@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import type {
   Dispatch,
   KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
   SetStateAction,
 } from "react";
 
@@ -453,4 +454,170 @@ export function handleAttributeSelectorKeyNavigation(
     event.preventDefault();
     expandButton.focus();
   }
+};
+
+/**
+ * Helper for utility functions surrounding keyboard navigation in MenuItem and ProvenancePicker:
+ * gets a reference to every checkbox element in the provenance picker of a menu item
+ * @param menuItem A reference to the menu item containing the provenance picker we're interested in
+ * @returns An array of references to checkboxes in the provenance picker
+ */
+export function getCheckboxesInProvenancePicker (menuItem: HTMLElement) {
+  return Array.from(
+    menuItem.querySelectorAll<HTMLElement>(
+      ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']"
+    )
+  )
+};
+
+/**
+ * Handles keyboard navigation for the expand button in MenuItem that opens the ProvenancePicker
+ * (i.e. activating it with Enter or Space, and moving from it to the menu item above it,
+ * or the menu item below it, or the first provenance entry below it, depending on whether
+ * the provenance picker is expanded)
+ */
+export function handleExpandButtonKeyDownEvent (
+  event: ReactKeyboardEvent<HTMLSpanElement>,
+  isProvenancePickerOpen: boolean,
+) {
+  // Allow button activation while preventing the parent menu option from being selected.
+  if (event.key === "Enter" || event.key === " ") {
+    event.stopPropagation();
+    return;
+  }
+
+  // Move from the expand control into the first provenance checkbox when expanded.
+  if (event.key === "ArrowDown" && isProvenancePickerOpen) {
+    const container = event.currentTarget.closest<HTMLElement>(
+      ".tol-attribute-selector-menu-item"
+    );
+    if (!container) return;
+
+    const firstProvenanceCheckbox = getCheckboxesInProvenancePicker(container)[0];
+    if (!firstProvenanceCheckbox) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    firstProvenanceCheckbox.focus();
+  } else if (event.key === "ArrowLeft") {
+    // Move focus back to the parent menu option from the expand control.
+    event.preventDefault();
+    event.stopPropagation();
+
+    const menuItem = event.currentTarget.closest<HTMLElement>("[role='option']");
+    if (!menuItem) return;
+
+    const focusableInItem = menuItem.querySelector<HTMLElement>("[tabindex]");
+    (focusableInItem || menuItem).focus();
+  }
+};
+
+/**
+ * Used for keyboard navigation in ProvenancePicker: the ArrowUp and ArrowDown buttons cycle
+ * through each provenance option
+ */
+export function handleProvenancePickerKeyDownEvent(
+  event: ReactKeyboardEvent<HTMLDivElement>
+) {
+  if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+
+  const pickerContainer = event.currentTarget.closest<HTMLElement>(
+    ".tol-attribute-selector-menu-item"
+  );
+  if (!pickerContainer) return;
+
+  const focusableCheckboxes = getCheckboxesInProvenancePicker(pickerContainer);
+  if (!focusableCheckboxes.length) return;
+
+  const currentTarget = event.target as Node;
+  const currentIndex = focusableCheckboxes.findIndex(checkbox =>
+    checkbox === event.target || checkbox.contains(currentTarget)
+  );
+  if (currentIndex < 0) return;
+
+  const direction = event.key === "ArrowDown" ? 1 : -1;
+  const nextIndex = currentIndex + direction;
+
+  if (nextIndex >= 0 && nextIndex < focusableCheckboxes.length) {
+    // Consume ArrowUp/ArrowDown only when moving within the provenance list.
+    event.preventDefault();
+    event.stopPropagation();
+    focusableCheckboxes[nextIndex].focus();
+  }
+};
+
+/**
+ * Helper for keyboard navigation in ProvenancePicker.
+ * Sets the element in focus as the checkbox in a specific provenance option.
+ */
+export function focusCheckboxInProvenanceEntry(
+  optionElement: HTMLSpanElement,
+  provenance: string
+) {
+  const menuItem = optionElement.closest<HTMLElement>(".tol-attribute-selector-menu-item");
+  if (!menuItem) return;
+
+  // Re-focus the same checkbox after state updates to keep keyboard navigation active.
+  requestAnimationFrame(() => {
+    const refreshedOption = menuItem.querySelector<HTMLElement>(
+      `[data-provenance="${provenance}"]`
+    );
+    const checkboxInput = refreshedOption?.querySelector<HTMLInputElement>(
+      ".tol-provenance-picker-checkbox input[type='checkbox']"
+    );
+    checkboxInput?.focus();
+  });
+};
+
+/**
+ * Handles selecting (or deselecting) a provenance option in a ProvenancePicker via a click,
+ * taking into account keyboard navigation concerns.
+ */
+export function handleProvenanceEntryClick(
+  event: ReactMouseEvent<HTMLSpanElement>,
+  provenance: string,
+  toggleProvenance: (provenance: string) => void,
+) {
+  const target = event.target as HTMLElement | null;
+  if (!target) return;
+
+  // Handle interaction for any nested RSCheckbox target (label/span/input)
+  // without allowing the parent menu row to select.
+  if (!target.closest(".tol-provenance-picker-checkbox")) return;
+
+  // Prevent weird interactions with the rsuite menu item
+  event.stopPropagation();
+
+  // Select (or deselect) this provenance
+  toggleProvenance(provenance);
+
+  // Because of keyboard navigation shenanigans, we need to go back to having specifically
+  // the checkbox in the provenance entry in focus
+  focusCheckboxInProvenanceEntry(event.currentTarget, provenance);
+};
+
+/**
+ * Used for keyboard navigation in ProvenancePicker.
+ * When a provenance option is in focus, Enter or Space should toggle it.
+ */
+export function handleProvenanceEntryKeyDownEvent(
+  event: ReactKeyboardEvent<HTMLSpanElement>,
+  provenance: string,
+  toggleProvenance: (provenance: string) => void,
+) {
+  if (event.key !== "Enter" && event.key !== " ") return;
+
+  const target = event.target as HTMLElement | null;
+  if (!target?.closest(".tol-provenance-picker-checkbox")) return;
+
+  // Prevent weird interactions with the rsuite menu item
+  event.preventDefault();
+  event.stopPropagation();
+
+  // Select (or deselect) this provenance
+  toggleProvenance(provenance);
+
+  // Because of keyboard navigation shenanigans, we need to go back to having specifically
+  // the checkbox in the provenance entry in focus
+  focusCheckboxInProvenanceEntry(event.currentTarget, provenance);
 };

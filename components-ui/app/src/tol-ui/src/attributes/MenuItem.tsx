@@ -5,16 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import { forwardRef, useState } from "react";
-import type {
-  HTMLAttributes,
-  KeyboardEvent as ReactKeyboardEvent,
-} from "react";
+import type { HTMLAttributes } from "react";
 import { Animation as RSAnimation } from "rsuite";
 
 import {
   AttributeTitle,
   Col,
   ExpandButton,
+  handleExpandButtonKeyDownEvent,
   Icon,
   SourceTag,
   truncateString,
@@ -97,55 +95,6 @@ export function MenuItem(props: PMenuItem) {
 
   const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
 
-  const getCheckboxesInProvenancePicker = (menuItem: HTMLElement) => {
-    return Array.from(
-      menuItem.querySelectorAll<HTMLElement>(
-        ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']"
-      )
-    )
-  };
-
-  /**
-   * Handles keyboard navigation for the expand button that opens the provenance picker
-   * (i.e. activating it with Enter or Space, and moving from it to the menu item above it,
-   * or the menu item below it, or the first provenance entry below it, depending on whether
-   * the provenance picker is expanded)
-   */
-  const handleExpandButtonKeyDownEvent = (
-    event: ReactKeyboardEvent<HTMLSpanElement>
-  ) => {
-    // Allow button activation while preventing the parent menu option from being selected.
-    if (event.key === "Enter" || event.key === " ") {
-      event.stopPropagation();
-      return;
-    }
-
-    // Move from the expand control into the first provenance checkbox when expanded.
-    if (event.key === "ArrowDown" && provenancePickerOpen) {
-      const container = event.currentTarget.closest<HTMLElement>(
-        ".tol-attribute-selector-menu-item"
-      );
-      if (!container) return;
-
-      const firstProvenanceCheckbox = getCheckboxesInProvenancePicker(container)[0];
-      if (!firstProvenanceCheckbox) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-      firstProvenanceCheckbox.focus();
-    } else if (event.key === "ArrowLeft") {
-      // Move focus back to the parent menu option from the expand control.
-      event.preventDefault();
-      event.stopPropagation();
-
-      const menuItem = event.currentTarget.closest<HTMLElement>("[role='option']");
-      if (!menuItem) return;
-
-      const focusableInItem = menuItem.querySelector<HTMLElement>("[tabindex]");
-      (focusableInItem || menuItem).focus();
-    }
-  };
-
   /**
    * The contents of the main item entry showing the non-provenance field
    */
@@ -174,7 +123,6 @@ export function MenuItem(props: PMenuItem) {
         provenancesAvailable={provenancesAvailable}
         provenancesSelected={provenancesSelected}
         onProvenancesChanged={onProvenancesChanged ?? (() => {})}
-        getCheckboxesInProvenancePicker={getCheckboxesInProvenancePicker}
       />
     </div>
   ));
@@ -192,7 +140,7 @@ export function MenuItem(props: PMenuItem) {
             <span
               // Prevent clicking the expand control from selecting the parent menu option
               onClick={(event) => event.stopPropagation()}
-              onKeyDown={handleExpandButtonKeyDownEvent}
+              onKeyDown={(event) => handleExpandButtonKeyDownEvent(event, provenancePickerOpen)}
             >
               <ExpandButton
                 testid={`attribute-selector-provenance-toggle-${field}`}
