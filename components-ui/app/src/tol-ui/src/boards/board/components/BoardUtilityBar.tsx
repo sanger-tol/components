@@ -18,6 +18,9 @@ import {
   PopUpMessage,
   isBoardInNavConfig,
   useApp,
+  processTour,
+  EDIT_MODE_TOUR,
+  useAuth,
 } from "../../..";
 import { boardButtonsBuilder, ViewModeBoardTitle, ViewTabs } from ".";
 import type { PEditableTitle, PButton } from "../../..";
@@ -94,6 +97,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     setBoard,
   } = useBoard();
   const { navConfig } = useApp();
+  const { user } = useAuth();
 
   const onSaveBoardTitle = (newTitle: string) => {
     upsertTitle(newTitle, board.id!, boardDataSource);
@@ -121,13 +125,18 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
   };
 
   const onEditModeClick = () => {
-    if (!editMode && isBoardInNavConfig(navConfig, board.id!)) {
-      PopUpMessage({
-        type: "warning",
-        message:
-          "This Board is live. Changes made here immediately affect the live Board.",
-      });
+    if (!editMode) {
+      if (isBoardInNavConfig(navConfig, board.id)) {
+        PopUpMessage({
+          type: "warning",
+          message:
+            "This Board is live. Changes made here immediately affect the live Board.",
+        });
+      }
+
+      processTour("editMode", EDIT_MODE_TOUR, user?.id ?? null, true);
     }
+
     clearAllFilters();
     setEditMode(!editMode);
   };
