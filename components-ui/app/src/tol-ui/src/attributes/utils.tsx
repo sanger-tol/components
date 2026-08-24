@@ -371,7 +371,7 @@ export function extractProvenancesForAttribute(fields: string[], attribute: stri
  */
 export function updateProvenanceFields(
   fields: string[],
-  setFields: (newFields: string) => void,
+  setFields: (newFields: string[]) => void,
   attribute: string,
   selectedProvenances: string[],
 ) {
