@@ -11,7 +11,7 @@ import {
   isInHeadlessMode,
   setAuth,
   createPopulatedBoardAndGoToPage,
-} from "../../helpers";
+} from "../helpers";
 
 test.use({ headless: isInHeadlessMode });
 

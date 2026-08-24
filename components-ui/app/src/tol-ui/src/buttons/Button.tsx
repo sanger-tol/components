@@ -14,6 +14,7 @@ export interface PButton {
   onClick?: (...args: any[]) => void;
   onMouseDown?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
+  wrapperClassName?: string;
   text?: string | ReactNode;
   disabled?: boolean;
   size?: "md" | "lg";
@@ -39,6 +40,7 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
       onClick,
       onMouseDown,
       className,
+      wrapperClassName,
       text,
       disabled,
       size,
@@ -136,7 +138,7 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
     if (!visible) return null;
 
     return (
-      <div className={getButtonWrapperClass(position)}>
+      <div className={`${getButtonWrapperClass(position)}${wrapperClassName ? " " + wrapperClassName : ""}`}>
         {contents ? (
           <HoverOverlay
             contents={contents}

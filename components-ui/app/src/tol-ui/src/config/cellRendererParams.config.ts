@@ -74,7 +74,7 @@ export const cellRendererParams: IBoardCellRenderers = {
         rename: "URL",
         required: true,
         description: "The URL to link to. Ensure external links prefix with 'http://' or 'https://'",
-        placeholder: "www.example.com"
+        placeholder: "https://www.example.com"
       },
       text: {
         type: "string",
@@ -82,6 +82,234 @@ export const cellRendererParams: IBoardCellRenderers = {
         required: true,
         description: "The text to display for the link, if empty it will default to the current field value",
         placeholder: "Click here",
+      },
+    }
+  },
+  linkGroups: {
+    rename: "Link Groups",
+    description: (
+      "A means of displaying multiple links in one cell, " +
+      "organised by group. All fields are optional."
+    ),
+    params: {
+      firstGroupTitle: {
+        type: "string",
+        rename: "Group 1 Title",
+        description: "The title of the first link group"
+      },
+      firstGroupFirstLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 1 URL",
+        description: "The URL of the first link in group one",
+        placeholder: "https://www.example.com"
+      },
+      firstGroupFirstLinkText: {
+        type: "string",
+        rename: "✏️ Link 1 Text",
+        description: "The text to display for the first link in group one",
+        placeholder: "Link Name"
+      },
+      firstGroupFirstLinkCondition: {
+        type: "condition",
+        rename: "Link 1 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      firstGroupSecondLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 2 URL",
+        description: "The URL of the second link in group one",
+        placeholder: "https://www.example.com"
+      },
+      firstGroupSecondLinkText: {
+        type: "string",
+        rename: "✏️ Link 2 Text",
+        description: "The text to display for the second link in group one",
+        placeholder: "Link Name"
+      },
+      firstGroupSecondLinkCondition: {
+        type: "condition",
+        rename: "Link 2 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      firstGroupThirdLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 3 URL",
+        description: "The URL of the third link in group one",
+        placeholder: "https://www.example.com"
+      },
+      firstGroupThirdLinkText: {
+        type: "string",
+        rename: "✏️ Link 3 Text",
+        description: "The text to display for the third link in group one",
+        placeholder: "Link Name"
+      },
+      firstGroupThirdLinkCondition: {
+        type: "condition",
+        rename: "Link 3 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      firstGroupFourthLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 4 URL",
+        description: "The URL of the fourth link in group one",
+        placeholder: "https://www.example.com"
+      },
+      firstGroupFourthLinkText: {
+        type: "string",
+        rename: "✏️ Link 4 Text",
+        description: "The text to display for the fourth link in group one",
+        placeholder: "Link Name"
+      },
+      firstGroupFourthLinkCondition: {
+        type: "condition",
+        rename: "Link 4 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      secondGroupTitle: {
+        type: "string",
+        rename: "Group 2 Title",
+        description: "The title of the second link group"
+      },
+      secondGroupFirstLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 1 URL",
+        description: "The URL of the first link in group two",
+        placeholder: "https://www.example.com"
+      },
+      secondGroupFirstLinkText: {
+        type: "string",
+        rename: "✏️ Link 1 Text",
+        description: "The text to display for the first link in group two",
+        placeholder: "Link Name"
+      },
+      secondGroupFirstLinkCondition: {
+        type: "condition",
+        rename: "Link 1 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      secondGroupSecondLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 2 URL",
+        description: "The URL of the second link in group two",
+        placeholder: "https://www.example.com"
+      },
+      secondGroupSecondLinkText: {
+        type: "string",
+        rename: "✏️ Link 2 Text",
+        description: "The text to display for the second link in group two",
+        placeholder: "Link Name"
+      },
+      secondGroupSecondLinkCondition: {
+        type: "condition",
+        rename: "Link 2 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      secondGroupThirdLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 3 URL",
+        description: "The URL of the third link in group two",
+        placeholder: "https://www.example.com"
+      },
+      secondGroupThirdLinkText: {
+        type: "string",
+        rename: "✏️ Link 3 Text",
+        description: "The text to display for the third link in group two",
+        placeholder: "Link Name"
+      },
+      secondGroupThirdLinkCondition: {
+        type: "condition",
+        rename: "Link 3 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      secondGroupFourthLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 4 URL",
+        description: "The URL of the fourth link in group two",
+        placeholder: "https://www.example.com"
+      },
+      secondGroupFourthLinkText: {
+        type: "string",
+        rename: "✏️ Link 4 Text",
+        description: "The text to display for the fourth link in group two",
+        placeholder: "Link Name"
+      },
+      secondGroupFourthLinkCondition: {
+        type: "condition",
+        rename: "Link 4 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      thirdGroupTitle: {
+        type: "string",
+        rename: "Group 3 Title",
+        description: "The title of the third link group"
+      },
+      thirdGroupFirstLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 1 URL",
+        description: "The URL of the first link in group three",
+        placeholder: "https://www.example.com"
+      },
+      thirdGroupFirstLinkText: {
+        type: "string",
+        rename: "✏️ Link 1 Text",
+        description: "The text to display for the first link in group three",
+        placeholder: "Link Name"
+      },
+      thirdGroupFirstLinkCondition: {
+        type: "condition",
+        rename: "Link 1 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      thirdGroupSecondLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 2 URL",
+        description: "The URL of the second link in group three",
+        placeholder: "https://www.example.com"
+      },
+      thirdGroupSecondLinkText: {
+        type: "string",
+        rename: "✏️ Link 2 Text",
+        description: "The text to display for the second link in group three",
+        placeholder: "Link Name"
+      },
+      thirdGroupSecondLinkCondition: {
+        type: "condition",
+        rename: "Link 2 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      thirdGroupThirdLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 3 URL",
+        description: "The URL of the third link in group three",
+        placeholder: "https://www.example.com"
+      },
+      thirdGroupThirdLinkText: {
+        type: "string",
+        rename: "✏️ Link 3 Text",
+        description: "The text to display for the third link in group three",
+        placeholder: "Link Name"
+      },
+      thirdGroupThirdLinkCondition: {
+        type: "condition",
+        rename: "Link 3 Condition",
+        description: "The condition used to know whether to show this link"
+      },
+      thirdGroupFourthLinkUrl: {
+        type: "string",
+        rename: "🔗 Link 4 URL",
+        description: "The URL of the fourth link in group three",
+        placeholder: "https://www.example.com"
+      },
+      thirdGroupFourthLinkText: {
+        type: "string",
+        rename: "✏️ Link 4 Text",
+        description: "The text to display for the fourth link in group three",
+        placeholder: "Link Name"
+      },
+      thirdGroupFourthLinkCondition: {
+        type: "condition",
+        rename: "Link 4 Condition",
+        description: "The condition used to know whether to show this link"
       },
     }
   },

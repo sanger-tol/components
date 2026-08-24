@@ -6,21 +6,21 @@ SPDX-License-Identifier: MIT
 
 import { expect, test, describe } from "vitest";
 import {
-  getReadOnlyAndFilterText,
+  getProseForAndFilters,
   generateFilterDescriptions,
   IFilter,
   IFilterOperatorOptions,
   TFilterOperatorType
 } from "../../tol-ui/src";
 
-describe("getReadOnlyAndFilterText function", () => {
+describe("getProseForAndFilters function", () => {
   /**
-   * A function to perform tests on the getReadOnlyAndFilterText function (as most tests have the
+   * A function to perform tests on the getProseForAndFilters function (as most tests have the
    * same structure)
    * 
    * @param operatorType The type of filter operator used
    * @param negate Whether the operator is negated
-   * @param expectedProse The prose expected to be returned by getReadOnlyAndFilterText. Where the
+   * @param expectedProse The prose expected to be returned by getProseForAndFilters. Where the
    * operator value is expected, use `VALUE`
    */
   function generalizedTest(
@@ -39,7 +39,7 @@ describe("getReadOnlyAndFilterText function", () => {
           }
         ];
 
-        const generatedProse = getReadOnlyAndFilterText(filterOperator);
+        const generatedProse = getProseForAndFilters(filterOperator);
 
         expect(generatedProse).toBe(expectedProse);
       }
@@ -70,7 +70,7 @@ describe("getReadOnlyAndFilterText function", () => {
       }
     ];
 
-    const generatedProse = getReadOnlyAndFilterText(filterOperator);
+    const generatedProse = getProseForAndFilters(filterOperator);
 
     expect(generatedProse).toBe("must be one of DTOL, PSYCHE or BIOSCAN");
   });
@@ -84,7 +84,7 @@ describe("getReadOnlyAndFilterText function", () => {
       }
     ];
 
-    const generatedProse = getReadOnlyAndFilterText(filterOperator);
+    const generatedProse = getProseForAndFilters(filterOperator);
 
     expect(generatedProse).toBe("must not be one of DTOL, PSYCHE or BIOSCAN");
   });
@@ -98,7 +98,7 @@ describe("getReadOnlyAndFilterText function", () => {
       }
     ];
 
-    const generatedProse = getReadOnlyAndFilterText(filterOperator);
+    const generatedProse = getProseForAndFilters(filterOperator);
 
     expect(generatedProse).toBe("must be RELEASED");
   });
@@ -106,7 +106,7 @@ describe("getReadOnlyAndFilterText function", () => {
 
 describe("getReadOnlyFiltersText function", () => {
   // This is the only test needed, as the transformation into prose is handled by
-  // the getReadOnlyAndFilterText function, which is separately tested above
+  // the getProseForAndFilters function, which is separately tested above
   test("Function returns an object in the correct format", () => {
     const filter: IFilter = {
       and_: {

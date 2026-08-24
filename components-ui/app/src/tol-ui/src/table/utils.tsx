@@ -379,7 +379,7 @@ export function copyPageColumnValues(
   copyToClipboard(copyList);
 }
 
-async function addFieldsFromStringProp(
+async function addFieldsFromStringParam(
   requestedFields: Set<string>,
   value: unknown,
   fieldName: string,
@@ -423,7 +423,7 @@ async function addFieldsFromStringProp(
   }
 }
 
-function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
+function addFieldsFromConditionParam(requestedFields: Set<string>, value: unknown) {
   if (
     typeof value !== "object" ||
     value === null ||
@@ -454,12 +454,12 @@ export async function amalgamateRequestedFields(
     const props = cellRenderer?.props || {};
 
     for (const value of Object.values(props)) {
-      await addFieldsFromStringProp(
+      await addFieldsFromStringParam(
         requestedFields,
         value,
         fieldName,
       );
-      addFieldsFromFilterProp(requestedFields, value);
+      addFieldsFromConditionParam(requestedFields, value);
     }
   }
 

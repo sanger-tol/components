@@ -46,3 +46,13 @@
 .tol-icon-tooltip.tol-utility-bar-tooltip {
   margin: 0 10px;
 }
+
+.tol-utility-bar-title-tooltip {
+  .tol-icon {
+    color: var(--tol-grey);
+
+    :hover {
+      color: var(--tol-primary);
+    }
+  }
+}

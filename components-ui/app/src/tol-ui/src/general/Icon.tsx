@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { HoverOverlay } from "./HoverOverlay";
 
 
 export interface PIcon {
@@ -33,6 +34,10 @@ export interface PIcon {
    */
   onClick?: () => void;
   /**
+   * Tooltip to show when this icon is hovered over
+   */
+  tooltip?: string;
+  /**
    * Test ID for Playwright tests
    */
   testid?: string;
@@ -45,16 +50,24 @@ export interface PIcon {
  * Accepts additional options such as config and colour.
  */
 export function Icon(props: PIcon) {
-  const { icon, size, colour, config = "solid", className, onClick, testid } = props;
+  const { icon, size, colour, config = "solid", className, onClick, tooltip, testid } = props;
+
+  // @ts-ignore
+  const IconContents = <FontAwesomeIcon icon={`fa-${config} fa-${icon}`} size={size} color={colour} />;
 
   return (
     <span
       className={"tol-icon" + (className ? ` ${className}` : "")}
       onClick={onClick} data-testid={testid}
       style={onClick ? {cursor: "pointer"} : {}}
-      >
-      {/* @ts-ignore */}
-      <FontAwesomeIcon icon={`fa-${config} fa-${icon}`} size={size} color={colour} />
+    >
+      {tooltip ? (
+        <HoverOverlay contents={tooltip}>
+          {IconContents}
+        </HoverOverlay>
+      ) : (
+        IconContents
+      )}
     </span>
   );
 }

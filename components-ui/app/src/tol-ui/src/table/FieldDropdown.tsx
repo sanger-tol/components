@@ -37,7 +37,7 @@ export function FieldDropdown(props: FieldDropdown) {
       >
         {(!choices || choices.includes("copyValues")) && (
           <Dropdown.Item
-            icon={<Icon icon="copy" size="sm" />}
+            icon={<Icon icon="copy" size="sm" tooltip="Copy" />}
             onClick={() => copyPageColumnValues(data, attribute, separator)}
           >
             Copy Values

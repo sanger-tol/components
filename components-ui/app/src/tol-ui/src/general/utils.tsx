@@ -43,6 +43,33 @@ export function formatDate(text: string) {
   }
 }
 
+/**
+ * Checks whether a value is a string representing a date in a recognised format.
+ *
+ * Accepted formats:
+ * - ISO 8601: `YYYY-MM-DD`, optionally followed by `THH:mm`, `THH:mm:ss`, fractional seconds, and a timezone offset or `Z`
+ * - `dd/MM/yyyy HH:mm`
+ *
+ * Numbers and strings that do not match either format (including ambiguous strings parseable by `Date`) return `false`.
+ *
+ * @param value - The value to test.
+ * @returns `true` if `value` is a string in a recognised date format, `false` otherwise.
+ */
+export function isDateString(value: any): boolean {
+  if (typeof value !== "string") return false;
+  const isoRegex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/;
+  const dmyRegex = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/;
+  if (isoRegex.test(value)) return !isNaN(new Date(value).getTime());
+  if (dmyRegex.test(value)) {
+    const [datePart, timePart] = value.split(" ");
+    const [day, month, year] = datePart.split("/").map(Number);
+    const [hours, minutes] = timePart.split(":").map(Number);
+    const date = new Date(year, month - 1, day, hours, minutes);
+    return !isNaN(date.getTime()) && date.getDate() === day && date.getMonth() === month - 1;
+  }
+  return false;
+}
+
 export function stopPropagation(e: { stopPropagation: () => any }) {
   e.stopPropagation();
 }
