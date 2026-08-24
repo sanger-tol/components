@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import type { Dispatch, SetStateAction } from "react";
 import { Checkbox as RSCheckbox } from "rsuite";
 
 import {

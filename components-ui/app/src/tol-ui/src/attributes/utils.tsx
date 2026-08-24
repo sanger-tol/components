@@ -5,10 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import type {
-  Dispatch,
   KeyboardEvent as ReactKeyboardEvent,
   MouseEvent as ReactMouseEvent,
-  SetStateAction,
 } from "react";
 
 import {
