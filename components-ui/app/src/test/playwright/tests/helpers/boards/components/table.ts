@@ -5,7 +5,7 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { clickUtilityBarButton } from "../../utility-bar";
-import { selectFromAttributeSelector, selectFromDropdown } from "../..";
+import { selectFromAttributeSelector, selectFromDropdown, sleep } from "../..";
 import type { IConfigureTable } from "../../../interfaces";
 
 /**
@@ -25,7 +25,7 @@ export async function configureTable(
   const configDrawer = page.locator(".tol-drawer");
 
   // I unfortunately couldn't find a suitable waiting condition for the opening animation to finish
-  await page.waitForTimeout(200);
+  await sleep(page);
 
   // Add the default sort attribute if one was provided
   if (config.defaultSort) {

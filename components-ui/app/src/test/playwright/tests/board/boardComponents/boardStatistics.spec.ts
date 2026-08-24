@@ -11,7 +11,8 @@ import {
   deleteComponent,
   enterEditMode,
   exitEditMode,
-  isInHeadlessMode
+  isInHeadlessMode,
+  sleep
 } from "../../helpers";
 
 test.use({ headless: isInHeadlessMode });
@@ -41,7 +42,7 @@ const filterStatisticsComponent = async (page: Page) => {
 
   // check the count has changed
   // TODO This sleep should be removed at some point
-  await page.waitForTimeout(200);
+  await sleep(page);
   const countAfter = await page.locator(".tol-count").textContent();
   expect(countAfter).not.toBe(countBefore);
 }

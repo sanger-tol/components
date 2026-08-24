@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { Page, Locator } from "@playwright/test";
+import { sleep } from "./sleep";
 
 /**
  * Clicks the provided element a few times in case it's a bit flaky in the DOM
@@ -29,7 +30,7 @@ export async function clickWithRetries(
       return;
     } catch (error) {
       lastError = error;
-      await page.waitForTimeout(100 * (attempt + 1));
+      await sleep(page, 100 * (attempt + 1));
     }
   }
 

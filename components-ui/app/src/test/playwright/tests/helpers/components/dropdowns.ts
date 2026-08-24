@@ -5,6 +5,7 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { BASE_ATTRIBUTE_PROVENANCE_INDICATOR } from "../../";
+import { sleep } from "../sleep";
 
 /**
  * Selects the requested attributes from an AttributeSelector
@@ -104,7 +105,7 @@ export async function selectFromAttributeSelector (
   // There's some weird thing where it doesn't register properly for a moment, so unfortunately
   // a manual sleep is needed.
   await dropdown.click();
-  await page.waitForTimeout(200);
+  await sleep(page);
 }
 
 /**

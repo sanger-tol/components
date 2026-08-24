@@ -8,4 +8,5 @@ export * from "./components";
 export * from "./configBuilders";
 export * from "./meta";
 export * from "./pageActions";
+export * from "./sleep";
 export * from "./utility-bar";

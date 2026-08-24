@@ -4,7 +4,7 @@
 
 import type { Locator, Page } from "@playwright/test";
 
-import { clickWithRetries } from "..";
+import { clickWithRetries, sleep } from "..";
 
 /**
  * Clicks the utility bar button with the testid `testId` on the provided component,
@@ -17,7 +17,7 @@ export async function clickUtilityBarButton(page: Page, component: Locator, test
   // A utility bar button will either be in a utility bar at the top of a component,
   // or it will be hidden in an rs-popover that appears when the condensed utility bar button
   // is clicked.
-  await page.waitForTimeout(200);
+  await sleep(page);
 
   // First, check whether a condensed button exists on this component
   const condensedUtilityBarButton = component.getByTestId("condensed-utility-bar-button");
