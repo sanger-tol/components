@@ -603,6 +603,8 @@ export function RemoteTable(props: PRemoteTable) {
   );
 
   const Contents = () => {
+    if (contents) return contents;
+  
     if (error !== "") {
       return <Placeholder errorMessage={error} height={height} />;
     }
@@ -611,8 +613,6 @@ export function RemoteTable(props: PRemoteTable) {
     }
     return null;
   };
-
-  // const resetDifferences = props.resetConfigDifferences ?? getInitialDiffState(id, ) ?? { add: [], remove: [] };
 
   return (
     <div style={{ height: height }} data-testid={testid}>
@@ -635,7 +635,7 @@ export function RemoteTable(props: PRemoteTable) {
       />
       <Table
         {...props}
-        contents={contents ? contents : Contents()}
+        contents={Contents()}
         data={data}
         fieldMeta={fieldMeta!}
         expandedRows={expandedRows}
