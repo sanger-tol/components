@@ -337,6 +337,24 @@ export function isProvenanceAttributeOfField(field: string, baseAttribute: strin
 }
 
 /**
+ * Extracts from `fields` the answer to the following question: Which provenances are selected
+ * for `attribute`?
+ * ["genus", "scientific_name[sts]", "scientific_name", "scientific_name[goat]"] -> ["sts", "goat"]
+ * @param fields The list of fields to search. A field could be a table column. It can include
+ * both attribute and provenance.
+ * @param attribute The base attribute whose provenances we're interested in.
+ * @returns The sources/provenances present for the provided attribute
+ */
+export function extractProvenancesForAttribute(fields: string[], attribute: string): string[] {
+  return fields
+    .filter(field => isProvenanceAttributeOfField(field, attribute))
+    .flatMap(field => {
+      const match = field.match(PROVENANCE_IN_FIELD_REGEX);
+      return match?.[1] ? [match[1]] : [];
+    });
+}
+
+/**
  * Runs when a keydown event is detected on the attribute selector,
  * which adds keyboard navigation to provenance dropdowns.
  * 

@@ -10,6 +10,7 @@ import { Checkbox } from "rsuite";
 import {
   AdvanceSearchTab,
   attributeSelectorSearchBy,
+  extractProvenancesForAttribute,
   filterAttributes,
   getAllAttributeData,
   getFlattenedMetaData,
@@ -135,17 +136,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     setAttributes(newAttributes);
   };
 
-  /**
-   * @returns An array of provenances selected for the field `field`
-   */
-  const extractProvenancesForField = (field: string): string[] =>
-    attribute
-      .filter(att => isProvenanceAttributeOfField(field, att))
-      .flatMap(att => {
-        const match = att.match(PROVENANCE_IN_FIELD_REGEX);
-        return match?.[1] ? [match[1]] : [];
-      });
-
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
@@ -171,7 +161,7 @@ export function AttributeSelector(props: PAttributeSelector) {
         tooltipContent={tooltipContent}
         disabledValues={disabledValues}
         provenancesAvailable={provenancesAvailable}
-        provenancesSelected={extractProvenancesForField(label)}
+        provenancesSelected={extractProvenancesForAttribute(attribute, label)}
         onProvenancesChanged={(newProvenances) => updateProvenanceAttributes(label, newProvenances)}
       />
     );
