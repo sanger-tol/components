@@ -45,7 +45,7 @@ export interface PAttributeSelector extends IRemoteTarget {
   populatedFieldType?: string;
   recommendedFilterAvailable?: boolean;
   renderSearchBySource?: boolean;
-  setAttributes: Dispatch<SetStateAction<string[]>>;
+  setAttributes: (attributes: string[]) => void;
   setAttributeMeta?: (attributeMeta: any) => void;
   onClean?: () => void;
   sticky?: boolean;
