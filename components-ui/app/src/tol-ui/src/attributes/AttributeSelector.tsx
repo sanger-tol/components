@@ -249,7 +249,7 @@ export function AttributeSelector(props: PAttributeSelector) {
             style={{ paddingRight: 6 }}
             onClick={(e) => e.stopPropagation()}
           >
-            Recommended columns.
+            Recommended columns
           </span>
           <IconTooltip
             contents={"Recommended properties are indicated by a star icon."}
