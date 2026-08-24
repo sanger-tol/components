@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Checkbox } from "rsuite";
+import type { Dispatch, SetStateAction } from "react";
+import { Checkbox as RSCheckbox } from "rsuite";
 
 import {
   AdvanceSearchTab,
@@ -14,11 +15,9 @@ import {
   filterAttributes,
   getAllAttributeData,
   getFlattenedMetaData,
-  getProvenanceFieldName,
   handleAttributeSelectorKeyNavigation,
   handleSetAttribute,
   IconTooltip,
-  isProvenanceFieldOfAttribute,
   isRelationship,
   MenuItem,
   MultipleSelect,
@@ -27,6 +26,7 @@ import {
   PROVENANCE_IN_FIELD_REGEX_GLOBAL,
   renderTotalSelectedItems,
   SourceTag,
+  updateProvenanceFields,
 } from "..";
 import type {
   IAllowedCardinality,
@@ -45,7 +45,7 @@ export interface PAttributeSelector extends IRemoteTarget {
   populatedFieldType?: string;
   recommendedFilterAvailable?: boolean;
   renderSearchBySource?: boolean;
-  setAttributes: (attributes: string[]) => void;
+  setAttributes: Dispatch<SetStateAction<string[]>>;
   setAttributeMeta?: (attributeMeta: any) => void;
   onClean?: () => void;
   sticky?: boolean;
@@ -115,27 +115,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     }
   }, [attribute, entityMeta, objectType, setAttributeMeta]);
 
-  /**
-   * Updates the `attributes` state to include all the selected provenances for `field`,
-   * where `selectedProvenances` are what's selected from the provenance picker for that attribute.
-   * 
-   * The provenance attributes added for this field are in the format `${field_name}[${provenance}]`,
-   * matching the format the backend accepts.
-   */
-  const updateProvenanceAttributes = (field: string, selectedProvenances: string[]) => {
-    // Remove existing provenance entries for this field
-    const baseAttributes = attribute.filter(attr => !isProvenanceFieldOfAttribute(attr, field));
-    
-    // Add new provenance entries
-    const provenanceAttributes = selectedProvenances.map(
-      provenance => getProvenanceFieldName(field, provenance)
-    );
-    
-    // Update the attributes
-    const newAttributes = [...baseAttributes, ...provenanceAttributes];
-    setAttributes(newAttributes);
-  };
-
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
@@ -162,7 +141,9 @@ export function AttributeSelector(props: PAttributeSelector) {
         disabledValues={disabledValues}
         provenancesAvailable={provenancesAvailable}
         provenancesSelected={extractProvenancesForAttribute(attribute, label)}
-        onProvenancesChanged={(newProvenances) => updateProvenanceAttributes(label, newProvenances)}
+        onProvenancesChanged={
+          (newProvenances) => updateProvenanceFields(attribute, setAttributes, label, newProvenances)
+        }
       />
     );
   };
@@ -253,7 +234,7 @@ export function AttributeSelector(props: PAttributeSelector) {
       />
       {recommendedFilterAvailable && (
         <div className="tol-attribute-selector-suggested-toggle">
-          <Checkbox
+          <RSCheckbox
             key="recommended-tick-filter"
             onChange={() => {
               setRecommendedOn(!recommendedOn);

@@ -4,7 +4,11 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import type {
+  Dispatch,
+  KeyboardEvent as ReactKeyboardEvent,
+  SetStateAction,
+} from "react";
 
 import {
   isValidDate,
@@ -352,6 +356,40 @@ export function extractProvenancesForAttribute(fields: string[], attribute: stri
       const match = field.match(PROVENANCE_IN_FIELD_REGEX);
       return match?.[1] ? [match[1]] : [];
     });
+}
+
+/**
+ * Updates the state storing the selected fields in AttributeSelector to have the `selectedProvenances`
+ * for the attribute `attribute`. This is called when the selected provenances in a ProvenancePicker
+ * change.
+ * @param fields The state storing all fields selected in the AttributeSelector component
+ * @param setFields The React state setter for the `fields` state, used to update it at the end of the function
+ * @param attribute The base attribute that we're changing the provenced fields of
+ * @param selectedProvenances The provenances the user has selected in the ProvenancePicker for the attribute `attribute`
+ * @returns `undefined`; The output is via `setFields`, not a return value.
+ */
+export function updateProvenanceFields(
+  fields: string[],
+  setFields: Dispatch<SetStateAction<string[]>>,
+  attribute: string,
+  selectedProvenances: string[],
+) {
+  // Remove existing provenance fields for this attribute
+  // (we'll re-insert it all from scratch, which will take into account any changes)
+  const everythingButTheProvenanceFieldsOfThisAttribute = fields.filter(
+    field => !isProvenanceFieldOfAttribute(field, attribute)
+  );
+  
+  // Add new provenance entries
+  const newProvenanceFieldsForThisAttribute = selectedProvenances.map(
+    provenance => getProvenanceFieldName(attribute, provenance)
+  );
+  
+  // Update the fields state
+  setFields([
+    ...everythingButTheProvenanceFieldsOfThisAttribute,
+    ...newProvenanceFieldsForThisAttribute
+  ]);
 }
 
 /**
