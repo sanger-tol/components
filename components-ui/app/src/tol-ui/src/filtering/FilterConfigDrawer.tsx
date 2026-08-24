@@ -34,7 +34,7 @@ import {
   FILTER_EXCLUDE_INCOMING,
   ATTRIBUTE_TRANSLATIONS_PLACEHOLDER,
   RELATIONSHIP_TRANSLATION,
-  ADVANCED_TRANSLATION,
+  ATTRIBUTE_TRANSLATION,
   createEmptyFilter,
   normaliseCaps,
   TRANSLATOR_DISABLED_TEXT,
@@ -290,10 +290,10 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           checked={attributeTranslationsToggle}
         />
         <span className="tol-pr-sm" onClick={(e) => e.stopPropagation()}>
-          {ADVANCED_TRANSLATION.LABEL}
+          {ATTRIBUTE_TRANSLATION.LABEL}
         </span>
         <IconTooltip
-          contents={ADVANCED_TRANSLATION.TOOLTIP}
+          contents={ATTRIBUTE_TRANSLATION.TOOLTIP}
         />
       </div>
       {attributeTranslationsToggle && (

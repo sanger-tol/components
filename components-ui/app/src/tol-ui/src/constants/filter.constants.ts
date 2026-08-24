@@ -14,9 +14,6 @@ export const FILTER_INPUT_DELAY = 800;
 export const ATTRIBUTE_TRANSLATIONS_PLACEHOLDER =
 	'{"above_zone_field_id": "current_zone_field_id"}';
 
-export const RELATIONSHIP_TRANSLATIONS_PLACEHOLDER =
-	"Select a relationship path";
-
 export const FILTER_PASS_THROUGH = {
 	LABEL: (type: string) => `Apply the following filters only to this ${type}`,
 	TOOLTIP:
@@ -32,7 +29,7 @@ export const FILTER_EXCLUDE_INCOMING = {
 		"Toggling this on means this Component does not inherit filters from the Components above. The Zone filters are still applied if applicable.",
 };
 
-export const ADVANCED_TRANSLATION = {
+export const ATTRIBUTE_TRANSLATION = {
 	LABEL: "Attribute translation",
 	TOOLTIP:
 		"Toggling this allows you to specify a mapping of custom translations. These are prioritised over automatic translations. This is formatted using JSON.",
