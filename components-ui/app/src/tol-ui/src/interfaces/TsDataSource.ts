@@ -145,7 +145,9 @@ export interface IAttributeDescriptor {
   cardinality?: number;
   description?: string;
   display_name?: string;
+  object_type?: string;
   python_type?: string;
+  relationship_name?: string;
   source?: string;
 }
 
