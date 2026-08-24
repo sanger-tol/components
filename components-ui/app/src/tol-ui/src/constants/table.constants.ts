@@ -24,3 +24,11 @@ export const TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND = (field: string, objectTy
 
 export const TABLE_ERROR_FIELD_METADATA_NOT_FOUND = (field: string): string =>
   `Field metadata not found for attribute: ${field}`;
+
+export const PAGE_SIZE_OPTIONS = [
+  { label: "10", value: 10 },
+  { label: "25", value: 25 },
+  { label: "50", value: 50 },
+  { label: "100", value: 100 },
+  { label: "250", value: 250 },
+];

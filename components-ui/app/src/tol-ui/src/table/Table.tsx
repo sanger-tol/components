@@ -4,14 +4,13 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useState, useCallback } from "react";
-import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
+import { ReactNode, useState, useCallback, useRef } from "react";
+import { Table as RSTable } from "rsuite";
 import {
   Placeholder,
   useEffectUpdate,
   DownloadModal,
   UtilityBar,
-  resizeListener,
   ColumnConfigDrawer,
   IFieldMeta,
   IDropdownButtonConfig,
@@ -34,6 +33,8 @@ import {
   NoAttributesPlaceholder,
   IConfigDifferences,
   TableResetConfirmationModal,
+  Pagination,
+  IFilter,
 } from "..";
 
 export interface PTable extends IRemoteTargetAndZone {
@@ -61,7 +62,7 @@ export interface PTable extends IRemoteTargetAndZone {
   defaultSortByType?: string;
   onSortColumn?: (dataKey: string, sortType?: "asc" | "desc") => void;
 
-  filter: any;
+  filter: IFilter;
   copySeparator?: string;
   fieldDropdownChoices?: TFieldDropdownChoices;
 
@@ -103,17 +104,14 @@ export function Table(props: PTable) {
     height,
     loading,
     resizeableColumns = false,
-
     page,
     setPage,
     pageSize,
     setPageSize,
     totalSize,
     displaySource,
-
     filterVisibility,
     setFilterVisibility,
-
     sortByAttribute,
     sortByType,
     defaultSortByAttribute,
@@ -121,9 +119,7 @@ export function Table(props: PTable) {
     onSortColumn,
     filter,
     expandedRows,
-
     onResizeColumn,
-
     noFilter,
     noPagination,
     noSorting,
@@ -133,24 +129,21 @@ export function Table(props: PTable) {
     actionsFooter,
     utilityBarConfig = {},
     contents,
+    groupBy,
+    onReset,
+    showConfigReset,
+    resetConfigDifferences,
+    baseFieldMeta,
     /* eslint-enable */
   } = props;
 
-  const groupBy: boolean | undefined = props.groupBy;
-  const onReset: (() => void) | undefined = props.onReset;
-  const showConfigReset: boolean | undefined = props.showConfigReset;
-  const resetConfigDifferences: IConfigDifferences | undefined =
-    props.resetConfigDifferences;
-  const baseFieldMeta: Partial<IFieldMeta> | undefined = props.baseFieldMeta;
-
   const { editMode } = useBoard();
+  const tableRef = useRef<HTMLDivElement | null>(null);
 
   const [open, setOpen] = useState<boolean>(false);
   const [resetConfirmationOpen, setResetConfirmationOpen] =
     useState<boolean>(false);
   const [downloadOpen, setDownloadOpen] = useState<boolean>(false);
-  const [smallBreakpoint, setSmallBreakpoint] = useState<boolean>(true);
-  const [mediumBreakpoint, setMediumBreakpoint] = useState<boolean>(true);
   const [cellHeights, setCellHeights] = useState<TCellHeights>({});
   const [heightExpandedRows, setHeightExpandedRows] = useState<
     Record<string, boolean>
@@ -169,7 +162,6 @@ export function Table(props: PTable) {
   noFilter = !!noFilter;
 
   const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
-  const wrapperId = "tol-table-wrapper-" + id;
 
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
@@ -183,14 +175,6 @@ export function Table(props: PTable) {
     checked = false;
     setSelectedRows([]);
   }, [page, pageSize, filter, sortByAttribute, sortByType]);
-
-  resizeListener(() => {
-    const width = document.getElementById(wrapperId)?.offsetWidth;
-    if (width !== undefined) {
-      setSmallBreakpoint(width < 800);
-      setMediumBreakpoint(width < 1000);
-    }
-  });
 
   // @ts-ignore
   const handleCheckAll = (value: any, checkedVal: boolean) => {
@@ -274,61 +258,48 @@ export function Table(props: PTable) {
       disabled: selectedRowData.length === 0 || button.disabled === true,
     }));
 
-  const configButton: PButton = !noConfigModal
-    ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        testid: "table-config-button",
-        tooltip: "Configure Table",
-        onClick: () => {
-          setOpen(true);
-        },
-        icon: "sliders",
-        outline: true,
-        disabled: loading,
-      }
-    : {
-        visible: false,
-      };
+  const configButton: PButton = {
+    visible: !noConfigModal,
+    position: "right",
+    type: "primary",
+    testid: "table-config-button",
+    tooltip: "Configure Table",
+    onClick: () => {
+      setOpen(true);
+    },
+    icon: "sliders",
+    outline: true,
+    disabled: loading,
+  };
 
-  const filterButton: PButton =
-    !noFilter && fieldMeta.order.active.length !== 0 && editMode
-      ? {
-          visible: true,
-          position: "right",
-          type: "primary",
-          onClick: () => {
-            setFilterVisibility(!filterVisibility);
-          },
-          icon: filterVisibility ? "eye-slash" : "eye",
-          tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
-          outline: true,
-        }
-      : {
-          visible: false,
-        };
+  const filterButton: PButton = {
+    visible: !noFilter && fieldMeta.order.active.length !== 0 && editMode,
+    position: "right",
+    type: "primary",
+    onClick: () => {
+      setFilterVisibility(!filterVisibility);
+    },
+    icon: filterVisibility ? "eye-slash" : "eye",
+    tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+    outline: true,
+  };
 
-  const downloadButton: PButton = !noDownload
-    ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        tooltip: "Download the tables current state in various formats",
-        onClick: () => {
-          setDownloadOpen(!downloadOpen);
-        },
-        disabled: totalSize <= 0 || noFieldsSelected || loading,
-        icon: "download",
-        disabledTooltip:
-          totalSize >= 1
-            ? "Must have at least one row to download."
-            : undefined,
-        outline: true,
-      }
-    : {
-        visible: false,
-      };
+  const downloadButton: PButton = {
+    visible: !noDownload,
+    position: "right",
+    type: "primary",
+    tooltip: "Download the tables current state in various formats",
+    onClick: () => {
+      setDownloadOpen(!downloadOpen);
+    },
+    disabled: totalSize <= 0 || noFieldsSelected || loading,
+    icon: "download",
+    disabledTooltip:
+      totalSize >= 1
+        ? "Must have at least one row to download."
+        : undefined,
+    outline: true,
+  };
 
   const actionDropdown: PDeprecatedDropdownButtons | undefined =
     actions && actions.length > 0
@@ -351,41 +322,14 @@ export function Table(props: PTable) {
     data.length > 0 &&
     data.every((row: any) => !!(row?.key && heightExpandedRows[row.key]));
 
-  const PageSizePicker = (
-    <span className="tol-page-size">
-      <SelectPicker
-        value={pageSize}
-        onChange={setPageSize}
-        size="sm"
-        cleanable={false}
-        searchable={false}
-        data={[
-          { label: "25", value: 25 },
-          { label: "50", value: 50 },
-          { label: "100", value: 100 },
-          { label: "250", value: 250 },
-        ]}
-      />
-    </span>
-  );
-
   const PaginationPicker = (
     <Pagination
-      className="tol-pagination"
-      size="sm"
-      layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
-      total={totalSize <= 10000 ? totalSize : 10000}
-      activePage={page}
-      onChangePage={setPage}
-      limit={pageSize}
-      onChangeLimit={setPageSize}
-      prev
-      next
-      first={!mediumBreakpoint}
-      last={!mediumBreakpoint}
-      ellipsis={!mediumBreakpoint}
-      boundaryLinks
-      maxButtons={mediumBreakpoint ? 1 : 3}
+      parentRef={tableRef}
+      page={page}
+      setPage={setPage}
+      pageSize={pageSize}
+      setPageSize={setPageSize}
+      totalSize={totalSize}
     />
   );
 
@@ -400,14 +344,13 @@ export function Table(props: PTable) {
       ],
       elements:
         !noPagination && fieldMeta?.order?.active?.length > 0 ? [
-          ...(!smallBreakpoint ? [PageSizePicker] : []),
           PaginationPicker,
         ] : [],
     }
   )
 
   return (
-    <div style={{ height: height }} className="tol-table" id={wrapperId}>
+    <div id={id} ref={tableRef} className="tol-table" style={{ height: height }}>
       <TableResetConfirmationModal
         open={resetConfirmationOpen}
         setOpen={setResetConfirmationOpen}
