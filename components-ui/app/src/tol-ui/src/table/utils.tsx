@@ -190,15 +190,13 @@ export function addDefaultsFromEntityMeta(
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
+    ...meta,
     cellRenderer: addDefaultCellRenderer(meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
     isAttribute: isRelationship(key),
     rename: meta.display_name || normaliseCaps(key),
     sort: true,
     type: meta.python_type,
-    description: meta.description,
-    source: meta.source,
-    acts_as: meta.acts_as,
   };
   // customised field config overrides the defaults
   fieldMeta.dataWithDefaults[key] = {

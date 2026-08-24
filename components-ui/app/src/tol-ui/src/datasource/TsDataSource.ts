@@ -646,7 +646,10 @@ export class TsDataSource {
       }
     } else if (splitField.length === 1) {
       if (field in attributes[objectType]) {
-        return attributes[objectType][field];
+        return {
+          ...attributes[objectType][field],
+          object_type: objectType,
+        };
       }
     }
   }
