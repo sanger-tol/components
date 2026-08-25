@@ -21,11 +21,12 @@ This includes code in `tol-ui`, as well as the UI of any of our apps.
   * Named in PascalCase (e.g. `BoardTable`)
   * Destructure necessary props and provide Defaults
     * `const { prop1, prop2, optionalProp = "default value" } = props`
-  * Hooks. Examples:
+  * Hooks. In order where possible:
     * `useContext`
     * `useState`
-    * `useEffect`
     * `useRef`
+    * `useEffect`
+  * Component wide variables (where possible as it depends on the variables dependencies)
   * Lambda Functions:
     * `() => {}`
     * If we have a function within a function use lambda functions for them

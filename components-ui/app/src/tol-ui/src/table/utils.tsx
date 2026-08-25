@@ -524,6 +524,34 @@ export function hasExpandableRows(
 }
 
 /**
+ * Calculates the display height for a table row.
+ *
+ * Returns the full height when the row is expanded, otherwise caps it at
+ * `COLLAPSED_ROW_MAX_HEIGHT`.
+ *
+ * @param rowData - The row data object provided by the rsuite table.
+ * @param cellHeights - A map of row IDs to per-column cell heights.
+ * @param heightExpandedRows - A map of row IDs to their expanded state.
+ * @returns The pixel height to use for the row.
+ */
+export function getTableRowHeight(
+  rowData: any,
+  cellHeights: TCellHeights,
+  heightExpandedRows: Record<string, boolean>,
+): number {
+  const rowId = rowData?.key;
+  const row = cellHeights[rowId];
+  const fullHeight = row
+    ? Math.max(DEFAULT_ROW_HEIGHT, ...Object.values(row))
+    : DEFAULT_ROW_HEIGHT;
+
+  if (heightExpandedRows[rowId]) {
+    return fullHeight;
+  }
+  return Math.min(fullHeight, COLLAPSED_ROW_MAX_HEIGHT);
+}
+
+/**
  * Updates a specific attribute of a field within the IFieldMeta object.
  *
  * @param fieldMeta - The field metadata object to be updated

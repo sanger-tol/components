@@ -24,28 +24,26 @@ import {
   RowCounter,
   RowExpander,
   TFieldDropdownChoices,
-  DEFAULT_ROW_HEIGHT,
   TCellHeights,
-  COLLAPSED_ROW_MAX_HEIGHT,
   RowToolsColumn,
   DataColumn,
   mergeUtilityBarConfigs,
   getTableRowClassName,
+  getTableRowHeight,
   NoAttributesPlaceholder,
   IConfigDifferences,
   TableResetConfirmationModal,
   Pagination,
-  IFilter,
-  PPagination,
-  IComponentBasics,
   ITableRecord,
+  TFilterOrUndefined,
+  IDataComponentBasics,
 } from "..";
 
-export interface PTable extends IRemoteTargetAndZone, IComponentBasics, PPagination {
+export interface PTable extends IRemoteTargetAndZone, IDataComponentBasics {
   data: any;
   fieldMeta: IFieldMeta;
   baseFieldMeta?: Partial<IFieldMeta>;
-  resizeableColumns?: boolean;
+  filter: TFilterOrUndefined;
   filterVisibility?: boolean;
   setFilterVisibility?: any;
   sortByAttribute?: string;
@@ -53,28 +51,28 @@ export interface PTable extends IRemoteTargetAndZone, IComponentBasics, PPaginat
   defaultSortByAttribute?: string;
   defaultSortByType?: string;
   onSortColumn?: (dataKey: string, sortType?: "asc" | "desc") => void;
-  filter: IFilter;
-  copySeparator?: string;
-  fieldDropdownChoices?: TFieldDropdownChoices;
-  onConfigSave: (config: ITableConfigSave) => void;
-  onResizeColumn?: (columnWidth?: number, dataKey?: string) => void;
+  resizeableColumns?: boolean;
   noFilter?: boolean;
-  noPagination?: boolean;
   noSorting?: boolean;
+  noPagination?: boolean;
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
   rowExpansion?: boolean;
+  expandedRows?: string[];
+  groupBy?: boolean;
   actions?: IDropdownButtonConfig[];
   actionChoices?: string[];
   actionsFooter?: IDropdownButtonConfig;
-  utilityBarConfig?: PUtilityBar;
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
-  expandedRows?: string[];
-  groupBy?: boolean;
+  copySeparator?: string;
+  fieldDropdownChoices?: TFieldDropdownChoices;
+  onConfigSave: (config: ITableConfigSave) => void;
+  onResizeColumn?: (columnWidth?: number, dataKey?: string) => void;
   downloadInProgress: boolean;
   setDownloadInProgress: (downloadInProgress: boolean) => void;
+  utilityBarConfig?: PUtilityBar;
   onReset?: () => void;
   showConfigReset?: boolean;
   resetConfigDifferences?: IConfigDifferences;
@@ -82,18 +80,17 @@ export interface PTable extends IRemoteTargetAndZone, IComponentBasics, PPaginat
 
 export function Table(props: PTable) {
   let {
-    /* eslint-disable */
     id,
     data,
     fieldMeta,
+    baseFieldMeta,
     height,
     loading,
     resizeableColumns = false,
     page,
-    setPage,
     pageSize,
-    setPageSize,
     totalSize,
+    filter,
     filterVisibility,
     setFilterVisibility,
     sortByAttribute,
@@ -101,8 +98,8 @@ export function Table(props: PTable) {
     defaultSortByAttribute,
     defaultSortByType,
     onSortColumn,
-    filter,
     expandedRows,
+    groupBy,
     onResizeColumn,
     noFilter,
     noPagination,
@@ -112,40 +109,48 @@ export function Table(props: PTable) {
     actions,
     actionsFooter,
     utilityBarConfig = {},
-    contents,
-    groupBy,
     onReset,
     showConfigReset,
     resetConfigDifferences,
-    baseFieldMeta,
-    /* eslint-enable */
   } = props;
 
   const { editMode } = useBoard();
-  const tableRef = useRef<HTMLDivElement | null>(null);
 
   const [open, setOpen] = useState<boolean>(false);
   const [resetConfirmationOpen, setResetConfirmationOpen] =
     useState<boolean>(false);
   const [downloadOpen, setDownloadOpen] = useState<boolean>(false);
   const [cellHeights, setCellHeights] = useState<TCellHeights>({});
-  const [heightExpandedRows, setHeightExpandedRows] = useState<
-    Record<string, boolean>
-  >({});
+  const [heightExpandedRows, setHeightExpandedRows] = useState<Record<string, boolean>>({});
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
     props.setSelectedRows,
     [],
   );
-
   // @ts-ignore - temp turned off
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
 
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  // Check if there are no fields selected in the table
+  const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
+
+  // Check if all rows are expanded
+  const allRowsExpanded = (
+    Array.isArray(data) &&
+    data.length > 0 &&
+    data.every((row: any) => !!(row?.key && heightExpandedRows[row.key]))
+  );
+
+  // Get the data for the selected rows
+  const selectedRowData = selectedRows.map((row) => {
+    const key = Object.keys(row)[0];
+    return data.find((d: any) => d.key === key) ?? Object.values(row)[0];
+  });
+
+  // Row selection checkbox logic
   let checked = false;
   let indeterminate = false;
-  noFilter = !!noFilter;
-
-  const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
 
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
@@ -164,8 +169,8 @@ export function Table(props: PTable) {
   const handleCheckAll = (value: any, checkedVal: boolean) => {
     const vals = checkedVal
       ? data.map((item: any) => {
-          return { [item.key]: item };
-        })
+        return { [item.key]: item };
+      })
       : [];
     setSelectedRows && setSelectedRows(vals);
   };
@@ -174,8 +179,8 @@ export function Table(props: PTable) {
     const vals = checkedVal
       ? [...selectedRows, value]
       : selectedRows.filter(
-          (item) => Object.keys(item)[0] !== Object.keys(value)[0],
-        );
+        (item) => Object.keys(item)[0] !== Object.keys(value)[0],
+      );
     setSelectedRows(vals);
   };
 
@@ -225,10 +230,6 @@ export function Table(props: PTable) {
     });
   }, [data]);
 
-  const selectedRowData = selectedRows.map((row) => {
-    const key = Object.keys(row)[0];
-    return data.find((d: any) => d.key === key) ?? Object.values(row)[0];
-  });
   const actionDropDownButtons = actions
     ?.filter(
       (button) =>
@@ -260,9 +261,7 @@ export function Table(props: PTable) {
     visible: !noFilter && fieldMeta.order.active.length !== 0 && editMode,
     position: "right",
     type: "primary",
-    onClick: () => {
-      setFilterVisibility(!filterVisibility);
-    },
+    onClick: () => setFilterVisibility(!filterVisibility),
     icon: filterVisibility ? "eye-slash" : "eye",
     tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
     outline: true,
@@ -273,9 +272,7 @@ export function Table(props: PTable) {
     position: "right",
     type: "primary",
     tooltip: "Download the tables current state in various formats",
-    onClick: () => {
-      setDownloadOpen(!downloadOpen);
-    },
+    onClick: () => setDownloadOpen(!downloadOpen),
     disabled: totalSize <= 0 || noFieldsSelected || loading,
     icon: "download",
     disabledTooltip:
@@ -288,32 +285,23 @@ export function Table(props: PTable) {
   const actionDropdown: PDeprecatedDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
-          mainButtonIcon: {
-            id: "actions",
-            icon: "paper-plane",
-            type: "primary",
-            position: "right",
-            outline: selectedRows.length === 0,
-          },
-          dropdownButtons: actionDropDownButtons,
-          footer: actionsFooter,
-          placement: "leftStart",
-        }
+        mainButtonIcon: {
+          id: "actions",
+          icon: "paper-plane",
+          type: "primary",
+          position: "right",
+          outline: selectedRows.length === 0,
+        },
+        dropdownButtons: actionDropDownButtons,
+        footer: actionsFooter,
+        placement: "leftStart",
+      }
       : undefined;
-
-  const allRowsExpanded =
-    Array.isArray(data) &&
-    data.length > 0 &&
-    data.every((row: any) => !!(row?.key && heightExpandedRows[row.key]));
 
   const PaginationPicker = (
     <Pagination
-      parentRef={tableRef}
-      page={page}
-      setPage={setPage}
-      pageSize={pageSize}
-      setPageSize={setPageSize}
-      totalSize={totalSize}
+      {...props}
+      parentRef={ref}
     />
   );
 
@@ -327,14 +315,33 @@ export function Table(props: PTable) {
         downloadButton,
       ],
       elements:
-        !noPagination && fieldMeta?.order?.active?.length > 0 ? [
-          PaginationPicker,
-        ] : [],
+        !noPagination && noFieldsSelected ? [PaginationPicker] : [],
     }
   )
 
+  const LoadingScreen = () => (
+    <Placeholder
+      loader
+      opacity={0.8}
+      squareCorners
+      messagePosition="top"
+    />
+  )
+
+  const customAttributeSelection =
+    !editMode
+      && ((baseFieldMeta?.order?.limitVisibility ?? fieldMeta?.order?.limitVisibility) === true)
+      ? [
+        ...((baseFieldMeta?.order?.active || fieldMeta.order.active) ?? []),
+        ...((baseFieldMeta?.order?.inactive || fieldMeta.order.inactive) ?? []),
+      ]
+      : undefined;
+
+  const contents =
+    props.contents || (noFieldsSelected ? <NoAttributesPlaceholder /> : null);
+
   return (
-    <div id={id} ref={tableRef} className="tol-table" style={{ height: height }}>
+    <div id={id} ref={ref} className="tol-table" style={{ height: height }}>
       <TableResetConfirmationModal
         open={resetConfirmationOpen}
         setOpen={setResetConfirmationOpen}
@@ -370,102 +377,73 @@ export function Table(props: PTable) {
             : undefined
         }
         showConfigReset={!noConfigModal && !editMode && showConfigReset}
-        customAttributeSelection={
-          !editMode
-          && ((baseFieldMeta?.order?.limitVisibility ?? fieldMeta?.order?.limitVisibility) === true)
-            ? [...((baseFieldMeta?.order?.active || fieldMeta.order.active) ?? []), ...((baseFieldMeta?.order?.inactive || fieldMeta.order.inactive) ?? [])]
-            : undefined
-        }
+        customAttributeSelection={customAttributeSelection}
       />
       <UtilityBar id={id} {...ubc} />
-      {contents ? (
-        contents
-      ) : (
+      {contents || (
         <>
-          {noFieldsSelected ? (
-            <NoAttributesPlaceholder />
-          ) : (
-            <>
-              <RowCounter {...props} />
-              <div className="tol-table-inner">
-                <RSTable
-                  bordered
-                  fillHeight
-                  wordWrap
-                  rowKey={"key"}
-                  data={data}
-                  headerHeight={!noFilter && filterVisibility ? 85 : 42}
-                  loading={loading}
-                  sortColumn={sortByAttribute}
-                  sortType={sortByType}
-                  onSortColumn={onSortColumn}
-                  expandedRowKeys={expandedRows}
-                  renderRowExpanded={RowExpander}
-                  shouldUpdateScroll={false}
-                  rowClassName={(rowData: ITableRecord) => getTableRowClassName(
-                    rowData,
-                    bulkSelect,
-                    selectedRows,
-                  )}
-                  rowHeight={(rowData: any) => {
-                    const rowId = rowData?.key;
-                    const row = cellHeights[rowId];
-                    const fullHeight = row
-                      ? Math.max(DEFAULT_ROW_HEIGHT, ...Object.values(row))
-                      : DEFAULT_ROW_HEIGHT;
+          <RowCounter {...props} />
+          <div className="tol-table-inner">
+            <RSTable
+              bordered
+              fillHeight
+              wordWrap
+              rowKey={"key"}
+              data={data}
+              headerHeight={!noFilter && filterVisibility ? 85 : 42}
+              loading={loading}
+              sortColumn={sortByAttribute}
+              sortType={sortByType}
+              onSortColumn={onSortColumn}
+              expandedRowKeys={expandedRows}
+              renderRowExpanded={RowExpander}
+              shouldUpdateScroll={false}
+              rowClassName={(rowData: ITableRecord) => getTableRowClassName(
+                rowData,
+                bulkSelect,
+                selectedRows,
+              )}
+              rowHeight={(rowData: any) =>
+                getTableRowHeight(rowData, cellHeights, heightExpandedRows)
+              }
+              renderLoading={LoadingScreen}
+            >
+              {/* Has to be a function as only rsuite components can be children on their Table */}
+              {RowToolsColumn({
+                ...props,
+                checked,
+                indeterminate,
+                bulkSelect,
+                selectedRows,
+                cellHeights,
+                heightExpandedRows,
+                allRowsExpanded,
+                handleCheckAll,
+                handleCheck,
+                setHeightExpandedRows,
+                handleToggleAllRowHeights,
+              })}
+              {fieldMeta!.order.active.map((key: string) => {
+                const field = fieldMeta.dataWithDefaults![key];
+                if (!field) return null;
 
-                    if (heightExpandedRows[rowId]) {
-                      return fullHeight;
-                    }
-                    return Math.min(fullHeight, COLLAPSED_ROW_MAX_HEIGHT);
-                  }}
-                  renderLoading={() => (
-                    <Placeholder
-                      loader
-                      opacity={0.8}
-                      squareCorners
-                      messagePosition="top"
-                    />
-                  )}
-                >
-                  {/* Has to be a function as only rsuite components can be children on their Table */}
-                  {RowToolsColumn({
-                    ...props,
-                    checked,
-                    indeterminate,
-                    bulkSelect,
-                    selectedRows,
-                    cellHeights,
-                    heightExpandedRows,
-                    allRowsExpanded,
-                    handleCheckAll,
-                    handleCheck,
-                    setHeightExpandedRows,
-                    handleToggleAllRowHeights,
-                  })}
-                  {fieldMeta!.order.active.map((key: string) => {
-                    const field = fieldMeta.dataWithDefaults![key];
-                    if (!field) return null;
-
-                    const sortable: boolean =
-                      (!noSorting && field.sort) ?? false;
-                    const filterable = !noFilter && !!field.filter;
-                    // Has to be a function as only rsuite components can be children on their Table
-                    return DataColumn({
-                      ...props,
-                      fieldKey: key,
-                      field,
-                      sortable,
-                      filterable,
-                      resizeable: resizeableColumns,
-                      onResize: onResizeColumn,
-                      handleCellHeightChange,
-                    });
-                  })}
-                </RSTable>
-              </div>
-            </>
-          )}
+                const sortable: boolean =
+                  (!noSorting && field.sort) ?? false;
+                const filterable = !noFilter && !!field.filter;
+                // Has to be a function as only rsuite components can be children on their Table
+                return DataColumn({
+                  ...props,
+                  fieldKey: key,
+                  field,
+                  sortable,
+                  filterable,
+                  resizeable: resizeableColumns,
+                  onResize: onResizeColumn,
+                  handleCellHeightChange,
+                });
+              })}
+            </RSTable>
+          </div>
         </>
       )}
     </div>

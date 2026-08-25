@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import type { CSSProperties, ReactNode } from "react";
+import { IPagination } from "./Table";
 
 export interface IHeight {
   /**
@@ -30,3 +31,8 @@ export interface IComponentBasics extends IHeight {
    */
   contents?: ReactNode;
 }
+
+/**
+ * Shared baseline props used by data related components in this library that also support pagination.
+ */
+export interface IDataComponentBasics extends IComponentBasics, IPagination {}

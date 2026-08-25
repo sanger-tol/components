@@ -6,34 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { RefObject, useState } from "react";
 import { Pagination as RSPagination, SelectPicker } from "rsuite";
-import { componentResizeListener, PAGE_SIZE_OPTIONS } from "..";
+import { componentResizeListener, IPagination, PAGE_SIZE_OPTIONS } from "..";
 
 
-export interface PPagination {
+export interface PPagination extends IPagination {
   /**
    * Parent element ref from the table container used for width-based layout.
    */
   parentRef: RefObject<HTMLDivElement | null>;
-  /**
-   * The current active page.
-   */
-  page: number;
-  /**
-   * Callback to change the active page.
-   */
-  setPage: (page: number) => void;
-  /**
-   * The number of rows displayed per page.
-   */
-  pageSize: number;
-  /**
-   * Callback to change the page size.
-   */
-  setPageSize: (pageSize: number) => void;
-  /**
-   * The total number of rows across all pages.
-   */
-  totalSize: number;
 }
 
 /**
