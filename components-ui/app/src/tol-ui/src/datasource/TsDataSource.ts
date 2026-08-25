@@ -629,6 +629,12 @@ export class TsDataSource {
       });
   }
 
+  /**
+   * Fetches the entry in attribute_metadata for a specific attribute
+   * @param field The name of the attribute to fetch
+   * @param objectType The object type to fetch from (within this data source's dataspace)
+   * @returns The `attribute_metadata` entry for this attribute
+   */
   private async getAttributeDescriptorValue(
     field: string,
     objectType: string
@@ -654,6 +660,12 @@ export class TsDataSource {
     }
   }
 
+  /**
+   * Fetches the entry in attribute_metadata for a specific attribute
+   * @param args Specifies which attribute to fetch. It will be the `field` attribute of the
+   * `objectType` object type
+   * @returns The `attribute_metadata` entry for this attribute
+   */
   public async getAttributeDescriptor({
     objectType,
     field,
