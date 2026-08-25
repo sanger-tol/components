@@ -13,6 +13,7 @@ import {
   RELATIONSHIP_SEPARATOR,
   getFieldByName,
   createEmptyFilter,
+  NoneValue,
 } from "..";
 import type {
   IEntityMeta,
@@ -379,7 +380,7 @@ export function updateContents(contents: object) {
     }
     // make nulls show a faded 'None'
     if (value === null || value === undefined) {
-      contents[key] = <span className="tol-none-value">None</span>;
+      contents[key] = <NoneValue />;
     }
   }
   return contents;

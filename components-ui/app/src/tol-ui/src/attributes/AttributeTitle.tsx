@@ -44,7 +44,7 @@ export function AttributeTitle(props: PAttributeTitle) {
 
     let cancelled = false;
 
-    void dataSource
+    dataSource
       .getAttributeDescriptor({ objectType, field: attributeId })
       .then((attribute) => {
         if (cancelled || !attribute) return;

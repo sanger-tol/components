@@ -27,29 +27,30 @@ export function AttributeTooltip(props: PAttributeTooltip) {
     let cancelled = false;
     setDetails({});
 
-    void dataSource.getAttributeDescriptor({ objectType, field }).then((attribute) => {
-      if (cancelled) return;
+    dataSource
+      .getAttributeDescriptor({ objectType, field }).then((attribute) => {
+        if (cancelled) return;
 
-      if (attribute) {
-        setDetails({
-          "Authoritative": attribute.authoritative,
-          "Available on Relationships": attribute.available_on_relationships,
-          "Cardinality": attribute.cardinality,
-          "Description": attribute.description,
-          "Display Name": attribute.display_name,
-          "Python Type": attribute.python_type,
-          "Source": attribute.source && (
-            <SourceTag
-              source={attribute.source}
-              className="tol-attribute-tooltip-source"
-            />
-          ),
-          "System Name": field,
-        });
-      } else {
-        setDetails({ "System Name": field });
-      }
-    });
+        if (attribute) {
+          setDetails({
+            "Authoritative": attribute.authoritative,
+            "Available on Relationships": attribute.available_on_relationships,
+            "Cardinality": attribute.cardinality,
+            "Description": attribute.description,
+            "Display Name": attribute.display_name,
+            "Python Type": attribute.python_type,
+            "Source": attribute.source && (
+              <SourceTag
+                source={attribute.source}
+                className="tol-attribute-tooltip-source"
+              />
+            ),
+            "System Name": field,
+          });
+        } else {
+          setDetails({ "System Name": field });
+        }
+      });
 
     return () => {
       cancelled = true;

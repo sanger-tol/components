@@ -62,7 +62,7 @@ export async function translateZoneAboveFilter(
       generateAttributeTranslations(zoneAbove, currentZone.attributeTranslations);
 
     if (currentZone.relationshipTranslation) {
-      for (let [incomingField, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
+      for (const [incomingField, filterValue] of Object.entries(zoneAboveFilter.and_ || {})) {
         // If the field already exists in the attribute translations, skip automatic translation
         if (incomingField in (translatedFilter.and_ || {})) continue;
 
