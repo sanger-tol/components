@@ -39,7 +39,7 @@ import {
 } from "..";
 import type {
   TsDataSource,
-  TAttributeData,
+  IAttributeDescriptor,
   TDataObjectListOrNull,
   ITableData,
   ITableRecord,
@@ -155,7 +155,7 @@ export async function getIsManyByField(
   return Object.fromEntries(entries);
 }
 
-function addDefaultCellRenderer(type: string): TCellRenderer {
+function addDefaultCellRenderer(type?: string): TCellRenderer {
   switch (type) {
     case "datetime":
       return { type: "datetime" };
@@ -164,7 +164,7 @@ function addDefaultCellRenderer(type: string): TCellRenderer {
   }
 }
 
-function addRemoteFilterType(type: string, cardinality: number) {
+function addRemoteFilterType(type?: string, cardinality?: number) {
   if (cardinality && cardinality < 50 && type === "str") return "multi";
   if (type === "double") return "float";
   return type;
@@ -185,7 +185,7 @@ function sortFieldsByRename(fieldMeta: IFieldMeta) {
 
 export function addDefaultsFromEntityMeta(
   key: string,
-  meta: TAttributeData,
+  meta: IAttributeDescriptor,
   fieldMeta: IFieldMeta,
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};

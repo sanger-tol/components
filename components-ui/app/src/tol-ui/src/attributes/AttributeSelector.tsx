@@ -111,9 +111,9 @@ export function AttributeSelector(props: PAttributeSelector) {
     return (
       <div key={`${label}-${index}`}>
         <MenuItem
-          source={metaData["source"]}
+          source={metaData?.source}
           field={label}
-          authoritative={metaData["authoritative"]}
+          authoritative={metaData?.authoritative}
           objectType={objectType}
           dataSource={dataSource}
           displaySource={displaySource}
@@ -126,11 +126,11 @@ export function AttributeSelector(props: PAttributeSelector) {
   };
 
   const RenderSelectedValue = (value: string) => {
-    const metaData = getFlattenedMetaData(entityMeta, objectType, value) || {};
+    const metaData = getFlattenedMetaData(entityMeta, objectType, value);
     return (
       <span className="tol-attribute-selector-render-single-item">
-        {metaData["display_name"] ?? normaliseCaps(value)}
-        <SourceTag source={metaData["source"]} />
+        {metaData?.display_name ?? normaliseCaps(value)}
+        <SourceTag source={metaData?.source} />
       </span>
     );
   };
