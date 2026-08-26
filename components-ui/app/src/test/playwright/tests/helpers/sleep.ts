@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
+import type { Page } from "@playwright/test";
+
 /**
  * Pauses the test for `ms` miliseconds.
  * 
@@ -9,6 +11,6 @@
  * Prefer approaches such as waiting for an element to attach or for DOM content to load.
  * @param ms The number of miliseconds to wait for
  */
-export async function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+export async function sleep(page: Page, ms: number = 200) {
+  await page.waitForTimeout(ms);
 }

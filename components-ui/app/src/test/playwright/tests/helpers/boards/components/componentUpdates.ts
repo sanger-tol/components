@@ -12,11 +12,11 @@ import { clickUtilityBarButton } from "../../utility-bar";
  * @param component Playwright locator handle to the component to delete
  * @param componentType The name of the component type to delete
  */
-export const deleteComponent = async (
+export async function deleteComponent(
   page: Page,
   component: Locator,
   componentType: string,
-) => {
+) {
   // Click the delete button in the utility bar of the target component
   await clickUtilityBarButton(page, component, `delete-${componentType}-button`);
 

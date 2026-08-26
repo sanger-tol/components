@@ -207,3 +207,76 @@ SPDX-License-Identifier: MIT
   }
 
 }
+
+.tol-attribute-selector-menu-item-right-container {
+  display: flex;
+  align-items: center;
+}
+
+.tol-provenance-picker {
+  margin-top: var(--tol-spacing-sm);
+  background-color: var(--tol-grey-translucent);
+  border-radius: var(--tol-border-radius);
+  display: flex;
+  flex-direction: column;
+
+  & > * {
+    padding: 0.5rem;
+  }
+}
+
+.tol-provenance-picker-entry {
+  padding: 0.2rem;
+  border-radius: var(--tol-border-radius) !important;
+  color: var(--tol-text);
+  font-weight: normal;
+
+  &:hover {
+    background-color: var(--tol-grey-subtle);
+    color: var(--tol-primary);
+  }
+
+  .rs-checkbox {
+    width: 100%;
+    height: 100%;
+  }
+
+  .tol-provenance-picker-checkbox {
+    width: 100%;
+
+    .rs-checkbox-checker,
+    .rs-checkbox-checker > label {
+      display: block;
+      width: 100%;
+    }
+
+    .rs-checkbox-label div {
+      display: inline;
+    }
+
+    /*
+    RSuite styles checked checkboxes using descendant selectors.
+    Since this checkbox is rendered inside a CheckPicker item, a checked parent item
+    would otherwise also give every unchecked provenance checkbox a tick.
+
+    These styles force the checked style to be off if it's not logically checked.
+    */
+    &:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate) >
+      .rs-checkbox-checker > label > .rs-checkbox-control {
+      &::before {
+        visibility: hidden;
+      }
+
+      .rs-checkbox-inner::before {
+        background-color: transparent;
+        border-color: var(--rs-checkbox-border);
+      }
+
+      .rs-checkbox-inner::after {
+        border: 0;
+        opacity: 0;
+        transform: rotate(45deg) scale(0);
+      }
+    }
+  }
+}

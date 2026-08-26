@@ -5,22 +5,31 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Checkbox } from "rsuite";
+import { Checkbox as RSCheckbox } from "rsuite";
+
 import {
-  MultipleSelect,
-  IconTooltip,
-  SourceTag,
-  getFlattenedMetaData,
+  AdvanceSearchTab,
   attributeSelectorSearchBy,
-  normaliseCaps,
+  extractProvenancesForAttribute,
   filterAttributes,
   getAllAttributeData,
-  IRemoteTarget,
-  IAllowedCardinality,
+  getFlattenedMetaData,
+  handleAttributeSelectorKeyNavigation,
   handleSetAttribute,
-  renderTotalSelectedItems,
+  IconTooltip,
+  isRelationship,
   MenuItem,
-  AdvanceSearchTab,
+  MultipleSelect,
+  normaliseCaps,
+  PROVENANCE_IN_FIELD_REGEX,
+  PROVENANCE_IN_FIELD_REGEX_GLOBAL,
+  renderTotalSelectedItems,
+  SourceTag,
+  updateProvenanceFields,
+} from "..";
+import type {
+  IAllowedCardinality,
+  IRemoteTarget,
 } from "..";
 
 export interface PAttributeSelector extends IRemoteTarget {
@@ -108,29 +117,45 @@ export function AttributeSelector(props: PAttributeSelector) {
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
-    return (
-      <div key={`${label}-${index}`}>
-        <MenuItem
-          source={metaData["source"]}
-          field={label}
-          authoritative={metaData["authoritative"]}
-          objectType={objectType}
-          dataSource={dataSource}
-          displaySource={displaySource}
-          tooltipContent={tooltipContent}
-          disabledValues={disabledValues}
-        />
+    const sourceOrder = typeof metaData["source_order"] == "string"
+      ? []
+      : metaData["source_order"] ?? [];
 
-      </div>
+    // Only allow selecting provenance on direct attributes of this object
+    const isDirectAttribute = !isRelationship(label);
+    const provenancesAvailable = isDirectAttribute
+      ? sourceOrder
+      : [];
+
+    return (
+      <MenuItem
+        key={`${label}-${index}`}
+        source={metaData["source"]}
+        field={label}
+        authoritative={metaData["authoritative"]}
+        objectType={objectType}
+        dataSource={dataSource}
+        displaySource={displaySource}
+        tooltipContent={tooltipContent}
+        disabledValues={disabledValues}
+        provenancesAvailable={provenancesAvailable}
+        provenancesSelected={extractProvenancesForAttribute(attribute, label)}
+        onProvenancesChanged={
+          (newProvenances) => updateProvenanceFields(attribute, setAttributes, label, newProvenances)
+        }
+      />
     );
   };
 
   const RenderSelectedValue = (value: string) => {
     const metaData = getFlattenedMetaData(entityMeta, objectType, value) || {};
+    const provenance = value.match(PROVENANCE_IN_FIELD_REGEX)?.[1];
+    const displayName = metaData["display_name"]
+      ?? (normaliseCaps(value) as string).replace(PROVENANCE_IN_FIELD_REGEX_GLOBAL, "");
     return (
       <span className="tol-attribute-selector-render-single-item">
-        {metaData["display_name"] ?? normaliseCaps(value)}
-        <SourceTag source={metaData["source"]} />
+        {displayName}
+        <SourceTag source={provenance || metaData["source"]} />
       </span>
     );
   };
@@ -138,7 +163,12 @@ export function AttributeSelector(props: PAttributeSelector) {
   if (loading) return <></>;
 
   return (
-    <div className="tol-attribute-selector" data-testid={testid}>
+    <div
+      className="tol-attribute-selector"
+      data-testid={testid}
+      // Register the event at the capture phase so it overrides the default menu navigation
+      onKeyDownCapture={handleAttributeSelectorKeyNavigation}
+    >
       <MultipleSelect
         className="tol-attribute-selector-select"
         menuClassName={`tol-attribute-selector-menu${maxSelections === 1 && ' tol-single-selector'}`}
@@ -203,7 +233,7 @@ export function AttributeSelector(props: PAttributeSelector) {
       />
       {recommendedFilterAvailable && (
         <div className="tol-attribute-selector-suggested-toggle">
-          <Checkbox
+          <RSCheckbox
             key="recommended-tick-filter"
             onChange={() => {
               setRecommendedOn(!recommendedOn);
@@ -218,7 +248,7 @@ export function AttributeSelector(props: PAttributeSelector) {
             style={{ paddingRight: 6 }}
             onClick={(e) => e.stopPropagation()}
           >
-            Recommended columns.
+            Recommended columns
           </span>
           <IconTooltip
             contents={"Recommended properties are indicated by a star icon."}

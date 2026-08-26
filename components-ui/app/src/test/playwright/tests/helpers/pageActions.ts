@@ -2,21 +2,22 @@
 //
 // SPDX-License-Identifier: MIT
 
-import type { Locator } from "@playwright/test";
-
+import type { Page, Locator } from "@playwright/test";
 import { sleep } from "./sleep";
 
 /**
  * Clicks the provided element a few times in case it's a bit flaky in the DOM
+ * @param page The Playwright page handle
  * @param getLocator Function returning the locator of the element to click
  * @param attempts How many times to try clicking before giving up
  * @param timeoutMs The value in miliseconds to use for all timeouts in this helper
  */
-export const clickWithRetries = async (
+export async function clickWithRetries(
+  page: Page,
   getLocator: () => Locator,
   attempts: number = 5,
   timeoutMs: number = 1_500,
-) => {
+) {
   let lastError: unknown;
 
   for (let attempt = 0; attempt < attempts; attempt++) {
@@ -29,7 +30,7 @@ export const clickWithRetries = async (
       return;
     } catch (error) {
       lastError = error;
-      await sleep(100 * (attempt + 1));
+      await sleep(page, 100 * (attempt + 1));
     }
   }
 

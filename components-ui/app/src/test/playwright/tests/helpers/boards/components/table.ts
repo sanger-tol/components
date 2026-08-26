@@ -5,33 +5,27 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { clickUtilityBarButton } from "../../utility-bar";
-import { selectFromDropdown, sleep } from "../..";
+import { selectFromAttributeSelector, selectFromDropdown, sleep } from "../..";
+import type { IConfigureTable } from "../../../interfaces";
 
 /**
  * Configured the provided table component with the given config,
  * with the assumption that the table is newly created (currently empty; non-configured).
  * @param page The Playwright page handle
  * @param table Playwright locator handle to the table to configure
- * @param defaultSort The field to choose in the 'Default Sort' select
- * @param limitColumnVisibility Whether to enable the 'Limit Column Visibility' slider
- * @param activeColumns The columns to choose in the 'Active Columns' dropdown. Columns are added
- * in the order provided in this array.
+ * @param config Table configuration options
  */
-export const configureTable = async (
+export async function configureTable(
   page: Page,
   table: Locator,
-  config: {
-    defaultSort?: string,
-    limitColumnVisibility?: boolean,
-    activeColumns?: string[],
-  }
-) => {
+  config: IConfigureTable,
+) {
   // Click the Configure Table button
   await clickUtilityBarButton(page, table, "table-config-button");
   const configDrawer = page.locator(".tol-drawer");
 
   // I unfortunately couldn't find a suitable waiting condition for the opening animation to finish
-  await sleep(200)
+  await sleep(page);
 
   // Add the default sort attribute if one was provided
   if (config.defaultSort) {
@@ -49,11 +43,11 @@ export const configureTable = async (
 
   // Add the active columns if they were provided
   if (config.activeColumns) {    
-    await selectFromDropdown(
+    await selectFromAttributeSelector(
       page,
       configDrawer.getByRole("combobox").nth(1),
       config.activeColumns
-    );
+    )
   }
 
   // Save the table

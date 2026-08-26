@@ -17,11 +17,11 @@ import {
  * @param limitVisibility - A boolean indicating whether to limit the visibility of certain fields.
  * @returns An object containing the fieldMeta configuration for the table component.
  */
-export const createTableConfig = ({
+export function createTableConfig({
   activeOrder = [],
   inactiveOrder = [],
   limitVisibility = false
-}: ITableConfigOptions): { fieldMeta: IFieldMeta } => {
+}: ITableConfigOptions): { fieldMeta: IFieldMeta } {
   return {
     fieldMeta: {
       data: {},

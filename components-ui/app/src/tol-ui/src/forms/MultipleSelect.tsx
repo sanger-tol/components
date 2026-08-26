@@ -5,19 +5,22 @@ SPDX-License-Identifier: MIT
 */
 
 import { Checkbox, CheckPicker as RSCheckPicker } from "rsuite";
+
 import {
   isPropDefined,
-  IData,
   FormComponentWrapper,
+} from "..";
+import type {
+  IData,
   TFormMultipleSelectField,
 } from "..";
 
 export interface PMultipleSelect extends TFormMultipleSelectField {
   name?: string;
   value: string[];
-  setValue: (value: string[]) => void;
+  setValue: React.Dispatch<React.SetStateAction<string[]>>;
   errorText?: string;
-  renderExtraFooter?: any;
+  renderExtraFooter?: React.ReactNode;
   renderMenu?: (menuItem: JSX.Element) => JSX.Element;
   menuClassName?: string;
 }
@@ -63,7 +66,7 @@ export function MultipleSelect(props: PMultipleSelect) {
     setValue(value.length === allValues.length ? [] : allValues);
   };
 
-  const selectAll = () => {
+  const renderSelectAllCheckbox = () => {
     if (data.length === 0) return undefined;
     return (
       <>
@@ -112,7 +115,7 @@ export function MultipleSelect(props: PMultipleSelect) {
           onEntering={onEntering}
           onClose={onClose}
           onClean={onClean}
-          renderExtraFooter={selectAll}
+          renderExtraFooter={renderSelectAllCheckbox}
           renderMenuItem={renderMenuItem}
           renderValue={renderValue}
           disabledItemValues={disabledItemValues}
