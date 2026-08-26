@@ -655,8 +655,12 @@ export class TsDataSource {
     objectType,
     field,
   }: IGetAttributeDescriptor): Promise<IAttributeDescriptor | undefined> {
+    // If this is a Provenance field, the descriptor should come from the normal attribute,
+    // not the Provenance variation
+    const fieldToGet = field.split("[")[0];
+
     return this.getAttributeDescriptorValue(
-      field,
+      fieldToGet,
       objectType
     );
   }

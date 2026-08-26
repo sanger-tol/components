@@ -8,7 +8,7 @@ globalThis.crypto ??= require("node:crypto").webcrypto
 import { randomInt } from '..';
 
 
-const getRoleId = async (roleName: string) => {
+async function getRoleId(roleName: string) {
   try {
     const result = await sql.unsafe(`
       SELECT id FROM role WHERE name = '${roleName}'
@@ -17,9 +17,9 @@ const getRoleId = async (roleName: string) => {
   } catch (error) {
     throw new Error(`Failed to fetch role ID for role name "${roleName}": ${error}`);
   }
-};
+}
 
-const createRoleBindingQuery = async (userId: number, roleNames: string[]) => {
+async function createRoleBindingQuery(userId: number, roleNames: string[]) {
   for (const roleName of roleNames) {
     const roleId = await getRoleId(roleName);
     return (`
@@ -27,9 +27,9 @@ const createRoleBindingQuery = async (userId: number, roleNames: string[]) => {
       VALUES (${randomInt()}, ${userId}, ${roleId})
     `);
   }
-};
+}
 
-const insertAuthToDB = async (userId: number, token: string, orcidId: string, roles?: string[]) => {
+async function insertAuthToDB(userId: number, token: string, orcidId: string, roles?: string[]) {
   console.log(`Inserting user with ID ${userId} and token ${token} into the database.`);
 
   const roleBindingInserts = await createRoleBindingQuery(userId, roles ?? ["tol"]);
@@ -49,8 +49,9 @@ const insertAuthToDB = async (userId: number, token: string, orcidId: string, ro
  * Sets up authentication for the account used in the tests on the browser.
  * Call this function before a test to create an authenticated session for the test user.
  * @param page The Playwright page handle
+ * @returns The ID of the new user created
  */
-export const setAuth = async (page: Page, roles?: string[]) => {
+export async function setAuth(page: Page, roles?: string[]) {
   const userID = randomInt();
   const token = crypto.randomUUID();
   const orcidID = `https://orcid.org/${crypto.randomUUID()}`;
@@ -91,6 +92,8 @@ export const setAuth = async (page: Page, roles?: string[]) => {
   });
   await page.waitForLoadState("load");
   await page.getByTestId("profile-dropdown").waitFor({ state: "visible" });
+
+  return String(userID);
 };
 
 /**
@@ -102,7 +105,7 @@ export const setAuth = async (page: Page, roles?: string[]) => {
  * Use this function when you just want to add a user to the database without logging
  * in as that user in the test.
  */
-export const addUserToDB = async () => {
+export async function addUserToDB() {
   const userId = randomInt();
   const token = crypto.randomUUID();
   const orcidId = `https://orcid.org/${crypto.randomUUID()}`;

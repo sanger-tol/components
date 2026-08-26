@@ -5,7 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import {
+  ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX,
   RELATIONSHIP_SEPARATOR,
+} from "..";
+import type {
   TDataObjectOrNull,
   TDataObjectListOrNull,
 } from "..";
@@ -30,7 +33,19 @@ export function getFieldByName(object: TDataObjectOrNull, field: string): any {
       return getFieldByName(relationshipObject, rest.join(RELATIONSHIP_SEPARATOR));
     }
   }
-  return object?.[field];
+
+  // If there's no relationship, we're at the end of the field name
+  // (the attribute to fetch the value of).
+  // If this is a provenance field, fetch it from the provenance data;
+  // else get it as an attribute of the data object
+  const provenanceMatch = field.match(ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX);
+  if (provenanceMatch) {
+    const fieldName = provenanceMatch[1];
+    const source = provenanceMatch[2];
+    return object?.provenance?.[fieldName]?.[source];
+  } else { // Not provenance
+    return object?.[field];
+  }
 }
 
 /**

@@ -4,10 +4,13 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX } from "..";
+
 export class DataObject {
   private _id: string;
   private _objectType: string;
   private _attributes?: Record<string, any>;
+  private _provenance?: object; // TODO Type needs refining when DataObject is implemented
   private _relationships?: Record<string, DataObject>;
 
   constructor(
@@ -44,11 +47,15 @@ export class DataObject {
       }
     }
 
-    // If there was no dot, the field relates to this data object. So search this object's
-    // attributes resulting in the value of the field or `undefined` depending on whether the field
-    // actually exists in this object
-    // (TERMINATING CLAUSE)
-    if (!this._attributes) return undefined;
-    else return this._attributes[field];
+    // If there was no dot, the field relates to this data object.
+    const provenanceMatch = field.match(ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX);
+    if (provenanceMatch) {
+      // If this is a provenance field variation, fetch it from the provenance data of this object
+      const [, fieldName, source] = provenanceMatch;
+      return this._provenance?.[fieldName]?.[source];
+    } else {
+      // Else get it from this object's attributes
+      return this._attributes?.[field];
+    }
   }
 }

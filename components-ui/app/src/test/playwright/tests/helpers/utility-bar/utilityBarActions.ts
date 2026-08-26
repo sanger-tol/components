@@ -13,11 +13,11 @@ import { clickWithRetries, sleep } from "..";
  * @param component Playwright locator handle to the component containing the utility bar
  * @param testId Test ID of the target button
  */
-export const clickUtilityBarButton = async (page: Page, component: Locator, testId: string) => {
+export async function clickUtilityBarButton(page: Page, component: Locator, testId: string) {
   // A utility bar button will either be in a utility bar at the top of a component,
   // or it will be hidden in an rs-popover that appears when the condensed utility bar button
   // is clicked.
-  await sleep(200);
+  await sleep(page);
 
   // First, check whether a condensed button exists on this component
   const condensedUtilityBarButton = component.getByTestId("condensed-utility-bar-button");
@@ -25,10 +25,10 @@ export const clickUtilityBarButton = async (page: Page, component: Locator, test
 
   if (hasCondensedButton) {
     // Open the condensed utility bar to show the requested button, then click it
-    await clickWithRetries(() => component.getByTestId("condensed-utility-bar-button"));
-    await clickWithRetries(() => page.locator("#control-id-clickable").getByTestId(testId));
+    await clickWithRetries(page, () => component.getByTestId("condensed-utility-bar-button"));
+    await clickWithRetries(page, () => page.locator("#control-id-clickable").getByTestId(testId));
   } else {
     // Directly click the requested button
-    await clickWithRetries(() => component.getByTestId(testId));
+    await clickWithRetries(page, () => component.getByTestId(testId));
   }
-};
+}

@@ -2,5 +2,4 @@
 //
 // SPDX-License-Identifier: MIT
 
-export * from "./attributes";
-export * from "./board";
+export const BASE_ATTRIBUTE_PROVENANCE_INDICATOR = "_CALC";
