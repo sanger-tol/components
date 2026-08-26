@@ -144,7 +144,7 @@ export function defineBoardEntity(
         ...definedEntity.ui_api_details,
       }),
       // TODO: Temp fix due to different casing
-      filterExcludeIncoming: definedEntity.filter_exclude_incoming ?? false,
+      filterExcludeIncoming: definedEntity.filter_exclude_incoming ?? definedEntity.filterExcludeIncoming ?? false,
     };
   }
 
@@ -156,7 +156,8 @@ export function defineBoardEntity(
       ...entity,
       relationshipTranslation: definedEntity.relationship_translation,
       attributeTranslations: definedEntity.attribute_translations,
-    }
+      filterPassThrough: definedEntity.filter_pass_through ?? definedEntity.filterPassThrough ?? false,
+    };
   }
 
   // If the objectType is not component, we need to set up an empty object for the child board level

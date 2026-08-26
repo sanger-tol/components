@@ -6,10 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `4.1.0`
+## tol-ui `5.0.0`
 
-24-08-2026
+26-08-2026
 
+- Added Provenance UI picker!
+- Fixed bug where filter pass through did not work on hard-coded pages
 - Added multi-hop translations for relationships
 - Added filterPassThrough to Zones
 
