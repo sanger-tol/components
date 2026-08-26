@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { Checkbox as RSCheckbox } from "rsuite";
-
 import {
   AdvanceSearchTab,
   attributeSelectorSearchBy,
@@ -32,6 +31,7 @@ import type {
   IRemoteTarget,
 } from "..";
 
+
 export interface PAttributeSelector extends IRemoteTarget {
   additionalPopulatedFieldData?: any;
   allowedTypes?: string[];
@@ -55,7 +55,6 @@ export interface PAttributeSelector extends IRemoteTarget {
   advanceTab?: boolean;
   testid?: string;
 }
-
 
 export function AttributeSelector(props: PAttributeSelector) {
   const {
