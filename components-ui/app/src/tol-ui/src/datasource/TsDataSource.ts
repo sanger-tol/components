@@ -17,7 +17,7 @@ import {
 } from "..";
 import type {
   IAttributeDescriptor,
-  IAttributes,
+  TAttributes,
   TClient,
   IConfigPromises,
   ICustom,
@@ -318,8 +318,8 @@ export class TsDataSource {
     }
   }
 
-  public async attributeMetadata(): Promise<IAttributes> {
-    return this.getConfig("_config/attribute_metadata") as Promise<IAttributes>;
+  public async attributeMetadata(): Promise<TAttributes> {
+    return this.getConfig("_config/attribute_metadata") as Promise<TAttributes>;
   }
 
   public async relationshipConfig(): Promise<TRelationships> {
@@ -340,7 +340,7 @@ export class TsDataSource {
     return attributeDescriptor?.available_on_relationships ?? false;
   }
 
-  private addObjectTypeToAttributes = (attributes: IAttributes) => {
+  private addObjectTypeToAttributes = (attributes: TAttributes) => {
     for (const [objectType, meta] of Object.entries(attributes)) {
       for (const [, value] of Object.entries(meta)) {
         value.object_type = objectType;
@@ -349,10 +349,10 @@ export class TsDataSource {
   };
 
   private flattenAttributes(
-    attributes: IAttributes,
+    attributes: TAttributes,
     relationships: TRelationships
   ) {
-    const newAttributes: IAttributes = deepCopy(attributes);
+    const newAttributes: TAttributes = deepCopy(attributes);
     this.addObjectTypeToAttributes(newAttributes);
     for (const entity in relationships) {
       // just deal with one-side relationships
@@ -395,7 +395,7 @@ export class TsDataSource {
             expiry: anHourFromNow,
             data: {
               flatAttributes: this.flattenAttributes(
-                attributes as IAttributes,
+                attributes as TAttributes,
                 relationships as TRelationships
               ),
               relationships,

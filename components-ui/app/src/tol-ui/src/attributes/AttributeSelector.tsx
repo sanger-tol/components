@@ -28,6 +28,7 @@ import {
 } from "..";
 import type {
   IAllowedCardinality,
+  IAttributeDescriptor,
   IRemoteTarget,
 } from "..";
 
@@ -116,7 +117,7 @@ export function AttributeSelector(props: PAttributeSelector) {
 
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
-    const metaData = getFlattenedMetaData(entityMeta, objectType, label);
+    const metaData = getFlattenedMetaData(entityMeta, objectType, label) as IAttributeDescriptor;
     const sourceOrder = typeof metaData["source_order"] == "string"
       ? []
       : metaData["source_order"] ?? [];
@@ -130,9 +131,9 @@ export function AttributeSelector(props: PAttributeSelector) {
     return (
       <MenuItem
         key={`${label}-${index}`}
-        source={metaData["source"]}
+        source={metaData.source}
         field={label}
-        authoritative={metaData["authoritative"]}
+        authoritative={metaData.authoritative}
         objectType={objectType}
         dataSource={dataSource}
         displaySource={displaySource}
@@ -148,14 +149,14 @@ export function AttributeSelector(props: PAttributeSelector) {
   };
 
   const RenderSelectedValue = (value: string) => {
-    const metaData = getFlattenedMetaData(entityMeta, objectType, value) || {};
+    const metaData = getFlattenedMetaData(entityMeta, objectType, value) as IAttributeDescriptor;
     const provenance = value.match(PROVENANCE_IN_FIELD_REGEX)?.[1];
     const displayName = metaData["display_name"]
       ?? (normaliseCaps(value) as string).replace(PROVENANCE_IN_FIELD_REGEX_GLOBAL, "");
     return (
       <span className="tol-attribute-selector-render-single-item">
         {displayName}
-        <SourceTag source={provenance || metaData["source"]} />
+        <SourceTag source={provenance || metaData.source} />
       </span>
     );
   };

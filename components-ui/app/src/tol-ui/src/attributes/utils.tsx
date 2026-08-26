@@ -8,7 +8,6 @@ import type {
   KeyboardEvent as ReactKeyboardEvent,
   MouseEvent as ReactMouseEvent,
 } from "react";
-
 import {
   isValidDate,
   normaliseCaps,
@@ -17,21 +16,24 @@ import {
 } from "..";
 import type {
   IAllowedCardinality,
+  IAttributeDescriptor,
   IEntityMeta,
   IFilter,
   IFilterOperatorOptions,
   TDescribedFilters,
   TFilterOperatorType,
+  TObjectAttributes,
 } from "..";
+
 
 export function getFlattenedMetaData(
   entityMeta: IEntityMeta,
   endpoint: string,
   attribute?: string
-) {
+): TObjectAttributes | IAttributeDescriptor {
   return attribute
-    ? entityMeta?.flatAttributes?.[endpoint]?.[attribute]
-    : entityMeta?.flatAttributes?.[endpoint];
+    ? entityMeta?.flatAttributes?.[endpoint]?.[attribute] as IAttributeDescriptor
+    : entityMeta?.flatAttributes?.[endpoint] as TObjectAttributes;
 }
 
 export function filterAttributes(
@@ -290,7 +292,7 @@ export function generateFilterDescriptions(filter?: IFilter): TDescribedFilters 
   }
 
   let describedFilters: TDescribedFilters = {};
-  
+
   // `and_` filters.
   // We first check to see whether they exist, to allow inner code to assume so
   if (filter.and_) {
@@ -378,12 +380,12 @@ export function updateProvenanceFields(
   const everythingButTheProvenanceFieldsOfThisAttribute = fields.filter(
     field => !isProvenanceFieldOfAttribute(field, attribute)
   );
-  
+
   // Add new provenance entries
   const newProvenanceFieldsForThisAttribute = selectedProvenances.map(
     provenance => getProvenanceFieldName(attribute, provenance)
   );
-  
+
   // Update the fields state
   setFields([
     ...everythingButTheProvenanceFieldsOfThisAttribute,
@@ -469,7 +471,7 @@ export function handleAttributeSelectorKeyNavigation(
  * @param menuItem A reference to the menu item containing the provenance picker we're interested in
  * @returns An array of references to checkboxes in the provenance picker
  */
-function getCheckboxesInProvenancePicker (menuItem: HTMLElement) {
+function getCheckboxesInProvenancePicker(menuItem: HTMLElement) {
   return Array.from(
     menuItem.querySelectorAll<HTMLElement>(
       ".tol-provenance-picker .tol-provenance-picker-checkbox input[type='checkbox']"
@@ -503,7 +505,7 @@ function focusAttributeSelectorMenuItem(menuItem: HTMLElement) {
  * or the menu item below it, or the first provenance entry below it, depending on whether
  * the provenance picker is expanded)
  */
-export function handleExpandButtonKeyDownEvent (
+export function handleExpandButtonKeyDownEvent(
   event: ReactKeyboardEvent<HTMLSpanElement>,
   isProvenancePickerOpen: boolean,
 ) {
