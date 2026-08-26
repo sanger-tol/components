@@ -143,7 +143,7 @@ export function defineBoardEntity(
         ...definedEntity.ui_api_details,
       }),
       // TODO: Temp fix due to different casing
-      filterExcludeIncoming: definedEntity.filter_exclude_incoming ?? false,
+      filterExcludeIncoming: definedEntity.filter_exclude_incoming ?? definedEntity.filterExcludeIncoming ?? false,
     };
   }
 
@@ -152,7 +152,7 @@ export function defineBoardEntity(
     const definedEntity = entity as any;
     entity = {
       ...entity,
-      filterPassThrough: definedEntity.filter_pass_through ?? false,
+      filterPassThrough: definedEntity.filter_pass_through ?? definedEntity.filterPassThrough ?? false,
     };
   }
 
