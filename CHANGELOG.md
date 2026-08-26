@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `4.0.14`
+## tol-ui `5.0.0`
 
 - Added Provenance UI picker!!
 - Fixed bug where filter pass through did not work on hard-coded pages
