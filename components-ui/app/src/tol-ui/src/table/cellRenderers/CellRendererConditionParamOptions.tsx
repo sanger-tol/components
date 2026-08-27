@@ -4,9 +4,10 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+
 import {
-  AttributeSelector,
   Button,
   BUTTONS,
   cellRendererParams,
@@ -14,7 +15,6 @@ import {
   generateDefaultFilter,
   defineZoneWithComponentList,
   isEmptyObject,
-  RemoteFilters,
   Tabs,
   IconTooltip,
 } from "../..";
@@ -24,8 +24,9 @@ import type {
   IRemoteTarget,
   IZone,
   TCellRenderer,
-  TsDataSource
 } from "../..";
+
+import { CellRendererConditionConfigurer } from "./CellRendererConditionConfigurer";
 
 export interface PCellRendererConditionParamOptions extends IRemoteTarget {
   /**
@@ -247,7 +248,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       </div>
       <Tabs defaultActiveKey="current">
         <Tabs.Tab eventKey="current" title="Current">
-          <ConditionConfigurer
+          <CellRendererConditionConfigurer
             objectType={objectType}
             dataSource={dataSource}
             filterZone={filterZone}
@@ -258,7 +259,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
           />
         </Tabs.Tab>
         <Tabs.Tab eventKey="origin" title="Origin">
-          <ConditionConfigurer
+          <CellRendererConditionConfigurer
             objectType={originObjectType}
             dataSource={dataSource}
             filterZone={filterZone}
@@ -273,53 +274,3 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
     </div>
   )
 }
-
-// TODO May need a separate file
-const ConditionConfigurer = ({
-  objectType,
-  dataSource,
-  filterZone,
-  setFilterZone,
-  componentId,
-  selectedAttributes,
-  setSelectedAttributes,
-}: {
-  objectType: string,
-  dataSource: TsDataSource,
-  filterZone: IZone,
-  setFilterZone: React.Dispatch<React.SetStateAction<IZone>>,
-  componentId: string,
-  selectedAttributes: string[] | undefined,
-  setSelectedAttributes: React.Dispatch<React.SetStateAction<string[] | undefined>>
-}) => (
-  <>
-    <AttributeSelector
-      objectType={objectType}
-      dataSource={dataSource}
-      displaySource
-      recommendedFilterAvailable
-      renderSearchBySource
-      attribute={selectedAttributes ?? []}
-      setAttributes={setSelectedAttributes}
-      populatedFieldType="filter"
-      onClean={() => {
-        // We know that the component exists because it is set by default (filterZone state)
-        const component = filterZone.children[componentId];
-
-        // When the multi-select is cleared, the filter should be reset
-        component.filter!.and_ = {};
-        component.defaultFilter!.and_ = {};
-        setFilterZone({ ...filterZone });
-      }}
-    />
-    <RemoteFilters
-      objectType={objectType}
-      dataSource={dataSource}
-      utilityBarConfig={undefined}
-      zone={filterZone}
-      setZone={setFilterZone}
-      componentId={componentId}
-      attributes={selectedAttributes ?? []}
-    />
-  </>
-);
