@@ -13,7 +13,6 @@ import {
   deepCopy,
   generateDefaultFilter,
   defineZoneWithComponentList,
-  generateFilter,
   isEmptyObject,
   RemoteFilters,
   Tabs,
@@ -44,10 +43,6 @@ export interface PCellRendererConditionParamOptions extends IRemoteTarget {
    */
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
   /**
-   * The previous state of `renderer`, used to detect whether any changes have been made
-   */
-  previousRenderer: TCellRenderer;
-  /**
    * The state of the same name from the parent `CellRendererModal` component. Needed to disable
    * the confirmation button
    */
@@ -74,7 +69,6 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
     setRenderer,
     hasPendingChanges,
     setHasPendingChanges,
-    previousRenderer,
     goBack,
     objectType,
     dataSource
@@ -124,15 +118,13 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   // The initial values are set in the useEffect below.
   const [filtersForCurrent, setFiltersForCurrent] = useState<IFilter>();
   const [filtersForOrigin, setFiltersForOrigin] = useState<IFilter>();
-  const getCondition = (): IDataPointConditionProp => ({
-    filterForCurrent: filtersForCurrent ?? {},
-    filterForOrigin: filtersForOrigin ?? {},
+  const getCondition = (
+    currentFilters = filtersForCurrent,
+    originFilters = filtersForOrigin,
+  ): IDataPointConditionProp => ({
+    filterForCurrent: currentFilters ?? {},
+    filterForOrigin: originFilters ?? {},
   });
-
-  // The *previous* built-up filters for both tabs, used to know whether changes have been made.
-  // The initial values are set in the useEffect below.
-  const [previousFiltersForCurrent, setPreviousFiltersForCurrent] = useState<IFilter>();
-  const [previousFiltersForOrigin, setPreviousFiltersForOrigin] = useState<IFilter>();
 
   // The attributes we're filtering on for both tabs.
   // The initial values are set in the useEffect below.
@@ -144,6 +136,12 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   // setting any state, the changes will still apply. Then, the renderer is set to the value
   // stored here.
   const [rendererBeforeChanges, _setRendererBeforeChanges] = useState(deepCopy(renderer));
+
+  // Save a copy of this condition before any changes have been made,
+  // which can be used to determine whether there are pending changes.
+  const conditionBeforeChanges = rendererBeforeChanges?.props?.[paramName] as IDataPointConditionProp | undefined;
+  const previousFiltersForCurrent = conditionBeforeChanges?.filterForCurrent ?? generateDefaultFilter();
+  const previousFiltersForOrigin = conditionBeforeChanges?.filterForOrigin ?? generateDefaultFilter();
 
   // Runs upon opening the second page of the modal (to configure a new condition);
   // Checks that the condition exists and has a value, and stops the condition filters spreading across all conditions.
@@ -167,16 +165,9 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       setAttributesSelectedForOrigin(Object.keys(storedFiltersForOrigin.and_ ?? {}) || []);
       updateFilterZone(storedFiltersForCurrent, storedFiltersForOrigin);
 
-      // Do the same kind of thing for the previous conditions, except `undefined` is allowed
-      const previousCondition = previousRenderer?.props?.[paramName] as IDataPointConditionProp | undefined;
-      setPreviousFiltersForCurrent(previousCondition?.filterForCurrent);
-      setPreviousFiltersForOrigin(previousCondition?.filterForOrigin);
     } else { // Set all the states to be blank
       setFiltersForCurrent(generateDefaultFilter());
       setFiltersForOrigin(generateDefaultFilter());
-
-      setPreviousFiltersForCurrent(generateDefaultFilter());
-      setPreviousFiltersForOrigin(generateDefaultFilter());
 
       setAttributesSelectedForCurrent([]);
       setAttributesSelectedForOrigin([]);
@@ -186,25 +177,21 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   // The `filterZone` is what is updated when the filters changed,
   // so when it changes, extract the filters into their own states
   useEffect(() => {
-    const newFiltersForCurrent = generateFilter(filterZone, currentFilterComponentId);
-    const newFiltersForOrigin = generateFilter(filterZone, originFilterComponentId);
+    const newFiltersForCurrent = deepCopy(
+      filterZone.children[currentFilterComponentId].filter ?? generateDefaultFilter()
+    );
+    const newFiltersForOrigin = deepCopy(
+      filterZone.children[originFilterComponentId].filter ?? generateDefaultFilter()
+    );
 
     // Set the states
     setFiltersForCurrent(newFiltersForCurrent);
     setFiltersForOrigin(newFiltersForOrigin);
 
-    setHasPendingChanges(() => {
-      if (!renderer || !paramName) return false;
-
-      // Apply the new filters to the renderer
-      renderer!.props![paramName!] = getCondition();
-      setRenderer({ ...renderer });
-
-      return (
-        JSON.stringify(previousFiltersForCurrent) !== JSON.stringify(newFiltersForCurrent)
-        || JSON.stringify(previousFiltersForOrigin) !== JSON.stringify(newFiltersForOrigin)
-      );
-    });
+    setHasPendingChanges(
+      JSON.stringify(previousFiltersForCurrent) !== JSON.stringify(newFiltersForCurrent)
+      || JSON.stringify(previousFiltersForOrigin) !== JSON.stringify(newFiltersForOrigin)
+    );
   }, [filterZone]);
 
   const handleBack = () => {
@@ -218,11 +205,17 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
     // Save the changes to the condition filters.
     // If there's nothing in either filter, delete the param in the renderer to show that there
     // is no condition (this will change the button on the previous page from Edit Condition to Add Condition).
-    // TODO Are the states storing the filters actually necessary? They're only ever modified via the zone
-    if (isEmptyObject(filtersForCurrent?.and_ || {}) && isEmptyObject(filtersForOrigin?.and_ || {})) {
+    const currentFilters = deepCopy(
+      filterZone.children[currentFilterComponentId].filter ?? generateDefaultFilter()
+    );
+    const originFilters = deepCopy(
+      filterZone.children[originFilterComponentId].filter ?? generateDefaultFilter()
+    );
+
+    if (isEmptyObject(currentFilters.and_ || {}) && isEmptyObject(originFilters.and_ || {})) {
       delete renderer!.props![paramName!];
     } else {
-      renderer!.props![paramName!] = getCondition();
+      renderer!.props![paramName!] = getCondition(currentFilters, originFilters);
     }
 
     setRenderer({ ...renderer! });

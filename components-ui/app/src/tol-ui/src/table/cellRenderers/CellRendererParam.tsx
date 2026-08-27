@@ -11,7 +11,7 @@ import {
   Button,
   IconTooltip,
 } from "../..";
-import type { IBoardCellRendererParam, IFilter, IRemoteTarget, TCellRenderer } from "../..";
+import type { IBoardCellRendererParam, IRemoteTarget, TCellRenderer } from "../..";
 
 export interface PCellRendererParam extends IRemoteTarget {
   param: string,
@@ -33,7 +33,7 @@ export function CellRendererParam(props: PCellRendererParam) {
   } = props;
 
   const paramValue = renderer?.props![param];
-  const conditionPresent = Object.keys((paramValue as IFilter || {}).and_ || {}).length > 0;
+  const conditionPresent = typeof paramValue == "object";
 
   return (
     <div key={param}>
