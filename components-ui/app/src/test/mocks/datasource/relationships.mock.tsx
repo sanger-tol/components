@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import type { TRelationships } from "../../../tol-ui/src";
 
 
-export const relationshipConfigMock: TRelationships = {
+export const relationshipConfigMockRelational: TRelationships = {
   species: {
     one: {},
     many: { specimens: "specimen" },
@@ -20,6 +20,30 @@ export const relationshipConfigMock: TRelationships = {
   },
   sample: {
     one: { specimen: "specimen" },
+    many: {},
+    foreign_keys: {},
+  },
+};
+
+export const relationshipConfigMockFlattened: TRelationships = {
+  species: {
+    one: {},
+    many: {
+      specimens: "specimen",
+      samples: "sample",
+    },
+    foreign_keys: {},
+  },
+  specimen: {
+    one: { species: "species" },
+    many: { samples: "sample" },
+    foreign_keys: {},
+  },
+  sample: {
+    one: {
+      species: "species",
+      specimen: "specimen",
+    },
     many: {},
     foreign_keys: {},
   },

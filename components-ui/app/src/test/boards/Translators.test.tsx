@@ -6,76 +6,133 @@ SPDX-License-Identifier: MIT
 
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { TsDataSource } from "../../tol-ui/src";
-import { relationshipConfigMock } from "../mocks/datasource/relationships.mock";
+import { relationshipConfigMockFlattened, relationshipConfigMockRelational } from "../mocks/datasource/relationships.mock";
 
 const ds = new TsDataSource();
 
-describe("findShortestRelationshipField", () => {
+describe("findShortestRelationshipField for relational schemas", () => {
   beforeEach(() => {
-    vi.spyOn(ds, "relationshipConfig").mockResolvedValue(relationshipConfigMock);
+    vi.spyOn(ds, "relationshipConfig").mockResolvedValue(relationshipConfigMockRelational);
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe("attribute fields", () => {
-    test("same source and target type → returns field unchanged", async () => {
-      const result = await ds.findShortestRelationshipField("name", "specimen", "specimen");
+  describe("unchanged attributes", () => {
+    test("same source and target type for - attribute", async () => {
+      const result = await ds.findShortestRelationshipField("name", "species", "species");
       expect(result).toBe("name");
     });
 
-    test("direct one-relationship target → prepends relationship name", async () => {
-      const result = await ds.findShortestRelationshipField("name", "specimen", "species");
+    test("same source and target type - relationship attribute", async () => {
+      const result = await ds.findShortestRelationshipField("specimens.id", "species", "species");
+      expect(result).toBe("specimens.id");
+    });
+  })
+
+  describe("attribute to relation", () => {
+    test("one hop", async () => {
+      const result = await ds.findShortestRelationshipField("name", "species", "specimen");
       expect(result).toBe("species.name");
     });
 
-    test("direct many-relationship target → prepends relationship name", async () => {
-      const result = await ds.findShortestRelationshipField("name", "specimen", "sample");
-      expect(result).toBe("samples.name");
-    });
-
-    test("two-hop target → prepends full shortest path", async () => {
+    test("multiple hops", async () => {
       const result = await ds.findShortestRelationshipField("name", "species", "sample");
-      expect(result).toBe("specimens.samples.name");
+      expect(result).toBe("specimen.species.name");
+    });
+  })
+
+  describe("relation to attribute", () => {
+    test("one hop", async () => {
+      const result = await ds.findShortestRelationshipField("specimens.id", "species", "specimen");
+      expect(result).toBe("id");
     });
 
-    test("unreachable target type → returns field unchanged", async () => {
-      const result = await ds.findShortestRelationshipField("name", "species", "unknown_type");
-      expect(result).toBeNull();
+    test("multiple hops", async () => {
+      const result = await ds.findShortestRelationshipField("specimens.samples.id", "species", "sample");
+      expect(result).toBe("id");
     });
-  });
-
-  describe("relationship fields", () => {
-    test("already shortest path → returns field unchanged", async () => {
-      const result = await ds.findShortestRelationshipField("specimens.name", "species", "species");
-      expect(result).toBe("specimens.name");
-    });
-
-    test("redundant path that resolves back to source type → returns bare attribute", async () => {
-      // specimens → specimen, samples → sample, specimen → specimen, species → species (back to source)
-      const result = await ds.findShortestRelationshipField(
-        "specimens.samples.specimen.species.name",
-        "species",
-        "species"
-      );
-      expect(result).toBe("name");
-    });
-
-    test("longer path that can be shortened → returns shortened field", async () => {
-      // samples → sample, specimen → specimen, species → species; shortest from specimen to species is "species"
-      const result = await ds.findShortestRelationshipField(
-        "samples.specimen.species.name",
-        "specimen",
-        "specimen"
-      );
-      expect(result).toBe("species.name");
-    });
-
-    test("unknown relationship segment → returns null", async () => {
-      const result = await ds.findShortestRelationshipField("unknown.name", "species", "species");
-      expect(result).toBeNull();
-    });
-  });
+  })
 });
 
+describe("findShortestRelationshipField for flattened schemas", () => {
+  beforeEach(() => {
+    vi.spyOn(ds, "relationshipConfig").mockResolvedValue(relationshipConfigMockFlattened);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  describe("unchanged attributes", () => {
+    test("same source and target type - attribute", async () => {
+      const result = await ds.findShortestRelationshipField("name", "species", "species");
+      expect(result).toBe("name");
+    });
+
+    test("same source and target type - relationship attribute", async () => {
+      const result = await ds.findShortestRelationshipField("specimens.id", "species", "species");
+      expect(result).toBe("specimens.id");
+    });
+  })
+
+  describe("attribute to relation", () => {
+    test("one hop", async () => {
+      const result = await ds.findShortestRelationshipField("name", "species", "specimen");
+      expect(result).toBe("species.name");
+    });
+
+    test("multiple hops", async () => {
+      const result = await ds.findShortestRelationshipField("name", "species", "sample");
+      expect(result).toBe("species.name");
+    });
+  })
+
+  describe("relation to attribute", () => {
+    test("one hop", async () => {
+      const result = await ds.findShortestRelationshipField("specimens.id", "species", "specimen");
+      expect(result).toBe("id");
+    });
+
+    test("multiple hops", async () => {
+      const result = await ds.findShortestRelationshipField("samples.id", "species", "sample");
+      expect(result).toBe("id");
+    });
+  })
+});
+
+describe("findShortestRelationshipField other universal cases", () => {
+  beforeEach(() => {
+    vi.spyOn(ds, "relationshipConfig").mockResolvedValue(relationshipConfigMockRelational);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("same source and target type", async () => {
+    const result = await ds.findShortestRelationshipField("unknown.name", "species", "species");
+    expect(result).toBeNull();
+  });
+
+  test("redundant path that resolves back to source type", async () => {
+    // specimens → specimen, samples → sample, specimen → specimen, species → species (back to source)
+    const result = await ds.findShortestRelationshipField(
+      "specimens.samples.specimen.species.name",
+      "species",
+      "species"
+    );
+    expect(result).toBe("name");
+  });
+
+  test("returns null when target type does not exist in relationship config", async () => {
+    const result = await ds.findShortestRelationshipField("name", "species", "not_a_real_type");
+    expect(result).toBeNull();
+  });
+
+  test("returns null for malformed path with empty segment", async () => {
+    const result = await ds.findShortestRelationshipField("specimens..id", "species", "sample");
+    expect(result).toBeNull();
+  });
+});
