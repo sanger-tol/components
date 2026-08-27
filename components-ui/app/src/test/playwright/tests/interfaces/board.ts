@@ -35,6 +35,11 @@ export interface ICreateBoard {
    */
   zoneTitle?: string;
   /**
+   * ID of the data_source_instance to use for this zone (controls the dataspace).
+   * Defaults to DATASOURCE_INSTANCE_ID
+   */
+  zoneDataSourceInstanceId?: string;
+  /**
    * Object type for the zone.
    */
   zoneObjectType?: string;

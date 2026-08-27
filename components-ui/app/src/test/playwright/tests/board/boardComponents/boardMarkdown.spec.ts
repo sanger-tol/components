@@ -10,10 +10,10 @@ import {
   setAuth,
   deleteComponent,
   clickUtilityBarButton,
-  sleep,
   enterEditMode,
   exitEditMode,
-  isInHeadlessMode
+  isInHeadlessMode,
+  sleep
 } from "../../helpers";
 
 test.use({ headless: isInHeadlessMode });
@@ -40,7 +40,7 @@ const addTextToTextComponent = async (page: Page, textComponent: Locator) => {
   // click into the markdown editor and type text to simulate real user input
   await markdownEditor.click();
   await page.keyboard.type("Test Text", { delay: 10 });
-  await sleep(1_000);
+  await sleep(page, 1_000);
   await expect(markdownEditor).toHaveValue("Test Text");
 
   // click the preview button

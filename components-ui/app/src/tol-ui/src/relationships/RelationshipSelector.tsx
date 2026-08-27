@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { SelectPicker } from "rsuite";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, useEffect, useRef, useState } from "react";
 import {
   normaliseCaps,
   RELATIONSHIP_PATH_PLACEHOLDER,
@@ -45,7 +45,7 @@ export interface PRelationshipSelector extends IRemoteTarget {
   /**
    * Optional callback to expose path completion changes to parent components.
    */
-  setPathComplete?: (value: boolean) => void;
+  setPathComplete?: Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**

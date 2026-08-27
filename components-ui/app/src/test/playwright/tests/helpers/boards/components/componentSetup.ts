@@ -18,12 +18,12 @@ import { getComponentCount } from "./componentInfo";
  * (this will be picked from the component select modal)
  * @param size The component size to select in the component select modal
  */
-export const addComponent = async (
+export async function addComponent(
   page: Page,
   zone: Locator,
   componentType: string,
   size: string = "Small",
-) => {
+) {
   // Get how many of this component type exist already (so we can check one was added afterwards)
   const countBefore = await getComponentCount(page, componentType);
 
@@ -57,14 +57,14 @@ export const addComponent = async (
  * @param filterType The type of filter used on this attribute
  * @param filterValue The value to filter with
  */
-export const addComponentFilter = async (
+export async function addComponentFilter(
   page: Page,
   component: Locator,
   componentType: string,
   attribute: string,
   filterType: string,
   filterValue: string,
-) => {
+) {
   // Click the filter button
   await clickUtilityBarButton(page, component, `${componentType}-filter-button`);
 

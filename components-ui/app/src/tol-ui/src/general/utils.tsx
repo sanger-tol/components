@@ -13,6 +13,7 @@ import {
   RELATIONSHIP_SEPARATOR,
   getFieldByName,
   createEmptyFilter,
+  NoneValue,
 } from "..";
 import type {
   IEntityMeta,
@@ -340,7 +341,7 @@ export function generatePlateData(
     const digits = wellPosition.match(/[0-9]/g);
     wellHoverAttributeKeys.forEach((element) => {
       const displayName =
-        entityMeta["flatAttributes"][objectType][element].display_name;
+        entityMeta.flatAttributes[objectType][element].display_name!;
       wellData[displayName] = getFieldByName(obj, element);
     });
     data[ALPHABET.indexOf(letter)][Number(digits) - 1] = {
@@ -379,7 +380,7 @@ export function updateContents(contents: object) {
     }
     // make nulls show a faded 'None'
     if (value === null || value === undefined) {
-      contents[key] = <span className="tol-none-value">None</span>;
+      contents[key] = <NoneValue />;
     }
   }
   return contents;

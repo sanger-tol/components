@@ -15,7 +15,6 @@ This includes code in `tol-ui`, as well as the UI of any of our apps.
   * Named `P` + ComponentName
   * Always exported
   * Example: `PBoardTable`
-  * JSDoc comments are placed above each interface member, not above the whole interface
 * Functional Component:
   * Exported in the function declaration (NOT a default export)
   * Named in PascalCase (e.g. `BoardTable`)
@@ -47,8 +46,8 @@ This includes code in `tol-ui`, as well as the UI of any of our apps.
 ### Placement Rules:
 
 * Put functions in the most appropriate utils.tsx file.  
-* Any function used in multiple places → place in top-level utils file  
-* All functions must include JSDoc docstrings.
+* Any function used in multiple places → place in top-level utils file.
+* All functions must include JSDoc docstrings with `@param` `@return` and `@example` where required.
 
 ### Function Types:
 
@@ -184,5 +183,7 @@ This includes code in `tol-ui`, as well as the UI of any of our apps.
 
 ### Documentation
 
-* Use JSDoc for all utility functions and complex components.  
+* Keep docstrings on one line where possible.
+* Use JSDoc for all utility functions and complex components.
+* Ensure interfaces and types are documented appropriately.
 * Keep examples and filenames aligned with the rules above for quick discoverability.

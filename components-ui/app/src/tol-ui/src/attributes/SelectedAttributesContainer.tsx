@@ -15,7 +15,7 @@ import {
   TRANSITION_TIME,
   AttributeTitle,
   IFieldMeta
-} from "../index";
+} from "..";
 
 export interface PSelectedAttributesContainer extends IRemoteTarget {
   attributes: readonly string[];
