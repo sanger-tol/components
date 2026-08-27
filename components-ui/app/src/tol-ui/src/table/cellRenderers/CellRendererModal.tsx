@@ -14,6 +14,7 @@ import {
   CellRendererMarkdownParamOptions,
   cellRendererParams,
   deepCopy,
+  getRelationshipNameByField,
   IconTooltip,
   isEmptyObject,
   Modal,
@@ -262,7 +263,9 @@ export function CellRendererModal(props: PCellRendererModal) {
       hasPendingChanges={doesSelectedParamHavePendingChanges}
       setHasPendingChanges={setDoesSelectedParamHavePendingChanges}
       goBack={() => setSelectedParameter(undefined)}
-      objectType={objectType}
+      objectType={fieldMeta.dataWithDefaults![attributeId].object_type}
+      originObjectType={objectType}
+      relationshipFromOrigin={getRelationshipNameByField(attributeId)}
       dataSource={dataSource}
     />
   ) : selectedParameterType == "markdown" ? (
