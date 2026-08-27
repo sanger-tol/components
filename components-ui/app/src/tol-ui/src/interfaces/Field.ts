@@ -7,18 +7,19 @@ SPDX-License-Identifier: MIT
 import type { TCellRenderer } from "./Cells";
 
 export interface IField {
+  acts_as?: string;
   cellRenderer?: TCellRenderer;
+  custom?: boolean;
+  description?: string;
   filter?: string | null;
   fixed?: boolean;
   isAttribute?: boolean;
+  object_type: string;
   rename?: string;
   sort?: boolean;
+  source?: string;
   type?: string;
   width?: number;
-  description?: string;
-  source?: string;
-  acts_as?: string;
-  custom?: boolean;
 }
 
 export interface IFieldMetaData {
