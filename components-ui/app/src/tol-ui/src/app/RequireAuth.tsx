@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Capacitor } from "@capacitor/core";
-import { Browser } from "@capacitor/browser";
 import {
   getUrlLogin,
   setReturnUrlFromLocalStorage,
@@ -40,20 +40,19 @@ export function RequireAuth(props: PRequireAuth) {
   const { children } = props;
   const isExpired = tokenHasExpired();
   const { setGlobalLoading } = useGlobalLoading();
+  const history = useHistory();
 
   useEffect(() => {
     if (!isExpired) return;
 
-    setGlobalLoading(true);
     setReturnUrlFromLocalStorage(window.location.pathname);
 
     if (Capacitor.isNativePlatform()) {
-      // On native, use Browser.open so the deeplink callback mechanism works.
-      // window.location.href would open the auth URL inside the WebView, bypassing deeplinks.
-      getUrlLogin().then((data) => {
-        Browser.open({ url: data.loginUrl });
-      });
+      // On native, redirect to home so the user triggers login via the Login button.
+      // Auto-opening the auth URL here races with explicit login and causes double browser sessions.
+      history.push("/");
     } else {
+      setGlobalLoading(true);
       getUrlLogin().then((data) => {
         window.location.href = data.loginUrl;
       });
