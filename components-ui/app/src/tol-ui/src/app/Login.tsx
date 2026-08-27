@@ -36,14 +36,7 @@ export function Login(props: Props) {
     //@ts-ignore
     setUser(data.userData);
     if (Capacitor.isNativePlatform()) {
-      // On Android, close any existing browser before opening a new one to prevent duplicates
-      Browser.close().catch(() => {}).then(() => {
-        Browser.open({ url: data.loginUrl }).catch(() => {
-          // Fallback: redirect in-app if browser open fails
-          //@ts-ignore
-          window.location.href = data.loginUrl;
-        });
-      });
+      Browser.open({ url: data.loginUrl });
     } else {
       //@ts-ignore
       window.location.href = data.loginUrl;
