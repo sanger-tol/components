@@ -9,7 +9,6 @@ import { Schema } from "rsuite";
 import {
   MultipleSelect,
   Dropzone,
-  env,
   CountrySelect,
   SingleSelectCustomOption,
   FormAllInOne,

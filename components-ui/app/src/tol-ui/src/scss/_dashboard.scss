@@ -70,44 +70,9 @@
   }
 }
 
-// Registered custom property so it can be animated on the parent
-// and inherited by all ::after overlays, keeping them in sync.
-@property --tol-dash-opacity {
-  syntax: "<number>";
-  initial-value: 0;
-  inherits: true;
-}
-
-// Edit mode: pulse the dashed overlay (fade in + out)
 .tol-board.tol-edit-mode {
-  animation: tol-dash-pulse 3s ease-in-out infinite;
-
   .tol-boards-widget::after {
-    opacity: var(--tol-dash-opacity);
-  }
-}
-
-@keyframes tol-dash-pulse {
-  0% {
-    --tol-dash-opacity: 0.2;
-  }
-
-  50% {
-    --tol-dash-opacity: 1;
-  }
-
-  100% {
-    --tol-dash-opacity: 0.2;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tol-board.tol-edit-mode {
-    animation: none;
-
-    .tol-boards-widget::after {
-      opacity: 1;
-    }
+    opacity: 1;
   }
 }
 

@@ -30,7 +30,7 @@ import {
   MESSAGE_TYPE,
   BOARD_MESSAGE_TEXT,
   updateComponentConfigAndUpsert,
-  isRelationship,
+  isRelationshipField,
   TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
   TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
   CELL_RENDERER_PROP_TAG_START,
@@ -39,7 +39,7 @@ import {
 } from "..";
 import type {
   TsDataSource,
-  IAttributeData,
+  IAttributeDescriptor,
   TDataObjectListOrNull,
   ITableData,
   ITableRecord,
@@ -155,7 +155,7 @@ export async function getIsManyByField(
   return Object.fromEntries(entries);
 }
 
-function addDefaultCellRenderer(type: string): TCellRenderer {
+function addDefaultCellRenderer(type?: string): TCellRenderer {
   switch (type) {
     case "datetime":
       return { type: "datetime" };
@@ -164,7 +164,7 @@ function addDefaultCellRenderer(type: string): TCellRenderer {
   }
 }
 
-function addRemoteFilterType(type: string, cardinality: number) {
+function addRemoteFilterType(type?: string, cardinality?: number) {
   if (cardinality && cardinality < 50 && type === "str") return "multi";
   if (type === "double") return "float";
   return type;
@@ -185,14 +185,14 @@ function sortFieldsByRename(fieldMeta: IFieldMeta) {
 
 export function addDefaultsFromEntityMeta(
   key: string,
-  meta: IAttributeData,
+  meta: IAttributeDescriptor,
   fieldMeta: IFieldMeta,
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
     cellRenderer: addDefaultCellRenderer(meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
-    isAttribute: isRelationship(key),
+    isAttribute: isRelationshipField(key),
     rename: meta.display_name || normaliseCaps(key),
     sort: true,
     type: meta.python_type,

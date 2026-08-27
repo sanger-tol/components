@@ -26,7 +26,7 @@
 
   // page size dropdown
   .rs-picker-select-menu-item:hover {
-    background-color: var(--tol-grey) !important;
+    background-color: var(--tol-grey-translucent) !important;
   }
 
   // dropdown box shadow
@@ -318,9 +318,10 @@
   color: var(--tol-primary);
 }
 
-.tooltip-value-none {
+.tol-none-value {
   color: var(--tol-grey);
   font-weight: 400;
+  cursor: default;
 }
 
 .tooltip-wrapper {

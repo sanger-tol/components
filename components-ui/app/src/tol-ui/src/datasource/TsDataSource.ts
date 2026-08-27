@@ -10,12 +10,14 @@ import {
   API_METHODS,
   API_OPERATIONS,
   deepCopy,
+  getAttributeNameByField,
   httpClient,
-  isEmptyObject,
+  isAttributeField,
+  splitRelationshipsForField,
 } from "..";
 import type {
   IAttributeDescriptor,
-  IAttributes,
+  TAttributes,
   TClient,
   IConfigPromises,
   ICustom,
@@ -34,19 +36,18 @@ import type {
   IJsonApiResponse,
   IJsonApiResponseData,
   IRelationshipPointer,
-  TRelationshipPaths,
-  IRelationships,
+  TRelationships,
   ISourceDataObject,
   IUpsert,
   TCursorObjectOrNull,
   TDataObjectListOrNull,
   TDataObjectOrNull,
+  TRelationshipValues,
 } from "..";
 
 
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
-const relationshipPathsCache: TRelationshipPaths = {};
 
 export class TsDataSource {
   private client: TClient;
@@ -317,40 +318,12 @@ export class TsDataSource {
     }
   }
 
-  public async attributeMetadata(): Promise<IAttributes> {
-    return this.getConfig("_config/attribute_metadata") as Promise<IAttributes>;
+  public async attributeMetadata(): Promise<TAttributes> {
+    return this.getConfig("_config/attribute_metadata") as Promise<TAttributes>;
   }
 
-  public async relationshipConfig(): Promise<IRelationships> {
-    return this.getConfig("_config/relationships") as Promise<IRelationships>;
-  }
-
-  /**
-   * Generates a lookup table for relationship paths between object types
-   * using the relationship config from the current datasource instance.
-   * 
-   * @returns A lookup table for relationship paths between object types.
-   */
-  public async relationshipPaths(): Promise<TRelationshipPaths> {
-    if (!isEmptyObject(relationshipPathsCache)) return relationshipPathsCache;
-
-    const relationships = await this.relationshipConfig();
-
-    for (const [sourceObjectType, relations] of Object.entries(relationships)) {
-      const oneRelationships = Object.entries(relations.one ?? {});
-      if (oneRelationships.length === 0) continue;
-
-      const sourceLookup = (relationshipPathsCache[sourceObjectType] ??= {});
-
-      for (const [relationship, targetObjectType] of oneRelationships) {
-        const translator = (sourceLookup[targetObjectType] ??= {
-          paths: new Set<string>(),
-        });
-
-        translator.paths.add(relationship);
-      }
-    }
-    return relationshipPathsCache;
+  public async relationshipConfig(): Promise<TRelationships> {
+    return this.getConfig("_config/relationships") as Promise<TRelationships>;
   }
 
   /**
@@ -367,7 +340,7 @@ export class TsDataSource {
     return attributeDescriptor?.available_on_relationships ?? false;
   }
 
-  private addObjectTypeToAttributes = (attributes: IAttributes) => {
+  private addObjectTypeToAttributes = (attributes: TAttributes) => {
     for (const [objectType, meta] of Object.entries(attributes)) {
       for (const [, value] of Object.entries(meta)) {
         value.object_type = objectType;
@@ -376,10 +349,10 @@ export class TsDataSource {
   };
 
   private flattenAttributes(
-    attributes: IAttributes,
-    relationships: IRelationships
+    attributes: TAttributes,
+    relationships: TRelationships
   ) {
-    const newAttributes: IAttributes = deepCopy(attributes);
+    const newAttributes: TAttributes = deepCopy(attributes);
     this.addObjectTypeToAttributes(newAttributes);
     for (const entity in relationships) {
       // just deal with one-side relationships
@@ -422,8 +395,8 @@ export class TsDataSource {
             expiry: anHourFromNow,
             data: {
               flatAttributes: this.flattenAttributes(
-                attributes as IAttributes,
-                relationships as IRelationships
+                attributes as TAttributes,
+                relationships as TRelationships
               ),
               relationships,
             },
@@ -635,7 +608,7 @@ export class TsDataSource {
   ): Promise<IAttributeDescriptor | undefined> {
     const attributes = await this.attributeMetadata();
     const splitField = field.split(".");
-    const combinedRelationships = await this.combineRelationships(objectType);
+    const combinedRelationships = await this.getMergedRelationshipConfig(objectType);
     if (splitField.length > 1 && combinedRelationships) {
       // Checks if the object type exists in the relationships of previous "jump"
       // If relationship exists, get the related object type and continue down the field path
@@ -665,9 +638,9 @@ export class TsDataSource {
     );
   }
 
-  private async combineRelationships(
+  public async getMergedRelationshipConfig(
     objectType: string
-  ): Promise<{ [key: string]: string } | undefined> {
+  ): Promise<TRelationshipValues> {
     const relationships = await this.relationshipConfig();
     const objectRelationships = relationships[objectType];
     const one = objectRelationships?.one ?? {};
@@ -681,7 +654,7 @@ export class TsDataSource {
     objectType: string
   ): Promise<string[] | undefined> {
     const splitField = field.split(".");
-    const combinedRelationships = await this.combineRelationships(objectType);
+    const combinedRelationships = await this.getMergedRelationshipConfig(objectType);
     if (splitField.length > 1 && combinedRelationships) {
       if (splitField[0] in combinedRelationships) {
         const relatedObjectType = combinedRelationships[splitField[0]];
@@ -691,7 +664,7 @@ export class TsDataSource {
     } else if (splitField.length === 1) {
       if (!combinedRelationships) return undefined;
       const finalRelationshipObject = combinedRelationships[splitField[0]];
-      const availableRelationshipsObject = await this.combineRelationships(finalRelationshipObject);
+      const availableRelationshipsObject = await this.getMergedRelationshipConfig(finalRelationshipObject);
       return availableRelationshipsObject ? Object.keys(availableRelationshipsObject) : undefined;
     }
   }
@@ -717,7 +690,7 @@ export class TsDataSource {
     objectType: string,
     field: string
   ): Promise<boolean> {
-    const relationshipConfig = await this.relationshipConfig() as IRelationships;
+    const relationshipConfig = await this.relationshipConfig() as TRelationships;
     const [relationship, ...rest] = field.split(".");
     const hasMoreRelationshipJumps = rest.length > 1;
 
@@ -761,5 +734,208 @@ export class TsDataSource {
       }
     }
     return null;
+  }
+
+  /**
+   * Finds the shortest relationship path between two object types using breadth-first search over
+   * the relationship config. Both `one` and `many` relationships are traversed.
+   *
+   * @param sourceObjectType - The object type to start from (e.g. `"sample"`).
+   * @param targetObjectType - The object type to reach (e.g. `"species"`).
+   * @returns A dot-separated path string (e.g. `"specimen.species"`), or `null` if
+   *   no path exists between the two object types.
+   */
+  public async findShortestRelationshipPath(
+    sourceObjectType: string,
+    targetObjectType?: string
+  ): Promise<string | null> {
+    const resolvedRelationshipConfig = await this.relationshipConfig();
+
+    if (!resolvedRelationshipConfig[sourceObjectType]) return null;
+    if (targetObjectType && !resolvedRelationshipConfig[targetObjectType]) return null;
+    if (sourceObjectType === targetObjectType) return "";
+
+    // Each queue entry holds the current object type and the path of relationship names taken to reach it
+    const queue: Array<[string, string[]]> = [[sourceObjectType, []]];
+    // Track visited types to avoid cycles
+    const visited = new Set<string>([sourceObjectType]);
+
+    while (queue.length > 0) {
+      const [currentType, currentPath] = queue.shift()!;
+      const relationships = resolvedRelationshipConfig[currentType];
+
+      for (const side of ["one", "many"] as const) {
+        for (const [relationshipName, relatedType] of Object.entries(relationships?.[side] ?? {})) {
+          if (visited.has(relatedType)) continue;
+          const newPath = [...currentPath, relationshipName];
+          // Because we're using breadth-first search, the first time we reach the target is the shortest path
+          if (relatedType === targetObjectType) {
+            return newPath.join(".");
+          }
+          visited.add(relatedType);
+          queue.push([relatedType, newPath]);
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Validates dot-delimited field paths.
+   *
+   * Rejects empty values and empty path segments (e.g. "specimens..id").
+   */
+  private isValidFieldPath(field: string): boolean {
+    const trimmedField = field.trim();
+    if (!trimmedField) return false;
+
+    return trimmedField.split(".").every((segment) => segment.length > 0);
+  }
+
+  /**
+   * Prefixes an attribute field with the shortest relationship path between two object types.
+   *
+   * @param field - Attribute field name without relationship segments.
+   * @param incomingObjectType - Object type that owns the attribute field.
+   * @param targetObjectType - Object type to start from.
+   * @returns The prefixed field when a path exists, otherwise the original field.
+   */
+  private async addShortestPathToAttributeField(
+    incomingField: string,
+    incomingObjectType: string,
+    targetObjectType: string
+  ): Promise<string | null> {
+    const shortestPath = await this.findShortestRelationshipPath(
+      targetObjectType,
+      incomingObjectType
+    );
+    // If no path exists, return null to indicate that the field cannot be resolved from the source object type.
+    if (shortestPath === null) return null;
+
+    if (shortestPath === "") return incomingField;
+    return `${shortestPath}.${incomingField}`;
+  }
+
+  /**
+   * Resolves the object type reached by traversing relationship segments from a start type.
+   *
+   * @param startObjectType - Object type to begin traversal from.
+   * @param relationshipSegments - Relationship names to traverse in order.
+   * @param resolvedRelationshipConfig - Relationship config to use for traversal.
+   * @returns Final object type if all segments resolve, otherwise `null`.
+   */
+  private resolveObjectTypeFromRelationshipSegments(
+    startObjectType: string,
+    relationshipSegments: string[],
+    resolvedRelationshipConfig: TRelationships
+  ): string | null {
+    let currentObjectType = startObjectType;
+
+    for (const relationshipName of relationshipSegments) {
+      const nextObjectType =
+        resolvedRelationshipConfig[currentObjectType]?.one?.[relationshipName] ??
+        resolvedRelationshipConfig[currentObjectType]?.many?.[relationshipName];
+
+      if (!nextObjectType) return null;
+      currentObjectType = nextObjectType;
+    }
+
+    return currentObjectType;
+  }
+
+  /**
+   * Rewrites a relationship field to use the shortest relationship path while
+   * preserving the final attribute segment.
+   *
+   * First attempts to resolve the relationship chain starting from `targetObjectType`.
+   * If any segment is not found there, falls back to traversing from `incomingObjectType`
+   * (e.g. `benchling_species.sts_scientific_name` on `sample` targeting `species`).
+   *
+   * @param field - Original relationship field (e.g. `"specimens.samples.name"`).
+   * @param incomingObjectType - Object type the field originates from.
+   * @param targetObjectType - Object type the field should be relative to.
+   * @param resolvedRelationshipConfig - Relationship config to use for traversal.
+   * @returns Shortened relationship field, `null` if no path exists, or the
+   *   bare attribute name if source and target are the same type.
+   */
+  private async addShortestPathToRelationshipField(
+    incomingField: string,
+    incomingObjectType: string,
+    targetObjectType: string,
+    resolvedRelationshipConfig: TRelationships
+  ): Promise<string | null> {
+    const attribute = getAttributeNameByField(incomingField);
+    const relationshipSegments = splitRelationshipsForField(incomingField);
+
+    // Resolve the final object type reached by the full relationship chain.
+    // First try traversing from targetObjectType.
+    let currentObjectType = this.resolveObjectTypeFromRelationshipSegments(
+      targetObjectType,
+      relationshipSegments,
+      resolvedRelationshipConfig
+    );
+
+    // If traversal from targetObjectType failed, try from incomingObjectType instead.
+    if (currentObjectType === null) {
+      currentObjectType = this.resolveObjectTypeFromRelationshipSegments(
+        incomingObjectType,
+        relationshipSegments,
+        resolvedRelationshipConfig
+      );
+      if (currentObjectType === null) return null;
+    }
+
+    const shortestPath = await this.findShortestRelationshipPath(
+      targetObjectType,
+      currentObjectType
+    );
+
+    if (shortestPath === null) return null;
+    if (shortestPath === "") return attribute;
+
+    return `${shortestPath}.${attribute}`;
+  }
+
+  /**
+    * Returns a field that uses the shortest relationship path from `sourceObjectType`.
+    *
+    * @param incomingField - Field name, with or without relationship segments.
+    * @param incomingObjectType - Object type that owns `field` when `field` has no relationship segments.
+    * @param targetObjectType - The object type that the field should be relative to.
+    * @returns Shortened field, or the original field if no valid path is found.
+   */
+  public async findShortestRelationshipField(
+    incomingField: string,
+    incomingObjectType: string,
+    targetObjectType: string
+  ): Promise<string | null> {
+    const resolvedRelationshipConfig = await this.relationshipConfig();
+
+    // If the incoming or target object type is not present in the relationship config, return null
+    if (
+      !resolvedRelationshipConfig[incomingObjectType] ||
+      !resolvedRelationshipConfig[targetObjectType]
+    ) return null;
+
+    // If the incoming field is not a valid dot-delimited path, return null
+    if (!this.isValidFieldPath(incomingField)) return null;
+
+    // For attributes just add the shortest relationship path
+    if (isAttributeField(incomingField)) {
+      return this.addShortestPathToAttributeField(
+        incomingField,
+        incomingObjectType,
+        targetObjectType
+      );
+    }
+
+    // For relationship fields, find the shortest path to the final object type and preserve the attribute segment
+    return this.addShortestPathToRelationshipField(
+      incomingField,
+      incomingObjectType,
+      targetObjectType,
+      resolvedRelationshipConfig
+    );
   }
 }

@@ -21,6 +21,7 @@ import {
   Tag,
   ErrorBoundary,
   Card,
+  NoneValue,
 } from "../..";
 import type { PDataPoints, PDataPoint } from "../..";
 
@@ -104,7 +105,7 @@ export function CellDisplay(props: PCellDisplay) {
   }
 
   if (value === null || value === undefined) {
-    Display = <span className="tol-display-empty">None</span>;
+    Display = <NoneValue />;
   }
 
   /**

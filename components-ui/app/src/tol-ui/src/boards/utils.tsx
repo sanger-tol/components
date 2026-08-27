@@ -11,7 +11,7 @@ import {
   BOARD_MESSAGE_TEXT,
   BOARDS_API,
   deepCopy,
-  generateDefaultFilter,
+  createEmptyFilter,
   HTTP_STATUS_CODES,
   isEmptyObject,
   MESSAGE_TYPE,
@@ -132,11 +132,12 @@ export function defineBoardEntity(
     objectType === BOARD_ENTITIES.ENTITIES.ZONE
   ) {
     const definedEntity = entity as any; // Partial<IZone> | Partial<IComponent>;
-    const initialFilter = definedEntity.filter ?? generateDefaultFilter();
+    const initialFilter = definedEntity.filter ?? createEmptyFilter();
     entity = {
       ...entity,
       filter: deepCopy(initialFilter),
       defaultFilter: deepCopy(initialFilter),
+      filterPassThrough: definedEntity.filter_pass_through ?? false,
       title: definedEntity.title || "",
       dataspace: new TsDataSource({
         dataSourceInstanceId: definedEntity.data_source_instance_id,
@@ -147,11 +148,14 @@ export function defineBoardEntity(
     };
   }
 
-  // TODO: Temp fix due to different casing
-  if (objectType === BOARD_ENTITIES.ENTITIES.COMPONENT) {
+  if (
+    objectType === BOARD_ENTITIES.ENTITIES.ZONE
+  ) {
     const definedEntity = entity as any;
     entity = {
       ...entity,
+      relationshipTranslation: definedEntity.relationship_translation,
+      attributeTranslations: definedEntity.attribute_translations,
       filterPassThrough: definedEntity.filter_pass_through ?? definedEntity.filterPassThrough ?? false,
     };
   }

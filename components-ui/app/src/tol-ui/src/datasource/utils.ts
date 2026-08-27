@@ -21,7 +21,7 @@ import type {
  * @returns The resolved value, a mapped array of values for to-many relationships, or `undefined` if no value is found.
  */
 export function getFieldByName(object: TDataObjectOrNull, field: string): any {
-  if (isRelationship(field)) {
+  if (isRelationshipField(field)) {
     const [relationship, ...rest] = field.split(RELATIONSHIP_SEPARATOR);
     const relationshipObject = object?.relationships?.[relationship];
     if (relationshipObject) {
@@ -81,7 +81,7 @@ function filterUniqueById(items: TDataObjectListOrNull): TDataObjectListOrNull {
  * @returns A list of resolved child objects, or `null` if any relationship segment is missing/undefined along the path.
  */
 export function getChildObjectsByName(object: TDataObjectOrNull, field: string): TDataObjectListOrNull {
-  if (isRelationship(field)) {
+  if (isRelationshipField(field)) {
     const [relationship, ...rest] = field.split(RELATIONSHIP_SEPARATOR);
     const relationshipObject = object?.relationships?.[relationship];
     if (relationshipObject) {
@@ -104,6 +104,7 @@ export function getChildObjectsByName(object: TDataObjectOrNull, field: string):
 
 /**
  * Extracts the attribute name from a field path by returning the last segment.
+ * 
  * @param field - A dot-separated field path (e.g., "user.profile.name")
  * @returns The last segment of the field path (e.g., "name")
  * @example
@@ -116,6 +117,7 @@ export function getAttributeNameByField(field: string): string {
 
 /**
  * Extracts the relationship name from a field path by removing the last segment.
+ * 
  * @param field - A field path that may contain dot-separated segments (e.g., "relationship.field")
  * @returns The relationship name (all segments except the last one joined by dots), or an empty string if the field contains no dots
  * @example
@@ -123,27 +125,48 @@ export function getAttributeNameByField(field: string): string {
  * getRelationshipNameByField("name") // returns ""
  */
 export function getRelationshipNameByField(field: string): string {
-  if (isRelationship(field)) {
+  if (isRelationshipField(field)) {
     return field.split(RELATIONSHIP_SEPARATOR).slice(0, -1).join(RELATIONSHIP_SEPARATOR);
   }
   return "";
 }
 
 /**
- * Returns whether a field key represents a relationship path.
+ * Splits a field path into its dot-delimited segments.
  *
- * A relationship is identified by the configured relationship separator
- * (for example, `.` in `sample.species.id`).
+ * @param field - A field path such as "sample.species.name".
+ * @returns The field segments in order.
  */
-export function isRelationship(key: string): boolean {
-  return key.includes(RELATIONSHIP_SEPARATOR);
+export function splitField(field: string): string[] {
+  return field.split(RELATIONSHIP_SEPARATOR);
 }
 
 /**
- * Returns whether a field key represents a direct attribute.
+ * Returns only the relationship segments from a field path.
  *
- * Attributes are keys that do not include a relationship separator.
+ * @param field - A field path such as "sample.species.name".
+ * @returns All segments except the final attribute segment.
  */
-export function isAttribute(key: string): boolean {
-  return !isRelationship(key);
+export function splitRelationshipsForField(field: string): string[] {
+  return splitField(field).slice(0, -1)
+}
+
+/**
+ * Checks whether a field contains at least one relationship separator.
+ *
+ * @param field - Field name to check.
+ * @returns `true` when the field contains a relationship path, otherwise `false`.
+ */
+export function isRelationshipField(field: string): boolean {
+  return field.includes(RELATIONSHIP_SEPARATOR);
+}
+
+/**
+ * Checks whether a field is a plain attribute (no relationship separator).
+ *
+ * @param field - Field name to check.
+ * @returns `true` when the field is an attribute-only field, otherwise `false`.
+ */
+export function isAttributeField(field: string): boolean {
+  return !isRelationshipField(field);
 }

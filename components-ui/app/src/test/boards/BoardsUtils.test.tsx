@@ -158,6 +158,7 @@ describe(
         filter: { and_: {} },
         defaultFilter: { and_: {} },
         filterExcludeIncoming: false,
+        filterPassThrough: false,
         title: "",
 
         // Difference from previous test (from additional if clause)
@@ -214,6 +215,7 @@ describe(
         filter: { and_: {} },
         defaultFilter: { and_: {} },
         filterExcludeIncoming: false,
+        filterPassThrough: false,
         title: "",
         order: [],
         children: {
@@ -376,6 +378,7 @@ describe(
                 filter: { and_: {} },
                 defaultFilter: { and_: {} },
                 filterExcludeIncoming: false,
+                filterPassThrough: false,
                 data_source_instance_id: "test",
                 order: ["c_jlhdYFA89", "c_687YLHdga"],
                 ui_api_details: {
