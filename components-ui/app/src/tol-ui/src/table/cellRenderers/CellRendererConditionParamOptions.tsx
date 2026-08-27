@@ -258,7 +258,15 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
           />
         </Tabs.Tab>
         <Tabs.Tab eventKey="origin" title="Origin">
-          <p>TODO!</p>
+          <ConditionConfigurer
+            objectType={originObjectType}
+            dataSource={dataSource}
+            filterZone={filterZone}
+            setFilterZone={setFilterZone}
+            componentId={originFilterComponentId}
+            selectedAttributes={attributesSelectedForOrigin}
+            setSelectedAttributes={setAttributesSelectedForOrigin}
+          />
         </Tabs.Tab>
       </Tabs>
       {BottomButtons}
