@@ -533,7 +533,10 @@ export function RemoteTable(props: PRemoteTable) {
     setFullLoad(true);
   };
 
-  const onSortColumn = (dataKey: string, sortType: "asc" | "desc") => {
+  const onSortColumn = (
+    dataKey: string,
+    sortType?: "asc" | "desc",
+  ) => {
     setSortByAttribute(dataKey);
     setSortByType(sortType);
   };
