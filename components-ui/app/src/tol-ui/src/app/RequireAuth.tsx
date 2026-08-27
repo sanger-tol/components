@@ -5,6 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from "react";
+import { Capacitor } from "@capacitor/core";
+import { Browser } from "@capacitor/browser";
 import {
   getUrlLogin,
   setReturnUrlFromLocalStorage,
@@ -44,9 +46,18 @@ export function RequireAuth(props: PRequireAuth) {
 
     setGlobalLoading(true);
     setReturnUrlFromLocalStorage(window.location.pathname);
-    getUrlLogin().then((data) => {
-      window.location.href = data.loginUrl;
-    });
+
+    if (Capacitor.isNativePlatform()) {
+      // On native, use Browser.open so the deeplink callback mechanism works.
+      // window.location.href would open the auth URL inside the WebView, bypassing deeplinks.
+      getUrlLogin().then((data) => {
+        Browser.open({ url: data.loginUrl });
+      });
+    } else {
+      getUrlLogin().then((data) => {
+        window.location.href = data.loginUrl;
+      });
+    }
   }, [isExpired, setGlobalLoading]);
 
   if (isExpired) return null;
