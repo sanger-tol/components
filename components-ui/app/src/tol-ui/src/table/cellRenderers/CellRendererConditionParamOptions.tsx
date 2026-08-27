@@ -16,6 +16,7 @@ import {
   generateFilter,
   isEmptyObject,
   RemoteFilters,
+  Tabs,
 } from "../..";
 import type { IFilter, IRemoteTarget, IZone, TCellRenderer } from "../..";
 
@@ -175,34 +176,41 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
           Parameter
         </h6>
       </div>
-      <AttributeSelector
-        objectType={objectType}
-        dataSource={dataSource}
-        displaySource
-        recommendedFilterAvailable
-        renderSearchBySource
-        attribute={attributes}
-        setAttributes={setAttributes}
-        populatedFieldType="filter"
-        onClean={() => {
-          // We know that the component exists because it is set by default (filterZone state)
-          const component = filterZone.children[zoneFilterId];
+      <Tabs defaultActiveKey="current">
+        <Tabs.Tab eventKey="current" title="Current">
+          <AttributeSelector
+            objectType={objectType}
+            dataSource={dataSource}
+            displaySource
+            recommendedFilterAvailable
+            renderSearchBySource
+            attribute={attributes}
+            setAttributes={setAttributes}
+            populatedFieldType="filter"
+            onClean={() => {
+              // We know that the component exists because it is set by default (filterZone state)
+              const component = filterZone.children[zoneFilterId];
 
-          // When the multi-select is cleared, the filter should be reset
-          component.filter!.and_ = {};
-          component.defaultFilter!.and_ = {};
-          setFilterZone({ ...filterZone });
-        }}
-      />
-      <RemoteFilters
-        objectType={objectType}
-        dataSource={dataSource}
-        utilityBarConfig={undefined}
-        zone={filterZone}
-        setZone={setFilterZone}
-        componentId={zoneFilterId}
-        attributes={attributes}
-      />
+              // When the multi-select is cleared, the filter should be reset
+              component.filter!.and_ = {};
+              component.defaultFilter!.and_ = {};
+              setFilterZone({ ...filterZone });
+            }}
+          />
+          <RemoteFilters
+            objectType={objectType}
+            dataSource={dataSource}
+            utilityBarConfig={undefined}
+            zone={filterZone}
+            setZone={setFilterZone}
+            componentId={zoneFilterId}
+            attributes={attributes}
+          />
+        </Tabs.Tab>
+        <Tabs.Tab eventKey="origin" title="Origin">
+          <p>TODO!</p>
+        </Tabs.Tab>
+      </Tabs>
       {BottomButtons}
     </div>
   )
