@@ -167,18 +167,13 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
     }
   }, [paramName]);
 
-  // Update the pending-change state when either filter changes.
+  // Update the pending-change state when either filter changes
   useEffect(() => {
-    const newFiltersForCurrent = deepCopy(
-      filterZone.children[currentFilterComponentId].filter ?? generateDefaultFilter()
-    );
-    const newFiltersForOrigin = deepCopy(
-      filterZone.children[originFilterComponentId].filter ?? generateDefaultFilter()
-    );
+    const condition = getCondition();
 
     setHasPendingChanges(
-      JSON.stringify(previousFiltersForCurrent) !== JSON.stringify(newFiltersForCurrent)
-      || JSON.stringify(previousFiltersForOrigin) !== JSON.stringify(newFiltersForOrigin)
+      JSON.stringify(previousFiltersForCurrent) !== JSON.stringify(condition.filterForCurrent)
+      || JSON.stringify(previousFiltersForOrigin) !== JSON.stringify(condition.filterForOrigin)
     );
   }, [filterZone]);
 
