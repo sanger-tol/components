@@ -17,6 +17,7 @@ import {
   isEmptyObject,
   RemoteFilters,
   Tabs,
+  IconTooltip,
 } from "../..";
 import type { IFilter, IRemoteTarget, IZone, TCellRenderer } from "../..";
 
@@ -174,6 +175,16 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
           Configure Condition for
           '{cellRendererParams[renderer?.type!].params?.[paramName]?.rename}'
           Parameter
+          <IconTooltip
+            className="tol-ml-sm"
+            contents={
+              <p>
+                A Condition is a filter. If it passes, the Condition is true. If it does not, it is false.<br/>
+                Filters can either be from the perspective of this Data Point (configured in the Current tab),
+                or from the overall table (configured in the Origin tab).
+              </p>
+            }
+          />
         </h6>
       </div>
       <Tabs defaultActiveKey="current">
