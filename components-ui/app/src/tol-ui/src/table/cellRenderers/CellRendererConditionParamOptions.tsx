@@ -19,7 +19,7 @@ import {
   Tabs,
   IconTooltip,
 } from "../..";
-import type { IFilter, IRemoteTarget, IZone, TCellRenderer } from "../..";
+import type { IDataPointConditionProp, IFilter, IRemoteTarget, IZone, TCellRenderer } from "../..";
 
 export interface PCellRendererConditionParamOptions extends IRemoteTarget {
   /**
@@ -80,14 +80,27 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
     dataSource
   } = props;
 
-  // Filters must be associated with a zone,
-  // so here's a zone to assign the filters to while we're defining them
-  const zoneFilterId = "cell-renderer-component";
-  const [filterZone, setFilterZone] = useState<IZone>(
-    defineZoneWithComponentList("dummy-object-for-remote-filters", [
-      { id: zoneFilterId, filter: renderer?.props?.[paramName!] as IFilter || generateDefaultFilter() },
-    ]),
-  );
+  /*
+   * A mock zone with an arbitrary object type, used to house two components.
+   * There is one component for each tab, and is used to store the filter from that tab.
+   * This is so they can be provided to the RemoteFilter components (filters must be associated with a zone).
+   */
+  const currentFilterComponentId = "filterForCurrent";
+  const originFilterComponentId = "filterForOrigin";
+  const [filterZone, setFilterZone] = useState<IZone>(defineZoneWithComponentList(
+    "dummy_object_type",
+    [
+      {
+        id: currentFilterComponentId,
+        filter: (renderer?.props?.[paramName!] as IDataPointConditionProp | undefined)?.filterForCurrent || generateDefaultFilter()
+      },
+      {
+        id: originFilterComponentId,
+        filter: (renderer?.props?.[paramName!] as IDataPointConditionProp | undefined)?.filterForOrigin || generateDefaultFilter()
+      }
+    ]
+  ));
+
   // The filters used for this condition
   const [filterConditions, setFilterConditions] = useState<IFilter>();
   const [previousFilterConditions, setPreviousFilterConditions] = useState<IFilter>();
@@ -108,7 +121,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       setFilterConditions(filterValue);
       setPreviousFilterConditions(previousRenderer?.props?.[paramName] as IFilter | undefined);
       setFilterZone(defineZoneWithComponentList("dummy-object-for-remote-filters", [
-        { id: zoneFilterId, filter: filterValue },
+        { id: currentFilterComponentId, filter: filterValue },
       ]));
     } else {
       setAttributes([]);
@@ -118,7 +131,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   }, [paramName]);
 
   useEffect(() => {
-    const newFilter = generateFilter(filterZone, zoneFilterId);
+    const newFilter = generateFilter(filterZone, currentFilterComponentId);
     setFilterConditions(newFilter);
     setHasPendingChanges(() => {
       if (!renderer || !paramName) return false;
@@ -131,7 +144,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   // Needed for the BottomButtons. Either adding the parameter or going back means that the filter
   // making up the parameter should be cleared (it gets tied to the renderer somehow!)
   const resetFilterZone = () => setFilterZone(defineZoneWithComponentList("dummy-object-for-remote-filters", [
-    { id: zoneFilterId, filter: generateDefaultFilter() },
+    { id: currentFilterComponentId, filter: generateDefaultFilter() },
   ]));
 
   const handleBack = () => {
@@ -200,7 +213,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
             populatedFieldType="filter"
             onClean={() => {
               // We know that the component exists because it is set by default (filterZone state)
-              const component = filterZone.children[zoneFilterId];
+              const component = filterZone.children[currentFilterComponentId];
 
               // When the multi-select is cleared, the filter should be reset
               component.filter!.and_ = {};
@@ -214,7 +227,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
             utilityBarConfig={undefined}
             zone={filterZone}
             setZone={setFilterZone}
-            componentId={zoneFilterId}
+            componentId={currentFilterComponentId}
             attributes={attributes}
           />
         </Tabs.Tab>

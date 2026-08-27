@@ -20,8 +20,14 @@ export type TCellRendererType =
   "relationship" |
   string;
 
+// TODO Move to the datapoint file in the refactor
+export interface IDataPointConditionProp {
+  filterForCurrent: IFilter,
+  filterForOrigin: IFilter,
+}
+
 interface IElementProps {
-  [prop: string]: string | IFilter;
+  [prop: string]: string | IDataPointConditionProp;
 }
 
 export interface ICellRenderer {
