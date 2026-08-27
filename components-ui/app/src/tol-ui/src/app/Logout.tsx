@@ -37,6 +37,10 @@ export function useLogout() {
     setUserToLocalStorage(null);
     setToken("");
     setUser(null);
+    
+    // Clear auth callback state (Android-specific: sessionStorage persists across logout)
+    sessionStorage.removeItem("auth_callback_processed_url");
+    
     history.push("/");
   };
 }
