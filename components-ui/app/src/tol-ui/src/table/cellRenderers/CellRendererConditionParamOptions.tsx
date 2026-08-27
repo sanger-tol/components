@@ -124,6 +124,10 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   // The initial values are set in the useEffect below.
   const [filtersForCurrent, setFiltersForCurrent] = useState<IFilter>();
   const [filtersForOrigin, setFiltersForOrigin] = useState<IFilter>();
+  const getCondition = (): IDataPointConditionProp => ({
+    filterForCurrent: filtersForCurrent ?? {},
+    filterForOrigin: filtersForOrigin ?? {},
+  });
 
   // The *previous* built-up filters for both tabs, used to know whether changes have been made.
   // The initial values are set in the useEffect below.
@@ -193,11 +197,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       if (!renderer || !paramName) return false;
 
       // Apply the new filters to the renderer
-      const newCondition = {
-        filterForCurrent: newFiltersForCurrent ?? {},
-        filterForOrigin: newFiltersForOrigin ?? {},
-      } as IDataPointConditionProp;
-      renderer!.props![paramName!] = newCondition;
+      renderer!.props![paramName!] = getCondition();
       setRenderer({ ...renderer });
 
       return (
@@ -222,11 +222,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
     if (isEmptyObject(filtersForCurrent?.and_ || {}) && isEmptyObject(filtersForOrigin?.and_ || {})) {
       delete renderer!.props![paramName!];
     } else {
-      // TODO Reusable function for this?
-      renderer!.props![paramName!] = {
-        filterForCurrent: filtersForCurrent ?? {},
-        filterForOrigin: filtersForOrigin ?? {},
-      } as IDataPointConditionProp;
+      renderer!.props![paramName!] = getCondition();
     }
 
     setRenderer({ ...renderer! });
