@@ -10,6 +10,7 @@ export * from "./DataPoints";
 export * from "./DataPoint";
 export * from "./CellDisplay";
 export * from "./CellEditable";
+export * from "./CellEditableControls";
 export * from "./CellEditableDatetime";
 export * from "./CellEditableStatus";
 export * from "./CellEditableText";

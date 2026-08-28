@@ -38,29 +38,33 @@ export function DataPoint(props: PDataPoint) {
   const [value, setValue] = useState(attributeValue);
   const [editMode, setEditMode] = useState(false);
 
+  // TODO: OPENED UP JUST FOR TESTING PURPOSES. NEED TO RESTRICT THIS LATER.
+  // THE PREVIOUS IMPLEMENTATION WILL NEED CHANGING BELOW.
+  const canEdit = true;
+
   // TODO FUTURE: Make sure that string and date upserts have a role binding
   // const canEdit = (
   //   actsAs === "status" //|| typeof value === "string" || value instanceof Date
   // );
-
-  const canEdit = true;
 
   const onDoubleClick = () => {
     if (!editable) return;
     if (canEdit) setEditMode(true);
   }
 
-  const onCancel = () => {
+  const onExit = () => {
     setEditMode(false);
   };
 
   if (editMode) {
-    <CellEditable
-      {...props}
-      value={value}
-      setValue={setValue}
-      onCancel={onCancel}
-    />
+    return (
+      <CellEditable
+        {...props}
+        value={value}
+        setValue={setValue}
+        onExit={onExit}
+      />
+    )
   }
 
   // If the value is an array we produce separate CellDisplays for each item in the array.

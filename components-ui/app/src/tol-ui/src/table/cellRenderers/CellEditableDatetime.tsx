@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { DatePicker } from "rsuite";
-import { Button, BUTTONS, PCellEditableInput, PopUpMessage } from "../..";
+import { CellEditableControls, PCellEditableInput, PopUpMessage } from "../..";
+
 
 export function CellEditableDatetime(props: PCellEditableInput) {
   const {
@@ -77,17 +78,12 @@ export function CellEditableDatetime(props: PCellEditableInput) {
         onClose={() => setDatePickerOpen(false)}
         editable={false}
       />
-      <div
-        className={`tol-data-point-editable-controls${floatingControls ? " floating" : ""}`}
-      >
-        <Button {...BUTTONS.CANCEL} disabled={loading} onClick={onCancel} />
-        <Button
-          {...BUTTONS.SAVE}
-          disabled={loading}
-          loading={loading}
-          onClick={onSave}
-        />
-      </div>
+      <CellEditableControls
+        floatingControls={floatingControls}
+        loading={loading}
+        onCancel={onCancel}
+        onSave={onSave}
+      />
     </>
   );
 }

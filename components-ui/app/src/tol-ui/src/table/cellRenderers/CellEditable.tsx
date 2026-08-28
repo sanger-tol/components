@@ -10,31 +10,34 @@ import { CellEditableDatetime, CellEditableStatus, CellEditableText, PCellDispla
 export interface PCellEditable extends PCellDisplay {
   floatingControls?: boolean;
   setValue: (newValue: any) => void;
-  onCancel: () => void;
+  onExit: () => void;
 }
 
 export interface PCellEditableInput extends PCellEditable {
   onSaveSuccess?: () => void;
   onSaveError?: () => void;
+  onCancel: () => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
 }
 
 export function CellEditable(props: PCellEditable) {
-  const { value, setValue, onCancel } = props;
+  const { value, setValue, onExit } = props;
   const { type, actsAs } = props.meta;
 
   const [loading, setLoading] = useState(false);
   const [prevValue, setPrevValue] = useState(value);
 
-  const onCompleteEdit = () => {
-    setLoading(false);
-    onCancel();
+  const onCancel = () => {
+    // revert to previous value on cancel
+    setValue(prevValue);
+    onExit();
   }
 
   const onSaveSuccess = () => {
-    onCompleteEdit();
+    setLoading(false);
     setPrevValue(value);
+    onExit();
     PopUpMessage({
       type: "success",
       message: "Value saved successfully.",
@@ -42,7 +45,7 @@ export function CellEditable(props: PCellEditable) {
   }
 
   const onSaveError = () => {
-    onCompleteEdit();
+    onCancel();
     // revert to previous value on error
     setValue(prevValue);
     PopUpMessage({
@@ -55,6 +58,7 @@ export function CellEditable(props: PCellEditable) {
     ...props,
     onSaveSuccess,
     onSaveError,
+    onCancel,
     loading,
     setLoading,
   }
