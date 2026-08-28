@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Input } from "rsuite";
-import { Button, BUTTONS, PCellEditableInput, PopUpMessage } from "../..";
+import { CellEditableControls, PCellEditableInput, PopUpMessage } from "../..";
 
 
 export function CellEditableText(props: PCellEditableInput) {
@@ -65,17 +65,12 @@ export function CellEditableText(props: PCellEditableInput) {
         onChange={onChange}
         onPressEnter={onSave}
       />
-      <div
-        className={`tol-data-point-editable-controls${floatingControls ? " floating" : ""}`}
-      >
-        <Button {...BUTTONS.CANCEL} disabled={loading} onClick={onCancel} />
-        <Button
-          {...BUTTONS.SAVE}
-          disabled={loading}
-          loading={loading}
-          onClick={onSave}
-        />
-      </div>
+      <CellEditableControls
+        floatingControls={floatingControls}
+        loading={loading}
+        onCancel={onCancel}
+        onSave={onSave}
+      />
     </>
   );
 }

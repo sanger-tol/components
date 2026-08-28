@@ -9,8 +9,7 @@ import { SelectPicker } from "rsuite";
 import {
   API_METHODS,
   API_OPERATIONS,
-  Button,
-  BUTTONS,
+  CellEditableControls,
   IDataObject,
   PCellEditableInput,
   PopUpMessage,
@@ -117,21 +116,13 @@ export function CellEditableStatus(props: PCellEditableInput) {
         cleanable={false}
         block
       />
-      <div
-        className={`tol-data-point-editable-controls${floatingControls ? " floating" : ""}`}
-      >
-        <Button
-          {...BUTTONS.CANCEL}
-          disabled={loading}
-          onClick={onCancel}
-        />
-        <Button
-          {...BUTTONS.SAVE}
-          disabled={loading || !selected}
-          loading={loading}
-          onClick={() => selected && onSave(selected)}
-        />
-      </div>
+      <CellEditableControls
+        floatingControls={floatingControls}
+        loading={loading}
+        saveDisabled={!selected}
+        onCancel={onCancel}
+        onSave={() => selected && onSave(selected)}
+      />
     </>
   );
 }
