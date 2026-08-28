@@ -95,3 +95,41 @@ export function CellEditableStatus(props: PCellEditableInput) {
     </>
   );
 }
+
+  // const onSaveStatus = (selectedStatusTypeId: string) => {
+
+  //   if (selectedStatusTypeId == value) {
+  //     PopUpMessage({ type: "success", message: "Status updated successfully." })
+  //     setEditMode(false);
+  //     return;
+  //   }
+
+  //   if (!dataObject) return;
+  //   setLoading(true);
+
+  //   const user = getUserFromLocalStorage();
+  //   dataSource
+  //     .custom({
+  //       method: API_METHODS.POST,
+  //       resource: `${parentDataObject?.objectType}${API_OPERATIONS.ACTION}`,
+  //       body: {
+  //         ids: [parentDataObject?.id],
+  //         action_name: "SetStatusAction",
+  //         object_type: parentDataObject?.objectType,
+  //         params: { status: selectedStatusTypeId, user_id: user?.id },
+  //       },
+  //     })
+  //     .then(() => {
+  //       setEditMode(false);
+  //       PopUpMessage({ type: "success", message: "Status updated successfully." });
+  //       setValue(selectedStatusTypeId);
+  //       setHasChanged(true);
+  //     })
+  //     .catch((error: any) => {
+  //       PopUpMessage({ type: "error", message: `Error saving: ${error.message}` });
+  //       setEditMode(false);
+  //     })
+  //     .finally(() => {
+  //       setLoading(false)
+  //     });
+  // };
