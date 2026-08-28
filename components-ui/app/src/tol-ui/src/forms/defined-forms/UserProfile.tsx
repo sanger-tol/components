@@ -57,6 +57,7 @@ export function UserProfile(props: PUserProfile) {
       additionalConfigArrayPositions,
       additionalFieldMappings,
     } = {},
+    logout
   } = props;
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
@@ -141,7 +142,7 @@ export function UserProfile(props: PUserProfile) {
   return (
     <div>
       <Widgets components={components} />
-      {props.logout && (
+      {logout && (
         <div style={{ marginTop: "10vh"}}>
           <Button
             text="Logout"

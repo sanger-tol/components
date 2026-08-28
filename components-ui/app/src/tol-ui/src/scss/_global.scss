@@ -16,12 +16,6 @@
   flex-direction: column;
 }
 
-#tol-smart-app-background:has(.tol-navigation-mobile) {
-  .tol-smart-app .tol-smart-app-content {
-    padding-bottom: calc(var(--tol-navbar-height, 80px) + 16px);
-  }
-}
-
 .tol-smart-app {
   margin: 10px;
   width: calc(100% - 20px);

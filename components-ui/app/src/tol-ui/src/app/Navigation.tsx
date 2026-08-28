@@ -6,26 +6,18 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps, useHistory } from "react-router-dom";
-import { Container, Navbar, Nav } from "react-bootstrap";
 import {
   useAuth,
-  getReturnUrlFromLocalStorage,
   setReturnUrlFromLocalStorage,
   getTokenFromLocalStorage,
   setTokenToLocalStorage,
   setUserToLocalStorage,
-  tokenHasExpired,
-  Login,
-  LoginIcon,
-  RegisterIcon,
   PSmartApp,
   fetchEnvironment,
-  getNavBackgroundClass,
-  collectNavigationItems,
-  ProfileDropdown,
   TNavConfig,
   API_PATHS,
-  IMobileNavConfig
+  IMobileNavConfig,
+  NavBar,
 } from "..";
 
 
@@ -39,7 +31,7 @@ export interface PNavigation extends PSmartApp, RouteComponentProps {
    */
   profileNavigation: TNavConfig;
   /**
-   * Boolean flag to use mobile version of nav
+   * Mobile navigation configuration, uses standard nav bar if not set.
   */
   mobileNavConfig?: IMobileNavConfig;
 }
@@ -49,7 +41,15 @@ export interface PNavigation extends PSmartApp, RouteComponentProps {
  * It includes brand display, navigation items, and login functionality.
  */
 function Navigation(props: PNavigation) {
-  const { navigation, profileNavigation, mobileNavConfig } = props;
+  const {
+    navigation,
+    profileNavigation,
+    mobileNavConfig,
+    brand,
+    register,
+    login,
+    customCallbackUrl,
+  } = props;
 
   const history = useHistory();
 
@@ -111,110 +111,21 @@ function Navigation(props: PNavigation) {
     return null;
   }
 
-  if (!mobileNavConfig) {
-    return (
-      <div className="tol-navigation">
-        <div className="tol-navbar-offset" style={{ height: navbarOffset }}></div>
-        <Navbar
-          id="tol-navbar"
-          className={
-            "navbar-dark " + getNavBackgroundClass(environment) + " tol-navbar"
-          }
-          expand="lg"
-        >
-          <Container>
-            <Navbar.Brand
-              href="/"
-              style={{ padding: typeof props.brand === "string" ? 10 : 0 }}
-            >
-              {props.brand}
-              {environment && environment !== "production" && " " + environment}
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              {collectNavigationItems(navigation)}
-              {props.register && tokenHasExpired() ? (
-                <Nav.Link className="nav-right" key="Register">
-                  <Login
-                    buttonIcon={RegisterIcon}
-                    returnUrl={props.customCallbackUrl ?? "/"}
-                  />
-                </Nav.Link>
-              ) : null}
-              {props.login && tokenHasExpired() ? (
-                <Nav.Link
-                  className={!props.register ? "nav-right" : ""}
-                  key="Login"
-                >
-                  {/* @ts-ignore */}
-                  <Login
-                    buttonIcon={LoginIcon}
-                    returnUrl={getReturnUrlFromLocalStorage()}
-                  />
-                </Nav.Link>
-              ) : props.login && user && (
-                <div className="nav-right">
-                  <ProfileDropdown
-                    user={user}
-                    onLogout={onLogout}
-                    navigation={profileNavigation}
-                  />
-                </div>
-              )}
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-      </div>
-    );
-  } else {
-    return (
-      <div className="tol-navigation tol-navigation-mobile">
-        <div className="tol-navbar-offset" style={{ height: navbarOffset }}></div>
-        <Navbar
-          id="tol-navbar"
-          className={
-            "navbar-dark " + getNavBackgroundClass(environment) + " tol-navbar tol-navbar-mobile"
-          }
-          expand="lg"
-        >
-          <Container>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              {collectNavigationItems(navigation, mobileNavConfig)}
-              {props.register && tokenHasExpired() && mobileNavConfig.register ? (
-                <Nav.Link className="nav-right" key="Register">
-                  <Login
-                    buttonIcon={RegisterIcon}
-                    returnUrl={props.customCallbackUrl ?? "/"}
-                  />
-                </Nav.Link>
-              ) : null}
-              {props.login && tokenHasExpired() && mobileNavConfig.login ? (
-                <Nav.Link
-                  className={!props.register ? "nav-right" : ""}
-                  key="Login"
-                >
-                  {/* @ts-ignore */}
-                  <Login
-                    buttonIcon={LoginIcon}
-                    returnUrl={getReturnUrlFromLocalStorage()}
-                  />
-                </Nav.Link>
-              ) : props.login && user && mobileNavConfig.profile && (
-                <div className="nav-right">
-                  <ProfileDropdown
-                    user={user}
-                    onLogout={onLogout}
-                    navigation={profileNavigation}
-                  />
-                </div>
-              )}
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-      </div>
-    )
-  }
+  return (
+    <NavBar
+      brand={brand}
+      environment={environment}
+      navbarOffset={navbarOffset}
+      navigation={navigation}
+      profileNavigation={profileNavigation}
+      register={register}
+      login={login}
+      customCallbackUrl={customCallbackUrl}
+      user={user}
+      onLogout={onLogout}
+      mobileNavConfig={mobileNavConfig}
+    />
+  );
 }
 
 //@ts-ignore

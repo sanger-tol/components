@@ -146,6 +146,29 @@ export function generateRoutePath(
 }
 
 /**
+ * Resolves the routes for navigation items that should hide the navigation bar.
+ *
+ * @param hideNavFor - Navigation item names whose routes should hide the navigation bar.
+ * @param navigation - Navigation configuration containing the resolved navigation items.
+ *
+ * @returns An array of routes that should hide the navigation bar.
+ */
+export function getHideNavForRoutes(
+  hideNavFor: string[] | undefined,
+  navigation: TNavConfig,
+): string[] {
+  return hideNavFor
+    ?.map((id) => {
+      if (!Object.prototype.hasOwnProperty.call(navigation.data, id)) return undefined;
+      if (isRoute(navigation.data[id].path)) return navigation.data[id].path.route;
+
+      // Accounts for if path isn't set in the config
+      return generateRoutePath(id);
+    })
+    .filter((route): route is string => route !== undefined) ?? [];
+}
+
+/**
  * Adds missing default values to a navigation configuration recursively.
  * 
  * @param navigation - The navigation config to normalize. If `undefined`, a default empty config is used.
@@ -197,21 +220,7 @@ export function normaliseNavConfig(
   );
 
   if (source.hideNavFor) {
-    result.hideNavFor = source.hideNavFor
-      .map(
-        (id) => {
-          if (
-            Object.prototype.hasOwnProperty.call(result.data, id)
-          ) {
-            if (isRoute(result.data[id].path)) {
-              return result.data[id].path?.route;
-            }
-            // Accounts for if path isn't set in the config
-            return generateRoutePath(id);
-          }
-        }
-      )
-      .filter((route) => route !== undefined) as string[];
+    result.hideNavFor = getHideNavForRoutes(source.hideNavFor, result);
   }
 
   return result;
