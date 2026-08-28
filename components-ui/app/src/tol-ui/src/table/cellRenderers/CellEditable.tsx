@@ -5,40 +5,63 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { CellEditableDatetime, CellEditableStatus, CellEditableText, PCellDisplay } from "../..";
+import { CellEditableDatetime, CellEditableStatus, CellEditableText, PCellDisplay, PopUpMessage } from "../..";
 
 export interface PCellEditable extends PCellDisplay {
   floatingControls?: boolean;
   setValue: (newValue: any) => void;
   onCancel: () => void;
-  onSaveSuccess?: () => void;
-  onSaveError?: () => void;
 }
 
 export interface PCellEditableInput extends PCellEditable {
-  prevValue: any;
-  setPrevValue: (newValue: any) => void;
+  onSaveSuccess?: () => void;
+  onSaveError?: () => void;
   loading: boolean;
-  setLoading: (newValue: boolean) => void;
+  setLoading: (loading: boolean) => void;
 }
 
 export function CellEditable(props: PCellEditable) {
-  const { value } = props;
+  const { value, setValue, onCancel } = props;
   const { type, actsAs } = props.meta;
 
   const [loading, setLoading] = useState(false);
   const [prevValue, setPrevValue] = useState(value);
 
-  const states = {
+  const onCompleteEdit = () => {
+    setLoading(false);
+    onCancel();
+  }
+
+  const onSaveSuccess = () => {
+    onCompleteEdit();
+    setPrevValue(value);
+    PopUpMessage({
+      type: "success",
+      message: "Value saved successfully.",
+    });
+  }
+
+  const onSaveError = () => {
+    onCompleteEdit();
+    // revert to previous value on error
+    setValue(prevValue);
+    PopUpMessage({
+      type: "error",
+      message: `Error saving value. Please try again.`,
+    });
+  }
+
+  const newProps = {
+    ...props,
+    onSaveSuccess,
+    onSaveError,
     loading,
     setLoading,
-    prevValue,
-    setPrevValue,
   }
 
   let Element = CellEditableText;
   if (type === "datetime") Element = CellEditableDatetime;
   if (actsAs === "status") Element = CellEditableStatus;
 
-  return <Element {...props} {...states} />;
+  return <Element {...newProps} />;
 }

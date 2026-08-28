@@ -6,14 +6,10 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  API_METHODS,
-  API_OPERATIONS,
   CellDisplay,
   CellEditable,
   getFieldByName,
-  getUserFromLocalStorage,
   PDataPoints,
-  PopUpMessage,
   TDataObjectOrNull,
 } from "../..";
 
@@ -57,91 +53,6 @@ export function DataPoint(props: PDataPoint) {
   const onCancel = () => {
     setEditMode(false);
   };
-
-  // const onSaveStatus = (selectedStatusTypeId: string) => {
-
-  //   if (selectedStatusTypeId == value) {
-  //     PopUpMessage({ type: "success", message: "Status updated successfully." })
-  //     setEditMode(false);
-  //     return;
-  //   }
-
-  //   if (!dataObject) return;
-  //   setLoading(true);
-
-  //   const user = getUserFromLocalStorage();
-  //   dataSource
-  //     .custom({
-  //       method: API_METHODS.POST,
-  //       resource: `${parentDataObject?.objectType}${API_OPERATIONS.ACTION}`,
-  //       body: {
-  //         ids: [parentDataObject?.id],
-  //         action_name: "SetStatusAction",
-  //         object_type: parentDataObject?.objectType,
-  //         params: { status: selectedStatusTypeId, user_id: user?.id },
-  //       },
-  //     })
-  //     .then(() => {
-  //       setEditMode(false);
-  //       PopUpMessage({ type: "success", message: "Status updated successfully." });
-  //       setValue(selectedStatusTypeId);
-  //       setHasChanged(true);
-  //     })
-  //     .catch((error: any) => {
-  //       PopUpMessage({ type: "error", message: `Error saving: ${error.message}` });
-  //       setEditMode(false);
-  //     })
-  //     .finally(() => {
-  //       setLoading(false)
-  //     });
-  // };
-
-  // const onSave = () => {
-  //   // prevent saving blank values
-  //   if (typeof value === "string" && value.trim() === "") {
-  //     PopUpMessage({
-  //       type: "error",
-  //       message: "Value cannot be blank.",
-  //     });
-  //     return;
-  //   }
-
-  //   if (!dataObject) return;
-  //   setLoading(true);
-  //   dataSource
-  //     ?.upsert({
-  //       objectType: dataObject?.objectType,
-  //       payload: [
-  //         {
-  //           type: dataObject?.objectType,
-  //           id: dataObject?.id,
-  //           attributes: {
-  //             [props.field]: value,
-  //           },
-  //         },
-  //       ],
-  //     })
-  //     .then(() => {
-  //       setEditMode(false);
-  //       setPrevValue(value);
-  //       PopUpMessage({
-  //         type: "success",
-  //         message: "Value saved successfully.",
-  //       });
-  //     })
-  //     .catch((error: any) => {
-  //       PopUpMessage({
-  //         type: "error",
-  //         message: `Error saving: ${error.message}`,
-  //       });
-  //       // revert to previous value on error
-  //       setValue(prevValue);
-  //       setEditMode(false);
-  //     })
-  //     .finally(() => {
-  //       setLoading(false);
-  //     });
-  // }
 
   if (editMode) {
     <CellEditable

@@ -5,14 +5,56 @@ SPDX-License-Identifier: MIT
 */
 
 import { Input } from "rsuite";
-import { Button, BUTTONS, PCellEditableInput } from "../..";
+import { Button, BUTTONS, PCellEditableInput, PopUpMessage } from "../..";
 
 
 export function CellEditableText(props: PCellEditableInput) {
-  const { value, loading, floatingControls, onCancel } = props;
+  const {
+    field,
+    value,
+    setValue,
+    onSaveSuccess,
+    onSaveError,
+    dataSource,
+    dataObject,
+    loading,
+    setLoading,
+    floatingControls,
+    onCancel
+  } = props;
 
   const onChange = (newValue: string | Date) => {
     setValue(newValue);
+  }
+
+  const onSave = () => {
+    // prevent saving blank values
+    if (typeof value === "string" && value.trim() === "") {
+      PopUpMessage({
+        type: "error",
+        message: "Value cannot be blank.",
+      });
+      return;
+    }
+
+    if (!dataObject) return;
+    setLoading(true);
+    dataSource
+      ?.upsert({
+        objectType: dataObject?.objectType,
+        payload: [
+          {
+            type: dataObject?.objectType,
+            id: dataObject?.id,
+            attributes: {
+              [field]: value,
+            },
+          },
+        ],
+      })
+      .then(() => onSaveSuccess?.())
+      .catch(() => onSaveError?.())
+      .finally(() => setLoading(false));
   }
 
   return (
