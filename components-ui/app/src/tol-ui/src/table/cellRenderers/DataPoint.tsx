@@ -9,8 +9,10 @@ import {
   API_METHODS,
   API_OPERATIONS,
   CellDisplay,
-  CellEditable,
+  CellEditableDatetime,
+  CellEditableRelationship,
   CellEditableStatus,
+  CellEditableText,
   getFieldByName,
   getUserFromLocalStorage,
   PDataPoints,
@@ -24,6 +26,10 @@ export interface PDataPoint extends PDataPoints {
    * Whether the data point is being rendered within a tag component. Used for styling purposes.
    */
   isMany?: boolean,
+    /**
+     * Python type declared for the field by attribute metadata.
+     */
+    pythonType?: string;
   /**
    * The parent DataObject, used for upsert calls when saving edits to the data point.
    */
@@ -39,10 +45,11 @@ export function DataPoint(props: PDataPoint) {
     field,
     dataObject,
     dataSource,
-    editable,
     isMany,
     actsAs, 
     parentDataObject,
+    relationshipName,
+    pythonType,
   } = props;
 
   const attributeValue = getFieldByName(dataObject, field);
@@ -53,13 +60,9 @@ export function DataPoint(props: PDataPoint) {
   const [loading, setLoading] = useState(false);
   const [hasChanged, setHasChanged] = useState(false);
 
-  // TODO FUTURE: Make sure that string and date upserts have a role binding
-  const canEdit = (
-    actsAs === "status" //|| typeof value === "string" || value instanceof Date
-  );
+  const canEdit = true;
 
   const onDoubleClick = () => {
-    if (!editable) return;
     if (canEdit) {
       setEditMode(true);
     }
@@ -111,6 +114,50 @@ export function DataPoint(props: PDataPoint) {
       })
       .finally(() => {
         setLoading(false)
+      });
+  };
+
+  const onSaveRelationship = (selectedId: string) => {
+    if (!parentDataObject || !relationshipName || !dataObject) return;
+    setLoading(true);
+
+    dataSource
+      .upsert({
+        objectType: parentDataObject.objectType,
+        payload: [
+          {
+            type: parentDataObject.objectType,
+            id: parentDataObject.id,
+            relationships: {
+              [relationshipName]: {
+                data: {
+                  type: dataObject.objectType,
+                  id: selectedId,
+                },
+              },
+            },
+          },
+        ],
+      })
+      .then(() => {
+        setEditMode(false);
+        setValue(selectedId);
+        setPrevValue(selectedId);
+        PopUpMessage({
+          type: "success",
+          message: "Relationship updated successfully.",
+        });
+      })
+      .catch((error: any) => {
+        PopUpMessage({
+          type: "error",
+          message: `Error saving: ${error.message}`,
+        });
+        setValue(prevValue);
+        setEditMode(false);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -174,8 +221,31 @@ export function DataPoint(props: PDataPoint) {
         />
       );
     }
+    if (relationshipName && dataObject) {
+      return (
+        <CellEditableRelationship
+          {...props}
+          value={value}
+          loading={loading}
+          onCancel={onCancel}
+          onSave={onSaveRelationship}
+        />
+      );
+    }
+    if (pythonType === "datetime") {
+      return (
+        <CellEditableDatetime
+          {...props}
+          value={value}
+          loading={loading}
+          onChange={onChange}
+          onCancel={onCancel}
+          onSave={onSave}
+        />
+      );
+    }
     return (
-      <CellEditable
+      <CellEditableText
         {...props}
         value={value}
         loading={loading}

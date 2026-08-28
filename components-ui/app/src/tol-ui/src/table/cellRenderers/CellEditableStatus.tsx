@@ -6,22 +6,22 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
-import {
-  Button,
-  BUTTONS,
-  PCellDisplay,
-} from "../..";
+import { CellEditableControls, PCellDisplay } from "../..";
 
-
+/** Props for the editable status cell. */
 export interface PCellEditableStatus extends PCellDisplay {
+  /** Whether a save operation is in progress. */
   loading: boolean;
+  /** Whether the Save and Cancel controls should use floating positioning. */
   floatingControls?: boolean;
   /**
    * The object type of the status-type lookup table,
    * e.g. "metagenome_status_type".
    */
   statusTypeObjectType: string;
+  /** Called when editing is cancelled. */
   onCancel: () => void;
+  /** Called with the selected status ID when saving. */
   onSave: (selectedStatusTypeId: string) => void;
 }
 
@@ -83,21 +83,13 @@ export function CellEditableStatus(props: PCellEditableStatus) {
         cleanable={false}
         block
       />
-      <div
-        className={`tol-data-point-editable-controls${floatingControls ? " floating" : ""}`}
-      >
-        <Button
-          {...BUTTONS.CANCEL}
-          disabled={loading}
-          onClick={onCancel}
-        />
-        <Button
-          {...BUTTONS.SAVE}
-          disabled={loading || !selected}
-          loading={loading}
-          onClick={() => selected && onSave(selected)}
-        />
-      </div>
+      <CellEditableControls
+        loading={loading}
+        saveDisabled={!selected}
+        floatingControls={floatingControls}
+        onCancel={onCancel}
+        onSave={() => selected && onSave(selected)}
+      />
     </>
   );
 }

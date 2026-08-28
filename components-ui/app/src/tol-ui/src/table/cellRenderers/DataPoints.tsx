@@ -13,6 +13,7 @@ import {
   getChildObjectsByName,
   DataPoint,
   getAttributeNameByField,
+  getRelationshipNameByField,
 } from "../..";
 
 
@@ -55,6 +56,14 @@ export interface PDataPoints {
    * When provided, the async lookup is skipped and the cell renders synchronously.
    */
   isMany?: boolean;
+  /**
+   * Cardinality declared for the field by attribute metadata.
+   */
+  cardinality?: number;
+  /**
+   * The relationship path which contains the field, when the field is relational.
+   */
+  relationshipName?: string;
 }
 
 /**
@@ -67,12 +76,16 @@ export function DataPoints(props: PDataPoints) {
   // State to track whether there could be multiple data points to render.
   const [isMany, setIsMany] = useState(precomputedIsMany ?? false);
   const [loading, setLoading] = useState(precomputedIsMany === undefined);
+  const [pythonType, setPythonType] = useState<string | undefined>();
+  const [cardinality, setCardinality] = useState<number | undefined>();
+  const [loadingPythonType, setLoadingPythonType] = useState(true);
 
   // get the child objects based on the field
   const childObjects = getChildObjectsByName(dataObject, field);
 
   // get the attribute part of the field
   const attribute = getAttributeNameByField(field);
+  const relationshipName = getRelationshipNameByField(field);
 
   useEffect(() => {
     // Skip the async lookup when the flag has been precomputed by the caller
@@ -94,12 +107,31 @@ export function DataPoints(props: PDataPoints) {
     }
   }, [field, dataObject, precomputedIsMany]);
 
+  useEffect(() => {
+    if (!dataObject) {
+      setLoadingPythonType(false);
+      return;
+    }
+
+    dataSource
+      .getAttributeDescriptor({ objectType: dataObject.objectType, field })
+      .then((descriptor) => {
+        setPythonType(descriptor?.python_type);
+        if (relationshipName) {
+          setCardinality(descriptor?.cardinality);
+        }
+      })
+      .finally(() => {
+        setLoadingPythonType(false);
+      });
+  }, [dataObject, dataSource, field, relationshipName]);
+
   /**
    * getRelationshipConfig (used in isManyDataPointsByName) is already stored in cache
    * when this component is used so we don't need a loading wheel - although it still 
    * needs to be async.
    */
-  if (loading) return;
+  if (loading || loadingPythonType) return;
 
   const collectDataPoints = childObjects?.map((obj, index) => (
     <DataPoint
@@ -108,6 +140,9 @@ export function DataPoints(props: PDataPoints) {
       dataObject={obj}
       parentDataObject={dataObject}
       field={attribute}
+      relationshipName={relationshipName}
+      pythonType={pythonType}
+      cardinality={cardinality}
       isMany={isMany}
     />
   ))
