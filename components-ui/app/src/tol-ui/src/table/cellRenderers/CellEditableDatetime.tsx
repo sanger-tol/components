@@ -6,7 +6,13 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { DatePicker } from "rsuite";
-import { CellEditableControls, PCellEditableInput, PopUpMessage } from "../..";
+import {
+  CellEditableControls,
+  MESSAGE_TYPE,
+  PCellEditableInput,
+  PopUpMessage,
+  VALUE_CANNOT_BE_BLANK_MESSAGE,
+} from "../..";
 
 
 export function CellEditableDatetime(props: PCellEditableInput) {
@@ -14,14 +20,14 @@ export function CellEditableDatetime(props: PCellEditableInput) {
     field,
     value,
     setValue,
+    dataObject,
+    dataSource,
     onSaveSuccess,
     onSaveError,
-    dataSource,
-    dataObject,
+    floatingControls,
+    onCancel,
     loading,
     setLoading,
-    floatingControls,
-    onCancel
   } = props;
 
   const [datePickerOpen, setDatePickerOpen] = useState(true);
@@ -34,8 +40,8 @@ export function CellEditableDatetime(props: PCellEditableInput) {
     // prevent saving blank values
     if (typeof value === "string" && value.trim() === "") {
       PopUpMessage({
-        type: "error",
-        message: "Value cannot be blank.",
+        type: MESSAGE_TYPE.ERROR,
+        message: VALUE_CANNOT_BE_BLANK_MESSAGE,
       });
       return;
     }

@@ -12,30 +12,26 @@ import {
   CellEditableControls,
   IDataObject,
   PCellEditableInput,
-  PopUpMessage,
   useAuth,
 } from "../..";
 
 
 /**
- * Editable cell for fields with `acts_as === "status"`.
- * Fetches options from the status-type lookup table and presents them
- * as a searchable dropdown. On save, calls `onSave` with the selected ID
- * so the caller can dispatch the appropriate action.
+ * Status dropdown for editable cells backed by the status lookup object.
  */
 export function CellEditableStatus(props: PCellEditableInput) {
   const {
     value,
     setValue,
+    dataObject,
+    dataSource,
+    parentDataObject,
     onSaveSuccess,
     onSaveError,
-    dataSource,
-    dataObject,
-    loading,
-    setLoading,
     floatingControls,
     onCancel,
-    parentDataObject,
+    loading,
+    setLoading,
   } = props;
 
   /**
@@ -79,7 +75,6 @@ export function CellEditableStatus(props: PCellEditableInput) {
 
   const onSave = (selectedStatusTypeId: string) => {
     if (selectedStatusTypeId == value) {
-      PopUpMessage({ type: "success", message: "Status updated successfully." })
       onCancel();
       return;
     }

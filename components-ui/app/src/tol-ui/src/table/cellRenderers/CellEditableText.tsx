@@ -5,22 +5,31 @@ SPDX-License-Identifier: MIT
 */
 
 import { Input } from "rsuite";
-import { CellEditableControls, PCellEditableInput, PopUpMessage } from "../..";
+import {
+  CellEditableControls,
+  MESSAGE_TYPE,
+  PCellEditableInput,
+  PopUpMessage,
+  VALUE_CANNOT_BE_BLANK_MESSAGE,
+} from "../..";
 
 
+/**
+ * Text editor used for inline value updates.
+ */
 export function CellEditableText(props: PCellEditableInput) {
   const {
     field,
     value,
     setValue,
+    dataObject,
+    dataSource,
     onSaveSuccess,
     onSaveError,
-    dataSource,
-    dataObject,
+    floatingControls,
+    onCancel,
     loading,
     setLoading,
-    floatingControls,
-    onCancel
   } = props;
 
   const onChange = (newValue: string) => {
@@ -31,8 +40,8 @@ export function CellEditableText(props: PCellEditableInput) {
     // prevent saving blank values
     if (typeof value === "string" && value.trim() === "") {
       PopUpMessage({
-        type: "error",
-        message: "Value cannot be blank.",
+        type: MESSAGE_TYPE.ERROR,
+        message: VALUE_CANNOT_BE_BLANK_MESSAGE,
       });
       return;
     }
