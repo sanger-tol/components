@@ -25,7 +25,7 @@ import {
   ProfileDropdown,
   TNavConfig,
   API_PATHS,
-  IMobileNav
+  IMobileNavConfig
 } from "..";
 
 
@@ -41,7 +41,7 @@ export interface PNavigation extends PSmartApp, RouteComponentProps {
   /**
    * Boolean flag to use mobile version of nav
   */
-  mobileNav?: IMobileNav;
+  mobileNavConfig?: IMobileNavConfig;
 }
 
 /**
@@ -49,7 +49,7 @@ export interface PNavigation extends PSmartApp, RouteComponentProps {
  * It includes brand display, navigation items, and login functionality.
  */
 function Navigation(props: PNavigation) {
-  const { navigation, profileNavigation, mobileNav } = props;
+  const { navigation, profileNavigation, mobileNavConfig } = props;
 
   const history = useHistory();
 
@@ -111,7 +111,7 @@ function Navigation(props: PNavigation) {
     return null;
   }
 
-  if (!mobileNav) {
+  if (!mobileNavConfig) {
     return (
       <div className="tol-navigation">
         <div className="tol-navbar-offset" style={{ height: navbarOffset }}></div>
@@ -180,8 +180,8 @@ function Navigation(props: PNavigation) {
           <Container>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-              {collectNavigationItems(navigation, mobileNav)}
-              {props.register && tokenHasExpired() && mobileNav.register ? (
+              {collectNavigationItems(navigation, mobileNavConfig)}
+              {props.register && tokenHasExpired() && mobileNavConfig.register ? (
                 <Nav.Link className="nav-right" key="Register">
                   <Login
                     buttonIcon={RegisterIcon}
@@ -189,7 +189,7 @@ function Navigation(props: PNavigation) {
                   />
                 </Nav.Link>
               ) : null}
-              {props.login && tokenHasExpired() && mobileNav.login ? (
+              {props.login && tokenHasExpired() && mobileNavConfig.login ? (
                 <Nav.Link
                   className={!props.register ? "nav-right" : ""}
                   key="Login"
@@ -200,7 +200,7 @@ function Navigation(props: PNavigation) {
                     returnUrl={getReturnUrlFromLocalStorage()}
                   />
                 </Nav.Link>
-              ) : props.login && user && mobileNav.profile && (
+              ) : props.login && user && mobileNavConfig.profile && (
                 <div className="nav-right">
                   <ProfileDropdown
                     user={user}

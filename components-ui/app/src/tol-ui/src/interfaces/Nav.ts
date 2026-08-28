@@ -129,7 +129,7 @@ export interface INavDestination {
 /**
  * Configuration for mobile navbar.
  */
-export interface IMobileNav {
+export interface IMobileNavConfig {
   /**
    * Key value pair of nav item display name and the font awesome icon name (similar to buttons).
    */
