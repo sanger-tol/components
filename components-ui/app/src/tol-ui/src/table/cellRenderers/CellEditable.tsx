@@ -59,9 +59,9 @@ export function CellEditable(props: PCellEditable) {
     setLoading,
   }
 
-  let Element = CellEditableText;
-  if (type === "datetime") Element = CellEditableDatetime;
-  if (actsAs === "status") Element = CellEditableStatus;
+  let InputType = CellEditableText;
+  if (type === "datetime") InputType = CellEditableDatetime;
+  if (actsAs === "status") InputType = CellEditableStatus;
 
-  return <Element {...newProps} />;
+  return <InputType {...newProps} />;
 }
