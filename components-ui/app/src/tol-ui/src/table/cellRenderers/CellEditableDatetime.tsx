@@ -6,10 +6,10 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { DatePicker } from "rsuite";
-import { Button, BUTTONS, PCellDisplay } from "../..";
+import { Button, BUTTONS, PCellEditableInput } from "../..";
 
-export function CellEditableDatetime(props: PCellEditable) {
-  const { value, loading, floatingControls, onChange, onCancel, onSave } = props;
+export function CellEditableDatetime(props: PCellEditableInput) {
+  const { value, loading, floatingControls, onCancel } = props;
 
   const [datePickerOpen, setDatePickerOpen] = useState(true);
 

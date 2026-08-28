@@ -5,11 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { Input } from "rsuite";
-import { Button, BUTTONS, PCellEditable } from "../..";
+import { Button, BUTTONS, PCellEditableInput } from "../..";
 
 
-export function CellEditableText(props: PCellEditable) {
-  const { value, loading, floatingControls, onChange, onCancel, onSave } = props;
+export function CellEditableText(props: PCellEditableInput) {
+  const { value, loading, floatingControls, onCancel } = props;
+
+  const onChange = (newValue: string | Date) => {
+    setValue(newValue);
+  }
 
   return (
     <>
