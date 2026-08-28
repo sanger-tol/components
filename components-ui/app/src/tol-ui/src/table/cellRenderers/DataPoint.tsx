@@ -20,13 +20,9 @@ import {
 
 
 export interface PDataPoint extends PDataPoints {
-  /**
-   * Whether the data point is being rendered within a tag component. Used for styling purposes.
-   */
+  /** Whether the data point is being rendered within a tag component. Used for styling purposes. */
   isMany?: boolean,
-  /**
-   * The parent DataObject, used for upsert calls when saving edits to the data point.
-   */
+  /** The parent DataObject, used for upsert calls when saving edits to the data point. */
   parentDataObject: TDataObjectOrNull;
 }
 
@@ -39,11 +35,12 @@ export function DataPoint(props: PDataPoint) {
     field,
     dataObject,
     dataSource,
+    meta,
     editable,
     isMany,
-    actsAs, 
     parentDataObject,
   } = props;
+  const { actsAs } = meta;
 
   const attributeValue = getFieldByName(dataObject, field);
 
@@ -54,9 +51,11 @@ export function DataPoint(props: PDataPoint) {
   const [hasChanged, setHasChanged] = useState(false);
 
   // TODO FUTURE: Make sure that string and date upserts have a role binding
-  const canEdit = (
-    actsAs === "status" //|| typeof value === "string" || value instanceof Date
-  );
+  // const canEdit = (
+  //   actsAs === "status" //|| typeof value === "string" || value instanceof Date
+  // );
+
+  const canEdit = true;
 
   const onDoubleClick = () => {
     if (!editable) return;

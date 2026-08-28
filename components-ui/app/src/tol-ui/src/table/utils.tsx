@@ -115,11 +115,10 @@ export function convertTableData(
           field={field}
           dataObject={obj}
           dataSource={dataSource}
-          renderer={fieldMeta.dataWithDefaults?.[field]?.cellRenderer}
+          meta={fieldMeta.dataWithDefaults?.[field] ?? {}}
           setExpandedRows={setExpandedRows}
           customCellRenderers={customCellRenderers}
           editable={editableCells}
-          actsAs={fieldMeta.dataWithDefaults?.[field]?.acts_as}
           isMany={isManyByField?.[field]}
         />
       );
@@ -198,7 +197,7 @@ export function addDefaultsFromEntityMeta(
     type: meta.python_type,
     description: meta.description,
     source: meta.source,
-    acts_as: meta.acts_as,
+    actsAs: meta.acts_as,
   };
   // customised field config overrides the defaults
   fieldMeta.dataWithDefaults[key] = {

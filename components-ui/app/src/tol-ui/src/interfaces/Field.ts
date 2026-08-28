@@ -17,7 +17,7 @@ export interface IField {
   width?: number;
   description?: string;
   source?: string;
-  acts_as?: string;
+  actsAs?: string;
   custom?: boolean;
 }
 
