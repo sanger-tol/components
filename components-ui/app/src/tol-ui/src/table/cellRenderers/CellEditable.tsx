@@ -4,9 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
-import { Input, DatePicker } from "rsuite";
-import { Button, BUTTONS, PCellDisplay, isValidDate } from "../..";
+import { CellEditableDatetime, CellEditableStatus, CellEditableText, PCellDisplay } from "../..";
 
 export interface PCellEditable extends PCellDisplay {
   loading: boolean;
@@ -17,51 +15,13 @@ export interface PCellEditable extends PCellDisplay {
 }
 
 export function CellEditable(props: PCellEditable) {
-  const { value, loading, floatingControls, onChange, onCancel, onSave } =
-    props;
+  const { type, actsAs } = props.meta;
 
-  const [datePickerOpen, setDatePickerOpen] = useState(true);
+  if (type === "datetime") {
+    return <CellEditableDatetime {...props} />;
+  } else if (actsAs === "status") {
+    return <CellEditableStatus {...props} />;
+  }
 
-  const valueIsValidDate = isValidDate(value);
-
-  return (
-    <>
-      {valueIsValidDate ? (
-        <DatePicker
-          value={new Date(value)}
-          onChange={(date) => {
-            if (!date) return;
-            onChange(date);
-            setDatePickerOpen(false);
-          }}
-          cleanable={false}
-          preventOverflow
-          oneTap
-          block
-          open={datePickerOpen}
-          onOpen={() => setDatePickerOpen(true)}
-          onClose={() => setDatePickerOpen(false)}
-          editable={false}
-        />
-      ) : (
-        <Input
-          autoFocus
-          value={value}
-          onChange={onChange}
-          onPressEnter={onSave}
-        />
-      )}
-      <div
-        className={`tol-data-point-editable-controls${floatingControls ? " floating" : ""}`}
-      >
-        <Button {...BUTTONS.CANCEL} disabled={loading} onClick={onCancel} />
-        <Button
-          {...BUTTONS.SAVE}
-          disabled={loading}
-          loading={loading}
-          onClick={onSave}
-        />
-      </div>
-    </>
-  );
+  return <CellEditableText {...props} />;
 }
