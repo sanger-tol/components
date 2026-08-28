@@ -7,49 +7,30 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import {
   TDataObjectOrNull,
-  TCellRenderer,
   ICustomCellRenderers,
   TsDataSource,
   getChildObjectsByName,
   DataPoint,
   getAttributeNameByField,
+  IField
 } from "../..";
 
 
 export interface PDataPoints {
-  /**
-   * The attribute name which acts as a pointer in the dataObject.
-   */
+  /** The attribute name which acts as a pointer in the dataObject. */
   field: string,
-  /**
-   * The data object which the data point is based on.
-   */
+  /** The data object which the data point is based on. */
   dataObject: TDataObjectOrNull,
-  /**
-   * The data source which the data object belongs to.
-   */
+  /** The data source which the data object belongs to. */
   dataSource: TsDataSource,
-  /**
-   * The renderer to use for the data point.
-   */
-  renderer: TCellRenderer;
-  /**
-   * Setter function to set the expanded rows in a table.
-   */
+  /** Metadata about a field. Includes the renderer. */
+  meta: IField,
+  /** Setter function to set the expanded rows in a table. */
   setExpandedRows: any,
-  /**
-   * Custom cell renderers that can be used in addition to the pre-defined renderers.
-   */
+  /** Custom cell renderers that can be used in addition to the pre-defined renderers. */
   customCellRenderers?: ICustomCellRenderers;
-  /**
-   * Flag to indicate if the cell is editable.
-   */
+  /** Flag to indicate if the cell is editable. */
   editable?: boolean;
-  /**
-   * Semantic role of the field (e.g. "status"), used to apply special
-   * editing behaviour such as a status-type dropdown.
-   */
-  actsAs?: string;
   /**
    * Precomputed flag indicating whether the field is a "many" relationship.
    * When provided, the async lookup is skipped and the cell renders synchronously.
