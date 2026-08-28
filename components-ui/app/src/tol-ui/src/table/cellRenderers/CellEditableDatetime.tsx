@@ -32,7 +32,7 @@ export function CellEditableDatetime(props: PCellEditableInput) {
 
   const [datePickerOpen, setDatePickerOpen] = useState(true);
 
-  const onChange = (newValue: string) => {
+  const onChange = (newValue: Date) => {
     setValue(newValue);
   }
 
