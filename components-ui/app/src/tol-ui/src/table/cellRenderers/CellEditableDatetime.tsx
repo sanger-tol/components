@@ -6,12 +6,58 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { DatePicker } from "rsuite";
-import { Button, BUTTONS, PCellEditableInput } from "../..";
+import { Button, BUTTONS, PCellEditableInput, PopUpMessage } from "../..";
 
 export function CellEditableDatetime(props: PCellEditableInput) {
-  const { value, loading, floatingControls, onCancel } = props;
+  const {
+    field,
+    value,
+    setValue,
+    onSaveSuccess,
+    onSaveError,
+    dataSource,
+    dataObject,
+    loading,
+    setLoading,
+    floatingControls,
+    onCancel
+  } = props;
 
   const [datePickerOpen, setDatePickerOpen] = useState(true);
+
+  const onChange = (newValue: string) => {
+    setValue(newValue);
+  }
+
+  const onSave = () => {
+    // prevent saving blank values
+    if (typeof value === "string" && value.trim() === "") {
+      PopUpMessage({
+        type: "error",
+        message: "Value cannot be blank.",
+      });
+      return;
+    }
+
+    if (!dataObject) return;
+    setLoading(true);
+    dataSource
+      ?.upsert({
+        objectType: dataObject?.objectType,
+        payload: [
+          {
+            type: dataObject?.objectType,
+            id: dataObject?.id,
+            attributes: {
+              [field]: value,
+            },
+          },
+        ],
+      })
+      .then(() => onSaveSuccess?.())
+      .catch(() => onSaveError?.())
+      .finally(() => setLoading(false));
+  }
 
   return (
     <>

@@ -23,7 +23,7 @@ export function CellEditableText(props: PCellEditableInput) {
     onCancel
   } = props;
 
-  const onChange = (newValue: string | Date) => {
+  const onChange = (newValue: string) => {
     setValue(newValue);
   }
 
