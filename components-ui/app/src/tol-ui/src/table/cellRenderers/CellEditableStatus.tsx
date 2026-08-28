@@ -10,7 +10,7 @@ import {
   Button,
   BUTTONS,
   IDataObject,
-  PCellEditable,
+  PCellEditableInput,
 } from "../..";
 
 
@@ -20,7 +20,7 @@ import {
  * as a searchable dropdown. On save, calls `onSave` with the selected ID
  * so the caller can dispatch the appropriate action.
  */
-export function CellEditableStatus(props: PCellEditable) {
+export function CellEditableStatus(props: PCellEditableInput) {
   const {
     dataSource,
     dataObject,
@@ -28,9 +28,12 @@ export function CellEditableStatus(props: PCellEditable) {
     floatingControls,
     value,
     onCancel,
-    onSave,
   } = props;
 
+  /**
+   * The object type of the status-type lookup table,
+   * e.g. "metagenome_status_type".
+   */
   const statusTypeObjectType = (dataObject as IDataObject).objectType
 
   const initialValue = typeof value === "string" ? value : null;

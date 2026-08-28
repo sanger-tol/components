@@ -10,7 +10,6 @@ import {
   API_OPERATIONS,
   CellDisplay,
   CellEditable,
-  CellEditableStatus,
   getFieldByName,
   getUserFromLocalStorage,
   PDataPoints,
@@ -34,21 +33,14 @@ export function DataPoint(props: PDataPoint) {
   const {
     field,
     dataObject,
-    dataSource,
-    meta,
     editable,
     isMany,
-    parentDataObject,
   } = props;
-  const { actsAs } = meta;
 
   const attributeValue = getFieldByName(dataObject, field);
 
   const [value, setValue] = useState(attributeValue);
-  const [prevValue, setPrevValue] = useState(attributeValue);
   const [editMode, setEditMode] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [hasChanged, setHasChanged] = useState(false);
 
   // TODO FUTURE: Make sure that string and date upserts have a role binding
   // const canEdit = (
@@ -59,109 +51,105 @@ export function DataPoint(props: PDataPoint) {
 
   const onDoubleClick = () => {
     if (!editable) return;
-    if (canEdit) {
-      setEditMode(true);
-    }
-  }
-
-  const onChange = (newValue: string | Date) => {
-    setValue(newValue);
+    if (canEdit) setEditMode(true);
   }
 
   const onCancel = () => {
     setEditMode(false);
-    if (!hasChanged) {
-      setValue(prevValue);
-    }
   };
 
-  const onSaveStatus = (selectedStatusTypeId: string) => {
+  // const onSaveStatus = (selectedStatusTypeId: string) => {
 
-    if (selectedStatusTypeId == value) {
-      PopUpMessage({ type: "success", message: "Status updated successfully." })
-      setEditMode(false);
-      return;
-    }
+  //   if (selectedStatusTypeId == value) {
+  //     PopUpMessage({ type: "success", message: "Status updated successfully." })
+  //     setEditMode(false);
+  //     return;
+  //   }
 
-    if (!dataObject) return;
-    setLoading(true);
+  //   if (!dataObject) return;
+  //   setLoading(true);
 
-    const user = getUserFromLocalStorage();
-    dataSource
-      .custom({
-        method: API_METHODS.POST,
-        resource: `${parentDataObject?.objectType}${API_OPERATIONS.ACTION}`,
-        body: {
-          ids: [parentDataObject?.id],
-          action_name: "SetStatusAction",
-          object_type: parentDataObject?.objectType,
-          params: { status: selectedStatusTypeId, user_id: user?.id },
-        },
-      })
-      .then(() => {
-        setEditMode(false);
-        PopUpMessage({ type: "success", message: "Status updated successfully." });
-        setValue(selectedStatusTypeId);
-        setHasChanged(true);
-      })
-      .catch((error: any) => {
-        PopUpMessage({ type: "error", message: `Error saving: ${error.message}` });
-        setEditMode(false);
-      })
-      .finally(() => {
-        setLoading(false)
-      });
-  };
+  //   const user = getUserFromLocalStorage();
+  //   dataSource
+  //     .custom({
+  //       method: API_METHODS.POST,
+  //       resource: `${parentDataObject?.objectType}${API_OPERATIONS.ACTION}`,
+  //       body: {
+  //         ids: [parentDataObject?.id],
+  //         action_name: "SetStatusAction",
+  //         object_type: parentDataObject?.objectType,
+  //         params: { status: selectedStatusTypeId, user_id: user?.id },
+  //       },
+  //     })
+  //     .then(() => {
+  //       setEditMode(false);
+  //       PopUpMessage({ type: "success", message: "Status updated successfully." });
+  //       setValue(selectedStatusTypeId);
+  //       setHasChanged(true);
+  //     })
+  //     .catch((error: any) => {
+  //       PopUpMessage({ type: "error", message: `Error saving: ${error.message}` });
+  //       setEditMode(false);
+  //     })
+  //     .finally(() => {
+  //       setLoading(false)
+  //     });
+  // };
 
-  const onSave = () => {
-    // prevent saving blank values
-    if (typeof value === "string" && value.trim() === "") {
-      PopUpMessage({
-        type: "error",
-        message: "Value cannot be blank.",
-      });
-      return;
-    }
+  // const onSave = () => {
+  //   // prevent saving blank values
+  //   if (typeof value === "string" && value.trim() === "") {
+  //     PopUpMessage({
+  //       type: "error",
+  //       message: "Value cannot be blank.",
+  //     });
+  //     return;
+  //   }
 
-    if (!dataObject) return;
-    setLoading(true);
-    dataSource
-      ?.upsert({
-        objectType: dataObject?.objectType,
-        payload: [
-          {
-            type: dataObject?.objectType,
-            id: dataObject?.id,
-            attributes: {
-              [props.field]: value,
-            },
-          },
-        ],
-      })
-      .then(() => {
-        setEditMode(false);
-        setPrevValue(value);
-        PopUpMessage({
-          type: "success",
-          message: "Value saved successfully.",
-        });
-      })
-      .catch((error: any) => {
-        PopUpMessage({
-          type: "error",
-          message: `Error saving: ${error.message}`,
-        });
-        // revert to previous value on error
-        setValue(prevValue);
-        setEditMode(false);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
+  //   if (!dataObject) return;
+  //   setLoading(true);
+  //   dataSource
+  //     ?.upsert({
+  //       objectType: dataObject?.objectType,
+  //       payload: [
+  //         {
+  //           type: dataObject?.objectType,
+  //           id: dataObject?.id,
+  //           attributes: {
+  //             [props.field]: value,
+  //           },
+  //         },
+  //       ],
+  //     })
+  //     .then(() => {
+  //       setEditMode(false);
+  //       setPrevValue(value);
+  //       PopUpMessage({
+  //         type: "success",
+  //         message: "Value saved successfully.",
+  //       });
+  //     })
+  //     .catch((error: any) => {
+  //       PopUpMessage({
+  //         type: "error",
+  //         message: `Error saving: ${error.message}`,
+  //       });
+  //       // revert to previous value on error
+  //       setValue(prevValue);
+  //       setEditMode(false);
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // }
 
   if (editMode) {
-    <CellEditable />;
+    <CellEditable
+      {...props}
+      value={value}
+      setValue={setValue}
+      onCancel={onCancel}
+    />
   }
 
   // If the value is an array we produce separate CellDisplays for each item in the array.
