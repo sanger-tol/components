@@ -161,28 +161,7 @@ export function DataPoint(props: PDataPoint) {
   }
 
   if (editMode) {
-    if (actsAs === "status" && dataObject) {
-      return (
-        <CellEditableStatus
-          {...props}
-          value={value}
-          loading={loading}
-          statusTypeObjectType={dataObject.objectType}
-          onCancel={onCancel}
-          onSave={onSaveStatus}
-        />
-      );
-    }
-    return (
-      <CellEditable
-        {...props}
-        value={value}
-        loading={loading}
-        onChange={onChange}
-        onCancel={onCancel}
-        onSave={onSave}
-      />
-    );
+    <CellEditable />;
   }
 
   // If the value is an array we produce separate CellDisplays for each item in the array.

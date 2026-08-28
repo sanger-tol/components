@@ -9,21 +9,10 @@ import { SelectPicker } from "rsuite";
 import {
   Button,
   BUTTONS,
-  PCellDisplay,
+  IDataObject,
+  PCellEditable,
 } from "../..";
 
-
-export interface PCellEditableStatus extends PCellDisplay {
-  loading: boolean;
-  floatingControls?: boolean;
-  /**
-   * The object type of the status-type lookup table,
-   * e.g. "metagenome_status_type".
-   */
-  statusTypeObjectType: string;
-  onCancel: () => void;
-  onSave: (selectedStatusTypeId: string) => void;
-}
 
 /**
  * Editable cell for fields with `acts_as === "status"`.
@@ -31,16 +20,18 @@ export interface PCellEditableStatus extends PCellDisplay {
  * as a searchable dropdown. On save, calls `onSave` with the selected ID
  * so the caller can dispatch the appropriate action.
  */
-export function CellEditableStatus(props: PCellEditableStatus) {
+export function CellEditableStatus(props: PCellEditable) {
   const {
     dataSource,
+    dataObject,
     loading,
     floatingControls,
-    statusTypeObjectType,
     value,
     onCancel,
     onSave,
   } = props;
+
+  const statusTypeObjectType = (dataObject as IDataObject).objectType
 
   const initialValue = typeof value === "string" ? value : null;
   const [selected, setSelected] = useState<string | null>(initialValue);
