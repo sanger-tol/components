@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "http://components-api:80",
   "dependencies": {
-    "@tol/tol-ui": "4.0.8",
+    "@tol/tol-ui": "4.0.13",
     "@capacitor/browser": "^8.0.4",
     "@capacitor/core": "^8.4.0",
     "react": "18.3.1",
@@ -25,18 +25,18 @@
     "@vitejs/plugin-react": "4.7.0",
     "@vitejs/plugin-basic-ssl": "1.2.0",
     "@testing-library/react": "12.1.5",
-    "@testing-library/user-event": "14.6.1",
+    "@testing-library/user-event": "14.6.6",
     "@testing-library/jest-dom": "5.17.0",
     "lorem-ipsum": "2.0.10",
-    "@uiw/react-md-editor": "4.1.1",
+    "@uiw/react-md-editor": "4.1.2",
     "rehype-sanitize": "6.0.0",
-    "rsuite": "5.75.0"
+    "rsuite": "5.83.4"
   },
   "resolutions": {
-    "styled-components": "~6.4.0",
+    "styled-components": "~6.5.0",
     "filelist": "1.0.6",
-    "sass": "1.77.0",
-    "@eslint-community/eslint-utils": "4.9.1"
+    "sass": "1.103.1",
+    "@eslint-community/eslint-utils": "4.10.1"
   },
   "scripts": {
     "start": "vite",
