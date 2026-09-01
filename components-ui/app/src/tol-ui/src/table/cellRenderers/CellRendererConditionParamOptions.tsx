@@ -80,20 +80,23 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   } = props;
 
   /*
-   * A mock zone with an arbitrary object type, used to house two components.
-   * There is one component for each tab, and is used to store the filter from that tab.
-   * The two filters making up the condition are stored within this zone.
-   * (If you need to retrieve them, use the `getCondition` helper)
+   * Mock zones with arbitrary object types, used to store the filters for each tab
+   * (If you need to retrieve both filters, use the `getCondition` helper)
    */
   const currentFilterComponentId = "filterForCurrent";
   const originFilterComponentId = "filterForOrigin";
-  const [filterZone, setFilterZone] = useState<IZone>(defineZoneWithComponentList(
+  const [currentFilterZone, setCurrentFilterZone] = useState<IZone>(defineZoneWithComponentList(
     "dummy_object_type",
     [
       {
         id: currentFilterComponentId,
         filter: (renderer?.props?.[paramName!] as IDataPointConditionProp | undefined)?.filterForCurrent || createEmptyFilter()
-      },
+      }
+    ]
+  ));
+  const [originFilterZone, setOriginFilterZone] = useState<IZone>(defineZoneWithComponentList(
+    "dummy_object_type",
+    [
       {
         id: originFilterComponentId,
         filter: (renderer?.props?.[paramName!] as IDataPointConditionProp | undefined)?.filterForOrigin || createEmptyFilter()
@@ -103,21 +106,26 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
 
   const getCondition = (): IDataPointConditionProp => ({
     filterForCurrent: deepCopy(
-      filterZone.children[currentFilterComponentId].filter ?? createEmptyFilter()
+      currentFilterZone.children[currentFilterComponentId].filter ?? createEmptyFilter()
     ),
     filterForOrigin: deepCopy(
-      filterZone.children[originFilterComponentId].filter ?? createEmptyFilter()
+      originFilterZone.children[originFilterComponentId].filter ?? createEmptyFilter()
     ),
   });
 
-  const updateFilterZone = (currentFilters: IFilter, originFilters: IFilter) => {
-    setFilterZone(defineZoneWithComponentList(
+  const updateFilterZones = (currentFilters: IFilter, originFilters: IFilter) => {
+    setCurrentFilterZone(defineZoneWithComponentList(
       "dummy_object_type",
       [
         {
           id: currentFilterComponentId,
           filter: currentFilters,
-        },
+        }
+      ]
+    ));
+    setOriginFilterZone(defineZoneWithComponentList(
+      "dummy_object_type",
+      [
         {
           id: originFilterComponentId,
           filter: originFilters,
@@ -127,7 +135,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   }
   // Needed for the BottomButtons. Either adding the parameter or going back means that the filter
   // making up the parameter should be cleared (it gets tied to the renderer somehow!)
-  const resetFilterZone = () => updateFilterZone(createEmptyFilter(), createEmptyFilter());
+  const resetFilterZones = () => updateFilterZones(createEmptyFilter(), createEmptyFilter());
 
   // The attributes we're filtering on for both tabs.
   // The initial values are set in the useEffect below.
@@ -164,7 +172,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       // Set the states using this information
       setAttributesSelectedForCurrent(Object.keys(storedFiltersForCurrent.and_ ?? {}) || []);
       setAttributesSelectedForOrigin(Object.keys(storedFiltersForOrigin.and_ ?? {}) || []);
-      updateFilterZone(storedFiltersForCurrent, storedFiltersForOrigin);
+      updateFilterZones(storedFiltersForCurrent, storedFiltersForOrigin);
 
     } else { // Set all the states to be blank
       setAttributesSelectedForCurrent([]);
@@ -180,10 +188,10 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       JSON.stringify(previousFiltersForCurrent) !== JSON.stringify(condition.filterForCurrent)
       || JSON.stringify(previousFiltersForOrigin) !== JSON.stringify(condition.filterForOrigin)
     );
-  }, [filterZone]);
+  }, [currentFilterZone, originFilterZone]);
 
   const handleBack = () => {
-    resetFilterZone();
+    resetFilterZones();
     setRenderer(rendererBeforeChanges);
     setHasPendingChanges(false);
     goBack();
@@ -206,7 +214,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
 
     setRenderer({ ...renderer! });
     setHasPendingChanges(false);
-    resetFilterZone();
+    resetFilterZones();
     goBack();
   };
 
@@ -248,8 +256,8 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
           <CellRendererConditionConfigurer
             objectType={objectType}
             dataSource={dataSource}
-            filterZone={filterZone}
-            setFilterZone={setFilterZone}
+            filterZone={currentFilterZone}
+            setFilterZone={setCurrentFilterZone}
             componentId={currentFilterComponentId}
             selectedAttributes={attributesSelectedForCurrent}
             setSelectedAttributes={setAttributesSelectedForCurrent}
@@ -259,8 +267,8 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
           <CellRendererConditionConfigurer
             objectType={originObjectType}
             dataSource={dataSource}
-            filterZone={filterZone}
-            setFilterZone={setFilterZone}
+            filterZone={originFilterZone}
+            setFilterZone={setOriginFilterZone}
             componentId={originFilterComponentId}
             selectedAttributes={attributesSelectedForOrigin}
             setSelectedAttributes={setAttributesSelectedForOrigin}
