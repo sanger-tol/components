@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { ReactNode } from "react";
 import { Nav, NavDropdown } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import {
   TsDataSource,
   PRIVILEGE,
@@ -375,7 +376,7 @@ export function collectNavigationItems(
       navButtons.push(
         <NavDropdown
           key={navItemName}
-          title={navItem.icon ? <FontAwesomeIcon icon={navItem.icon} size='2x' /> : navItemName}
+          title={navItem.icon ? <FontAwesomeIcon icon={navItem.icon as IconProp} size='2x' /> : navItemName}
         >
           {collectNavigationItems(navItem.pages, mobileOptions)}
         </NavDropdown>
@@ -390,8 +391,7 @@ export function collectNavigationItems(
           href={destination}
           target={target}
         >
-          {/*@ts-ignore*/}
-          {navItem.icon ? <FontAwesomeIcon icon={navItem.icon} size='2x' /> : navItemName}
+          {navItem.icon ? <FontAwesomeIcon icon={navItem.icon as IconProp} size='2x' /> : navItemName}
         </Nav.Link>
       )
     }
