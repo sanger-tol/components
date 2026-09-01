@@ -22,6 +22,8 @@ import {
   USER,
   PRE_DEFINED_FORM_TYPES,
   FORM_MESSAGE_TEXT,
+  Button,
+  useLogout,
 } from "../..";
 import type {
   IUserProfileAdditionalConfigs,
@@ -29,6 +31,7 @@ import type {
   IUserProfileFormData,
   TUserProfileFormDataOrNull,
 } from "../..";
+
 
 export interface PUserProfile {
   /**
@@ -41,6 +44,10 @@ export interface PUserProfile {
    * including additional fields, their positions, and field mappings.
    */
   additionalConfigs?: IUserProfileAdditionalConfigs;
+  /**
+   * Optional boolean flag to indicate whether to show a logout button in the profile page.
+   */
+  logout?: boolean;
 }
 
 export function UserProfile(props: PUserProfile) {
@@ -50,6 +57,7 @@ export function UserProfile(props: PUserProfile) {
       additionalConfigArrayPositions,
       additionalFieldMappings,
     } = {},
+    logout
   } = props;
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
@@ -73,6 +81,7 @@ export function UserProfile(props: PUserProfile) {
   });
   const history = useHistory();
   const location = useLocation<{ from?: string }>();
+  const handleLogout = useLogout();
 
   const baseConfig =
     props.baseConfig ?? BASE_PROFILE_FORM_CONFIG(hasUnsavedChanges);
@@ -130,5 +139,20 @@ export function UserProfile(props: PUserProfile) {
     },
   ];
 
-  return <Widgets components={components} />;
+  return (
+    <div>
+      <Widgets components={components} />
+      {logout && (
+        <div style={{ marginTop: "10vh"}}>
+          <Button
+            text="Logout"
+            onClick={handleLogout}
+            type="error"
+            position='center'
+            icon='fa-solid fa-right-from-bracket'
+          />
+        </div>
+      )}
+    </div>
+  );
 }
