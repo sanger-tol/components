@@ -6,6 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode } from "react";
 import { Nav, NavDropdown } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import {
   TsDataSource,
   PRIVILEGE,
@@ -24,6 +26,7 @@ import {
   INavDestination,
   formatPath,
   API_PATHS,
+  IMobileOptions,
 } from "..";
 
 
@@ -136,11 +139,34 @@ export function clearUnusedLocalStorage() {
  */
 export function generateRoutePath(
   displayName: string,
-  path: IPageElement | undefined,
+  path?: IPageElement | undefined,
   routePrefix: string = "",
 ): string {
   const mainRoute: string = isRoute(path) ? path.route! : formatPath(displayName);
   return routePrefix ? `/${routePrefix}${mainRoute}` : mainRoute;
+}
+
+/**
+ * Resolves the routes for navigation items that should hide the navigation bar.
+ *
+ * @param hideNavFor - Navigation item names whose routes should hide the navigation bar.
+ * @param navigation - Navigation configuration containing the resolved navigation items.
+ *
+ * @returns An array of routes that should hide the navigation bar.
+ */
+export function getHideNavForRoutes(
+  hideNavFor: string[] | undefined,
+  navigation: TNavConfig,
+): string[] {
+  return hideNavFor
+    ?.map((id) => {
+      if (!Object.prototype.hasOwnProperty.call(navigation.data, id)) return undefined;
+      if (isRoute(navigation.data[id].path)) return navigation.data[id].path.route;
+
+      // Accounts for if path isn't set in the config
+      return generateRoutePath(id);
+    })
+    .filter((route): route is string => route !== undefined) ?? [];
 }
 
 /**
@@ -194,6 +220,10 @@ export function normaliseNavConfig(
     (id) => Object.prototype.hasOwnProperty.call(result.data, id)
   );
 
+  if (source.hideNavFor) {
+    result.hideNavFor = getHideNavForRoutes(source.hideNavFor, result);
+  }
+
   return result;
 }
 
@@ -214,7 +244,8 @@ export function mergeNavConfigs(
       ...baseConfig?.data,
       ...additionalConfig?.data,
     },
-    order: [...baseConfig?.order ?? [], ...additionalConfig?.order ?? []]
+    order: [...baseConfig?.order ?? [], ...additionalConfig?.order ?? []],
+    hideNavFor: [...(baseConfig?.hideNavFor ?? []), ...(additionalConfig?.hideNavFor ?? [])],
   };
   return mergedConfig;
 }
@@ -328,12 +359,15 @@ export function getNavDestination(path: unknown): INavDestination {
  * Iterates over `navigation.order` to maintain the specified order of items and to control what can be seen in the nav.
  *
  * @param navigation - Navigation configuration to render. If `undefined`, returns an empty array.
+ * @param mobileOptions - Mobile navbar options. Optional.
  * 
  * @returns An array of React nodes representing navigation links and dropdowns in the configured order.
  */
-export function collectNavigationItems(navigation: TNavConfig | undefined): ReactNode[] {
+export function collectNavigationItems(
+  navigation: TNavConfig | undefined,
+  mobileOptions?: IMobileOptions
+): ReactNode[] {
   const navButtons: ReactNode[] = [];
-
   navigation?.order.map((navItemName: string) => {
     const navItem = navigation.data[navItemName];
 
@@ -342,9 +376,9 @@ export function collectNavigationItems(navigation: TNavConfig | undefined): Reac
       navButtons.push(
         <NavDropdown
           key={navItemName}
-          title={navItemName}
+          title={navItem.icon ? <FontAwesomeIcon icon={navItem.icon as IconProp} size='2x' /> : navItemName}
         >
-          {collectNavigationItems(navItem.pages)}
+          {collectNavigationItems(navItem.pages, mobileOptions)}
         </NavDropdown>
       )
       // Single page nav item
@@ -357,7 +391,7 @@ export function collectNavigationItems(navigation: TNavConfig | undefined): Reac
           href={destination}
           target={target}
         >
-          {navItemName}
+          {navItem.icon ? <FontAwesomeIcon icon={navItem.icon as IconProp} size='2x' /> : navItemName}
         </Nav.Link>
       )
     }
