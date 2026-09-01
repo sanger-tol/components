@@ -58,7 +58,6 @@ export function CellRendererConditionConfigurer(props: PCellRendererConditionCon
       <RemoteFilters
         objectType={objectType}
         dataSource={dataSource}
-        utilityBarConfig={undefined}
         zone={filterZone}
         setZone={setFilterZone}
         componentId={componentId}
