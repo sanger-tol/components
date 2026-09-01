@@ -38,8 +38,6 @@ export interface PCellRendererConditionParamOptions extends IRemoteTarget {
    * which may or may not be the same as `objectType` (the object type of this data point)
    */
   originObjectType: string;
-  /** The relationship of `objectType` from `originObjectType` */
-  relationshipFromOrigin: string;
   /**
    * A reference to the cell renderer being configured
    */
@@ -72,7 +70,6 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   const {
     paramName,
     originObjectType,
-    relationshipFromOrigin,
     renderer,
     setRenderer,
     hasPendingChanges,
