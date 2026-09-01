@@ -55,6 +55,10 @@ export interface IPage {
    * The route or link for the page
    */
   path?: TPagePath;
+  /**
+   * Optional icon for the page, e.g. a Font Awesome class name
+   */
+  icon?: string;
 }
 
 /**
@@ -129,11 +133,11 @@ export interface INavDestination {
 /**
  * Configuration for mobile navbar.
  */
-export interface IMobileNavConfig {
+export interface IMobileOptions {
   /**
-   * Key value pair of nav item display name and the font awesome icon name (similar to buttons).
+   * Boolean to enable the mobile first navigation
    */
-  icons: Record<string, string>;
+  enabled: boolean;
   /**
    * Boolean to enable login on the navbar
    */

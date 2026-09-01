@@ -16,7 +16,7 @@ import {
   fetchEnvironment,
   TNavConfig,
   API_PATHS,
-  IMobileNavConfig,
+  IMobileOptions,
   NavBar,
 } from "..";
 
@@ -33,7 +33,7 @@ export interface PNavigation extends PSmartApp, RouteComponentProps {
   /**
    * Mobile navigation configuration, uses standard nav bar if not set.
   */
-  mobileNavConfig?: IMobileNavConfig;
+  mobileOptions?: IMobileOptions;
 }
 
 /**
@@ -44,7 +44,7 @@ function Navigation(props: PNavigation) {
   const {
     navigation,
     profileNavigation,
-    mobileNavConfig,
+    mobileOptions,
     brand,
     register,
     login,
@@ -123,7 +123,7 @@ function Navigation(props: PNavigation) {
       customCallbackUrl={customCallbackUrl}
       user={user}
       onLogout={onLogout}
-      mobileNavConfig={mobileNavConfig}
+      mobileOptions={mobileOptions}
     />
   );
 }

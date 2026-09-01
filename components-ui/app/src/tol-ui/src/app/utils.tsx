@@ -25,7 +25,7 @@ import {
   INavDestination,
   formatPath,
   API_PATHS,
-  IMobileNavConfig,
+  IMobileOptions,
 } from "..";
 
 
@@ -358,13 +358,13 @@ export function getNavDestination(path: unknown): INavDestination {
  * Iterates over `navigation.order` to maintain the specified order of items and to control what can be seen in the nav.
  *
  * @param navigation - Navigation configuration to render. If `undefined`, returns an empty array.
- * @param mobileNavConfig - Mobile navigation configuration. Optional.
+ * @param mobileOptions - Mobile navbar options. Optional.
  * 
  * @returns An array of React nodes representing navigation links and dropdowns in the configured order.
  */
 export function collectNavigationItems(
   navigation: TNavConfig | undefined,
-  mobileNavConfig?: IMobileNavConfig
+  mobileOptions?: IMobileOptions
 ): ReactNode[] {
   const navButtons: ReactNode[] = [];
   navigation?.order.map((navItemName: string) => {
@@ -375,9 +375,9 @@ export function collectNavigationItems(
       navButtons.push(
         <NavDropdown
           key={navItemName}
-          title={navItemName}
+          title={navItem.icon ? <FontAwesomeIcon icon={navItem.icon} size='2x' /> : navItemName}
         >
-          {collectNavigationItems(navItem.pages, mobileNavConfig)}
+          {collectNavigationItems(navItem.pages, mobileOptions)}
         </NavDropdown>
       )
       // Single page nav item
@@ -391,7 +391,7 @@ export function collectNavigationItems(
           target={target}
         >
           {/*@ts-ignore*/}
-          {mobileNavConfig?.icons[navItemName] ? <FontAwesomeIcon icon={mobileNavConfig.icons[navItemName]} size='2x' /> : navItemName}
+          {navItem.icon ? <FontAwesomeIcon icon={navItem.icon} size='2x' /> : navItemName}
         </Nav.Link>
       )
     }

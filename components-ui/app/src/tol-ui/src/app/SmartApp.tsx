@@ -48,7 +48,7 @@ import {
   IUserProfileAdditionalConfigs,
   AppContextProvider,
   PFooter,
-  IMobileNavConfig,
+  IMobileOptions,
 } from "..";
 
 export interface PSmartApp {
@@ -108,7 +108,7 @@ export interface PSmartApp {
   /**
    * Flag to set mobile first navigation
    */
-  mobileNavConfig?: IMobileNavConfig;
+  mobileOptions?: IMobileOptions;
   /**
    * Optional configuration for the user profile form, including base and additional configs.
    * If not provided, the default configuration will be used.

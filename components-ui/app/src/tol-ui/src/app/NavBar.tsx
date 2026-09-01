@@ -17,7 +17,7 @@ import {
   TNavConfig,
   TNavBrand,
   IUser,
-  IMobileNavConfig,
+  IMobileOptions,
 } from "..";
 
 export interface PNavBar {
@@ -64,12 +64,12 @@ export interface PNavBar {
   /**
    * Optional configuration for mobile navigation.
    */
-  mobileNavConfig?: IMobileNavConfig;
+  mobileOptions?: IMobileOptions;
 }
 
 /**
  * The NavBar component renders the navigation bar, switching between a desktop and mobile
- * layout depending on whether `mobileNavConfig` is set.
+ * layout depending on whether `mobileOptions` is set.
  */
 export function NavBar(props: PNavBar) {
   const {
@@ -83,13 +83,13 @@ export function NavBar(props: PNavBar) {
     customCallbackUrl,
     user,
     onLogout,
-    mobileNavConfig,
+    mobileOptions,
   } = props;
 
-  const isMobile = !!mobileNavConfig;
-  const showRegister = register && tokenHasExpired() && (!isMobile || mobileNavConfig.register);
-  const showLogin = login && tokenHasExpired() && (!isMobile || mobileNavConfig.login);
-  const showProfile = login && user && (!isMobile || mobileNavConfig.profile);
+  const isMobile = mobileOptions?.enabled ?? false;
+  const showRegister = register && tokenHasExpired() && (!isMobile || mobileOptions?.register);
+  const showLogin = login && tokenHasExpired() && (!isMobile || mobileOptions?.login);
+  const showProfile = login && user && (!isMobile || mobileOptions?.profile);
 
   return (
     <div className={"tol-navigation" + (isMobile ? " tol-navigation-mobile" : "")}>
@@ -116,7 +116,7 @@ export function NavBar(props: PNavBar) {
           )}
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            {collectNavigationItems(navigation, mobileNavConfig)}
+            {collectNavigationItems(navigation, mobileOptions)}
             {showRegister ? (
               <Nav.Link className="nav-right" key="Register">
                 <Login
