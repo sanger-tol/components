@@ -11,17 +11,20 @@ import {
   CELL_RENDERER_PROP_TAG_START,
   CELL_RENDERER_SPREAD_OPERATOR,
   getFieldByName,
+} from "../..";
+import type {
+  IDataPointConditionProp,
   IFilter,
   TDataObjectOrNull,
 } from "../..";
 
-export function processConditionToBoolean(
-  conditionObj: IFilter,
-  dataObject: TDataObjectOrNull,
+export function processFilterToBoolean(
+  filterObj: IFilter,
+  dataObject: TDataObjectOrNull
 ) {
-  if (Object.keys(conditionObj.and_ ?? {}).length === 0) return false;
+  if (Object.keys(filterObj.and_ ?? {}).length === 0) return false;
   for (const [fieldSystemName, conditions] of Object.entries(
-    conditionObj.and_!,
+    filterObj.and_!,
   )) {
     let fieldValue = getFieldByName(dataObject, fieldSystemName);
     if (dataObject && fieldValue !== undefined && fieldValue !== null) {
@@ -69,6 +72,32 @@ export function processConditionToBoolean(
     }
   }
   return true;
+}
+
+export function processConditionToBoolean(
+  conditionObj: IDataPointConditionProp,
+  dataObject: TDataObjectOrNull,
+  parentDataObject: TDataObjectOrNull,
+) {
+  const thereAreFiltersForBothObjects = (
+    (Object.keys(conditionObj.filterForCurrent.and_ ?? {}).length > 0) &&
+    (Object.keys(conditionObj.filterForOrigin.and_ ?? {}).length > 0)
+  );
+
+  const currentFiltersPass = processFilterToBoolean(conditionObj.filterForCurrent, dataObject);
+  const originFiltersPass = processFilterToBoolean(conditionObj.filterForOrigin, parentDataObject);
+
+  /*
+  Two use-cases:
+  1. Users who want to set one simple condition. In this case only the condition they have set
+     should need to pass. Whether it's on the current or origin object does not matter.
+  2. Users who need a condition on both object types. In this case both filters need to pass.
+  */
+  if (thereAreFiltersForBothObjects) {
+    return currentFiltersPass && originFiltersPass;
+  } else {
+    return currentFiltersPass || originFiltersPass;
+  }
 }
 
 /**
@@ -149,7 +178,7 @@ export function getCellRendererPropValue(
   field: string,
   value: any,
   prop: string,
-  propValue: string | IFilter,
+  propValue: string | IDataPointConditionProp,
   elementProps: Record<string, any>,
   dataObject: TDataObjectOrNull,
   parentDataObject: TDataObjectOrNull,
@@ -160,8 +189,12 @@ export function getCellRendererPropValue(
       CELL_RENDERER_PROP_ATTRIBUTE,
       (_, key) => processTagsToValues(key, field, value, dataObject, parentDataObject),
     );
-  } else if (typeof propValue === "object" && "and_" in propValue) {
-    elementProps[prop] = processConditionToBoolean(propValue, dataObject);
+  } else if (
+    typeof propValue === "object"
+    && "filterForCurrent" in propValue
+    && "filterForOrigin" in propValue
+  ) {
+    elementProps[prop] = processConditionToBoolean(propValue, dataObject, parentDataObject);
   } else {
     elementProps[prop] = propValue;
   }
