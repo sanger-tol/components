@@ -46,6 +46,7 @@ export * from "./map";
 export * from "./messaging";
 export * from "./interfaces";
 export * from "./overlays";
+export * from "./relationships";
 export * from "./services";
 export { retry } from "./services/http";
 export { clearExpiredToken } from "./services/auth";

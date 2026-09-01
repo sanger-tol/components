@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { TsDataSource, BOARD_ENTITIES } from "..";
-import type { IFieldMeta, PUtilityBar, IFilter, TComponentType, TTranslators } from "..";
+import type { IFieldMeta, PUtilityBar, IFilter, TComponentType, TTranslations } from "..";
 
 export interface TBoardEntityCore {
   /**
@@ -49,6 +49,11 @@ export interface IBoardFilter {
    * If true, the filter will not be applied to child entities.
    */
   filterExcludeIncoming?: boolean;
+  /**
+   * Whether this entity's filter applies only to itself.
+   * If true, the filter does not affect other entities in the hierarchy.
+   */
+  filterPassThrough?: boolean;
 }
 
 export interface IComponentConfig {
@@ -57,7 +62,6 @@ export interface IComponentConfig {
 
 export interface IComponent extends TBoardEntityCore, IBoardFilter {
   subFilter?: IFilter;
-  filterPassThrough?: boolean;
   component_type?: TComponentType;
   widget_type?: string;
 
@@ -75,20 +79,28 @@ export interface IComponent extends TBoardEntityCore, IBoardFilter {
 export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
   /**
    * The object type of the zone
-   * All components in a zone use this object type
    */
   object_type?: string;
   /**
    * The user ID of the board owner, used to determine permissions for editing the board.
-   * Note: Not required for dev pages when using useZone
    */
   data_source_instance_id?: string;
+  /**
+   * The data source instance for the zone, used to fetch data for the zone and its components.
+   */
   dataspace?: TsDataSource;
+  /**
+   * The API details for the data source instance, used to fetch data for the zone and its components.
+   */
   ui_api_details?: IDBDataSourceInstanceApiDetails;
   /**
-   * Custom translations for incoming filters, used at the zone level.
+   * Whether automatic relationship translations are enabled for the zone.
    */
-  translations?: TTranslators;
+  relationshipTranslation?: boolean;
+  /**
+   * Custom translations for specific attributes
+   */
+  attributeTranslations?: TTranslations;
 }
 
 export interface IView extends IBoardParentEntity<IZone> {}

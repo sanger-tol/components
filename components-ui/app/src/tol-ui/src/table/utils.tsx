@@ -17,39 +17,39 @@ import {
   CELL_RENDERER_PROP_TAG_START,
   CELL_RENDERER_SPREAD_OPERATOR,
   COLLAPSED_ROW_MAX_HEIGHT,
-  DataPoints,
-  DEFAULT_ROW_HEIGHT,
-  IFieldMeta,
-  IUser,
-  MESSAGE_TYPE,
-  PopUpMessage,
-  TOL_DS,
-  TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
-  TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
   colours,
   copyToClipboard,
+  DataPoints,
   deepCopy,
+  DEFAULT_ROW_HEIGHT,
   deleteComponentDiff,
   getFieldByName,
   getRelationshipNameByField,
   getRoleIdsByNames,
-  isRelationship,
+  IFieldMeta,
+  isRelationshipField,
+  IUser,
+  MESSAGE_TYPE,
   normaliseCaps,
+  PopUpMessage,
+  TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
+  TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
+  TOL_DS,
   updateComponentConfigAndUpsert,
 } from "..";
 import type {
-  IAttributeData,
+  IAttributeDescriptor,
   IComponent,
   IComponentConfig,
   IConfigDifferences,
   ICustomCellRenderers,
+  IDiffState,
   IFilter,
   ITableConfigHandlerContext,
   ITableConfigSave,
   ITableData,
   ITableDrawerSave,
   ITableRecord,
-  IDiffState,
   TCellHeights,
   TCellRenderer,
   TDataObjectListOrNull,
@@ -155,7 +155,7 @@ export async function getIsManyByField(
   return Object.fromEntries(entries);
 }
 
-function addDefaultCellRenderer(type: string): TCellRenderer {
+function addDefaultCellRenderer(type?: string): TCellRenderer {
   switch (type) {
     case "datetime":
       return { type: "datetime" };
@@ -164,7 +164,7 @@ function addDefaultCellRenderer(type: string): TCellRenderer {
   }
 }
 
-function addRemoteFilterType(type: string, cardinality: number) {
+function addRemoteFilterType(type?: string, cardinality?: number) {
   if (cardinality && cardinality < 50 && type === "str") return "multi";
   if (type === "double") return "float";
   return type;
@@ -185,7 +185,7 @@ function sortFieldsByRename(fieldMeta: IFieldMeta) {
 
 export function addDefaultsFromEntityMeta(
   key: string,
-  meta: IAttributeData,
+  meta: IAttributeDescriptor,
   fieldMeta: IFieldMeta,
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
@@ -193,7 +193,7 @@ export function addDefaultsFromEntityMeta(
     ...meta,
     cellRenderer: addDefaultCellRenderer(meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
-    isAttribute: isRelationship(key),
+    isAttribute: isRelationshipField(key),
     rename: meta.display_name || normaliseCaps(key),
     sort: true,
     type: meta.python_type,

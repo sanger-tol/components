@@ -12,7 +12,7 @@ import {
   BUTTONS,
   cellRendererParams,
   deepCopy,
-  generateDefaultFilter,
+  createEmptyFilter,
   defineZoneWithComponentList,
   isEmptyObject,
   Tabs,
@@ -95,21 +95,21 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
     [
       {
         id: currentFilterComponentId,
-        filter: (renderer?.props?.[paramName!] as IDataPointConditionProp | undefined)?.filterForCurrent || generateDefaultFilter()
+        filter: (renderer?.props?.[paramName!] as IDataPointConditionProp | undefined)?.filterForCurrent || createEmptyFilter()
       },
       {
         id: originFilterComponentId,
-        filter: (renderer?.props?.[paramName!] as IDataPointConditionProp | undefined)?.filterForOrigin || generateDefaultFilter()
+        filter: (renderer?.props?.[paramName!] as IDataPointConditionProp | undefined)?.filterForOrigin || createEmptyFilter()
       }
     ]
   ));
 
   const getCondition = (): IDataPointConditionProp => ({
     filterForCurrent: deepCopy(
-      filterZone.children[currentFilterComponentId].filter ?? generateDefaultFilter()
+      filterZone.children[currentFilterComponentId].filter ?? createEmptyFilter()
     ),
     filterForOrigin: deepCopy(
-      filterZone.children[originFilterComponentId].filter ?? generateDefaultFilter()
+      filterZone.children[originFilterComponentId].filter ?? createEmptyFilter()
     ),
   });
 
@@ -130,7 +130,7 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   }
   // Needed for the BottomButtons. Either adding the parameter or going back means that the filter
   // making up the parameter should be cleared (it gets tied to the renderer somehow!)
-  const resetFilterZone = () => updateFilterZone(generateDefaultFilter(), generateDefaultFilter());
+  const resetFilterZone = () => updateFilterZone(createEmptyFilter(), createEmptyFilter());
 
   // The attributes we're filtering on for both tabs.
   // The initial values are set in the useEffect below.
@@ -146,8 +146,8 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
   // Save a copy of this condition before any changes have been made,
   // which can be used to determine whether there are pending changes.
   const conditionBeforeChanges = rendererBeforeChanges?.props?.[paramName] as IDataPointConditionProp | undefined;
-  const previousFiltersForCurrent = conditionBeforeChanges?.filterForCurrent ?? generateDefaultFilter();
-  const previousFiltersForOrigin = conditionBeforeChanges?.filterForOrigin ?? generateDefaultFilter();
+  const previousFiltersForCurrent = conditionBeforeChanges?.filterForCurrent ?? createEmptyFilter();
+  const previousFiltersForOrigin = conditionBeforeChanges?.filterForOrigin ?? createEmptyFilter();
 
   // Runs upon opening the second page of the modal (to configure a new condition);
   // Checks that the condition exists and has a value, and stops the condition filters spreading across all conditions.
@@ -159,10 +159,10 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       const storedCondition = renderer!.props![paramName!];
       const storedFiltersForCurrent = typeof storedCondition == "object"
         ? (storedCondition as IDataPointConditionProp).filterForCurrent
-        : generateDefaultFilter();
+        : createEmptyFilter();
       const storedFiltersForOrigin = typeof storedCondition == "object"
         ? (storedCondition as IDataPointConditionProp).filterForOrigin
-        : generateDefaultFilter();
+        : createEmptyFilter();
 
       // Set the states using this information
       setAttributesSelectedForCurrent(Object.keys(storedFiltersForCurrent.and_ ?? {}) || []);

@@ -17,11 +17,10 @@ import {
   TitleTooltip,
   BUTTONS,
   useBoardState,
-  getSiblingBoardEntity,
   mergeFilters,
 } from "../..";
 import type { IZone, IView, PButton, PBoard } from "../..";
-import { translateZoneAboveFilter } from "./utils";
+import { getTranslatorZone, translateZoneAboveFilter } from "./utils";
 
 
 export interface PZone extends PBoard {
@@ -49,27 +48,36 @@ export function Zone(props: PZone) {
   const [confirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [openFilters, setOpenFilters] = useState<boolean>(false);
-  const [title, setTitle] = useState<string|undefined>(zone?.title);
+  const [title, setTitle] = useState<string | undefined>(zone?.title);
   const [translatedFilterReady, setTranslatedFilterReady] = useState<boolean>(false);
 
   const { object_type, dataspace, filter } = zone;
-  const zoneAbove = getSiblingBoardEntity(id, view, -1) as IZone;
+
+  // Find the first zone above that doesn't have filterPassThrough enabled
+  const zoneAbove = getTranslatorZone(id, view);
+
+  // Translation is only possible if the zone above is in the same dataspace as this zone
+  const zonesMatchDataspace =
+    zoneAbove?.dataspace?.getDataSourceInstanceId() === zone.dataspace?.getDataSourceInstanceId();
 
   useEffect(() => {
     (async () => {
-      await updateTranslatedFilter();
-      setTranslatedFilterReady(true);
+      await updateTranslatedFilter()
+        .then(() => setTranslatedFilterReady(true));
+
     })();
   }, [
     zoneAbove,
     zone.filterExcludeIncoming,
+    zone.filterPassThrough,
     zone.defaultFilter,
-    zone.translations,
+    zone.relationshipTranslation,
+    zone.attributeTranslations,
     editMode
   ]);
 
   const updateTranslatedFilter = async () => {
-    if (zoneAbove) {
+    if (zoneAbove && zonesMatchDataspace) {
       zone.filter = mergeFilters(
         await translateZoneAboveFilter(zone, zoneAbove),
         zone.defaultFilter
@@ -223,6 +231,7 @@ export function Zone(props: PZone) {
         setOpen={setOpenFilters}
         zone={zone}
         setZone={setZone}
+        aboveZone={zoneAbove!}
       />
     </div>
   );

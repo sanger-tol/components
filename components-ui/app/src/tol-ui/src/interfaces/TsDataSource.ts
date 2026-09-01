@@ -138,43 +138,8 @@ export interface ISourceDataObject extends IDataObject, IJsonApiDataExtra {
   __sourceId: string;
 }
 
-export interface IAttributeDescriptor {
-  authoritative: boolean;
-  available_on_relationships: boolean;
-  cardinality?: number;
-  description?: string;
-  display_name?: string;
-  python_type?: string;
-  source?: string;
-}
-
 export type TDataObjectOrNull = IDataObject | null;
 export type TDataObjectListOrNull = TDataObjectOrNull[] | null;
 
 export type TCursorSearchAfterOrNull = string[] | null;
 export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null
-
-/**
- * A lookup value for a relationship path between object types.
- */
-export type IRelationshipPathValue = {
-  /**
-   * The relationship path from the source to the target object type.
-   */
-  paths: Set<string>;
-};
-
-/**
- * A lookup table for relationship paths between object types.
- */
-export type TRelationshipPaths = {
-  /**
-   * The source object type for the relationship path.
-   */
-  [sourceObjectType: string]: {
-    /**
-     * The target object type for the relationship path.
-     */
-    [targetObjectType: string]: IRelationshipPathValue;
-  };
-};

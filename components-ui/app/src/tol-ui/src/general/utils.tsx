@@ -12,7 +12,8 @@ import {
   PLATE_DIMENSIONS,
   RELATIONSHIP_SEPARATOR,
   getFieldByName,
-  generateDefaultFilter,
+  createEmptyFilter,
+  NoneValue,
 } from "..";
 import type {
   IEntityMeta,
@@ -86,7 +87,7 @@ export function appendKeywordIfNeeded(field: string): string {
   return field.startsWith("calc_") ? field : `${field}.keyword`;
 }
 
-export function normaliseCaps(name: string, prefix?: string) {
+export function normaliseCaps(name?: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
   if (prefix && name === "id") return normaliseCaps(prefix) + " ID";
@@ -340,7 +341,7 @@ export function generatePlateData(
     const digits = wellPosition.match(/[0-9]/g);
     wellHoverAttributeKeys.forEach((element) => {
       const displayName =
-        entityMeta["flatAttributes"][objectType][element].display_name;
+        entityMeta.flatAttributes[objectType][element].display_name!;
       wellData[displayName] = getFieldByName(obj, element);
     });
     data[ALPHABET.indexOf(letter)][Number(digits) - 1] = {
@@ -357,7 +358,7 @@ export function generateWellFilter(
   clickedOnWellId: string | undefined,
   wellPositionAttribute: string
 ) {
-  const localFilters = generateDefaultFilter();
+  const localFilters = createEmptyFilter();
   localFilters["and_"][wellPositionAttribute] = {
     eq: { value: clickedOnWellId },
   };
@@ -379,7 +380,7 @@ export function updateContents(contents: object) {
     }
     // make nulls show a faded 'None'
     if (value === null || value === undefined) {
-      contents[key] = <span className="tooltip-value-none">None</span>;
+      contents[key] = <NoneValue />;
     }
   }
   return contents;

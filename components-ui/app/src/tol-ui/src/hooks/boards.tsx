@@ -19,8 +19,8 @@ import {
   IView,
   IBoard,
   defineZoneWithComponentList,
-  TTranslators,
-  generateDefaultFilter,
+  TTranslations,
+  createEmptyFilter,
 } from "..";
 
 export function useZone(params: {
@@ -41,35 +41,37 @@ export function useZone(params: {
   } as IUseZoneMeta;
 }
 
-export function generateTranslatedFilter(
+export function generateAttributeTranslations(
   sourceZone: IZone,
-  translations: TTranslators,
+  attributeTranslations?: TTranslations,
   excludeAfterId?: string,
 ) {
   const sourceFilter = generateFilter(sourceZone, excludeAfterId, true);
-  const translatedFilter = generateDefaultFilter();
-  Object.entries(translations).map(([sourceAttribute, targetAttribute]) => {
-    if (sourceFilter?.and_ && sourceAttribute in sourceFilter.and_) {
-      translatedFilter.and_[targetAttribute] =
-        sourceFilter.and_[sourceAttribute];
-    }
-  });
+  const translatedFilter = createEmptyFilter();
+  if (attributeTranslations) {
+    Object.entries(attributeTranslations).map(([sourceAttribute, targetAttribute]) => {
+      if (sourceFilter?.and_ && sourceAttribute in sourceFilter.and_) {
+        translatedFilter.and_[targetAttribute] =
+          sourceFilter.and_[sourceAttribute];
+      }
+    });
+  }
   return translatedFilter;
 }
 
 export function useTranslator(params: {
   source: IUseZoneMeta;
   target: IUseZoneMeta;
-  translations: TTranslators;
+  translations: TTranslations;
   excludeAfterId?: string;
   defaultFilter?: IFilter;
 }) {
   const { source, target, translations, defaultFilter, excludeAfterId } =
     params;
-  const prevFilter: any = useRef(defaultFilter ? defaultFilter : generateDefaultFilter());
+  const prevFilter: any = useRef(defaultFilter ? defaultFilter : createEmptyFilter());
 
   useEffectUpdate(() => {
-    const translatedFilter = generateTranslatedFilter(
+    const translatedFilter = generateAttributeTranslations(
       source.zone,
       translations,
       excludeAfterId,

@@ -24,7 +24,7 @@ export interface PMenuItem {
   /**
    * Source identifier shown in the source tag
    */
-  source: string;
+  source?: string;
   /**
    * The attribute this menu item describes
    */

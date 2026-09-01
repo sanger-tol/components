@@ -339,15 +339,11 @@
 }
 
 .tol-toggle-option {
-  margin-bottom: 26px;
+  margin-bottom: var(--tol-spacing-md);
 
   .rs-toggle {
-    margin-right: 10px;
+    margin-right: var(--tol-spacing-sm);
   }
-}
-
-.tol-filter-translations-input {
-  margin-top: 10px;
 }
 
 .tol-read-only-filters {

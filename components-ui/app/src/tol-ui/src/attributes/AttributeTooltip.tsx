@@ -22,17 +22,19 @@ export function AttributeTooltip(props: PAttributeTooltip) {
     attributeId: field, element, objectType, dataSource, id, componentId, zone } = props;
 
   const [details, setDetails] = useState<Record<string, ReactNode>>({});
-  useEffect(() => {
-    let isMounted = true;
-    if (isMounted) {
-      setDetails({});
 
-      dataSource.getEntityMeta().then((meta) => {
-        const attribute = meta.flatAttributes[objectType][field];
+  useEffect(() => {
+    let cancelled = false;
+    setDetails({});
+
+    dataSource
+      .getAttributeDescriptor({ objectType, field }).then((attribute) => {
+        if (cancelled) return;
+
         if (attribute) {
           setDetails({
-            "Authorative": attribute.authorative,
-            "Available on Relationship": attribute.available_on_relationship,
+            "Authoritative": attribute.authoritative,
+            "Available on Relationships": attribute.available_on_relationships,
             "Cardinality": attribute.cardinality,
             "Description": attribute.description,
             "Display Name": attribute.display_name,
@@ -43,15 +45,15 @@ export function AttributeTooltip(props: PAttributeTooltip) {
                 className="tol-attribute-tooltip-source"
               />
             ),
-            "System Name": field
+            "System Name": field,
           });
         } else {
-          setDetails({"System Name": field});
+          setDetails({ "System Name": field });
         }
       });
-    }
+
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
   }, [dataSource, field, objectType]);
 
