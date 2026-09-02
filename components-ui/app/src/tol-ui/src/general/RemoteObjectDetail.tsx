@@ -9,22 +9,11 @@ import {
   TUtilityBarOrNull,
   IRemoteTarget,
   ObjectDetail,
-  IRemoteObjectDetailField
+  IRemoteObjectDetailField,
+  PObjectDetail
 } from "..";
 
-export interface PRemoteObjectDetail extends IRemoteTarget {
-  /**
-   * The height of the object detail component
-   */
-  height?: string;
-  /**
-   * ID of the Object to display
-   */
-  id: string;
-  /**
-   * Configuration for the utility bar
-   */
-  utilityBarConfig?: TUtilityBarOrNull;
+export interface PRemoteObjectDetail extends IRemoteTarget, Omit<PObjectDetail, "data" | "contents"> {
   /**
    * Configuration for the fields to display in the object detail
    */
@@ -53,7 +42,7 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
 
         const nextData: Record<string, ReactNode> = {};
         for (const field of fields) {
-          const value = object[field.attribute] || "None";
+          const value = object[field.attribute] ?? "None";
           nextData[field.displayName ?? field.attribute] = field.valueFilter
             ? field.valueFilter(object)
             : value;
