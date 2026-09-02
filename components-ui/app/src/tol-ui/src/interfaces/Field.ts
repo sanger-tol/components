@@ -14,7 +14,7 @@ export interface IField {
   filter?: string | null;
   fixed?: boolean;
   isAttribute?: boolean;
-  object_type: string;
+  object_type?: string;
   rename?: string;
   sort?: boolean;
   source?: string;
