@@ -231,10 +231,11 @@ export function FormAllInOne(props: PFormAllInOne) {
         }
       case "multipleselect":
         const multipleselectField = field as IMultipleselectField;
+        const multipleSelectValue = formData[multipleselectField.name];
         return (
           <MultipleSelect
             {...multipleselectField}
-            value={formData[multipleselectField.name] ?? []}
+            value={Array.isArray(multipleSelectValue) ? multipleSelectValue : []}
             setValue={(value: any) =>
               handleInputChange(multipleselectField.name, value)
             }

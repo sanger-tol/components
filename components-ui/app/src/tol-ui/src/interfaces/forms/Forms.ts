@@ -277,3 +277,7 @@ export interface IUserProfileFormData {
   workplace?: string;
   [key: string]: any;
 }
+
+export type TProfileBaseConfig =
+  | IFormConfig
+  | ((hasUnsavedChanges: boolean, ...args: any[]) => IFormConfig);

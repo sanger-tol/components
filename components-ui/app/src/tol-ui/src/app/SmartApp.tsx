@@ -115,6 +115,7 @@ export interface PSmartApp {
    */
   profileFormConfigs?: {
     baseConfig?: any;
+    baseConfigArgs?: any[];
     additionalConfigs?: IUserProfileAdditionalConfigs;
   };
   /**

@@ -24,40 +24,53 @@ import {
   FORM_MESSAGE_TEXT,
   Button,
   useLogout,
+  MESSAGE_TYPE,
+  PopUpMessage,
 } from "../..";
 import type {
   IUserProfileAdditionalConfigs,
-  IFormConfig,
   IUserProfileFormData,
   TUserProfileFormDataOrNull,
+  TProfileBaseConfig,
 } from "../..";
 
-
 export interface PUserProfile {
-  /**
-   * Optional base form configuration to use for the user profile form.
-   * If not provided, a default configuration will be used.
-   */
-  baseConfig?: IFormConfig;
-  /**
-   * Optional additional configurations for the user profile form,
-   * including additional fields, their positions, and field mappings.
-   */
+  /** Base form configuration, or a factory receiving `hasUnsavedChanges` followed by any `baseConfigArgs`. */
+  baseConfig?: TProfileBaseConfig;
+  /** Extra arguments forwarded to `baseConfig` when it's a factory (e.g. `[termsaccepted]`). */
+  baseConfigArgs?: unknown[];
+  /** Optional additional configurations for the user profile form,
+   * including additional fields, their positions, and field mappings. */
   additionalConfigs?: IUserProfileAdditionalConfigs;
-  /**
-   * Optional boolean flag to indicate whether to show a logout button in the profile page.
-   */
+  /** Optional boolean flag to indicate whether to show a logout button in the profile page. */
   logout?: boolean;
+  /** Transform form valuse into the upsert payload */
+  transformSubmitData?: (
+    formData: object,
+    currentData: TUserProfileFormDataOrNull,
+  ) => object;
+  /** Return an error message to abort submission, or null to proceed. */
+  validateSubmission?: (
+    formData: object,
+    currentData: TUserProfileFormDataOrNull,
+  ) => string | null;
+  /** Called after a successful save that completed the profile for the first time. */
+  onFirstSubmitSuccess?: () => void;
 }
 
 export function UserProfile(props: PUserProfile) {
   const {
+    baseConfig: baseConfigProp,
+    baseConfigArgs = [],
     additionalConfigs: {
       additionalConfig,
       additionalConfigArrayPositions,
       additionalFieldMappings,
     } = {},
-    logout
+    logout,
+    transformSubmitData,
+    validateSubmission,
+    onFirstSubmitSuccess,
   } = props;
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
@@ -84,7 +97,9 @@ export function UserProfile(props: PUserProfile) {
   const handleLogout = useLogout();
 
   const baseConfig =
-    props.baseConfig ?? BASE_PROFILE_FORM_CONFIG(hasUnsavedChanges);
+    typeof baseConfigProp === "function"
+      ? baseConfigProp(hasUnsavedChanges, profile, ...baseConfigArgs)
+      : (baseConfigProp ?? BASE_PROFILE_FORM_CONFIG(hasUnsavedChanges));
 
   const mergedConfig = createMergedConfig(
     baseConfig,
@@ -101,9 +116,21 @@ export function UserProfile(props: PUserProfile) {
   const handleSubmit = (formData: object, isValid: boolean) => {
     if (!isValid) return;
 
+    const error = validateSubmission?.(formData, profile);
+    if (error) {
+      PopUpMessage({ type: MESSAGE_TYPE.ERROR, message: error });
+      return;
+    }
+
+    const wasIncomplete = !hasCompletedProfile;
+    const payload = transformSubmitData
+      ? transformSubmitData(formData, profile)
+      : formData;
+
     const from = location.state?.from;
-    updateUserProfile(formData as IUserProfileFormData, {
+    updateUserProfile(payload as IUserProfileFormData, {
       onSuccess: () => {
+        if (wasIncomplete) onFirstSubmitSuccess?.();
         if (from) history.push(from);
       },
     });
@@ -143,13 +170,13 @@ export function UserProfile(props: PUserProfile) {
     <div>
       <Widgets components={components} />
       {logout && (
-        <div style={{ marginTop: "10vh"}}>
+        <div style={{ marginTop: "10vh" }}>
           <Button
             text="Logout"
             onClick={handleLogout}
             type="error"
-            position='center'
-            icon='fa-solid fa-right-from-bracket'
+            position="center"
+            icon="fa-solid fa-right-from-bracket"
           />
         </div>
       )}

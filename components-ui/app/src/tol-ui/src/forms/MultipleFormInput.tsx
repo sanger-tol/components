@@ -5,12 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { cloneElement, useEffect } from "react";
-import {
-  Button,
-  PButton,
-  createNewInput,
-  FormComponentWrapper,
-} from "..";
+import { Button, PButton, createNewInput, FormComponentWrapper } from "..";
 import type { TFormField } from "..";
 
 export interface PMultipleFormInput {
@@ -24,7 +19,15 @@ export interface PMultipleFormInput {
 }
 
 export function MultipleFormInput(props: PMultipleFormInput) {
-  const { field, formData, setFormData, setModifiedFields, renderField, onChange, minOne } = props;
+  const {
+    field,
+    formData,
+    setFormData,
+    setModifiedFields,
+    renderField,
+    onChange,
+    minOne,
+  } = props;
   const fieldData = formData[field.name] || {};
 
   useEffect(() => {
@@ -38,7 +41,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
         handleDeleteInput(key, false);
       }
     }
-  }, [fieldData])
+  }, [fieldData]);
 
   const addButton: PButton = {
     onClick: () => {
@@ -66,31 +69,27 @@ export function MultipleFormInput(props: PMultipleFormInput) {
     delete updatedFormData[field.name][input];
     setFormData(updatedFormData);
     if (modify) {
-      setModifiedFields(prev => ({
+      setModifiedFields((prev) => ({
         ...prev,
         [field.name]: updatedFormData[field.name],
       }));
     }
-  }
+  };
 
   return (
     <FormComponentWrapper {...field}>
-      <Button {...addButton} />
       {Object.keys(fieldData).map((input, index) => (
-        <div
-          key={index}
-          className="tol-multiple-form-input-row"
-        >
+        <div key={index} className="tol-multiple-form-input-row">
           <div style={{ flex: 1 }}>
             {cloneElement(renderField(field)!, {
               value: formData[field.name][input],
-              onChange: ((value: string) => {
+              onChange: (value: string) => {
                 const newValue = { [input]: value };
                 const values = formData[field.name];
                 onChange(field.name, { ...(values || {}), ...newValue });
-              }),
+              },
               key: input,
-              label: undefined
+              label: undefined,
             })}
           </div>
           {(!minOne || Object.keys(fieldData).length > 1) && (
@@ -101,6 +100,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
               />
             </div>
           )}
+          {index === 0 && <Button {...addButton} />}
         </div>
       ))}
     </FormComponentWrapper>
