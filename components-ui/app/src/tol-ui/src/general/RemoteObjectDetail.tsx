@@ -4,17 +4,12 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
-  UtilityBar,
   TUtilityBarOrNull,
   IRemoteTarget,
   ObjectDetail
 } from "..";
-
-interface IRemoteObjectDetailData {
-  fields: IRemoteObjectDetailField[];
-}
 
 
 // Takes in attribute to get object
@@ -38,20 +33,29 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
     utilityBarConfig,
     height = "100%",
     dataSource,
-    objectType
+    objectType,
+    fields
   } = props;
+  const [data, setData] = useState<Record<string, ReactNode>>({});
 
-  // dataSource.getOne({
-  //   objectType,
-  //   id
-  // }).then((data: any) => {});
+  dataSource.getOne({
+    objectType,
+    id
+  }).then((object: any) => {
+    for (const field of fields) {
+      const value = object[field.attribute];
+      setData(prevData => ({
+        ...prevData,
+        [field.displayName ?? field.attribute]: field.valueFilter ? field.valueFilter(object) : value
+      }));
+    }
+  });
 
   return (
     <ObjectDetail
       id={id}
       utilityBarConfig={utilityBarConfig}
       data={data}
-      contents={contents}
       height={height}
     />
   );
