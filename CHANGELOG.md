@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.1.1`
+
+02-09-2026
+
+- Created RemoteObjectDetail component
+- Added returnFields prop to AutoComplete
+
 ## tol-ui `5.1.0`
 
 27-08-2026
