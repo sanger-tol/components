@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode, useEffect, useState } from "react";
 import {
-  TUtilityBarOrNull,
   IRemoteTarget,
   ObjectDetail,
   IRemoteObjectDetailField,
