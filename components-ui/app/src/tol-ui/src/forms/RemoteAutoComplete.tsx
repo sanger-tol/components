@@ -20,6 +20,8 @@ export interface PRemoteAutoComplete
   displayFields?: string[];
   displayFieldsTitle?: boolean;
   searchBy: string;
+  setReturnedValues?: (data: IRemoteAutoCompleteData) => void;
+  returnFields?: string[];
 }
 
 export function RemoteAutoComplete(props: PRemoteAutoComplete) {
@@ -29,6 +31,8 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
     objectType,
     displayFields = [],
     searchBy,
+    setReturnedValues,
+    returnFields,
   } = props;
   const [filteredData, setFilteredData] = useState<IRemoteAutoCompleteData>({});
   const [loading, setLoading] = useState<boolean>(false);
@@ -64,21 +68,35 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
           },
         });
 
-        const newData: Record<string, any> = {};
+        const displayData: Record<string, any> = {};
         let matchedId: string | undefined = undefined;
 
         data?.forEach((item: any) => {
           if (item[searchBy] === value) {
             matchedId = item.id;
           }
-          newData[item[searchBy]] = displayFields.map((field: string) => ({
+          displayData[item[searchBy]] = displayFields.map((field: string) => ({
             [field]: item[field],
           }));
         });
 
         // update the ref so we keep track of the matched ID
         valueIDRef.current = matchedId;
-        setFilteredData(newData);
+        setFilteredData(displayData);
+
+        // This returns the fields specified in returnFields for each item in the filtered data
+        if (setReturnedValues && returnFields) {
+          const returnData: Record<string, any> = {};
+          data?.forEach((item: any) => {
+            returnFields?.forEach((field: string) => {
+              if (!returnData[item[searchBy]]) {
+                returnData[item[searchBy]] = {};
+              }
+              returnData[item[searchBy]][field] = item[field];
+            });
+          });
+          setReturnedValues?.(returnData);
+        }
 
         // Notify parent of resolved ID
         if (matchedId) {

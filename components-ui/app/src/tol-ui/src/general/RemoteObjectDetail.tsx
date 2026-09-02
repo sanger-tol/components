@@ -36,8 +36,15 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
   const {
     id,
     utilityBarConfig,
-    height = "100%"
+    height = "100%",
+    dataSource,
+    objectType
   } = props;
+
+  // dataSource.getOne({
+  //   objectType,
+  //   id
+  // }).then((data: any) => {});
 
   return (
     <ObjectDetail
