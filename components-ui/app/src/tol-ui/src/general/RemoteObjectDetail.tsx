@@ -9,7 +9,9 @@ import {
   IRemoteTarget,
   ObjectDetail,
   IRemoteObjectDetailField,
-  PObjectDetail
+  PObjectDetail,
+  DataPoint,
+  ICustomCellRenderers
 } from "..";
 
 export interface PRemoteObjectDetail extends IRemoteTarget, Omit<PObjectDetail, "data" | "contents"> {
@@ -17,6 +19,10 @@ export interface PRemoteObjectDetail extends IRemoteTarget, Omit<PObjectDetail, 
    * Configuration for the fields to display in the object detail
    */
   fields: IRemoteObjectDetailField[];
+  /**
+   * Custom cell renderers for specific field types
+   */
+  customCellRenderers?: ICustomCellRenderers;
 }
 
 export function RemoteObjectDetail(props: PRemoteObjectDetail) {
@@ -26,7 +32,8 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
     height = "100%",
     dataSource,
     objectType,
-    fields
+    fields,
+    customCellRenderers
   } = props;
   const [data, setData] = useState<Record<string, ReactNode>>({});
 
@@ -34,6 +41,7 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
     dataSource
       .getOne({ objectType, id })
       .then((object) => {
+
         if (object === null) {
           setData({});
           return;
@@ -41,10 +49,17 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
 
         const nextData: Record<string, ReactNode> = {};
         for (const field of fields) {
-          const value = object[field.attribute] ?? "None";
-          nextData[field.displayName ?? field.attribute] = field.valueFilter
-            ? field.valueFilter(object)
-            : value;
+          nextData[field.displayName ?? field.attribute] = (
+            <DataPoint
+              parentDataObject={object}
+              field={field.attribute}
+              dataSource={dataSource}
+              renderer={{ type: field.renderer || 'longText' }}
+              setExpandedRows={() => { }}
+              customCellRenderers={customCellRenderers}
+              dataObject={object}
+            />
+          );
         }
 
         setData(nextData);

@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode } from "react";
 
 /**
  * Interface for the data object representing a field in the remote object detail
@@ -19,7 +18,7 @@ export interface IRemoteObjectDetailField {
    */
   displayName?: string;
   /**
-   * Optional function to transform the value before rendering
+   * Renderer to use for displaying the field value (defaults to longText)
    */
-  valueFilter?: (value: any) => ReactNode;
+  renderer?: string
 }
