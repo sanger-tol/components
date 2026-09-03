@@ -28,7 +28,7 @@ export function Callback(props: PSmartApp) {
   const { setToken, setUser } = useAuth();
   const [state] = useState(useQuery().get("state") || undefined);
   const [tokenCode] = useState(useQuery().get("code") || undefined);
-  const [loginError, setLoginError] = useState(false);
+  const [loginError, setLoginError] = useState<any>(null);
 
   useEffect(() => {
     const completeLogin = async () => {
@@ -52,8 +52,8 @@ export function Callback(props: PSmartApp) {
         }, 500);
       } catch (error) {
         console.error("Unable to complete login callback", error);
-        PopUpMessage({ type: 'error', message: error });
-        setLoginError(true);
+        PopUpMessage({ type: 'error', message: error.message || String(error) });
+        setLoginError(error);
       }
     };
 
@@ -62,7 +62,7 @@ export function Callback(props: PSmartApp) {
   }, []);
 
   if (loginError) {
-    return <p>Unable to complete login. Please try again.</p>;
+    return (<p>{loginError?.message || String(loginError)}</p>)
   }
 
   return (
