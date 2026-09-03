@@ -16,8 +16,8 @@ import {
   getReturnUrlFromLocalStorage,
   setTokenToLocalStorage,
   setUserToLocalStorage,
-  tokenHasExpired,
   PSmartApp,
+  PopUpMessage,
 } from "..";
 
 export function Callback(props: PSmartApp) {
@@ -25,38 +25,45 @@ export function Callback(props: PSmartApp) {
 
   const history = useHistory();
 
-  const { setToken, token, setUser } = useAuth();
+  const { setToken, setUser } = useAuth();
   const [state] = useState(useQuery().get("state") || undefined);
   const [tokenCode] = useState(useQuery().get("code") || undefined);
+  const [loginError, setLoginError] = useState(false);
 
   useEffect(() => {
-    if (!token || tokenHasExpired()) {
+    const completeLogin = async () => {
       const stateToken = {
         state,
         code: tokenCode,
       };
-      getToken(stateToken).then((res: any) => {
+      try {
+        const res: any = await getToken(stateToken);
         const token = res.data.access_token;
         setTokenToLocalStorage(token);
         setToken(token);
-        getProfile(token)
-          .then((profileData: any) => {
-            getRoles().then((rolesData: any) => {
-              const userData = { ...profileData.data, ...rolesData.data };
-              setUserToLocalStorage(userData);
-              setUser(userData);
-            });
-          })
-          .finally(() => {
-            setTimeout(() => {
-              const targetUrl = getReturnUrlFromLocalStorage() || "";
-              history.replace(targetUrl);
-            }, 500);
-          });
-      });
-    }
+        const profileData: any = await getProfile(token);
+        const rolesData: any = await getRoles();
+        const userData = { ...profileData.data, ...rolesData.data };
+        setUserToLocalStorage(userData);
+        setUser(userData);
+        setTimeout(() => {
+          const targetUrl = getReturnUrlFromLocalStorage() || "";
+          history.replace(targetUrl);
+        }, 500);
+      } catch (error) {
+        console.error("Unable to complete login callback", error);
+        PopUpMessage({ type: 'error', message: error });
+        setLoginError(true);
+      }
+    };
+
+    void completeLogin();
     // eslint-disable-next-line
   }, []);
+
+  if (loginError) {
+    return <p>Unable to complete login. Please try again.</p>;
+  }
 
   return (
     <LoadingContent
