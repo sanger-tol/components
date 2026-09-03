@@ -6,12 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode, useEffect, useState } from "react";
 import {
-  IRemoteTarget,
   ObjectDetail,
-  IRemoteObjectDetailField,
-  PObjectDetail,
   DataPoint,
-  ICustomCellRenderers
+} from "..";
+import type {
+  ICustomCellRenderers,
+  IRemoteObjectDetailField,
+  IRemoteTarget,
+  PObjectDetail
 } from "..";
 
 export interface PRemoteObjectDetail extends IRemoteTarget, Omit<PObjectDetail, "data" | "contents"> {
@@ -22,7 +24,7 @@ export interface PRemoteObjectDetail extends IRemoteTarget, Omit<PObjectDetail, 
   /**
    * Custom cell renderers for specific field types
    */
-  customCellRenderers?: ICustomCellRenderers;
+  customDataPointRenderers?: ICustomCellRenderers;
 }
 
 export function RemoteObjectDetail(props: PRemoteObjectDetail) {
@@ -33,7 +35,7 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
     dataSource,
     objectType,
     fields,
-    customCellRenderers
+    customDataPointRenderers
   } = props;
   const [data, setData] = useState<Record<string, ReactNode>>({});
 
@@ -56,7 +58,7 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
               dataSource={dataSource}
               renderer={{ type: field.renderer || 'longText' }}
               setExpandedRows={() => { }}
-              customCellRenderers={customCellRenderers}
+              customCellRenderers={customDataPointRenderers}
               dataObject={object}
             />
           );
