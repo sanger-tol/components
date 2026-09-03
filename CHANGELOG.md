@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `5.1.1`
+## tol-ui `5.2.0`
 
 02-09-2026
 
