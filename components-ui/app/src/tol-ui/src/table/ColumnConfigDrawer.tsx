@@ -7,6 +7,8 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { Toggle } from "rsuite";
 import {
+  addDefaultsFromEntityMeta,
+  addFieldMetaDefaults,
   AttributeSelector,
   Button,
   CellRendererConfigurer,
@@ -171,6 +173,30 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       }).catch(() => {});
     }
   }, [open]);
+
+  // When a column is added, not only does the `attribute` state need to be set,
+  // but it also needs to be added to `newFieldMeta`
+  const handleAddColumn = (newAttributes: string[]) => {
+    // Find the column that's just been added
+    const newestAttribute = newAttributes.find(attribute => !attributes.includes(attribute));
+    if (!newestAttribute) return;
+
+    // Add the column to the active attributes list
+    setAttributes(newAttributes);
+
+    // Add the required entries to `newFieldMeta` for the new column
+    newFieldMeta.order.active.push(newestAttribute);
+    newFieldMeta.dataWithDefaults![newestAttribute] = {};
+    newFieldMeta.data![newestAttribute] = {};
+    
+    // Populate `dataWithDefaults` for the new column
+    addFieldMetaDefaults(props.objectType, newFieldMeta, props.dataSource);
+
+    // Register the new field meta
+    setNewFieldMeta({
+      ...newFieldMeta
+    });
+  };
 
   const onSave = () => {
     if (hasPendingChanges) {
@@ -363,7 +389,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
               displaySource
               placeholder="Select columns to display..."
               attribute={attributes}
-              setAttributes={setAttributes}
+              setAttributes={handleAddColumn}
               disabledValues={null}
               numPopulatedFields={0}
               populatedFieldType={"column"}
