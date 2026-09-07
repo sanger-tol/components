@@ -25,6 +25,7 @@ export * from "./JsonEdit";
 export * from "./Markdown";
 export * from "./Messaging";
 export * from "./Nav";
+export * from "./ObjectDetail";
 export * from "./Plate";
 export * from "./Privilege";
 export * from "./Relationship";

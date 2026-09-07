@@ -6,6 +6,22 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.2.0`
+
+02-09-2026
+
+- Created RemoteObjectDetail component
+- Added returnFields prop to AutoComplete
+
+## tol-ui `5.1.0`
+
+27-08-2026
+
+- Added mobile nav bar option on Navigation component and SmartApp
+- Added ability to hide the nav bar completely from chosen pages
+- Given Button the option for center placement
+- The profile page now has an option for a logout button to be added
+
 ## tol-ui `5.0.0`
 
 26-08-2026

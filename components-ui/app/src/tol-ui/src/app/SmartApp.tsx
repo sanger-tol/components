@@ -48,6 +48,7 @@ import {
   IUserProfileAdditionalConfigs,
   AppContextProvider,
   PFooter,
+  IMobileOptions,
 } from "..";
 
 export interface PSmartApp {
@@ -105,6 +106,10 @@ export interface PSmartApp {
    */
   footer?: PFooter;
   /**
+   * Flag to set mobile first navigation
+   */
+  mobileOptions?: IMobileOptions;
+  /**
    * Optional configuration for the user profile form, including base and additional configs.
    * If not provided, the default configuration will be used.
    */
@@ -112,6 +117,10 @@ export interface PSmartApp {
     baseConfig?: any;
     additionalConfigs?: IUserProfileAdditionalConfigs;
   };
+  /**
+   * Optional boolean flag to indicate whether to show a logout button in the profile page.
+   */
+  profileLogoutButton?: boolean;
 }
 
 /**
@@ -129,6 +138,7 @@ export function SmartApp(props: PSmartApp) {
     routePrefix,
     footer,
     profileFormConfigs,
+    profileLogoutButton
   } = props;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
@@ -242,7 +252,7 @@ export function SmartApp(props: PSmartApp) {
       />
     ),
     validationResultsDetail: <ValidationResultsViewer />,
-    profile: <UserProfile {...profileFormConfigs} />,
+    profile: <UserProfile {...profileFormConfigs} logout={profileLogoutButton} />,
     callback: <Callback {...props} />,
     ...(props.pageElements ?? {}),
   };

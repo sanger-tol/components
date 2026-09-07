@@ -55,6 +55,10 @@ export interface IPage {
    * The route or link for the page
    */
   path?: TPagePath;
+  /**
+   * Optional icon for the page, e.g. a Font Awesome class name
+   */
+  icon?: string;
 }
 
 /**
@@ -81,6 +85,10 @@ export interface INavCollection<TItem> {
    * Order of items to be displayed in the navigation
    */
   order: string[];
+  /**
+   * Optional list of pages to hide the navigation bar for.
+   */
+  hideNavFor?: string[];
 }
 
 /**
@@ -121,3 +129,26 @@ export interface INavDestination {
    */
   target?: string;
 }
+
+/**
+ * Configuration for mobile navbar.
+ */
+export interface IMobileOptions {
+  /**
+   * Boolean to enable the mobile first navigation
+   */
+  enabled: boolean;
+  /**
+   * Boolean to enable login on the navbar
+   */
+  login?: boolean;
+  /**
+   * Boolean to enable register on the navbar
+   */
+  register?: boolean;
+  /**
+   * Boolean to enable profile on the navbar
+   */
+  profile?: boolean;
+}
+
