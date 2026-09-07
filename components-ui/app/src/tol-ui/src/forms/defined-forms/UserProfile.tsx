@@ -56,6 +56,8 @@ export interface PUserProfile {
   ) => string | null;
   /** Called after a successful save that completed the profile for the first time. */
   onFirstSubmitSuccess?: () => void;
+  /** Transform persisted data into form-ready values. */
+  transformInitialData?: (data: TUserProfileFormDataOrNull) => object;
 }
 
 export function UserProfile(props: PUserProfile) {
@@ -71,6 +73,7 @@ export function UserProfile(props: PUserProfile) {
     transformSubmitData,
     validateSubmission,
     onFirstSubmitSuccess,
+    transformInitialData,
   } = props;
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
@@ -107,10 +110,15 @@ export function UserProfile(props: PUserProfile) {
     additionalConfigArrayPositions,
   );
 
+  const transformedProfile = transformInitialData
+    ? transformInitialData(profile)
+    : (profile ?? {});
+
   const { mappedData: initialData, readOnlyFields } = applyFieldMappings(
-    profile ?? {},
+    transformedProfile,
     [...PROFILE_FORM_FIELD_MAPPINGS, ...(additionalFieldMappings ?? [])],
   );
+
   const patchedConfig = applyReadOnlyFields(mergedConfig, readOnlyFields);
 
   const handleSubmit = (formData: object, isValid: boolean) => {
