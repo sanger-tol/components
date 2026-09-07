@@ -12,10 +12,25 @@ import {
 
 
 export interface PObjectDetail {
+   /**
+   * The ID of the object detail component
+   */
   id: string;
+   /**
+   * The data to be displayed in the object detail component
+   */
   data: Record<string, ReactNode>;
+   /**
+   * The configuration for the utility bar of the object detail component
+   */
   utilityBarConfig?: TUtilityBarOrNull;
+   /**
+   * The contents of the object detail component
+   */
   contents?: ReactNode;
+   /**
+   * The height of the object detail component
+   */
   height?: any;
 }
 
