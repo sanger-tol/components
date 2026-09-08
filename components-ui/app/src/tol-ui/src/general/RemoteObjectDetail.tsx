@@ -53,7 +53,7 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
         for (const field of fields) {
           nextData[field.displayName ?? field.attribute] = (
             <DataPoint
-              parentDataObject={object}
+              originDataObject={object}
               field={field.attribute}
               dataSource={dataSource}
               renderer={{ type: field.renderer || 'longText' }}

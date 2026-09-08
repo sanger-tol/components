@@ -87,7 +87,8 @@ export function DataPoints(props: PDataPoints) {
       {...props}
       key={`${field}-${index}`}
       dataObject={obj}
-      parentDataObject={dataObject}
+      originDataObject={dataObject}
+      originField={field}
       field={attribute}
       isMany={isMany}
     />

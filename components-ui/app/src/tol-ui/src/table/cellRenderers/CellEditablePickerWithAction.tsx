@@ -13,32 +13,36 @@ import {
   IDataObject,
   PCellEditableInput,
   useAuth,
+  getRelationshipNameByField,
 } from "../..";
 
 
+export interface PCellEditablePickerWithAction extends PCellEditableInput {
+  /** The name of the action to be performed when the status is changed. */
+  actionName: string;
+}
+
 /**
- * Status dropdown for editable cells backed by the status lookup object.
+ * Picker dropdown for editable cells that triggers an action when a selection is made.
  */
-export function CellEditableStatus(props: PCellEditableInput) {
+export function CellEditablePickerWithAction(props: PCellEditablePickerWithAction) {
   const {
     value,
     setValue,
     dataObject,
     dataSource,
-    parentDataObject,
+    originDataObject,
     onSaveSuccess,
     onSaveError,
     floatingControls,
     onCancel,
     loading,
     setLoading,
+    actionName,
+    originField,
   } = props;
 
-  /**
-  * The object type of the status-type lookup table,
-  * e.g. "metagenome_status_type".
-  */
-  const statusTypeObjectType = (dataObject as IDataObject).objectType
+  const objectType = (dataObject as IDataObject).objectType
 
   const { user } = useAuth();
 
@@ -53,7 +57,7 @@ export function CellEditableStatus(props: PCellEditableInput) {
 
   useEffect(() => {
     dataSource
-      .getListPage({ objectType: statusTypeObjectType })
+      .getListPage({ objectType: objectType })
       .then((items: any) => {
         const fetchedOptions = (items ?? []).map((item: any) => ({
           label: item.id,
@@ -71,10 +75,25 @@ export function CellEditableStatus(props: PCellEditableInput) {
         setOptions(fetchedOptions);
       })
       .finally(() => setLoadingOptions(false));
-  }, [dataSource, initialValue, statusTypeObjectType]);
+  }, [dataSource, initialValue, objectType]);
 
-  const onSave = (selectedStatusTypeId: string) => {
-    if (selectedStatusTypeId == value) {
+  // Generates the parameters for the action based on the selected value.
+  const getActionParams = (selectedValue: string, userId?: string) => {
+    if (actionName === "SetStatusAction") {
+      return {
+        status: selectedValue,
+        user_id: userId,
+      };
+    } else if (actionName === "SetRelationshipAction") {
+      return {
+        relationship: getRelationshipNameByField(originField),
+        related_id: selectedValue,
+      };
+    }
+  };
+
+  const onSave = (selectedValue: string) => {
+    if (selectedValue == value) {
       onCancel();
       return;
     }
@@ -85,16 +104,16 @@ export function CellEditableStatus(props: PCellEditableInput) {
     dataSource
       .custom({
         method: API_METHODS.POST,
-        resource: `${parentDataObject?.objectType}${API_OPERATIONS.ACTION}`,
+        resource: `${originDataObject?.objectType}${API_OPERATIONS.ACTION}`,
         body: {
-          ids: [parentDataObject?.id],
-          action_name: "SetStatusAction",
-          object_type: parentDataObject?.objectType,
-          params: { status: selectedStatusTypeId, user_id: user?.id },
+          ids: [originDataObject?.id],
+          action_name: actionName,
+          object_type: originDataObject?.objectType,
+          params: getActionParams(selectedValue, user?.id),
         },
       })
       .then(() => {
-        setValue(selectedStatusTypeId);
+        setValue(selectedValue);
         onSaveSuccess?.();
       })
       .catch(() => onSaveError?.())

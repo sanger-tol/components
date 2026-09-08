@@ -12,7 +12,7 @@ export * from "./CellDisplay";
 export * from "./CellEditable";
 export * from "./CellEditableControls";
 export * from "./CellEditableDatetime";
-export * from "./CellEditableStatus";
+export * from "./CellEditablePickerWithAction";
 export * from "./CellEditableText";
 export * from "./DataPoints";
 export * from "./Datetime";

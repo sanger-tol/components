@@ -18,7 +18,9 @@ export interface PDataPoint extends PDataPoints {
   /** Whether the data point is being rendered within a tag component. Used for styling purposes. */
   isMany?: boolean,
   /** The parent DataObject, used for upsert calls when saving edits to the data point. */
-  parentDataObject: TDataObjectOrNull;
+  originDataObject: TDataObjectOrNull;
+  /** The field in the parent DataObject that this data point corresponds to. */
+  originField: string;
 }
 
 /**

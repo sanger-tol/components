@@ -7,8 +7,9 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   CellEditableDatetime,
-  CellEditableStatus,
+  CellEditablePickerWithAction,
   CellEditableText,
+  isOneJumpRelationshipField,
   MESSAGE_TYPE,
   PCellDisplay,
   PopUpMessage,
@@ -49,7 +50,7 @@ export interface PCellEditableInput extends PCellEditable {
  * Renders the correct inline editor for the cell based on field type metadata.
  */
 export function CellEditable(props: PCellEditable) {
-  const { value, setValue, onExit, meta } = props;
+  const { value, setValue, onExit, meta, field, originField } = props;
   const { type, actsAs } = meta;
 
   const [loading, setLoading] = useState(false);
@@ -90,9 +91,13 @@ export function CellEditable(props: PCellEditable) {
     setLoading,
   }
 
-  let InputType = CellEditableText;
-  if (type === "datetime") InputType = CellEditableDatetime;
-  if (actsAs === "status") InputType = CellEditableStatus;
+  if (type === "datetime")
+    return <CellEditableDatetime {...newProps} />;
+  if (actsAs === "status")
+    return <CellEditablePickerWithAction {...newProps} actionName="SetStatusAction" />;
+  // if (actsAs === "relationship_identifier" && isOneJumpRelationshipField(originField))
+  if (field === "id" && isOneJumpRelationshipField(originField))
+    return <CellEditablePickerWithAction {...newProps} actionName="SetRelationshipAction" />;
 
-  return <InputType {...newProps} />;
+  return <CellEditableText {...newProps} />;
 }
