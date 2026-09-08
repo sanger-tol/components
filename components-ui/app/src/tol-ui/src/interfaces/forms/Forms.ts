@@ -279,5 +279,7 @@ export interface IUserProfileFormData {
 }
 
 export type TProfileBaseConfig =
+  /** the fields and button config for the base form */
   | IFormConfig
+  /** Whether the form has unsaved changes */
   | ((hasUnsavedChanges: boolean, ...args: any[]) => IFormConfig);
