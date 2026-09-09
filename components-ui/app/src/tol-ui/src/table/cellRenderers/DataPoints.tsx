@@ -26,7 +26,7 @@ export interface PDataPoints {
   /** Metadata about a field. Includes the renderer. */
   meta: IField,
   /** Setter function to set the expanded rows in a table. */
-  setExpandedRows: any,
+  setExpandedRows?: (ids: string[]) => void,
   /** Custom cell renderers that can be used in addition to the pre-defined renderers. */
   customCellRenderers?: ICustomCellRenderers;
   /** Flag to indicate if the cell is editable. */

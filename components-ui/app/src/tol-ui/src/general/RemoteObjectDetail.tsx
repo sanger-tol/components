@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { ReactNode, useEffect, useState } from "react";
 import {
   ObjectDetail,
-  DataPoint,
+  DataPoints,
 } from "..";
 import type {
   ICustomCellRenderers,
@@ -52,14 +52,12 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
         const nextData: Record<string, ReactNode> = {};
         for (const field of fields) {
           nextData[field.displayName ?? field.attribute] = (
-            <DataPoint
-              originDataObject={object}
+            <DataPoints
+              dataObject={object}
               field={field.attribute}
               dataSource={dataSource}
-              renderer={{ type: field.renderer || 'longText' }}
-              setExpandedRows={() => { }}
+              meta={{cellRenderer: { type: field.renderer || 'longText' }}}
               customCellRenderers={customDataPointRenderers}
-              dataObject={object}
             />
           );
         }

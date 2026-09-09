@@ -123,12 +123,19 @@ export function CellEditablePickerWithAction(props: PCellEditablePickerWithActio
   return (
     <>
       <SelectPicker
-        data={options}
-        value={selected}
-        onChange={(v) => setSelected(v)}
+        block
+        defaultOpen
         loading={loadingOptions}
         cleanable={false}
-        block
+        data={options}
+        value={selected}
+        onChange={(v) => {
+          const nextValue = v ?? null;
+          setSelected(nextValue);
+          if (nextValue) {
+            onSave(nextValue);
+          }
+        }}
       />
       <CellEditableControls
         floatingControls={floatingControls}
