@@ -6,6 +6,15 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.2.1`
+
+07-09-2026
+
+- Fixed a styling issue with `multipleFormComponent`
+- Fixed a bug in `formAllInOne`
+- Added additional config options to `userProfile` to override base config and behaviour,
+  to allow for more complex form logic.
+
 ## tol-ui `5.2.0`
 
 02-09-2026
