@@ -277,3 +277,13 @@ export interface IUserProfileFormData {
   workplace?: string;
   [key: string]: any;
 }
+
+/**
+ * The base configuration for a user profile form,
+ * including fields and button configuration.
+ */
+export type TProfileBaseConfig =
+  /** the fields and button config for the base form */
+  | IFormConfig
+  /** Whether the form has unsaved changes */
+  | ((hasUnsavedChanges: boolean, ...args: any[]) => IFormConfig);
