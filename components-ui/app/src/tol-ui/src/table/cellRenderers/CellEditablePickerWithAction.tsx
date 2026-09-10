@@ -75,7 +75,7 @@ export function CellEditablePickerWithAction(props: PCellEditablePickerWithActio
         setOptions(fetchedOptions);
       })
       .finally(() => setLoadingOptions(false));
-  }, [dataSource, initialValue, objectType]);
+  }, [dataSource, objectType]);
 
   // Generates the parameters for the action based on the selected value.
   const getActionParams = (selectedValue: string, userId?: string) => {
