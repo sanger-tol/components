@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.2.2`
+
+09-09-2026
+
+- Fixed config drawer bug where default sort attribute could be undefined in entity meta
+  and cause rendering issues.
+
 ## tol-ui `5.2.1`
 
 07-09-2026
