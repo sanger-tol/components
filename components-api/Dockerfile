@@ -6,6 +6,7 @@ FROM gitlab-registry.internal.sanger.ac.uk/tol/tol-core/api-base:2.0.0-b
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV GUNICORN_WORKERS 4
+ENV APP_MODULE run:app
 
 RUN apt-get update -y
 RUN apt-get install -y python3-pip python3-setuptools
