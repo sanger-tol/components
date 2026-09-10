@@ -12,6 +12,8 @@ SPDX-License-Identifier: MIT
 
 - Relationship Picker for DataPoints
 - Refactor DataPoint Editors
+- Fixed config drawer bug where default sort attribute could be undefined in entity meta
+  and cause rendering issues.
 
 ## tol-ui `5.2.1`
 

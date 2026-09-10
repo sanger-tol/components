@@ -2,11 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-FROM gitlab-registry.internal.sanger.ac.uk/tol/tol-core/api-base:1.0.5
+FROM gitlab-registry.internal.sanger.ac.uk/tol/tol-core/api-base:2.0.0
 
 ENV PYTHONDONTWRITEBYTECODE 1
-ENV UWSGI_CHEAPER 4
-ENV UWSGI_PROCESSES 64
 
 RUN apt-get update -y
 RUN apt-get install -y python3-pip python3-setuptools
