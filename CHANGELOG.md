@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.3.0`
+
+10-09-26
+
+- Relationship Picker for DataPoints
+- Refactor DataPoint Editors
+
 ## tol-ui `5.2.1`
 
 07-09-2026

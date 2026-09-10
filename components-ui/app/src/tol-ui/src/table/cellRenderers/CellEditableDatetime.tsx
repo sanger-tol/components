@@ -15,6 +15,9 @@ import {
 } from "../..";
 
 
+/**
+ * Date picker used for inline value updates.
+ */
 export function CellEditableDatetime(props: PCellEditableInput) {
   const {
     field,

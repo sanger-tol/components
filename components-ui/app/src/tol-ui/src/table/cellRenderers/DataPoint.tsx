@@ -33,6 +33,7 @@ export function DataPoint(props: PDataPoint) {
     dataObject,
     editable,
     isMany,
+    meta,
   } = props;
 
   const attributeValue = getFieldByName(dataObject, field);
@@ -40,14 +41,11 @@ export function DataPoint(props: PDataPoint) {
   const [value, setValue] = useState(attributeValue);
   const [editMode, setEditMode] = useState(false);
 
-  // TODO: OPENED UP JUST FOR TESTING PURPOSES. NEED TO RESTRICT THIS LATER.
-  // THE PREVIOUS IMPLEMENTATION WILL NEED CHANGING BELOW.
-  const canEdit = true;
-
-  // TODO FUTURE: Make sure that string and date upserts have a role binding
-  // const canEdit = (
-  //   actsAs === "status" //|| typeof value === "string" || value instanceof Date
-  // );
+  // TODO FUTURE: Allow for string and date updates via permissions
+  const canEdit = (
+    meta.actsAs === "status" ||
+    meta.actsAs === "relationshipIdentifier"
+  );
 
   const onDoubleClick = () => {
     if (!editable) return;
