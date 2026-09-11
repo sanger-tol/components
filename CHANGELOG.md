@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.2.2`
+
+11-09-2026
+
+- Fixed a bug with `prefect_api_path` was previously `prefect_api_data_path`
+
 ## tol-ui `5.2.1`
 
 07-09-2026
