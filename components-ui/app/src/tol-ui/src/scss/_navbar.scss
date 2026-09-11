@@ -107,8 +107,62 @@
   }
 }
 
+// Navbar mobile overrides
+.tol-navigation-mobile {
+  margin: 0;
+
+  .tol-navbar-offset {
+    display: none;
+  }
+}
+
+.tol-navbar-mobile {
+  top: auto;
+  bottom: 0;
+  margin: 0 10px 10px 10px;
+  min-height: 64px;
+  padding-top: 0.5rem;
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
+
+  .navbar-toggler {
+    display: none;
+  }
+
+  .navbar-collapse {
+    display: flex !important;
+    justify-content: space-evenly;
+    width: 100%;
+  }
+
+  .navbar-nav {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    border-radius: 12px;
+  }
+
+  .nav-link svg {
+    // font-size: 1.1rem;
+  }
+
+  .nav-right {
+    margin-left: 0;
+  }
+}
+
 // clear navbar with header
-.tol-navigation:has(+ .tol-smart-app .masthead) .tol-navbar {
+.tol-navigation:not(.tol-navigation-mobile):has(+ .tol-smart-app .masthead) .tol-navbar {
   background-color: rgba(0, 0, 0, var(--tol-navbar-scroll, 0)) !important;
 }
 

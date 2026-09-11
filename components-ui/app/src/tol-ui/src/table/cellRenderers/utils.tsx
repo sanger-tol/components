@@ -106,13 +106,13 @@ export function processTagsToValues(
   field: string,
   value: any,
   dataObject: TDataObjectOrNull,
-  parentDataObject: TDataObjectOrNull,
+  originDataObject: TDataObjectOrNull,
 ): any {
   const isList = key.includes(CELL_RENDERER_SPREAD_OPERATOR);
 
   // Determine which data object to use based on presence of parent operator
-  const requiresParentDataObject = key.includes(CELL_RENDERER_PARENT_OPERATOR);
-  const chosenDataObject = requiresParentDataObject ? parentDataObject : dataObject;
+  const requiresoriginDataObject = key.includes(CELL_RENDERER_PARENT_OPERATOR);
+  const chosenDataObject = requiresoriginDataObject ? originDataObject : dataObject;
   const keyWithoutParentOperator = key.replace(CELL_RENDERER_PARENT_OPERATOR, "").trim();
 
   // Remove spread operator if present - still includes object keys
@@ -152,13 +152,13 @@ export function getCellRendererPropValue(
   propValue: string | IFilter,
   elementProps: Record<string, any>,
   dataObject: TDataObjectOrNull,
-  parentDataObject: TDataObjectOrNull,
+  originDataObject: TDataObjectOrNull,
 ) {
   if (typeof propValue === "string" && propValue.includes(CELL_RENDERER_PROP_TAG_START)) {
     // replace placeholders '${}' with values from a dataObject
     elementProps[prop] = propValue.replace(
       CELL_RENDERER_PROP_ATTRIBUTE,
-      (_, key) => processTagsToValues(key, field, value, dataObject, parentDataObject),
+      (_, key) => processTagsToValues(key, field, value, dataObject, originDataObject),
     );
   } else if (typeof propValue === "object" && "and_" in propValue) {
     elementProps[prop] = processConditionToBoolean(propValue, dataObject);

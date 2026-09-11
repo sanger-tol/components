@@ -38,7 +38,7 @@ export function Login(props: Props) {
     if (Capacitor.isNativePlatform()) {
       Browser.open({ url: data.loginUrl });
     } else {
-    //@ts-ignore
+      //@ts-ignore
       window.location.href = data.loginUrl;
     }
   });

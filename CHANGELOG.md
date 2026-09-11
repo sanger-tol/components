@@ -6,6 +6,41 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.3.0`
+
+11-09-26
+
+- Relationship Picker for DataPoints
+- Refactor DataPoint Editors
+- Fixed config drawer bug where default sort attribute could be undefined in entity meta
+  and cause rendering issues.
+- Fixed a bug with `prefect_api_path` was previously `prefect_api_data_path`
+
+## tol-ui `5.2.1`
+
+07-09-2026
+
+- Fixed a styling issue with `multipleFormComponent`
+- Fixed a bug in `formAllInOne`
+- Added additional config options to `userProfile` to override base config and behaviour,
+  to allow for more complex form logic.
+
+## tol-ui `5.2.0`
+
+02-09-2026
+
+- Created RemoteObjectDetail component
+- Added returnFields prop to AutoComplete
+
+## tol-ui `5.1.0`
+
+27-08-2026
+
+- Added mobile nav bar option on Navigation component and SmartApp
+- Added ability to hide the nav bar completely from chosen pages
+- Given Button the option for center placement
+- The profile page now has an option for a logout button to be added
+
 ## tol-ui `5.0.0`
 
 26-08-2026
@@ -122,7 +157,6 @@ SPDX-License-Identifier: MIT
 
 - Fixed bug: requestedFields for fields used in Cell Renderer params
 - Fixed bug: Filters are not being calculated in the utility bar tooltips.
-
 
 ## tol-ui `4.0.0`
 

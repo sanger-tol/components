@@ -20,7 +20,7 @@ export interface PButton {
   size?: "md" | "lg";
   type?: string;
   active?: boolean;
-  position?: "left" | "right" | "none";
+  position?: "left" | "right" | "center" | "none";
   tooltip?: string;
   disabledTooltip?: string;
   loading?: boolean;
@@ -106,10 +106,11 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
       (!!loading && timeout > 0) ||
       (limit > 0 && buttonClicked >= limit) ||
       timeoutDisabled;
+    const isIconOnRight = position === "right";
 
     const IconElement = icon && <div><Icon icon={icon} size={size} /></div>;
     const TextElement = text && (
-      <span style={{ [position === "right" ? "marginRight" : "marginLeft"]: icon ? "6px" : "0px" }}>
+      <span style={{ [isIconOnRight ? "marginRight" : "marginLeft"]: icon ? "6px" : "0px" }}>
         {text}
       </span>
     );
@@ -131,7 +132,7 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
             <TolLoader size="sm" />
           </span>
         )}
-        {position === "right" ? <>{TextElement}{IconElement}</> : <>{IconElement}{TextElement}</>}
+        {isIconOnRight ? <>{TextElement}{IconElement}</> : <>{IconElement}{TextElement}</>}
       </RsButton>
     );
 

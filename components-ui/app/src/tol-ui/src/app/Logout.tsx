@@ -4,34 +4,43 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import {
   useAuth,
   setReturnUrlFromLocalStorage,
-  tokenHasExpired,
+  getTokenFromLocalStorage,
+  setTokenToLocalStorage,
+  setUserToLocalStorage,
+  API_PATHS,
 } from "..";
 
 
-export function Logout() {
-  const { setToken } = useAuth();
+export function useLogout() {
+  const history = useHistory();
+  const { setToken, setUser } = useAuth();
 
-  setReturnUrlFromLocalStorage(window.location.pathname);
-
-  const handleVisibilityChange = () => {
-    setToken("");
+  const revokeOidc = (token: string) => {
+    fetch(API_PATHS.API_PATH + "/auth/logout", {
+      body: JSON.stringify({ token }),
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
   };
 
-  useEffect(() => {
-    if (tokenHasExpired()) {
-      setReturnUrlFromLocalStorage(window.location.pathname);
-      handleVisibilityChange();
-    }
+  return () => {
+    setReturnUrlFromLocalStorage(window.location.pathname);
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
+    const token = getTokenFromLocalStorage();
+    if (token) revokeOidc(token);
 
-  return <>Logout</>;
+    setTokenToLocalStorage("");
+    setUserToLocalStorage(null);
+    setToken("");
+    setUser(null);
+    
+    // Clear auth callback state (Android-specific: sessionStorage persists across logout)
+    sessionStorage.removeItem("auth_callback_processed_url");
+    
+    history.push("/");
+  };
 }

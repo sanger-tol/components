@@ -51,12 +51,13 @@ const preDefinedElements = {
  * If no renderer is provided, it will default to displaying the value as a string.
  */
 export function CellDisplay(props: PCellDisplay) {
+  const { cellRenderer: renderer } = props.meta;
+
   const {
     field,
     value,
     dataObject,
-    parentDataObject,
-    renderer,
+    originDataObject,
     customCellRenderers,
     isMany = false,
   } = props;
@@ -95,7 +96,7 @@ export function CellDisplay(props: PCellDisplay) {
             propValue,
             elementProps,
             dataObject,
-            parentDataObject,
+            originDataObject,
           );
         });
       }

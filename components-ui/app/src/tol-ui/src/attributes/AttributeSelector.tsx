@@ -148,12 +148,16 @@ export function AttributeSelector(props: PAttributeSelector) {
   const RenderSelectedValue = (value: string) => {
     const metaData = getFlattenedMetaData(entityMeta, objectType, value) as IAttributeDescriptor;
     const provenance = value.match(PROVENANCE_IN_FIELD_REGEX)?.[1];
-    const displayName = metaData["display_name"]
-      ?? (normaliseCaps(value) as string).replace(PROVENANCE_IN_FIELD_REGEX_GLOBAL, "");
+    const displayName =
+      metaData?.display_name ??
+      (normaliseCaps(value) as string).replace(
+        PROVENANCE_IN_FIELD_REGEX_GLOBAL,
+        "",
+      );
     return (
       <span className="tol-attribute-selector-render-single-item">
         {displayName}
-        <SourceTag source={provenance || metaData.source} />
+        <SourceTag source={provenance || metaData?.source} />
       </span>
     );
   };
