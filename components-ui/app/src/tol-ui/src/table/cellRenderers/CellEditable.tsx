@@ -5,63 +5,99 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Input, DatePicker } from "rsuite";
-import { Button, BUTTONS, PCellDisplay, isValidDate } from "../..";
+import {
+  CellEditableDatetime,
+  CellEditablePickerWithAction,
+  CellEditableText,
+  isOneJumpRelationshipField,
+  MESSAGE_TYPE,
+  PCellDisplay,
+  PopUpMessage,
+  VALUE_ERROR_MESSAGE,
+  VALUE_SAVED_SUCCESSFULLY_MESSAGE,
+} from "../..";
 
+
+/**
+ * Props for the wrapper that chooses the correct inline editor for a cell.
+ */
 export interface PCellEditable extends PCellDisplay {
-  loading: boolean;
+  /** Whether the edit controls should float below the cell content. */
   floatingControls?: boolean;
-  onChange: (newValue: string | Date) => void;
-  onCancel: () => void;
-  onSave: () => void;
+  /** Updates the value in the parent component when the inline editor changes. */
+  setValue: (newValue: any) => void;
+  /** Runs when the inline editor closes after cancel or save. */
+  onExit: () => void;
 }
 
+/**
+ * Props for the concrete inline editor used by the cell wrapper.
+ */
+export interface PCellEditableInput extends PCellEditable {
+  /** Called after a successful save. */
+  onSaveSuccess?: () => void;
+  /** Called when the save operation fails. */
+  onSaveError?: () => void;
+  /** Reverts the editor state and exits without persisting changes. */
+  onCancel: () => void;
+  /** Whether the editor is waiting on an async save or fetch. */
+  loading: boolean;
+  /** Toggles the loading state for the current edit action. */
+  setLoading: (loading: boolean) => void;
+}
+
+/**
+ * Renders the correct inline editor for the cell based on field type metadata.
+ */
 export function CellEditable(props: PCellEditable) {
-  const { value, loading, floatingControls, onChange, onCancel, onSave } =
-    props;
+  const { value, setValue, onExit, meta, field, originField } = props;
+  const { type, actsAs } = meta;
 
-  const [datePickerOpen, setDatePickerOpen] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [prevValue, setPrevValue] = useState(value);
 
-  const valueIsValidDate = isValidDate(value);
+  const onCancel = () => {
+    // revert to previous value on cancel
+    setValue(prevValue);
+    onExit();
+  }
 
-  return (
-    <>
-      {valueIsValidDate ? (
-        <DatePicker
-          value={new Date(value)}
-          onChange={(date) => {
-            if (!date) return;
-            onChange(date);
-            setDatePickerOpen(false);
-          }}
-          cleanable={false}
-          preventOverflow
-          oneTap
-          block
-          open={datePickerOpen}
-          onOpen={() => setDatePickerOpen(true)}
-          onClose={() => setDatePickerOpen(false)}
-          editable={false}
-        />
-      ) : (
-        <Input
-          autoFocus
-          value={value}
-          onChange={onChange}
-          onPressEnter={onSave}
-        />
-      )}
-      <div
-        className={`tol-data-point-editable-controls${floatingControls ? " floating" : ""}`}
-      >
-        <Button {...BUTTONS.CANCEL} disabled={loading} onClick={onCancel} />
-        <Button
-          {...BUTTONS.SAVE}
-          disabled={loading}
-          loading={loading}
-          onClick={onSave}
-        />
-      </div>
-    </>
-  );
+  const onSaveSuccess = () => {
+    setLoading(false);
+    setPrevValue(value);
+    onExit();
+    PopUpMessage({
+      type: MESSAGE_TYPE.SUCCESS,
+      message: VALUE_SAVED_SUCCESSFULLY_MESSAGE,
+    });
+  }
+
+  const onSaveError = () => {
+    onCancel();
+    // revert to previous value on error
+    setValue(prevValue);
+    PopUpMessage({
+      type: MESSAGE_TYPE.ERROR,
+      message: VALUE_ERROR_MESSAGE,
+    });
+  }
+
+  const newProps = {
+    ...props,
+    onSaveSuccess,
+    onSaveError,
+    onCancel,
+    loading,
+    setLoading,
+  }
+
+  if (type === "datetime")
+    return <CellEditableDatetime {...newProps} />;
+  if (actsAs === "status")
+    return <CellEditablePickerWithAction {...newProps} actionName="SetStatusAction" />;
+  // if (actsAs === "relationship_identifier" && isOneJumpRelationshipField(originField))
+  if (field === "id" && isOneJumpRelationshipField(originField))
+    return <CellEditablePickerWithAction {...newProps} actionName="SetRelationshipAction" />;
+
+  return <CellEditableText {...newProps} />;
 }

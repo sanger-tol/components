@@ -152,6 +152,18 @@ export function splitRelationshipsForField(field: string): string[] {
 }
 
 /**
+ * Checks whether a field resolves through exactly one relationship hop.
+ *
+ * @param field - Field name or relationship path to evaluate.
+ * @returns `true` when the field contains exactly one relationship segment,
+ * otherwise `false`.
+ */
+export function isOneJumpRelationshipField(field: string): boolean {
+  const relationships = splitRelationshipsForField(field);
+  return relationships.length === 1;
+}
+
+/**
  * Checks whether a field contains at least one relationship separator.
  *
  * @param field - Field name to check.

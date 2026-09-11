@@ -6,13 +6,15 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `5.2.2`
+## tol-ui `5.3.0`
 
-11-09-2026
+11-09-26
 
-- Fixed a bug with `prefect_api_path` was previously `prefect_api_data_path`
+- Relationship Picker for DataPoints
+- Refactor DataPoint Editors
 - Fixed config drawer bug where default sort attribute could be undefined in entity meta
   and cause rendering issues.
+- Fixed a bug with `prefect_api_path` was previously `prefect_api_data_path`
 
 ## tol-ui `5.2.1`
 
