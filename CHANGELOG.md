@@ -11,6 +11,8 @@ SPDX-License-Identifier: MIT
 11-09-2026
 
 - Fixed a bug with `prefect_api_path` was previously `prefect_api_data_path`
+- Fixed config drawer bug where default sort attribute could be undefined in entity meta
+  and cause rendering issues.
 
 ## tol-ui `5.2.1`
 
@@ -153,7 +155,6 @@ SPDX-License-Identifier: MIT
 
 - Fixed bug: requestedFields for fields used in Cell Renderer params
 - Fixed bug: Filters are not being calculated in the utility bar tooltips.
-
 
 ## tol-ui `4.0.0`
 
