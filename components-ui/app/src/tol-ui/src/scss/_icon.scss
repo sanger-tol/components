@@ -7,10 +7,18 @@
 .tol-icon-link-texts-viewer {
   display: flex;
   flex-direction: column;
+  row-gap: 0.25rem;
 }
 
 .tol-icon-link-text {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+
+  .tol-icon {
+    display: inline-flex;
+    flex: 0 0 2rem;
+    width: 2rem;
+    justify-content: center;
+  }
 }
