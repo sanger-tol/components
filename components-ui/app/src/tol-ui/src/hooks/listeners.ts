@@ -6,9 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
 
-/**
- * Returns whether the browser currently prefers a dark color scheme.
- */
+/** Returns whether the browser currently prefers a dark color scheme. */
 export function isDarkMode(): boolean {
   return (
     typeof window !== "undefined" &&
@@ -58,8 +56,7 @@ export function resizeListener(fn: () => void): void {
  * Runs a callback once the provided element ref is attached and whenever it is resized.
  *
  * @param componentRef Ref for the element to observe.
- * @param fn Callback invoked after the element is available and on each observed
- * resize event.
+ * @param fn Callback invoked after the element is available and on each observed resize event.
  */
 export function componentResizeListener(
   componentRef: RefObject<Element | null>,
