@@ -401,6 +401,8 @@ export function getLg(type: string) {
       return 3;
     case "md":
       return 6;
+    case "wide":
+      return 9;
     default:
       return 12;
   }
@@ -411,6 +413,8 @@ export function getHeight(type: string) {
     case "sm":
       return 150;
     case "md":
+      return 450;
+    case "wide":
       return 450;
     case "lg":
       return 450;
