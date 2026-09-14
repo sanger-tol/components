@@ -457,8 +457,6 @@ export function RemoteTable(props: PRemoteTable) {
         requestedFields: await amalgamateRequestedFields(fieldMeta),
       })
       .then(async (dataObjects: TDataObjectListOrNull) => {
-        setError("");
-
         // Render every cell synchronously in a single pass.
         const isManyByField = await getIsManyByField(
           dataSource,
@@ -481,7 +479,7 @@ export function RemoteTable(props: PRemoteTable) {
         // Temp fix for 500 errors, due to empty requested fields
         // TODO FUTURE: Remove when the SDK handles empty requested fields better.
         const errorMsg = error?.response?.data?.errors?.[0]?.detail;
-        if (errorMsg.includes("Empty element in path")) {
+        if (errorMsg?.includes("Empty element in path")) {
           setData([]);
           return;
         }
