@@ -42,7 +42,7 @@ import {
   amalgamateRequestedFields,
   TFieldDropdownChoices,
   updateFieldMetaAttribute,
-  IHeight,
+  IHeightDeprecated,
   TFilterOrUndefined,
   ACTIONS_DS,
   useBoard,
@@ -50,7 +50,7 @@ import {
   MESSAGE_TYPE,
 } from "..";
 
-export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
+export interface PRemoteTable extends IRemoteTargetAndZone, IHeightDeprecated {
   key?: Key;
   /**
    * Unique identifier for this table instance; used as the key for persisted configuration

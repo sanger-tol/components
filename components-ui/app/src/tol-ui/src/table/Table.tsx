@@ -36,10 +36,11 @@ import {
   Pagination,
   ITableRecord,
   TFilterOrUndefined,
-  IDataComponentBasics,
+  IRemoteComponentBase,
 } from "..";
 
-export interface PTable extends IRemoteTargetAndZone, IDataComponentBasics {
+
+export interface PTable extends IRemoteTargetAndZone, IRemoteComponentBase {
   data: any;
   fieldMeta: IFieldMeta;
   baseFieldMeta?: Partial<IFieldMeta>;

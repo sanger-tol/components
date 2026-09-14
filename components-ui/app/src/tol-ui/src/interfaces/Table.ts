@@ -121,28 +121,3 @@ export type IFieldDropdownChoices = "copyValues";
 
 export type TDiffComparison = Partial<IComponentConfig> | null | undefined;
 
-/**
- * Properties for pagination control in the table component.
- */
-export interface IPagination {
-  /**
-  * The current active page.
-  */
-  page: number;
-  /**
-   * Callback to change the active page.
-   */
-  setPage: (page: number) => void;
-  /**
-   * The number of rows displayed per page.
-   */
-  pageSize: number;
-  /**
-   * Callback to change the page size.
-   */
-  setPageSize: (pageSize: number) => void;
-  /**
-   * The total number of rows across all pages.
-   */
-  totalSize: number;
-}

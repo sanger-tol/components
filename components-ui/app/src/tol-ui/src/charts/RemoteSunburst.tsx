@@ -27,7 +27,7 @@ import {
   TFilterOrUndefined,
   API_METHODS,
   IRemoteTargetAndZone,
-  IHeight,
+  IHeightDeprecated,
   API_OPERATIONS,
   mergeUtilityBarConfigs,
   TSunburstBucketDataOrUndefined,
@@ -35,7 +35,7 @@ import {
   isEmptyObject
 } from "..";
 
-interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
+interface PRemoteSunburst extends IRemoteTargetAndZone, IHeightDeprecated {
   /**
    * Unique identifier for this chart instance; used as the key for persisted configuration
    */

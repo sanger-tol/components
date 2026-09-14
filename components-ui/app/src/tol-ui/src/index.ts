@@ -31,6 +31,7 @@ export * from "./autodoc";
 export * from "./boards";
 export * from "./buttons";
 export * from "./charts";
+export * from "./component";
 export * from "./config";
 export * from "./constants";
 export * from "./contexts";
