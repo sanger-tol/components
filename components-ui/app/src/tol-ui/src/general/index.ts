@@ -17,6 +17,7 @@ export * from "./FormatTooltip";
 export * from "./Header";
 export * from "./HoverOverlay";
 export * from "./Icon";
+export * from "./IconLink";
 export * from "./IconTooltip";
 export * from "./EditableTitle";
 export * from "./LoadingContent";

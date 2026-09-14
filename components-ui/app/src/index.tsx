@@ -10,6 +10,7 @@ import "./scss/styling.scss";
 import {
   API_PATHS,
   generateAutoDocNavigation,
+  PAGE_ACCESS,
   SmartApp,
   TsDataSource
 } from "./tol-ui/src";
@@ -46,6 +47,17 @@ root.render(
     id="components"
     configurableBoards
     brand="Components"
+    navigation={{
+      data: {
+        Sandbox: {
+          access: PAGE_ACCESS.PUBLIC,
+          path: {
+            pageElementReference: "sandbox",
+          },
+        },
+      },
+      order: ["Sandbox"],
+    }}
     pageElements={pageElements}
     configDataSource={CONFIG_DS}
   />

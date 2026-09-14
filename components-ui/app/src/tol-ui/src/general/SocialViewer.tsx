@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { Icon } from ".";
-import { TNameAndLinks } from "..";
+import { IconLink } from "./IconLink";
 
 export interface PNameAndLinks {
   data: TNameAndLinks;
@@ -22,18 +21,11 @@ export function SocialViewer(props: PNameAndLinks) {
           </p>
           <div className="tol-social-viewer-child">
             {item.links.map((link, bottomLevelIndex) => (
-              <a
+              <IconLink
                 key={bottomLevelIndex}
-                href={link.link}
-                target="_blank"
-                className="icon"
-              >
-                <Icon
-                  icon={link.icon}
-                  config={link.icon === "link" ? "solid" : "brands"}
-                  size={"2x"}
-                />
-              </a>
+                {...link}
+                config={link.icon === "link" ? "solid" : "brands"}
+              />
             ))}
           </div>
         </div>
