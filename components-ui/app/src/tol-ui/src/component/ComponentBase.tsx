@@ -25,7 +25,6 @@ export function ComponentBase(props: PComponentBase) {
     id,
     className,
     style,
-    loading,
     contents,
     height = "100%",
     utilityBarConfig,
@@ -47,7 +46,7 @@ export function ComponentBase(props: PComponentBase) {
           utilityBarConfig !== null ? "with-offset" : undefined,
         ].filter(Boolean).join(" ")}
       >
-        {contents ?? (loading ? <Placeholder loader /> : children)}
+        {contents ?? children}
       </div>
     </div>
   );

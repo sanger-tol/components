@@ -15,7 +15,6 @@ import {
   IFieldMeta,
   IDropdownButtonConfig,
   useStateFallback,
-  IRemoteTargetAndZone,
   PUtilityBar,
   PButton,
   PDeprecatedDropdownButtons,
@@ -36,11 +35,12 @@ import {
   Pagination,
   ITableRecord,
   TFilterOrUndefined,
-  IRemoteComponentBase,
+  IRemoteComponentList,
 } from "..";
 
 
-export interface PTable extends IRemoteTargetAndZone, IRemoteComponentBase {
+// TODO FUTURE: Remove IRemoteComponentList as this is for a remote component.
+export interface PTable extends IRemoteComponentList {
   data: any;
   fieldMeta: IFieldMeta;
   baseFieldMeta?: Partial<IFieldMeta>;
