@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode } from "react";
-import { IComponentBase, Placeholder, UtilityBar, mergeUtilityBarConfigs } from "..";
+import { IComponentBase, UtilityBar, mergeUtilityBarConfigs } from "..";
 
 
 /** Props for the `ComponentBase` wrapper component. */
