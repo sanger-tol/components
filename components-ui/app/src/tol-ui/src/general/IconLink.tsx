@@ -43,10 +43,13 @@ interface IDetectedLinkDetails {
 
 function detectLinkDetails(link: string): IDetectedLinkDetails {
   const knownProviders: Record<string, string> = {
+    bluesky: "Bluesky",
+    discord: "Discord",
+    facebook: "Facebook",
     github: "GitHub",
     gitlab: "GitLab",
-    bluesky: "Bluesky",
     linkedin: "LinkedIn",
+    slack: "Slack",
   };
   const provider = Object.keys(knownProviders).find((name) =>
     link.toLowerCase().includes(name)
