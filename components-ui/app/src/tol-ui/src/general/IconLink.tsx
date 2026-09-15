@@ -44,6 +44,8 @@ interface IDetectedLinkDetails {
 export interface IIconProvider {
   icon: string;
   text: string;
+  // FontAwesome does not have a "zoom" brand icon, so this needs "solid" rather than "brands"
+  config?: string;
 }
 
 export const KNOWN_ICON_PROVIDERS: Record<string, IIconProvider> = {
@@ -52,11 +54,11 @@ export const KNOWN_ICON_PROVIDERS: Record<string, IIconProvider> = {
     facebook: { icon: "facebook", text: "Facebook" },
     github: { icon: "github", text: "GitHub" },
     gitlab: { icon: "gitlab", text: "GitLab" },
-    kasm: { icon: "cloud", text: "Kasm" },
+    kasm: { icon: "cloud", text: "Kasm", config: "solid" },
     linkedin: { icon: "linkedin", text: "LinkedIn" },
     slack: { icon: "slack", text: "Slack" },
     wechat: { icon: "weixin", text: "WeChat" },
-    zoom: { icon: "zoom", text: "Zoom" }
+    zoom: { icon: "video", text: "Zoom", config: "solid" }
 };
 
 export function isKnownIconLink(link: string): boolean {
@@ -74,7 +76,7 @@ function detectLinkDetails(link: string): IDetectedLinkDetails {
     ? {
         icon: KNOWN_ICON_PROVIDERS[provider].icon,
         text: KNOWN_ICON_PROVIDERS[provider].text,
-        config: "brands",
+        config: KNOWN_ICON_PROVIDERS[provider].config ?? "brands",
       }
     : {};
 }
