@@ -67,8 +67,10 @@ export function Board(props: PBoard) {
 
   // objectType and filter are read from query params (e.g. ?objectType=species&filter=...)
   const queryParams = new URLSearchParams(location.search);
-  const objectType = props.object_type ?? queryParams.get("objectType") ?? undefined;
+  const objectType = props.object_type ?? queryParams.get("object_type") ?? undefined;
   const filter = props.filter ?? JSON.parse(queryParams.get("filter") ?? "null") ?? undefined;
+
+  console.log(objectType, filter);
 
   themeListener(() => {
     try {
