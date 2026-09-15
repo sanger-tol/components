@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import type { IconProp, SizeProp } from "@fortawesome/fontawesome-svg-core";
 import { HoverOverlay } from "./HoverOverlay";
 
 
@@ -53,7 +54,13 @@ export function Icon(props: PIcon) {
   const { icon, size, colour, config = "solid", className, onClick, tooltip, testid } = props;
 
   const prefix = config === "brands" ? "fab" : config === "regular" ? "far" : "fas";
-  const IconContents = <FontAwesomeIcon icon={[prefix, icon]} size={size} color={colour} />;
+  const IconContents = (
+    <FontAwesomeIcon
+      icon={[prefix, icon] as IconProp}
+      size={size as SizeProp}
+      color={colour}
+    />
+  );
 
   return (
     <span
