@@ -20,7 +20,7 @@ import {
   mergeFilters,
 } from "../..";
 import type { IZone, IView, PButton, PBoard } from "../..";
-import { getTranslatorZone, translateZoneAboveFilter } from "./utils";
+import { getTranslatorZone, getTopLevelDummyZone, translateZoneAboveFilter } from "./utils";
 
 
 export interface PZone extends PBoard {
@@ -42,7 +42,7 @@ export function Zone(props: PZone) {
     actionsDataSource,
   } = props;
 
-  const { editMode, layoutMode } = useBoard();
+  const { board, editMode, layoutMode } = useBoard();
 
   const [zone, setZone] = useBoardState<IView, IZone>(id, view, setView);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false);
@@ -54,11 +54,7 @@ export function Zone(props: PZone) {
   const { object_type, dataspace, filter } = zone;
 
   // Find the first zone above that doesn't have filterPassThrough enabled
-  const zoneAbove = getTranslatorZone(id, view);
-
-  // Translation is only possible if the zone above is in the same dataspace as this zone
-  const zonesMatchDataspace =
-    zoneAbove?.dataspace?.getDataSourceInstanceId() === zone.dataspace?.getDataSourceInstanceId();
+  const zoneAbove: IZone = getTranslatorZone(id, view) ?? getTopLevelDummyZone(board);
 
   useEffect(() => {
     (async () => {
@@ -77,7 +73,7 @@ export function Zone(props: PZone) {
   ]);
 
   const updateTranslatedFilter = async () => {
-    if (zoneAbove && zonesMatchDataspace) {
+    if (zoneAbove) {
       zone.filter = mergeFilters(
         await translateZoneAboveFilter(zone, zoneAbove),
         zone.defaultFilter

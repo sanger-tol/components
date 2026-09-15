@@ -9,8 +9,10 @@ import {
   generateFilter,
   generateAttributeTranslations,
   getSiblingBoardEntity,
+  defineBoardEntity,
+  BOARD_ENTITIES,
 } from "../..";
-import type { IZone, IFilter, IView } from "../..";
+import type { IZone, IFilter, IView, IBoard } from "../..";
 
 
 /**
@@ -22,13 +24,36 @@ import type { IZone, IFilter, IView } from "../..";
  * @param view - The view containing all sibling zones.
  * @returns The nearest qualifying zone above, or `null` if none exists.
  */
-export function getTranslatorZone(id: string, view: IView): IZone | null {
+export function getTranslatorZone(
+  id: string,
+  view: IView
+): IZone | null {
   for (let offset = -1; ; offset--) {
     const candidate = getSiblingBoardEntity(id, view, offset) as IZone | null;
     if (!candidate) return null;
     if (!candidate.filterPassThrough) return candidate;
   }
 }
+
+/**
+ * Builds a dummy, non-persisted zone from the board's object type and filter.
+ * Used to act as a top-level zone above the first real zone of a view, so
+ * that zone can still translate an incoming objectType/filter (e.g. supplied
+ * via props or query params) even though no real zone exists above it.
+ *
+ * @param board - The board to derive the top-level object type and filter from.
+ * @returns A dummy `IZone` wrapping the board's object type and filter.
+ */
+export function getTopLevelDummyZone(board: IBoard): IZone {
+  return defineBoardEntity(
+    {
+      object_type: board.object_type,
+      filter: board.filter,
+    },
+    BOARD_ENTITIES.ENTITIES.ZONE,
+  ) as IZone;
+}
+
 
 /**
  * Translates filter attributes from the zone above into attributes usable by the current zone.

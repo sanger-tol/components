@@ -32,33 +32,23 @@ import {
   isEmptyObject,
 } from "../..";
 import { BoardUtilityBar, ImportViewModal } from "./components";
-import type { IBoard, TsDataSource } from "../..";
+import type { IBoard, IBoardFilter, TsDataSource } from "../..";
 
 
-export interface PBoard {
-  /**
-   * The ID of the board to be displayed.
-   */
+export interface PBoard extends IBoardFilter {
+  /** The ID of the board to be displayed. */
   boardId?: string;
-  /**
-   * The data source for fetching board data.
-   */
+  /** The data source for fetching board data. */
   boardDataSource: TsDataSource;
-  /**
-   * The data source for fetching actions.
-   */
+  /** The data source for fetching actions. */
   actionsDataSource?: TsDataSource;
 }
 
-/**
- * Component to render a board based on its ID and TSDataSource.
- */
+/** Component to render a board based on its ID and TSDataSource. */
 export function Board(props: PBoard) {
-  const { boardId, boardDataSource, actionsDataSource } = props;
+  const { boardDataSource, actionsDataSource } = props;
 
-  const { setPrivilege, editMode, board, setBoard } = useBoard();
-
-  const { boardId: paramBoardId } = useParams<any>();
+  const { board, setBoard, editMode, setPrivilege } = useBoard();
   const location = useLocation();
 
   const [activeViewId, setActiveViewId] = useState<string | null>(null);
@@ -72,7 +62,13 @@ export function Board(props: PBoard) {
     useState<boolean>(false);
 
   // Ability to override boardId from props over URL params
-  const id = boardId ?? paramBoardId;
+  const { boardId: paramBoardId } = useParams<any>();
+  const id = props.boardId ?? paramBoardId;
+
+  // objectType and filter are read from query params (e.g. ?objectType=species&filter=...)
+  const queryParams = new URLSearchParams(location.search);
+  const objectType = props.object_type ?? queryParams.get("objectType") ?? undefined;
+  const filter = props.filter ?? JSON.parse(queryParams.get("filter") ?? "null") ?? undefined;
 
   themeListener(() => {
     try {
@@ -90,7 +86,12 @@ export function Board(props: PBoard) {
     isLoading,
   } = useQueryData<IBoard>(
     [BOARD_ENTITIES.ENTITIES.BOARD, id],
-    () => fetchBoardEntityAndChildren(boardDataSource, id!) as Promise<IBoard>,
+    () => fetchBoardEntityAndChildren(
+      boardDataSource,
+      id!,
+      objectType,
+      filter,
+    ) as Promise<IBoard>,
     { enabled: !!id },
   );
 
