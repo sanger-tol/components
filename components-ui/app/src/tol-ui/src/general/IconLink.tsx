@@ -41,24 +41,39 @@ interface IDetectedLinkDetails {
   config?: string;
 }
 
+export interface IIconProvider {
+  icon: string;
+  text: string;
+}
+
+export const KNOWN_ICON_PROVIDERS: Record<string, IIconProvider> = {
+    bluesky: { icon: "bluesky", text: "Bluesky" },
+    discord: { icon: "discord", text: "Discord" },
+    facebook: { icon: "facebook", text: "Facebook" },
+    github: { icon: "github", text: "GitHub" },
+    gitlab: { icon: "gitlab", text: "GitLab" },
+    kasm: { icon: "cloud", text: "Kasm" },
+    linkedin: { icon: "linkedin", text: "LinkedIn" },
+    slack: { icon: "slack", text: "Slack" },
+    wechat: { icon: "weixin", text: "WeChat" },
+    zoom: { icon: "zoom", text: "Zoom" }
+};
+
+export function isKnownIconLink(link: string): boolean {
+  return Object.keys(KNOWN_ICON_PROVIDERS).some((name) =>
+    link.toLowerCase().includes(name)
+  );
+}
+
 function detectLinkDetails(link: string): IDetectedLinkDetails {
-  const knownProviders: Record<string, string> = {
-    bluesky: "Bluesky",
-    discord: "Discord",
-    facebook: "Facebook",
-    github: "GitHub",
-    gitlab: "GitLab",
-    linkedin: "LinkedIn",
-    slack: "Slack",
-  };
-  const provider = Object.keys(knownProviders).find((name) =>
+  const provider = Object.keys(KNOWN_ICON_PROVIDERS).find((name) =>
     link.toLowerCase().includes(name)
   );
 
   return provider
     ? {
-        icon: provider,
-        text: knownProviders[provider],
+        icon: KNOWN_ICON_PROVIDERS[provider].icon,
+        text: KNOWN_ICON_PROVIDERS[provider].text,
         config: "brands",
       }
     : {};
