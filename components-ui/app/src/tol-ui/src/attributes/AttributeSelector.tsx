@@ -38,7 +38,6 @@ export interface PAttributeSelector extends IRemoteTarget {
   allowedTypes?: string[];
   attribute: string[];
   disabledValues?: any;
-  displaySource?: boolean;
   maxSelections?: number;
   numPopulatedFields?: number;
   placeholder?: string;
@@ -65,7 +64,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     allowedTypes,
     attribute,
     disabledValues,
-    displaySource,
     numPopulatedFields,
     maxSelections,
     populatedFieldType = "value",
@@ -136,7 +134,6 @@ export function AttributeSelector(props: PAttributeSelector) {
         authoritative={metaData.authoritative}
         objectType={objectType}
         dataSource={dataSource}
-        displaySource={displaySource}
         tooltipContent={tooltipContent}
         disabledValues={disabledValues}
         provenancesAvailable={provenancesAvailable}
@@ -197,7 +194,7 @@ export function AttributeSelector(props: PAttributeSelector) {
         })}
         placeholder={placeholder}
         value={attribute}
-        setValue={(newAttribute: string[]) => {
+        setValue={(newAttribute) => {
           handleSetAttribute(
             newAttribute,
             maxSelections!,

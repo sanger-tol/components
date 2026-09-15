@@ -5,10 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { IHeight } from "..";
+import { IHeightDeprecated } from "..";
 import type { MouseEventHandler } from "react";
 
-export interface PImage extends IHeight {
+export interface PImage extends IHeightDeprecated {
   /**
    * The href for the image
    */

@@ -42,7 +42,7 @@ import {
   amalgamateRequestedFields,
   TFieldDropdownChoices,
   updateFieldMetaAttribute,
-  IHeight,
+  IHeightDeprecated,
   TFilterOrUndefined,
   ACTIONS_DS,
   useBoard,
@@ -50,7 +50,7 @@ import {
   MESSAGE_TYPE,
 } from "..";
 
-export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
+export interface PRemoteTable extends IRemoteTargetAndZone, IHeightDeprecated {
   key?: Key;
   /**
    * Unique identifier for this table instance; used as the key for persisted configuration
@@ -60,7 +60,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Optional label or description of the data source, shown where supported by `Table`
    */
   source?: string;
-
   /**
    * Initial field metadata for columns; overridden by any saved configuration for this table `id`
    */
@@ -117,7 +116,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Called when the user resizes the width of a column
    */
   onResizeColumn?: (columnWidth: number, dataKey: string) => void;
-
   /**
    * Initial page size if none is stored already for this table `id`
    */
@@ -126,11 +124,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Initial filter bar visibility if none is stored already
    */
   filterVisibility?: boolean;
-  /**
-   * If true, allows the UI to display the `source` information where supported
-   */
-  displaySource?: boolean;
-
   /**
    * If true, hides or disables the filter UI for this table
    */
@@ -213,7 +206,6 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * This is used in conjunction with `showConfigReset`
    */
   resetConfigDifferences?: IConfigDifferences;
-
   /**
    * Test ID used to identify this table in Playwright tests
    */
@@ -465,8 +457,6 @@ export function RemoteTable(props: PRemoteTable) {
         requestedFields: await amalgamateRequestedFields(fieldMeta),
       })
       .then(async (dataObjects: TDataObjectListOrNull) => {
-        setError("");
-
         // Render every cell synchronously in a single pass.
         const isManyByField = await getIsManyByField(
           dataSource,
@@ -489,7 +479,7 @@ export function RemoteTable(props: PRemoteTable) {
         // Temp fix for 500 errors, due to empty requested fields
         // TODO FUTURE: Remove when the SDK handles empty requested fields better.
         const errorMsg = error?.response?.data?.errors?.[0]?.detail;
-        if (errorMsg.includes("Empty element in path")) {
+        if (errorMsg?.includes("Empty element in path")) {
           setData([]);
           return;
         }
@@ -541,7 +531,10 @@ export function RemoteTable(props: PRemoteTable) {
     setFullLoad(true);
   };
 
-  const onSortColumn = (dataKey: string, sortType: "asc" | "desc") => {
+  const onSortColumn = (
+    dataKey: string,
+    sortType?: "asc" | "desc",
+  ) => {
     setSortByAttribute(dataKey);
     setSortByType(sortType);
   };
@@ -611,6 +604,8 @@ export function RemoteTable(props: PRemoteTable) {
   );
 
   const Contents = () => {
+    if (contents) return contents;
+  
     if (error !== "") {
       return <Placeholder errorMessage={error} height={height} />;
     }
@@ -619,8 +614,6 @@ export function RemoteTable(props: PRemoteTable) {
     }
     return null;
   };
-
-  // const resetDifferences = props.resetConfigDifferences ?? getInitialDiffState(id, ) ?? { add: [], remove: [] };
 
   return (
     <div style={{ height: height }} data-testid={testid}>
@@ -643,7 +636,7 @@ export function RemoteTable(props: PRemoteTable) {
       />
       <Table
         {...props}
-        contents={contents ? contents : Contents()}
+        contents={Contents()}
         data={data}
         fieldMeta={fieldMeta!}
         expandedRows={expandedRows}

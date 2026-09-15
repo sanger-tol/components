@@ -239,6 +239,32 @@ export function createSort(sortColumn?: string, sortType?: string) {
   return sortColumn;
 }
 
+/**
+ * Resolves the CSS class for a table row based on selection state.
+ *
+ * @param rowData The row record provided by `rsuite` table.
+ * @param bulkSelect Whether bulk selection mode is active.
+ * @param selectedRows The currently selected rows keyed by row id.
+ * @returns The row class string to apply.
+ */
+export function getTableRowClassName(
+  rowData: ITableRecord | null | undefined,
+  bulkSelect: boolean,
+  selectedRows: any[],
+): string {
+  if (!rowData) return "";
+
+  if (bulkSelect) {
+    return "tol-selected-row disabled";
+  }
+
+  if (selectedRows.some((item) => Object.keys(item)[0] === rowData.key)) {
+    return "tol-selected-row";
+  }
+
+  return "";
+}
+
 export function optimiseFieldMetaForSave(fieldMeta?: IFieldMeta) {
   const fm = deepCopy(fieldMeta);
   delete fm.dataWithDefaults;
@@ -494,6 +520,34 @@ export function hasExpandableRows(
       return fullHeight > COLLAPSED_ROW_MAX_HEIGHT;
     })
   );
+}
+
+/**
+ * Calculates the display height for a table row.
+ *
+ * Returns the full height when the row is expanded, otherwise caps it at
+ * `COLLAPSED_ROW_MAX_HEIGHT`.
+ *
+ * @param rowData - The row data object provided by the rsuite table.
+ * @param cellHeights - A map of row IDs to per-column cell heights.
+ * @param heightExpandedRows - A map of row IDs to their expanded state.
+ * @returns The pixel height to use for the row.
+ */
+export function getTableRowHeight(
+  rowData: any,
+  cellHeights: TCellHeights,
+  heightExpandedRows: Record<string, boolean>,
+): number {
+  const rowId = rowData?.key;
+  const row = cellHeights[rowId];
+  const fullHeight = row
+    ? Math.max(DEFAULT_ROW_HEIGHT, ...Object.values(row))
+    : DEFAULT_ROW_HEIGHT;
+
+  if (heightExpandedRows[rowId]) {
+    return fullHeight;
+  }
+  return Math.min(fullHeight, COLLAPSED_ROW_MAX_HEIGHT);
 }
 
 /**

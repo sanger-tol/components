@@ -18,7 +18,6 @@ export interface ISliceByDrawer extends IRemoteTarget {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
-  displaySource?: boolean;
   onConfigSave: (config: object) => void;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
@@ -74,7 +73,6 @@ export function SliceByDrawer(props: ISliceByDrawer) {
           sticky
           recommendedFilterAvailable
           renderSearchBySource
-          displaySource
           placeholder="Select Attributes to Slice By..."
           attribute={attributes}
           setAttributes={setAttributes}

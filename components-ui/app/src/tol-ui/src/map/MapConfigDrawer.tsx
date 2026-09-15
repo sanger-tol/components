@@ -110,7 +110,6 @@ export function MapConfigDrawer(props: PMapConfigDrawer) {
         {...props}
         sticky
         renderSearchBySource
-        displaySource
         placeholder="Select Longitude Attribute..."
         attribute={longitudeKey}
         setAttributes={setLongitudeKey}
@@ -127,7 +126,6 @@ export function MapConfigDrawer(props: PMapConfigDrawer) {
         {...props}
         sticky
         renderSearchBySource
-        displaySource
         placeholder="Select Latitude Attribute..."
         attribute={latitudeKey}
         setAttributes={setLatitudeKey}
@@ -143,7 +141,6 @@ export function MapConfigDrawer(props: PMapConfigDrawer) {
         {...props}
         sticky
         renderSearchBySource
-        displaySource
         placeholder="Select Attribute Keys..."
         attribute={attributeKeys}
         setAttributes={setAttributeKeys}

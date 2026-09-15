@@ -22,12 +22,12 @@ import {
   IRemoteTargetAndZone,
   TFilterOrUndefined,
   API_METHODS,
-  IHeight,
+  IHeightDeprecated,
   API_OPERATIONS,
   NO_DATA_FOUND_MESSAGE
 } from "..";
 
-interface PRemoteBarChart extends IRemoteTargetAndZone, IHeight {
+interface PRemoteBarChart extends IRemoteTargetAndZone, IHeightDeprecated {
   /**
    * Unique identifier for this chart instance; used as the key for persisted configuration
    */
