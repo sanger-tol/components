@@ -5,6 +5,7 @@
  */
 
 import { IconLink } from "./IconLink";
+import { TNameAndLinks } from "../interfaces/SocialViewer";
 
 export interface PNameAndLinks {
   data: TNameAndLinks;
