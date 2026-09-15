@@ -393,7 +393,6 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         {FilterPassThroughToggle}
         <AttributeSelector
           {...props}
-          displaySource
           recommendedFilterAvailable
           renderSearchBySource
           disabledValues={disabledFilterValues}

@@ -13,13 +13,13 @@ import {
   Placeholder,
   generateFilter,
   createMapMarkers,
-  IHeight,
+  IHeightDeprecated,
   filterHasUpdated,
   resetFiltersBelow,
   useEffectUpdate
 } from "..";
 
-export interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
+export interface PRemoteMap extends IRemoteTargetAndZone, IHeightDeprecated {
   /**
    * Unique identifier for this map instance, utilised in API interactions and state management
    */

@@ -5,10 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { useEffect, useRef, useState } from "react";
-import { Icon, IHeight } from "..";
+import { Icon, IHeightDeprecated } from "..";
 import { Image } from "./Image";
 
-export interface PImageCarousel extends IHeight {
+export interface PImageCarousel extends IHeightDeprecated {
   /**
    * Array of hrefs for the images
    */

@@ -169,7 +169,6 @@ export function CellRendererConditionParamOptions(props: PCellRendererConditionP
       <AttributeSelector
         objectType={objectType}
         dataSource={dataSource}
-        displaySource
         recommendedFilterAvailable
         renderSearchBySource
         attribute={attributes}

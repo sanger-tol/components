@@ -111,7 +111,7 @@ export interface IDiffState {
   removedColumns?: string[];
 }
 
-export interface ITableConfigSave extends ITableDrawerSave, ITableOtherSave {}
+export interface ITableConfigSave extends ITableDrawerSave, ITableOtherSave { }
 
 export type TCellHeights = Record<string, Record<string, number>>;
 
@@ -120,3 +120,4 @@ export type TFieldDropdownChoices = IFieldDropdownChoices[];
 export type IFieldDropdownChoices = "copyValues";
 
 export type TDiffComparison = Partial<IComponentConfig> | null | undefined;
+
