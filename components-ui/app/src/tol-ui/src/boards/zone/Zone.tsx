@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FilterConfigDrawer,
   ComponentCreationModal,
@@ -53,8 +53,21 @@ export function Zone(props: PZone) {
 
   const { object_type, dataspace, filter } = zone;
 
-  // Find the first zone above that doesn't have filterPassThrough enabled
-  const zoneAbove: IZone = getTranslatorZone(id, view) ?? getTopLevelDummyZone(board);
+  /*
+   * Try to find the first zone above that doesn't have filterPassThrough enabled.
+   * If no such zone exists, `translatorZone` will be `null`.
+   */
+  const translatorZone = getTranslatorZone(id, view);
+
+  /**
+   * Memoized since getTopLevelDummyZone returns a new object every call, which would
+   * otherwise retrigger the effect below on every render. Only computed when there's
+   * no real zone above.
+   */
+  const zoneAbove: IZone | null = useMemo(
+    () => translatorZone ?? getTopLevelDummyZone(board),
+    [translatorZone, board.object_type, board.filter],
+  );
 
   useEffect(() => {
     (async () => {

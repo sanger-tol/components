@@ -44,7 +44,8 @@ export function getTranslatorZone(
  * @param board - The board to derive the top-level object type and filter from.
  * @returns A dummy `IZone` wrapping the board's object type and filter.
  */
-export function getTopLevelDummyZone(board: IBoard): IZone {
+export function getTopLevelDummyZone(board: IBoard): IZone | null {
+  if (!board.object_type || !board.filter) return null;
   return defineBoardEntity(
     {
       object_type: board.object_type,
