@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.4.0`
+
+16-09-26
+
+- Param Boards
+
 ## tol-ui `5.3.0`
 
 11-09-26
