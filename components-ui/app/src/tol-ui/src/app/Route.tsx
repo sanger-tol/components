@@ -54,7 +54,9 @@ export function Route(props: PRoute) {
   } = props;
 
   /** Resolves route parameters and renders the configured page element. */
-  const renderElement = (routeParams: Record<string, string>): React.ReactNode => {
+  const renderElement = (
+    routeParams: Record<string, string | undefined>,
+  ): React.ReactNode => {
     let element: React.ReactNode;
 
     // Check if there is a pageElementReference in the path
