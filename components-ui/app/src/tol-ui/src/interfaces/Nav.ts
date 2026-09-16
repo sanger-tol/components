@@ -6,153 +6,93 @@ SPDX-License-Identifier: MIT
 
 import { PAGE_ACCESS } from "src";
 
+/** Query parameters for a navigation page, including nested filter values. */
+export type TQueryParams = Record<string, unknown>;
+
+/** A navigation destination represented by an internal page or external link. */
 export type TPagePath = IPageElement | IPageLink;
 
+/** Configuration for an internal navigation page. */
 export interface IPageElement {
-  /**
-   * Reference to a specific page element or boardId
-   * Optional for dropdowns
-   */
+  /** Reference to a specific page element or board ID; optional for dropdowns. */
   pageElementReference?: string;
-  /**
-   * The route path within the app
-   * Will default to the name of the nav item in implementation
-   */
+  /** Route path within the app; defaults to the navigation item name when omitted. */
   route?: string;
-  /**
-   * The query parameters for the page, represented as a key-value pair object.
-   */
-  queryParams?: Record<string, unknown>;
+  /** Query parameters for the page, represented as a key-value object. */
+  queryParams?: TQueryParams;
 }
 
+/** Configuration for an external navigation link. */
 export interface IPageLink {
-  /**
-   * The external link URL
-   */
+  /** External link URL. */
   href: string;
-  /**
-   * Whether to open the link in a new tab/window
-   */
+  /** Target browsing context, such as `_blank` for a new tab. */
   target?: string;
 }
 
+/** Access level or role list required to view a navigation item. */
 export type TPageAccess =
-  /**
-   * Predefined access levels
-   */
   (typeof PAGE_ACCESS)[keyof typeof PAGE_ACCESS] |
-  /**
-   * Array of roles that can access, e.g. ['lab']
-   */
   string[];
-  
 
-/**
- * Base interface for navigation page items
- */
+/** Base configuration shared by navigation pages and dropdowns. */
 export interface IPage {
-  /**
-   * The access level required to view the page
-   */
+  /** Access level required to view the page. */
   access: TPageAccess;
-  /**
-   * The route or link for the page
-   */
+  /** Route or external link for the page. */
   path?: TPagePath;
-  /**
-   * Optional icon for the page, e.g. a Font Awesome class name
-   */
+  /** Optional icon, such as a Font Awesome class name. */
   icon?: string;
 }
 
-/**
- * A dropdown containing a collection of pages.
- */
+/** A dropdown containing a collection of pages. */
 export interface INavDropdown extends IPage {
-  /**
-   * A group of pages within a dropdown, keyed by page nav display name.
-   */
+  /** Pages within the dropdown, keyed by navigation display name. */
   pages: INavCollection<TPageOrDropdown>;
 }
 
-/**
- * A named, ordered collection of items, keyed by their nav display name.
- *
- * The keys of `data` are the nav display names, e.g. "Extractions".
- */
+/** A named, ordered collection of navigation items keyed by display name. */
 export interface INavCollection<TItem> {
-  /**
-   * Items keyed by their nav display name
-   */
+  /** Items keyed by navigation display name. */
   data: Record<string, TItem>;
-  /**
-   * Order of items to be displayed in the navigation
-   */
+  /** Order in which items are displayed in the navigation. */
   order: string[];
-  /**
-   * Optional list of pages to hide the navigation bar for.
-   */
+  /** Optional list of routes for which the navigation bar is hidden. */
   hideNavFor?: string[];
 }
 
-/**
- * A top‑level navigation item can be either a page or a dropdown.
- */
+/** A top-level navigation item can be either a page or a dropdown. */
 export type TPageOrDropdown = IPage | INavDropdown;
 
-/**
- * The full navigation configuration.
- */
+/** The full navigation configuration. */
 export type TNavConfig = INavCollection<TPageOrDropdown>;
 
-/**
- * A page element can be either a React node or a boardId reference.
- */
+/** A page element can be either a React node or a board ID reference. */
 export type TPageElement = React.ReactNode | string;
 
-/**
- * A mapping of page element references to their corresponding JSX elements.
- */
+/** Mapping of page element references to their corresponding JSX elements. */
 export type TPageElements = Record<string, TPageElement>;
 
-/**
- * The brand displayed in the navigation bar, either as a string title or a React node.
- */
+/** Brand displayed in the navigation bar as a string title or React node. */
 export type TNavBrand = string | React.ReactNode;
 
-/**
- * Navigation destination details for nav items.
- */
+/** Resolved navigation destination details. */
 export interface INavDestination {
-  /**
-   * The URL or route to navigate to.
-   */
+  /** URL or route to navigate to. */
   destination: string;
-  /**
-   * The target attribute for links (e.g., "_blank" for new tab).
-   */
+  /** Target attribute for links, such as `_blank` for a new tab. */
   target?: string;
 }
 
-/**
- * Configuration for mobile navbar.
- */
+/** Configuration for the mobile navigation bar. */
 export interface IMobileOptions {
-  /**
-   * Boolean to enable the mobile first navigation
-   */
+  /** Enables mobile-first navigation. */
   enabled: boolean;
-  /**
-   * Boolean to enable login on the navbar
-   */
+  /** Enables the login action in the navigation bar. */
   login?: boolean;
-  /**
-   * Boolean to enable register on the navbar
-   */
+  /** Enables the registration action in the navigation bar. */
   register?: boolean;
-  /**
-   * Boolean to enable profile on the navbar
-   */
+  /** Enables the profile action in the navigation bar. */
   profile?: boolean;
 }
 

@@ -70,8 +70,6 @@ export function Board(props: PBoard) {
   const objectType = props.object_type ?? queryParams.get("object_type") ?? undefined;
   const filter = props.filter ?? JSON.parse(queryParams.get("filter") ?? "null") ?? undefined;
 
-  console.log(objectType, filter);
-
   themeListener(() => {
     try {
       const backing = document.getElementById("tol-smart-app-background");
