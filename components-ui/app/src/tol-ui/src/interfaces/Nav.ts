@@ -19,6 +19,10 @@ export interface IPageElement {
    * Will default to the name of the nav item in implementation
    */
   route?: string;
+  /**
+   * The query parameters for the page, represented as a key-value pair object.
+   */
+  queryParams?: Record<string, unknown>;
 }
 
 export interface IPageLink {

@@ -8,6 +8,7 @@ import { Route as ReactRoute } from "react-router-dom";
 import {
   Board,
   BoardContextProvider,
+  IFilter,
   IPageElement,
   RequireAuth,
   RequireCompletedProfile,
@@ -77,6 +78,8 @@ export function Route(props: PRoute) {
             boardDataSource={boardDataSource}
             boardId={path.pageElementReference}
             actionsDataSource={actionsDataSource!}
+            object_type={path.queryParams?.object_type as string}
+            filter={path.queryParams?.filter as IFilter}
           />
         </BoardContextProvider>
       );
