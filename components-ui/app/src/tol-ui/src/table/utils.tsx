@@ -191,7 +191,6 @@ export function addDefaultsFromEntityMeta(
   const defaults = {
     cellRenderer: addDefaultCellRenderer(meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
-    isAttribute: isRelationshipField(key),
     rename: meta.display_name || normaliseCaps(key),
     sort: true,
     type: meta.python_type,
