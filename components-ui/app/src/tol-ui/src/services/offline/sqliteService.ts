@@ -14,8 +14,9 @@ import {
 import type { HTMLJeepSqliteElement } from 'jeep-sqlite';
 
 let sqliteConnection: SQLiteConnection | undefined;
+let dbPromise: ReturnType<typeof getDatabase> | undefined;
 
-export async function initOfflineStorage(): Promise<SQLiteConnection> {
+async function initOfflineStorage(): Promise<SQLiteConnection> {
   if (sqliteConnection) return sqliteConnection;
   if (Capacitor.getPlatform() === 'web') {
     // Inject the <jeep-sqlite> custom element programmatically —
@@ -38,19 +39,29 @@ export async function initOfflineStorage(): Promise<SQLiteConnection> {
   return sqliteConnection;
 }
 
-export async function getDatabase(
-  dbName: string,
+async function getDatabase(
+  databaseName: string,
   upgradeStatements: CapacitorSQLiteUpgradeOptions[]
 ): Promise<SQLiteDBConnection> {
   const conn = await initOfflineStorage();
-  const isConn = (await conn.isConnection(dbName, false)).result;
+  const isConn = (await conn.isConnection(databaseName, false)).result;
 
-  await conn.addUpgradeStatement(dbName, upgradeStatements);
+  await conn.addUpgradeStatement(databaseName, upgradeStatements);
 
   const db = isConn
-    ? await conn.retrieveConnection(dbName, false)
-    : await conn.createConnection(dbName, false, 'no-encryption', upgradeStatements.length, false);
+    ? await conn.retrieveConnection(databaseName, false)
+    : await conn.createConnection(databaseName, false, 'no-encryption', upgradeStatements.length, false);
 
   await db.open();
   return db;
+}
+
+export function getSQLiteDatabase(
+  databaseName: string,
+  upgrades: CapacitorSQLiteUpgradeOptions[]
+) {
+  if (!dbPromise) {
+    dbPromise = getDatabase(databaseName, upgrades);
+  }
+  return dbPromise;
 }
