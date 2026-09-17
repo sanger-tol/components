@@ -21,12 +21,12 @@ export interface IDetectedLinkDetails {
 }
 
 /**
- * Definition for a known external provider icon.
+ * Definition for a known external brand icon.
  *
- * The provider metadata is used to both render the correct icon and provide a
+ * The metadata is used to both render the correct icon and provide a
  * user-facing label when the icon is displayed in a link or social list.
  */
-export interface IIconProvider {
+export interface IIconBrand {
   /** Icon name (FontAwesome). */
   icon: string;
   /** Text label for the provider. */

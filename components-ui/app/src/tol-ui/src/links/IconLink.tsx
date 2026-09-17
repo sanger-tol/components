@@ -4,9 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode } from "react";
-import { Icon } from "../general";
-import { detectLinkDetails } from "./utils";
+import { IconLinkText } from "./IconLinkText";
 
 /**
  * Props for rendering an icon link to an external provider or resource.
@@ -30,31 +28,8 @@ export interface PIconLink {
 /**
  * @autodoc
  *
- * Renders an icon inside a link, detecting the icon and style from known provider URLs when
- * they are omitted.
+ * Renders an icon link without a text label.
  */
-export function IconLink(props: PIconLink & { children?: ReactNode }) {
-  const {
-    link,
-    icon: providedIcon,
-    config: providedConfig,
-    size = "2x",
-    className,
-    children,
-  } = props;
-  const detectedDetails = detectLinkDetails(link);
-  const icon = providedIcon ?? detectedDetails.icon;
-  const config = providedConfig ?? detectedDetails.config ?? "solid";
-
-  return (
-    <a
-      href={link}
-      target="_blank"
-      rel="noreferrer"
-      className={`icon tol-icon-link-text${className ? ` ${className}` : ""}`}
-    >
-      {icon && <Icon icon={icon} config={config} size={size} />}
-      {children}
-    </a>
-  );
+export function IconLink(props: PIconLink) {
+  return <IconLinkText {...props} text="" />;
 }

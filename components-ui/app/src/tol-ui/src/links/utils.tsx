@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { KNOWN_ICON_PROVIDERS } from "../constants";
+import { KNOWN_ICON_BRANDS } from "../config";
 import { IDetectedLinkDetails } from "../interfaces";
 
 /**
@@ -14,28 +14,28 @@ import { IDetectedLinkDetails } from "../interfaces";
  * @returns True when the URL includes a known provider name such as GitHub or GitLab.
  */
 export function isKnownIconLink(link: string): boolean {
-  return Object.keys(KNOWN_ICON_PROVIDERS).some((name) =>
+  return Object.keys(KNOWN_ICON_BRANDS).some((name) =>
     link.toLowerCase().includes(name)
   );
 }
 
 /**
- * Extracts the matching provider metadata for a known link URL.
+ * Extracts the matching brand metadata for a known link URL.
  *
  * @param link - The URL or link target to inspect.
  * @returns The icon name, visible text, and style configuration for the detected provider,
  * or an empty object when the URL does not match a known provider.
  */
 export function detectLinkDetails(link: string): IDetectedLinkDetails {
-  const provider = Object.keys(KNOWN_ICON_PROVIDERS).find((name) =>
+  const brand = Object.keys(KNOWN_ICON_BRANDS).find((name) =>
     link.toLowerCase().includes(name)
   );
 
-  return provider
+  return brand
     ? {
-        icon: KNOWN_ICON_PROVIDERS[provider].icon,
-        text: KNOWN_ICON_PROVIDERS[provider].text,
-        config: KNOWN_ICON_PROVIDERS[provider].config ?? "brands",
+        icon: KNOWN_ICON_BRANDS[brand].icon,
+        text: KNOWN_ICON_BRANDS[brand].text,
+        config: KNOWN_ICON_BRANDS[brand].config ?? "brands",
       }
     : {};
 }

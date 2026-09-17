@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IIconProvider } from "src";
+import { IIconBrand } from "..";
 
-export const KNOWN_ICON_PROVIDERS: Record<string, IIconProvider> = {
+export const KNOWN_ICON_BRANDS: Record<string, IIconBrand> = {
     bluesky: { icon: "bluesky", text: "Bluesky" },
     discord: { icon: "discord", text: "Discord" },
     facebook: { icon: "facebook", text: "Facebook" },

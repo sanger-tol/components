@@ -39,5 +39,6 @@ export * from "./TextEditor";
 export * from "./TsDataSource";
 export * from "./TsDocParser";
 export * from "./User";
+export * from "./Video";
 export * from "./Visualisation";
 export * from "./Widgets";

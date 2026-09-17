@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 import { IconLinkText, PIconLinkText } from "./IconLinkText";
 
+/**
+ * Props for a vertical list of icon links with text labels.
+ *
+ * Each item is rendered with `IconLinkText`, which infers any omitted link
+ * metadata from supported service URLs.
+ */
 export interface PIconLinkTexts {
   /** Icon links to display. */
   data: PIconLinkText[];
