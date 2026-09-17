@@ -4,8 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { PIconLinkText } from "./IconLinkText";
-import { IconLinkText } from "./IconLinkText";
+import { IconLinkText, PIconLinkText } from "./IconLinkText";
 
 export interface PIconLinkTexts {
   /** Icon links to display. */

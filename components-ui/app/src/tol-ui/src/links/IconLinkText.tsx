@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IconLink, PIconLink, detectLinkDetails } from "./IconLink";
+import { IconLink, PIconLink } from "./IconLink";
+import { detectLinkDetails } from "./utils";
 
 export interface PIconLinkText extends PIconLink {
   /** Text displayed beside the icon; detected from the URL when omitted. */

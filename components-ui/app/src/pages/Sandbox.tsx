@@ -5,10 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  IconLinkTexts,
-  SocialViewer,
   VideoPlayer,
 } from "../tol-ui/src/general";
+import {
+  IconLinkTexts,
+  SocialViewer
+} from "../tol-ui/src/links";
 
 export function Sandbox() {
   return (
