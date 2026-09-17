@@ -21,12 +21,14 @@ import {
   IPageLink,
   IPageElement,
   TPageElements,
+  TQueryParams,
   INavDropdown,
   Route,
   INavDestination,
   formatPath,
   API_PATHS,
   IMobileOptions,
+  PARAM_ATTRIBUTE,
 } from "..";
 
 
@@ -144,6 +146,28 @@ export function generateRoutePath(
 ): string {
   const mainRoute: string = isRoute(path) ? path.route! : formatPath(displayName);
   return routePrefix ? `/${routePrefix}${mainRoute}` : mainRoute;
+}
+
+/**
+ * Resolves `${parameterName}` placeholders in query parameter values using the
+ * current route parameter map.
+ *
+ * @param queryParams - Query parameters whose values may include template placeholders.
+ * @param routeParams - Route parameter values keyed by placeholder name.
+ *
+ * @returns A new query parameter object with each placeholder replaced by the matching
+ * route value, or an empty string when the route value is missing.
+ */
+export function resolveTemplateValues(
+  queryParams: TQueryParams,
+  routeParams: Record<string, unknown>,
+): TQueryParams {
+  const templateAttribute = new RegExp(PARAM_ATTRIBUTE.source, "g");
+  const serializedQueryParams = JSON.stringify(queryParams).replace(
+    templateAttribute,
+    (_placeholder, parameterName: string) => String(routeParams[parameterName] ?? ""),
+  );
+  return JSON.parse(serializedQueryParams) as TQueryParams;
 }
 
 /**

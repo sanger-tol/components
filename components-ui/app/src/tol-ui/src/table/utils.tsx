@@ -13,12 +13,12 @@ import {
   DataPoints,
   deepCopy,
   copyToClipboard,
-  CELL_RENDERER_PROP_ATTRIBUTE,
+  PARAM_ATTRIBUTE,
   DEFAULT_ROW_HEIGHT,
   COLLAPSED_ROW_MAX_HEIGHT,
   getRelationshipNameByField,
-  CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
-  CELL_RENDERER_SPREAD_OPERATOR,
+  PARAM_ATTRIBUTE_OBJECT_KEY,
+  SPREAD_OPERATOR,
   getRoleIdsByNames,
   PopUpMessage,
   IUser,
@@ -33,9 +33,9 @@ import {
   isRelationshipField,
   TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
   TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
-  CELL_RENDERER_PROP_TAG_START,
-  CELL_RENDERER_PROP_TAG_END,
-  CELL_RENDERER_PARENT_OPERATOR,
+  PARAM_TAG_START,
+  PARAM_TAG_END,
+  ORIGIN_OPERATOR,
 } from "..";
 import type {
   TsDataSource,
@@ -409,20 +409,20 @@ async function addFieldsFromStringParam(
   value: unknown,
   fieldName: string,
 ) {
-  if (typeof value !== "string" || !value.includes(CELL_RENDERER_PROP_TAG_START)) return;
+  if (typeof value !== "string" || !value.includes(PARAM_TAG_START)) return;
 
-  const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
+  const matches: string[] = value.match(PARAM_ATTRIBUTE) || [];
 
   // This notation indicates that the cellRenderer is referring to a field on the parent object rather than the current object type. 
-  const refersToParentObject = value.includes(CELL_RENDERER_PARENT_OPERATOR);
+  const refersToParentObject = value.includes(ORIGIN_OPERATOR);
 
   for (const match of matches) {
     const relativeAttribute = match
-      .replace(CELL_RENDERER_PROP_TAG_START, "")
-      .replace(CELL_RENDERER_PROP_TAG_END, "")
-      .replace(CELL_RENDERER_SPREAD_OPERATOR, "")
-      .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
-      .replace(CELL_RENDERER_PARENT_OPERATOR, "")
+      .replace(PARAM_TAG_START, "")
+      .replace(PARAM_TAG_END, "")
+      .replace(SPREAD_OPERATOR, "")
+      .replace(PARAM_ATTRIBUTE_OBJECT_KEY, "")
+      .replace(ORIGIN_OPERATOR, "")
       .trim();
 
     /*

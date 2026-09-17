@@ -29,6 +29,7 @@ If a dropdown is inaccessible, the whole dropdown is removed.
 
 - Routes are only registered for leaf pages that have `path.route` (explicit or generated).
 - Dropdown child routes are generated from the _child key_ (the key in `pages.data`), e.g. `"Public Dropdown Public Page"` → `"/public-dropdown-public-page"`.
+- Query parameter values support route parameter placeholders using the `${parameterName}` syntax. Placeholders are resolved from matching route parameters before a board is rendered, including inside nested objects and arrays. Unresolved placeholders are left unchanged.
 
 ### Example
 
@@ -66,3 +67,31 @@ const EXAMPLE: TNavConfig = {
   order: ["Dropdown Example 1", "Page Example 1"],
 };
 ```
+
+### Route parameters in query parameters
+
+Store the query parameters as a `IFilter` in the database and use a route parameter placeholder when a board needs a detail value:
+
+```json
+{
+  "access": "public",
+  "path": {
+    "pageElementReference": "b_123456",
+    "route": "/species/:id",
+    "queryParams": {
+      "object_type": "species",
+      "filter": {
+        "and_": {
+          "id": {
+            "eq": {
+              "value": "${id}"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Opening `/species/9606` resolves the filter value to `"9606"` before it is passed to the board. The route remains readable while the filter is still stored in the database as configuration.

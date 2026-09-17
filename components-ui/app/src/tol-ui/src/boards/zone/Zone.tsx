@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FilterConfigDrawer,
   ComponentCreationModal,
@@ -20,7 +20,7 @@ import {
   mergeFilters,
 } from "../..";
 import type { IZone, IView, PButton, PBoard } from "../..";
-import { getTranslatorZone, translateZoneAboveFilter } from "./utils";
+import { getTranslatorZone, getTopLevelDummyZone, translateZoneAboveFilter } from "./utils";
 
 
 export interface PZone extends PBoard {
@@ -42,30 +42,34 @@ export function Zone(props: PZone) {
     actionsDataSource,
   } = props;
 
-  const { editMode, layoutMode } = useBoard();
+  const { board, editMode, layoutMode } = useBoard();
 
   const [zone, setZone] = useBoardState<IView, IZone>(id, view, setView);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [openFilters, setOpenFilters] = useState<boolean>(false);
   const [title, setTitle] = useState<string | undefined>(zone?.title);
-  const [translatedFilterReady, setTranslatedFilterReady] = useState<boolean>(false);
 
   const { object_type, dataspace, filter } = zone;
 
-  // Find the first zone above that doesn't have filterPassThrough enabled
-  const zoneAbove = getTranslatorZone(id, view);
+  /*
+   * Try to find the first zone above that doesn't have filterPassThrough enabled.
+   * If no such zone exists, `translatorZone` will be `null`.
+   */
+  const translatorZone = getTranslatorZone(id, view);
 
-  // Translation is only possible if the zone above is in the same dataspace as this zone
-  const zonesMatchDataspace =
-    zoneAbove?.dataspace?.getDataSourceInstanceId() === zone.dataspace?.getDataSourceInstanceId();
+  /**
+   * Memoized since getTopLevelDummyZone returns a new object every call, which would
+   * otherwise retrigger the effect below on every render. Only computed when there's
+   * no real zone above.
+   */
+  const zoneAbove: IZone | null = useMemo(
+    () => translatorZone ?? getTopLevelDummyZone(board),
+    [translatorZone, board.object_type, board.filter],
+  );
 
   useEffect(() => {
-    (async () => {
-      await updateTranslatedFilter()
-        .then(() => setTranslatedFilterReady(true));
-
-    })();
+    updateTranslatedFilter();
   }, [
     zoneAbove,
     zone.filterExcludeIncoming,
@@ -77,13 +81,14 @@ export function Zone(props: PZone) {
   ]);
 
   const updateTranslatedFilter = async () => {
-    if (zoneAbove && zonesMatchDataspace) {
-      zone.filter = mergeFilters(
-        await translateZoneAboveFilter(zone, zoneAbove),
-        zone.defaultFilter
-      );
-      setZone({ ...zone });
-    }
+    if (!zoneAbove) return;
+    const translatedFilter = mergeFilters(
+      await translateZoneAboveFilter(zone, zoneAbove),
+      zone.defaultFilter
+    );
+    // Filters are pre-translated on load (translateBoardFilters); only update on real changes
+    if (JSON.stringify(translatedFilter) === JSON.stringify(zone.filter)) return;
+    setZone({ ...zone, filter: translatedFilter });
   };
 
   const onAddComponent = () => {
@@ -189,8 +194,6 @@ export function Zone(props: PZone) {
       </div>
     </div>
   );
-
-  if (!translatedFilterReady) return;
 
   return (
     <div className="tol-zone" data-testid="zone">
