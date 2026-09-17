@@ -8,9 +8,10 @@ SPDX-License-Identifier: MIT
 
 ## tol-ui `5.4.0`
 
-15-09-26
+16-09-26
 
 - IconLinkText and IconLinkTextsViewer
+- Param Boards
 
 ## tol-ui `5.3.0`
 

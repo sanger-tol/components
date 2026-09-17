@@ -12,6 +12,7 @@ import {
   normaliseNavConfig,
   mergeAndNormaliseNavConfig,
   generateRoutePath,
+  resolveTemplateValues,
   getSystemDefaultNavConfig,
 } from "../../tol-ui/src";
 import {
@@ -138,5 +139,28 @@ describe("generateRoutePath function", () => {
     };
     const route = generateRoutePath("Test Page v2", path, "v2");
     expect(route).toBe("/v2/custom-page");
+  });
+});
+
+describe("resolveTemplateValues function", () => {
+  test("resolves placeholders in nested query parameters", () => {
+    const queryParams = {
+      object_type: "species",
+      filter: {
+        and_: {
+          id: { eq: { value: "${id}" } },
+        },
+      },
+    };
+    const routeParams = { id: "9606" };
+
+    expect(resolveTemplateValues(queryParams, routeParams)).toEqual({
+      object_type: "species",
+      filter: { and_: { id: { eq: { value: "9606" } } } },
+    });
+  });
+
+  test("replaces missing route parameters with an empty string", () => {
+    expect(resolveTemplateValues({ value: "${id}" }, {})).toEqual({ value: "" });
   });
 });
