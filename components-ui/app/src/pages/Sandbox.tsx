@@ -5,8 +5,5 @@ SPDX-License-Identifier: MIT
 */
 
 export function Sandbox() {
-  return (
-    <>
-    </>
-  );
+  return <></>;
 }
