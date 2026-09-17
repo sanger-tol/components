@@ -30,6 +30,7 @@ import {
   patchReorderBoardEntity,
   defineBoardEntityInParent,
   isEmptyObject,
+  translateBoardFilters,
 } from "../..";
 import { BoardUtilityBar, ImportViewModal } from "./components";
 import type { IBoard, IBoardFilter, TsDataSource } from "../..";
@@ -86,12 +87,14 @@ export function Board(props: PBoard) {
     isLoading,
   } = useQueryData<IBoard>(
     [BOARD_ENTITIES.ENTITIES.BOARD, id],
-    () => fetchBoardEntityAndChildren(
-      boardDataSource,
-      id!,
-      objectType,
-      filter,
-    ) as Promise<IBoard>,
+    () => (
+      fetchBoardEntityAndChildren(
+        boardDataSource,
+        id!,
+        objectType,
+        filter,
+      ) as Promise<IBoard>
+    ).then(translateBoardFilters),
     { enabled: !!id },
   );
 

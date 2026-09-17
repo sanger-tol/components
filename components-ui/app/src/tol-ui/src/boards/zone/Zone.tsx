@@ -49,7 +49,6 @@ export function Zone(props: PZone) {
   const [open, setOpen] = useState<boolean>(false);
   const [openFilters, setOpenFilters] = useState<boolean>(false);
   const [title, setTitle] = useState<string | undefined>(zone?.title);
-  const [translatedFilterReady, setTranslatedFilterReady] = useState<boolean>(false);
 
   const { object_type, dataspace, filter } = zone;
 
@@ -70,11 +69,7 @@ export function Zone(props: PZone) {
   );
 
   useEffect(() => {
-    (async () => {
-      await updateTranslatedFilter()
-        .then(() => setTranslatedFilterReady(true));
-
-    })();
+    updateTranslatedFilter();
   }, [
     zoneAbove,
     zone.filterExcludeIncoming,
@@ -86,13 +81,14 @@ export function Zone(props: PZone) {
   ]);
 
   const updateTranslatedFilter = async () => {
-    if (zoneAbove) {
-      zone.filter = mergeFilters(
-        await translateZoneAboveFilter(zone, zoneAbove),
-        zone.defaultFilter
-      );
-      setZone({ ...zone });
-    }
+    if (!zoneAbove) return;
+    const translatedFilter = mergeFilters(
+      await translateZoneAboveFilter(zone, zoneAbove),
+      zone.defaultFilter
+    );
+    // Filters are pre-translated on load (translateBoardFilters); only update on real changes
+    if (JSON.stringify(translatedFilter) === JSON.stringify(zone.filter)) return;
+    setZone({ ...zone, filter: translatedFilter });
   };
 
   const onAddComponent = () => {
@@ -198,8 +194,6 @@ export function Zone(props: PZone) {
       </div>
     </div>
   );
-
-  if (!translatedFilterReady) return;
 
   return (
     <div className="tol-zone" data-testid="zone">

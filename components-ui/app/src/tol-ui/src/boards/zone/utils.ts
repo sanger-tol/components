@@ -10,9 +10,10 @@ import {
   generateAttributeTranslations,
   getSiblingBoardEntity,
   defineBoardEntity,
+  mergeFilters,
   BOARD_ENTITIES,
 } from "../..";
-import type { IZone, IFilter, IView, IBoard } from "../..";
+import type { IZone, IFilter, IView, IBoard, TBoardChildren } from "../..";
 
 
 /**
@@ -107,4 +108,46 @@ export async function translateZoneAboveFilter(
     }
   }
   return translatedFilter;
+}
+
+/**
+ * Translates every zone's filter in order, starting from the top-level dummy zone,
+ * so the board enters state with its final filters and zones render only once.
+ *
+ * @param board - The fetched board.
+ * @returns The board with each zone's `filter` translated from the zone above it.
+ */
+export async function translateBoardFilters(board: IBoard): Promise<IBoard> {
+  if (!board.order) return board;
+
+  const views: TBoardChildren<IView> = {};
+  for (const viewId of board.order) {
+    const view = board.children[viewId];
+    const zones: TBoardChildren<IZone> = { ...view.children };
+    /**
+     * The dummy zone is the initial source; each translated zone becomes
+     * the source for the next, chaining sequentially down the zone order.
+     */
+    let zoneAbove = getTopLevelDummyZone(board);
+
+    for (const zoneId of view.order) {
+      const zone = zones[zoneId];
+      if (zoneAbove) {
+        zones[zoneId] = {
+          ...zone,
+          filter: mergeFilters(
+            await translateZoneAboveFilter(zone, zoneAbove),
+            zone.defaultFilter,
+          ),
+        };
+      }
+      /**
+       * Zones with filterPassThrough don't propagate their filter downward,
+       * so they're skipped as a source (matches getTranslatorZone's behaviour).
+       */
+      if (!zones[zoneId].filterPassThrough) zoneAbove = zones[zoneId];
+    }
+    views[viewId] = { ...view, children: zones };
+  }
+  return { ...board, children: views };
 }
