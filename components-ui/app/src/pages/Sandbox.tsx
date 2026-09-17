@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  IconLinkTextsViewer,
+  IconLinkTexts,
   SocialViewer,
   VideoPlayer,
 } from "../tol-ui/src/general";
@@ -13,7 +13,7 @@ import {
 export function Sandbox() {
   return (
     <>
-      <IconLinkTextsViewer
+      <IconLinkTexts
         data={[
           {
             link: "https://github.com/",
@@ -56,7 +56,7 @@ export function Sandbox() {
         ]}
       />
       <h2>New Section</h2>
-      <IconLinkTextsViewer
+      <IconLinkTexts
         data={[
           {
             link: "https://google.com/",
