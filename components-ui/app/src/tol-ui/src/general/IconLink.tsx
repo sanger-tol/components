@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { ReactNode } from "react";
 import { Icon } from ".";
 import { KNOWN_ICON_PROVIDERS } from "../constants";
+import { IDetectedLinkDetails } from "../interfaces";
 
 
 export interface PIconLink {
