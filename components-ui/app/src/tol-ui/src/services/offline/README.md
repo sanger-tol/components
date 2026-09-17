@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 # Offline SQLite service
 
-`sqliteService` provides `getSQLiteDatabase(name, upgrades)`. It initialises the Capacitor SQLite connection once, configures `jeep-sqlite` and its persistent web store in browsers, applies upgrades, and returns an opened database connection.
+`sqliteService` provides the `SqliteService` class, constructed with a database name and its upgrade statements. It initialises the Capacitor SQLite connection once, configures `jeep-sqlite` and its persistent web store in browsers, applies upgrades, and returns an opened database connection via `getSQLiteDatabase()`.
 
 ## Consuming application
 
@@ -27,7 +27,7 @@ Add `sql.js@1.11.0` and the package peer dependencies to `package.json`:
 }
 ```
 
-Create a `schema.ts` that exports ordered versioned SQL upgrade statements. Create an `index.ts` that imports the upgrades, calls `getSQLiteDatabase` with a stable database name, and exposes the application's queries or seed functions.
+Create a `schema.ts` that exports ordered versioned SQL upgrade statements. Create an `index.ts` that imports the upgrades, instantiates `SqliteService` with a stable database name, and exposes the application's queries or seed functions.
 
 Add the plugin logic to `vite.config.ts`:
 
