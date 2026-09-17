@@ -20,6 +20,7 @@ export * from "./FileValidation";
 export * from "./Filter";
 export * from "./forms";
 export * from "./GlobalLoading";
+export * from "./Icon";
 export * from "./JsonApi";
 export * from "./JsonEdit";
 export * from "./Markdown";

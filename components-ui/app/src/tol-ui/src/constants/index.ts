@@ -16,6 +16,7 @@ export * from "./file-validation.constants";
 export * from "./filter.constants";
 export * from "./form.constants";
 export * from "./general.constants";
+export * from "./icon.constants";
 export * from "./messaging.constants";
 export * from "./nav.constants";
 export * from "./plates.constants";

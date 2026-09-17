@@ -6,8 +6,10 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode } from "react";
 import { Icon } from ".";
+import { KNOWN_ICON_PROVIDERS } from "../constants";
 
-export interface PIconLinkBase {
+
+export interface PIconLink {
   /** URL opened when the link is activated. */
   link: string;
   /** Font Awesome icon name; detected from the URL when omitted. */
@@ -20,54 +22,26 @@ export interface PIconLinkBase {
   className?: string;
 }
 
-/** Props for a link containing an icon. */
-export interface PIconLink extends PIconLinkBase {}
-
-export interface PIconLinkText extends PIconLinkBase {
-  /** Text displayed beside the icon; detected from the URL when omitted. */
-  text?: string;
-}
-
-export interface PIconLinkTextsViewer {
-  /** Icon links to display. */
-  data: PIconLinkText[];
-  /** Additional CSS class names applied to the viewer. */
-  className?: string;
-}
-
-interface IDetectedLinkDetails {
-  icon?: string;
-  text?: string;
-  config?: string;
-}
-
-export interface IIconProvider {
-  icon: string;
-  text: string;
-  // FontAwesome does not have a "zoom" brand icon, so this needs "solid" rather than "brands"
-  config?: string;
-}
-
-export const KNOWN_ICON_PROVIDERS: Record<string, IIconProvider> = {
-    bluesky: { icon: "bluesky", text: "Bluesky" },
-    discord: { icon: "discord", text: "Discord" },
-    facebook: { icon: "facebook", text: "Facebook" },
-    github: { icon: "github", text: "GitHub" },
-    gitlab: { icon: "gitlab", text: "GitLab" },
-    kasm: { icon: "cloud", text: "Kasm", config: "solid" },
-    linkedin: { icon: "linkedin", text: "LinkedIn" },
-    slack: { icon: "slack", text: "Slack" },
-    wechat: { icon: "weixin", text: "WeChat" },
-    zoom: { icon: "video", text: "Zoom", config: "solid" }
-};
-
+/**
+ * Checks whether a URL matches one of the known social/provider link patterns.
+ *
+ * @param link - The URL or link target to inspect.
+ * @returns True when the URL includes a known provider name such as GitHub or GitLab.
+ */
 export function isKnownIconLink(link: string): boolean {
   return Object.keys(KNOWN_ICON_PROVIDERS).some((name) =>
     link.toLowerCase().includes(name)
   );
 }
 
-function detectLinkDetails(link: string): IDetectedLinkDetails {
+/**
+ * Extracts the matching provider metadata for a known link URL.
+ *
+ * @param link - The URL or link target to inspect.
+ * @returns The icon name, visible text, and style configuration for the detected provider,
+ * or an empty object when the URL does not match a known provider.
+ */
+export function detectLinkDetails(link: string): IDetectedLinkDetails {
   const provider = Object.keys(KNOWN_ICON_PROVIDERS).find((name) =>
     link.toLowerCase().includes(name)
   );
@@ -81,7 +55,13 @@ function detectLinkDetails(link: string): IDetectedLinkDetails {
     : {};
 }
 
-function IconLinkBase(props: PIconLinkBase & { children?: ReactNode }) {
+/**
+ * @autodoc
+ *
+ * Renders an icon inside a link, detecting the icon and style from known provider URLs when
+ * they are omitted.
+ */
+export function IconLink(props: PIconLink & { children?: ReactNode }) {
   const {
     link,
     icon: providedIcon,
@@ -104,45 +84,5 @@ function IconLinkBase(props: PIconLinkBase & { children?: ReactNode }) {
       {icon && <Icon icon={icon} config={config} size={size} />}
       {children}
     </a>
-  );
-}
-
-/**
- * @autodoc
- *
- * Renders an icon inside a link, detecting the icon and style from known provider URLs when
- * they are omitted.
- */
-export function IconLink(props: PIconLink) {
-  return <IconLinkBase {...props} />;
-}
-
-/**
- * @autodoc
- *
- * Renders an icon link with a text label, detecting both values from known provider URLs when
- * they are omitted.
- */
-export function IconLinkText(props: PIconLinkText) {
-  const { link, text: providedText, ...linkProps } = props;
-  const detectedDetails = detectLinkDetails(link);
-  const text = providedText ?? detectedDetails.text;
-  return <IconLinkBase link={link} {...linkProps}>{text}</IconLinkBase>;
-}
-
-/**
- * @autodoc
- *
- * Renders a vertical list of icon links with optional text labels, detecting missing values from
- * known provider URLs.
- */
-export function IconLinkTextsViewer(props: PIconLinkTextsViewer) {
-  const { data, className } = props;
-  return (
-    <div className={`tol-icon-link-texts-viewer${className ? ` ${className}` : ""}`}>
-      {data.map((item, index) => (
-        <IconLinkText key={index} {...item} />
-      ))}
-    </div>
   );
 }

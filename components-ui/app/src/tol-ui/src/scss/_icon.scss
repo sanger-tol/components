@@ -21,4 +21,37 @@
     width: 2rem;
     justify-content: center;
   }
+
+  .fa-github {
+    color: var(--tol-brand-github);
+  }
+
+  .fa-gitlab {
+    color: var(--tol-brand-gitlab);
+  }
+
+  .fa-linkedin {
+    color: var(--tol-brand-linkedin);
+  }
+
+  .fa-facebook {
+    color: var(--tol-brand-facebook);
+  }
+
+  .fa-discord {
+    color: var(--tol-brand-discord);
+  }
+
+  .fa-slack {
+    color: var(--tol-brand-slack);
+  }
+
+  .fa-bluesky {
+    color: var(--tol-brand-bluesky);
+  }
+
+  .fa-weixin,
+  .fa-wechat {
+    color: var(--tol-brand-wechat);
+  }
 }
