@@ -12,7 +12,7 @@ import {
   getChildObjectsByName,
   DataPoint,
   getAttributeNameByField,
-  IField
+  IFieldBase
 } from "../..";
 
 
@@ -24,7 +24,7 @@ export interface PDataPoints {
   /** The data source which the data object belongs to. */
   dataSource: TsDataSource,
   /** Metadata about a field. Includes the renderer. */
-  meta: IField,
+  meta: IFieldBase,
   /** Setter function to set the expanded rows in a table. */
   setExpandedRows?: (ids: string[]) => void,
   /** Custom cell renderers that can be used in addition to the pre-defined renderers. */

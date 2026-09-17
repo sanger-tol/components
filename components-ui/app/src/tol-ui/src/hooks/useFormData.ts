@@ -15,7 +15,7 @@ import {
 } from "..";
 import type { TsDataSource, IAndAttributes } from "..";
 
-export interface PUseFormData<T> {
+export interface IUseFormData<T> {
   /**
    * The name of the form to fetch and cache. This is used as part of the query key for React Query.
    */
@@ -64,7 +64,7 @@ export interface PUseFormData<T> {
  * (keyed on `["formName", userId]`), so no provider is required and the
  * form is only fetched once per session.
  */
-export const useFormData = <T>(props: PUseFormData<T>) => {
+export const useFormData = <T>(params: IUseFormData<T>) => {
   const {
     formName,
     dataSource,
@@ -75,7 +75,7 @@ export const useFormData = <T>(props: PUseFormData<T>) => {
     enabledCondition,
     isComplete,
     queryKeyParts = [],
-  } = props;
+  } = params;
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
