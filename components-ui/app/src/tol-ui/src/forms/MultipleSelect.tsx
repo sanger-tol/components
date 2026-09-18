@@ -11,7 +11,7 @@ import {
   FormComponentWrapper,
 } from "..";
 import type {
-  IData,
+  IMultiSelectData,
   TFormMultipleSelectField,
 } from "..";
 
@@ -56,7 +56,7 @@ export function MultipleSelect(props: PMultipleSelect) {
   } = props;
   const block = isPropDefined(props.block);
 
-  const formattedData: IData[] = data.map((item) =>
+  const formattedData: IMultiSelectData[] = data.map((item) =>
     typeof item === "string" ? { label: item, value: item } : item,
   );
 

@@ -5,12 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode } from "react";
-import { IComponentBase, UtilityBar, mergeUtilityBarConfigs } from "..";
+import { IComponentBase, UtilityBar, Placeholder, mergeUtilityBarConfigs, joinClassNames } from "..";
 
 
 /** Props for the `ComponentBase` wrapper component. */
 export interface PComponentBase extends IComponentBase {
-  /** The component's own body, rendered when not `loading` and no override `contents` is supplied. */
+  /** The component's own body, rendered when not `isLoading` and no override `contents` is supplied. */
   children?: ReactNode;
 }
 
@@ -24,29 +24,42 @@ export function ComponentBase(props: PComponentBase) {
   const {
     id,
     className,
+    classNames = [],
     style,
     contents,
     height = "100%",
     utilityBarConfig,
+    isLoading,
+    errorMessage,
+    warningMessage,
     children,
   } = props;
 
   const ubc = mergeUtilityBarConfigs(utilityBarConfig ?? undefined);
 
+  const ResolveContents = () => {
+    if (errorMessage) return <Placeholder errorMessage={errorMessage} height={height} />;
+    if (warningMessage) return <Placeholder warningMessage={warningMessage} height={height} />;
+    if (isLoading) return <Placeholder loader height={height} />;
+    return contents ?? children;
+  };
+
   return (
     <div
       id={id}
-      className={["tol-component", className].filter(Boolean).join(" ")}
-      style={{ ...style, height }}
+      style={{ height }}
     >
       {utilityBarConfig !== null && <UtilityBar id={id} {...ubc} />}
       <div
-        className={[
+        className={joinClassNames(
           "tol-component-contents",
           utilityBarConfig !== null ? "with-offset" : undefined,
-        ].filter(Boolean).join(" ")}
+          className,
+          ...classNames,
+        )}
+        style={style}
       >
-        {contents ?? children}
+        {ResolveContents()}
       </div>
     </div>
   );

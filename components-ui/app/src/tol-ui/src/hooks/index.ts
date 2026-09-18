@@ -15,3 +15,4 @@ export * from "./useQueryData";
 export * from "./useTimeout";
 export * from "./useFormData";
 export * from "./useComponentData";
+export * from "./useComponentListData";

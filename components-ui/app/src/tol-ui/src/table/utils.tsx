@@ -153,7 +153,7 @@ export async function getIsManyByField(
   return Object.fromEntries(entries);
 }
 
-function addDefaultCellRenderer(type?: string): TCellRenderer {
+export function addDefaultCellRenderer(type?: string): TCellRenderer {
   switch (type) {
     case "datetime":
       return { type: "datetime" };

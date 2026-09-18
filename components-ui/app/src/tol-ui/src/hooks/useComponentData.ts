@@ -20,13 +20,13 @@ export interface IUseComponentData<T> {
   id: string;
   /** Fetches and returns the component's data for the given compounded filter. */
   fetchData: (filter: TFilterOrUndefined) => Promise<T>;
-  /** The zone the component belongs to, used to derive the compounded filter. */
-  zone: IZone;
+  /** The zone the component belongs to, used to derive the compounded filter. Omit if the component doesn't filter by zone. */
+  zone?: IZone;
   /**
    * Setter used to persist filter resets on the zone (components below this
    * one are reset whenever this component's compounded filter changes).
    */
-  setZone: (zone: IZone) => void;
+  setZone?: (zone: IZone) => void;
   /**
    * Additional parts to append to the query key, so different components/configurations
    * (e.g. a chart's `breakDownBy` and `type`) are cached and refetched independently.
@@ -57,6 +57,7 @@ export function useComponentData<T>(params: IUseComponentData<T>) {
   const [filter, setFilter] = useState<TFilterOrUndefined>({});
 
   useEffect(() => {
+    if (!zone || !setZone) return;
     const compoundedFilter = generateFilter(zone, id);
     // will trigger the query below if an update has occurred
     if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
@@ -84,9 +85,8 @@ export function useComponentData<T>(params: IUseComponentData<T>) {
   return {
     filter,
     data,
-    loading: isLoading,
-    isError,
-    error,
+    isLoading,
+    errorMessage: isError ? (error?.message ?? "An error occurred") : undefined,
     refetch,
   };
 }
