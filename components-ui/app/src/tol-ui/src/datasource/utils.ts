@@ -7,10 +7,13 @@ SPDX-License-Identifier: MIT
 import {
   ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX,
   RELATIONSHIP_SEPARATOR,
+  addDefaultCellRenderer,
 } from "..";
 import type {
   TDataObjectOrNull,
   TDataObjectListOrNull,
+  TFieldMetaData,
+  TsDataSource,
 } from "..";
 
 /**
@@ -46,6 +49,42 @@ export function getFieldByName(object: TDataObjectOrNull, field: string): any {
   } else { // Not provenance
     return object?.[field];
   }
+}
+
+/**
+ * Fetches each field's `IAttributeDescriptor` via `dataSource.getAttributeDescriptor` and builds the
+ * corresponding `TFieldMetaData` defaults, the same way `RemoteTable` enriches its columns via
+ * `addFieldMetaDefaults` - generalised for any component that needs field metadata, not just tables.
+ *
+ * @param objectType - The object type the fields belong to.
+ * @param attributes - The attribute names to fetch descriptors for.
+ * @param dataSource - Data source used to fetch each field's attribute descriptor.
+ * @param existingDataWithDefaults - Already-configured field metadata; takes precedence over the fetched defaults.
+ * @returns `TFieldMetaData` with the fetched defaults merged under any existing configuration.
+ */
+export async function buildFieldMetaDefaults(
+  objectType: string,
+  attributes: string[],
+  dataSource: TsDataSource,
+  existingDataWithDefaults?: TFieldMetaData,
+): Promise<TFieldMetaData> {
+  const dataWithDefaults: TFieldMetaData = { ...existingDataWithDefaults };
+  await Promise.all(
+    attributes.map(async (field) => {
+      const descriptor = await dataSource.getAttributeDescriptor({ objectType, field });
+      dataWithDefaults[field] = {
+        rename: descriptor?.display_name || field,
+        type: descriptor?.python_type,
+        description: descriptor?.description,
+        source: descriptor?.source,
+        actsAs: descriptor?.acts_as,
+        cellRenderer: addDefaultCellRenderer(descriptor?.python_type),
+        // caller-provided config for this field overrides the fetched defaults
+        ...existingDataWithDefaults?.[field],
+      };
+    }),
+  );
+  return dataWithDefaults;
 }
 
 /**

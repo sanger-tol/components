@@ -42,7 +42,7 @@ export interface IFileData {
   status: string;
 }
 
-export interface IData {
+export interface IMultiSelectData {
   label: string;
   value: string;
 }
@@ -195,7 +195,7 @@ export interface IMultipleselectField extends IFormComponent {
   type: "multipleselect";
   sticky?: boolean;
   block?: boolean;
-  data: string[] | IData[];
+  data: string[] | IMultiSelectData[];
   placeholder?: string;
   disabled?: boolean;
   loading?: boolean;

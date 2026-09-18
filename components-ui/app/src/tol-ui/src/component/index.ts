@@ -5,3 +5,4 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./ComponentBase";
+export * from "./utils";
