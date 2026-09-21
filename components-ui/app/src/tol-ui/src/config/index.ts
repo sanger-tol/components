@@ -8,6 +8,7 @@ export * from "./boards.config";
 export * from "./buttons.config";
 export * from "./componentSelection.config";
 export * from "./cellRendererParams.config";
+export * from "./icon.config";
 export * from "./nav.config";
 export * from "./forms";
 export * from "./tours.config";
