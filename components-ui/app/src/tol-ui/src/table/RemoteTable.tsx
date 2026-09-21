@@ -35,7 +35,7 @@ import {
   TsDataSource,
   initialiseFieldMeta,
   TDataObjectListOrNull,
-  ICustomCellRenderers,
+  TCustomDataPointRenderers,
   ITableDrawerSave,
   ITableConfigSave,
   optimiseFieldMetaForSave,
@@ -79,7 +79,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeightDeprecated {
   /**
    * Custom cell renderers by field key to override default cell display
    */
-  cellRenderers?: ICustomCellRenderers;
+  cellRenderers?: TCustomDataPointRenderers;
   /**
    * Whether the width of columns are allowed to be manually resized by users
    */

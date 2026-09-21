@@ -5,10 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import { ComponentBase, getField } from "..";
-import type { IComponentList } from "..";
+import type { IComponentData } from "..";
 
 
-export function ObjectDetail(props: IComponentList) {
+export function ObjectDetail(props: IComponentData) {
   const { fields, data, classNames = [], ...rest } = props;
 
   return (
