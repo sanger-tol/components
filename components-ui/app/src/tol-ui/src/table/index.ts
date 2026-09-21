@@ -21,7 +21,6 @@ export * from "./ImageCellModal";
 export * from "./Pagination";
 export * from "./RemoteTable";
 export * from "./RemovedColumnsModal";
-export * from "./RowCounter";
 export * from "./RowHeightExpandIcon";
 export * from "./rowExpanders";
 export * from "./RowToolsColumn";

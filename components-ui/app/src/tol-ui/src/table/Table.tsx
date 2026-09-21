@@ -20,7 +20,7 @@ import {
   PDeprecatedDropdownButtons,
   useBoard,
   ITableConfigSave,
-  RowCounter,
+  RecordCounter,
   RowExpander,
   TFieldDropdownChoices,
   TCellHeights,
@@ -383,7 +383,7 @@ export function Table(props: PTable) {
       <UtilityBar id={id} {...ubc} />
       {contents || (
         <>
-          <RowCounter {...props} />
+          <RecordCounter {...props} />
           <div className="tol-table-inner">
             <RSTable
               bordered

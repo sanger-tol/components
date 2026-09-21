@@ -496,17 +496,9 @@ span.rs-dropdown-toggle-icon {
   color: var(--tol-warning);
 }
 
-.tol-table-row-counter {
-  z-index: 2;
-  border-radius: var(--tol-border-radius);
-  background-color: var(--tol-grey-translucent);
-  position: absolute;
+.tol-table .tol-component-counter {
   bottom: 6px;
   right: 6px;
-  top: auto;
-  left: auto;
-  padding: 4px 8px;
-  backdrop-filter: blur(3px);
 }
 
 // pagination buttons on smaller devices

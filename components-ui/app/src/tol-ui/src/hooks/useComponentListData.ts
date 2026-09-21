@@ -72,6 +72,18 @@ export function useComponentListData({
   });
 
   const {
+    data: totalSize,
+    isLoading: isLoadingTotalSize,
+  } = useQueryData<number>(
+    [id, "listPageCount", JSON.stringify(filter)],
+    () =>
+      dataSource
+        .custom({ method: API_METHODS.POST, resource: `${objectType}${API_OPERATIONS.COUNT}`, body: { filter } })
+        .then((res: any) => res?.data?.meta?.total ?? 0),
+    { enabled: !isLoadingFields },
+  );
+
+  const {
     data: dataObjects,
     isLoading: isLoadingData,
     isError,
@@ -79,16 +91,7 @@ export function useComponentListData({
   } = useQueryData<TDataObjectListOrNull>(
     [id, "listPage", JSON.stringify(filter), String(page), String(pageSize), String(sortBy)],
     () => dataSource.getListPage({ objectType, page, pageSize, filter, sortBy, requestedFields: attributes }),
-    { enabled: !isLoadingFields },
-  );
-
-  const { data: totalSize } = useQueryData<number>(
-    [id, "listPageCount", JSON.stringify(filter)],
-    () =>
-      dataSource
-        .custom({ method: API_METHODS.POST, resource: `${objectType}${API_OPERATIONS.COUNT}`, body: { filter } })
-        .then((res: any) => res?.data?.meta?.total ?? 0),
-    { enabled: !isLoadingFields },
+    { enabled: !isLoadingFields && !isLoadingTotalSize },
   );
 
   const data: TDataRecordList = buildDataRecords(dataObjects, dataSource, fieldMeta as IFieldMeta, customCellRenderers);

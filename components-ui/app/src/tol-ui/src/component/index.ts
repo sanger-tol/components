@@ -5,5 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./ComponentBase";
+export * from "./RecordCounter";
 export * from "./RemoteComponentBase";
 export * from "./utils";
