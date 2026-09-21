@@ -5,12 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode } from "react";
-import { IComponentBase, UtilityBar, Placeholder, mergeUtilityBarConfigs, joinClassNames } from "..";
+import { IComponentBase, UtilityBar, mergeUtilityBarConfigs, joinClassNames } from "..";
 
 
 /** Props for the `ComponentBase` wrapper component. */
 export interface PComponentBase extends IComponentBase {
-  /** The component's own body, rendered when not `isLoading` and no override `contents` is supplied. */
+  /** The component's own body, rendered when no override `contents` is supplied. */
   children?: ReactNode;
 }
 
@@ -29,20 +29,10 @@ export function ComponentBase(props: PComponentBase) {
     contents,
     height = "100%",
     utilityBarConfig,
-    isLoading,
-    errorMessage,
-    warningMessage,
     children,
   } = props;
 
   const ubc = mergeUtilityBarConfigs(utilityBarConfig ?? undefined);
-
-  const ResolveContents = () => {
-    if (errorMessage) return <Placeholder errorMessage={errorMessage} height={height} />;
-    if (warningMessage) return <Placeholder warningMessage={warningMessage} height={height} />;
-    if (isLoading) return <Placeholder loader height={height} />;
-    return contents ?? children;
-  };
 
   return (
     <div
@@ -59,8 +49,9 @@ export function ComponentBase(props: PComponentBase) {
         )}
         style={style}
       >
-        {ResolveContents()}
+        {contents ?? children}
       </div>
     </div>
   );
 }
+

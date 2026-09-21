@@ -43,7 +43,7 @@ import type {
   ITableData,
   ITableRecord,
   TCellRenderer,
-  ICustomCellRenderers,
+  TCustomDataPointRenderers,
   IFilter,
   TCellHeights,
   ITableConfigSave,
@@ -98,7 +98,7 @@ export function convertTableData(
   dataSource: TsDataSource,
   fieldMeta: IFieldMeta,
   setExpandedRows: (expandedRows: string[]) => void,
-  customCellRenderers?: ICustomCellRenderers,
+  customCellRenderers?: TCustomDataPointRenderers,
   editableCells?: boolean,
   isManyByField?: { [field: string]: boolean },
 ): ITableData {

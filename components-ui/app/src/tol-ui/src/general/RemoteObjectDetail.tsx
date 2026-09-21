@@ -4,74 +4,52 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useEffect, useState } from "react";
 import {
   ObjectDetail,
-  DataPoints,
+  RemoteComponentBase,
+  useComponentListData,
 } from "..";
-import type {
-  ICustomCellRenderers,
-  IRemoteObjectDetailField,
-  IRemoteTarget,
-  PObjectDetail
-} from "..";
+import type { IRemoteComponentData } from "..";
 
-export interface PRemoteObjectDetail extends IRemoteTarget, Omit<PObjectDetail, "data" | "contents"> {
-  /**
-   * Configuration for the fields to display in the object detail
-   */
-  fields: IRemoteObjectDetailField[];
-  /**
-   * Custom cell renderers for specific field types
-   */
-  customDataPointRenderers?: ICustomCellRenderers;
-}
-
-export function RemoteObjectDetail(props: PRemoteObjectDetail) {
+export function RemoteObjectDetail(props: IRemoteComponentData) {
   const {
     id,
-    utilityBarConfig,
-    height = "100%",
     dataSource,
     objectType,
     fields,
-    customDataPointRenderers
+    customDataPointRenderers,
+    zone,
+    setZone,
+    ...rest
   } = props;
-  const [data, setData] = useState<Record<string, ReactNode>>({});
 
-  useEffect(() => {
-    dataSource
-      .getOne({ objectType, id })
-      .then((object) => {
-
-        if (object === null) {
-          setData({});
-          return;
-        }
-
-        const nextData: Record<string, ReactNode> = {};
-        for (const field of fields) {
-          nextData[field.displayName ?? field.attribute] = (
-            <DataPoints
-              dataObject={object}
-              field={field.attribute}
-              dataSource={dataSource}
-              meta={{cellRenderer: { type: field.renderer || 'longText' }}}
-              customCellRenderers={customDataPointRenderers}
-            />
-          );
-        }
-
-        setData(nextData);
-      });
-  }, []);
+  // A single object is just a one-row, one-page list.
+  const { fieldMeta, data, isLoading, errorMessage } = useComponentListData({
+    id,
+    objectType,
+    dataSource,
+    fields,
+    zone,
+    setZone,
+    page: 1,
+    pageSize: 1,
+    customCellRenderers: customDataPointRenderers,
+  });
 
   return (
-    <ObjectDetail
+    <RemoteComponentBase
+      {...rest}
       id={id}
-      utilityBarConfig={utilityBarConfig}
-      data={data}
-      height={height}
-    />
+      isLoading={isLoading}
+      errorMessage={errorMessage}
+    >
+      <ObjectDetail
+        {...rest}
+        id={id}
+        data={data[0] ?? {}}
+        fields={fieldMeta}
+      />
+    </RemoteComponentBase>
   );
 }
+

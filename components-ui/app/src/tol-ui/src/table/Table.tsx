@@ -35,12 +35,12 @@ import {
   Pagination,
   ITableRecord,
   TFilterOrUndefined,
-  IRemoteComponentList,
+  IRemoteComponentDataList,
 } from "..";
 
 
 // TODO FUTURE: Remove IRemoteComponentList as this is for a remote component.
-export interface PTable extends IRemoteComponentList {
+export interface PTable extends IRemoteComponentDataList {
   data: any;
   fieldMeta: IFieldMeta;
   baseFieldMeta?: Partial<IFieldMeta>;

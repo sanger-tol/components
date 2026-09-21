@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { buildFieldMetaDefaults, useComponentData, useQueryData } from "..";
-import type { IFieldMeta, IUseComponentData, TDataObjectListOrNull, TsDataSource } from "..";
+import { buildDataRecords, buildFieldMetaDefaults, useComponentData, useQueryData } from "..";
+import type { IFieldMeta, IUseComponentData, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecordList, TsDataSource } from "..";
 
 
 /** Parameters for the `useComponentListData` hook. */
@@ -22,6 +22,8 @@ export interface IUseComponentListData extends Omit<IUseComponentData<IFieldMeta
   pageSize: number;
   /** Sort string passed straight to `getListPage`, e.g. from `createSort`. */
   sortBy?: string;
+  /** Custom cell renderers to use in addition to the pre-defined ones when building the returned `data`. */
+  customCellRenderers?: TCustomDataPointRenderers;
 }
 
 /**
@@ -41,6 +43,7 @@ export function useComponentListData({
   page,
   pageSize,
   sortBy,
+  customCellRenderers,
   queryKey = [],
   ...rest
 }: IUseComponentListData) {
@@ -62,7 +65,7 @@ export function useComponentListData({
   });
 
   const {
-    data,
+    data: dataObjects,
     isLoading: isLoadingData,
     isError,
     error,
@@ -71,6 +74,8 @@ export function useComponentListData({
     () => dataSource.getListPage({ objectType, page, pageSize, filter, sortBy, requestedFields: attributes }),
     { enabled: !isLoadingFields },
   );
+
+  const data: TDataRecordList = buildDataRecords(dataObjects, dataSource, fieldMeta as IFieldMeta, customCellRenderers);
 
   return {
     fieldMeta: (fieldMeta as IFieldMeta),
