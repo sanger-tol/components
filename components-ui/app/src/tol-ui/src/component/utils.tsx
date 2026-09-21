@@ -62,3 +62,14 @@ export function buildDataRecords(
 export function joinClassNames(...classNames: (string | undefined | null | false)[]): string {
   return classNames.filter(Boolean).join(" ");
 }
+
+/**
+ * Formats a total size as records for the record counter.
+ *
+ * @param totalSize - The total number of records.
+ * @returns The formatted record count.
+ */
+export function formatTotalSize(totalSize: number): string {
+  if (totalSize === 1) return "1 Record";
+  return totalSize.toLocaleString() + " Records";
+}

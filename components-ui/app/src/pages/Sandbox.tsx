@@ -23,8 +23,6 @@ export function Sandbox() {
     }
   });
 
-  const title = <h2>Remote Object Detail</h2>;
-
   const remoteObjectDetail = (
     <RemoteObjectDetail
       {...sp}
@@ -56,10 +54,6 @@ export function Sandbox() {
   );
 
   const components = [
-    {
-      component: title,
-      type: "full",
-    },
     {
       component: remoteObjectDetail,
       type: "md",

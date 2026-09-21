@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { ReactElement, cloneElement, useRef } from "react";
 import { Pagination, Placeholder, mergeUtilityBarConfigs, IComponentBase, IRemoteStatus, IPagination } from "..";
+import { RecordCounter } from "./RecordCounter";
 
 
 /** Props for the `RemoteComponentBase` wrapper component. */
@@ -48,6 +49,8 @@ export function RemoteComponentBase(props: PRemoteComponentBase) {
     totalSize !== undefined &&
     totalSize > 1;
 
+  const showCounter = totalSize !== undefined && totalSize > 1;
+
   const ubc = mergeUtilityBarConfigs(utilityBarConfig ?? undefined, {
     elements: showPagination
       ? [
@@ -73,7 +76,8 @@ export function RemoteComponentBase(props: PRemoteComponentBase) {
         : contents;
 
   return (
-    <div ref={parentRef} style={{ height }}>
+    <div ref={parentRef} className="tol-remote-component-base" style={{ height }}>
+      {showCounter && <RecordCounter totalSize={totalSize} loading={isLoading} />}
       {cloneElement(children, {
         height,
         utilityBarConfig: ubc,

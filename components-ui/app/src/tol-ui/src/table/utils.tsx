@@ -371,11 +371,6 @@ export async function getActions(
   return actionsList;
 }
 
-export function formatTotalSize(totalSize: number) {
-  if (totalSize === 1) return "1 Row";
-  return totalSize.toLocaleString() + " Rows";
-}
-
 export function copyPageColumnValues(
   data: any,
   fieldHeader: string,

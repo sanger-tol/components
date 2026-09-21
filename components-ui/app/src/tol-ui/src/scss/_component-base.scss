@@ -1,0 +1,22 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.tol-remote-component-base {
+  position: relative;
+}
+
+.tol-component-counter {
+  z-index: 2;
+  border-radius: var(--tol-border-radius);
+  background-color: var(--tol-grey-translucent);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  top: auto;
+  left: auto;
+  padding: 4px 8px;
+  backdrop-filter: blur(3px);
+}
