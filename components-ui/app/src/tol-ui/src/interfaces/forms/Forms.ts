@@ -198,6 +198,7 @@ export interface IMultipleselectField extends IFormComponent {
   data: string[] | IData[];
   placeholder?: string;
   disabled?: boolean;
+  disabledWhen?: (formData: Record<string, any>) => boolean;
   loading?: boolean;
   open?: boolean;
   onOpen?: any;

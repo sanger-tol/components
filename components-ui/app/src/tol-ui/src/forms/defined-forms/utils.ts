@@ -186,6 +186,9 @@ export async function upsertFormData<T>(
             },
           ],
           objectType: objectType,
+          // Form submissions should replace list/dict fields outright, not union-merge them
+          // with existing values (which otherwise silently prevents clearing them out).
+          params: { merge_collections: false },
         });
 
   return (await fetch().then(async (data: TDataObjectListOrNull) => {
