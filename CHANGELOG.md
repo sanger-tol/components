@@ -6,11 +6,16 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.5.0`
+
+21-09-26
+
+- IconLinkText and IconLinkTextsViewer
+
 ## tol-ui `5.4.0`
 
 16-09-26
 
-- IconLinkText and IconLinkTextsViewer
 - Param Boards
 
 ## tol-ui `5.3.0`
