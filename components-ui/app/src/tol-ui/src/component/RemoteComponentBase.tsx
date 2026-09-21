@@ -4,21 +4,23 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useRef } from "react";
-import { ComponentBase, Pagination, Placeholder, mergeUtilityBarConfigs, IComponentBase, IRemoteStatus, IPagination } from "..";
+import { ReactElement, cloneElement, useRef } from "react";
+import { Pagination, Placeholder, mergeUtilityBarConfigs, IComponentBase, IRemoteStatus, IPagination } from "..";
 
 
 /** Props for the `RemoteComponentBase` wrapper component. */
-export interface PRemoteComponentBase extends IComponentBase, IRemoteStatus, Partial<IPagination> {
-  /** The component's own body, rendered when not loading and no error/warning is present. */
-  children?: ReactNode;
+export interface PRemoteComponentBase extends IComponentBase, IRemoteStatus, IPagination {
+  /** The single top-level component to enhance, e.g. an `<ObjectDetail />` or `<Table />`. */
+  children: ReactElement<IComponentBase>;
 }
 
 /**
- * Generic wrapper shared by top-level components that fetch their own data remotely.
+ * Enhances a top-level component (already wrapped in its own `ComponentBase`) with the behaviour
+ * needed by components that fetch their own data remotely, without wrapping it in a second `ComponentBase`.
  *
- * Extends `ComponentBase` with loading/error/warning screens, and, only when pagination props are
- * supplied and there is more than one page of data, a `Pagination` control rendered as a utility bar element.
+ * Clones `children`, injecting: a `utilityBarConfig` with a `Pagination` element added when pagination
+ * props are supplied and there is more than one page of data, and a `contents` override showing a loading,
+ * error, or warning placeholder in place of the child's own body.
  */
 export function RemoteComponentBase(props: PRemoteComponentBase) {
   const {
@@ -34,7 +36,6 @@ export function RemoteComponentBase(props: PRemoteComponentBase) {
     utilityBarConfig,
     contents,
     children,
-    ...rest
   } = props;
 
   const parentRef = useRef<HTMLDivElement>(null);
@@ -63,22 +64,22 @@ export function RemoteComponentBase(props: PRemoteComponentBase) {
       : [],
   });
 
-  const ResolveContents = () => {
-    if (errorMessage) return <Placeholder errorMessage={errorMessage} height={height} />;
-    if (warningMessage) return <Placeholder warningMessage={warningMessage} height={height} />;
-    if (isLoading) return <Placeholder loader height={height} />;
-    return contents ?? children;
-  };
+  const resolvedContents = errorMessage
+    ? <Placeholder errorMessage={errorMessage} height={height} />
+    : warningMessage
+      ? <Placeholder warningMessage={warningMessage} height={height} />
+      : isLoading
+        ? <Placeholder loader height={height} />
+        : contents;
 
   return (
     <div ref={parentRef} style={{ height }}>
-      <ComponentBase
-        {...rest}
-        height={height}
-        utilityBarConfig={utilityBarConfig === null ? null : ubc}
-      >
-        {ResolveContents()}
-      </ComponentBase>
+      {cloneElement(children, {
+        height,
+        utilityBarConfig: ubc,
+        contents: resolvedContents,
+      })}
     </div>
   );
 }
+

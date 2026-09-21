@@ -19,8 +19,8 @@ export function getField(fields: IFieldMeta, attribute: string): TField | undefi
 }
 
 /**
- * Converts a list of data objects into `TDataRecord`s (one per row), rendering each active field via
- * `DataPoints` using its merged metadata - the generic, non-table equivalent of `convertTableData`.
+ * Converts a list of data objects into `TDataRecord`s (one per row), rendering
+ * each active field via `DataPoints` using its merged metadata.
  *
  * @param dataObjects - The data objects to convert, e.g. from `dataSource.getListPage`.
  * @param dataSource - The data source the objects belong to.
@@ -53,7 +53,12 @@ export function buildDataRecords(
   });
 }
 
-/** Joins class names, ignoring any falsy values. */
+/**
+ * Joins class names, ignoring any falsy values.
+ *
+ * @param classNames - Class names to join.
+ * @returns The joined class names, separated by spaces.
+ */
 export function joinClassNames(...classNames: (string | undefined | null | false)[]): string {
   return classNames.filter(Boolean).join(" ");
 }

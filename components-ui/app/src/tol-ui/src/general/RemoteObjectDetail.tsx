@@ -24,15 +24,23 @@ export function RemoteObjectDetail(props: IRemoteComponentData) {
   } = props;
 
   // A single object is just a one-row, one-page list.
-  const { fieldMeta, data, isLoading, errorMessage } = useComponentListData({
+  const {
+    fieldMeta,
+    data,
+    isLoading,
+    errorMessage,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    totalSize,
+  } = useComponentListData({
     id,
     objectType,
     dataSource,
     fields,
     zone,
     setZone,
-    page: 1,
-    pageSize: 1,
     customCellRenderers: customDataPointRenderers,
   });
 
@@ -42,6 +50,11 @@ export function RemoteObjectDetail(props: IRemoteComponentData) {
       id={id}
       isLoading={isLoading}
       errorMessage={errorMessage}
+      page={page}
+      setPage={setPage}
+      pageSize={pageSize}
+      setPageSize={setPageSize}
+      totalSize={totalSize}
     >
       <ObjectDetail
         {...rest}
