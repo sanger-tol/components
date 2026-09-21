@@ -5,4 +5,5 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./DownloadModal";
+export * from "./ProgressBar";
 export * from "./utils";
