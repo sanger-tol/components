@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from "react";
-import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, TCustomDataPointRenderers, TDataRecord, TDataRecordList, TDataPointRecord, TDataPointRecordList } from "..";
+import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, TCustomDataPointRenderers, TDataRecord, TDataRecordList } from "..";
 
 
 // TODO FUTURE: Remove IHeightDeprecated and migrate all components to use the height property in IComponentBase.
@@ -39,15 +39,15 @@ export interface IComponentBase extends ComponentPropsWithoutRef<"div"> {
 /** State required for pagination controls. */
 export interface IPagination {
   /** The current active page. */
-  page: number;
+  page?: number;
   /** Callback to change the active page. */
-  setPage: (page: number) => void;
+  setPage?: (page: number) => void;
   /** The number of rows displayed per page. */
-  pageSize: number;
+  pageSize?: number;
   /** Callback to change the page size. */
-  setPageSize: (pageSize: number) => void;
+  setPageSize?: (pageSize: number) => void;
   /** The total number of rows across all pages. */
-  totalSize: number;
+  totalSize?: number;
 }
 
 /** Loading/error/warning status for components that fetch their own data remotely. */
@@ -60,28 +60,29 @@ export interface IRemoteStatus {
   warningMessage?: string;
 }
 
-/** Represents a component displaying a single data item. */
-export interface IComponentData<TData = TDataRecord> extends IComponentBase {
+/** Represents a component with associated fields. */
+export interface IComponentFields extends IComponentBase {
   /** The fields associated with this component. */
   fields: IFieldMeta;
+}
+
+/** Represents a component with associated data. */
+export interface IComponentData<TData = TDataRecord> extends IComponentFields {
   /** The data associated with this component. */
   data: TData;
 }
 
-/** Component interface for displaying a list of data items with pagination support. */
-export interface IComponentDataList<TData = TDataRecordList> extends IComponentData<TData>, IPagination { }
+/** Represents a component with associated list data. */
+export interface IComponentListData extends IComponentData<TDataRecordList> { }
 
 /** Base properties for components that fetch their own data from a remote data source. */
-export interface IRemoteComponentBase extends IComponentBase, IRemoteTargetAndZone, IRemoteStatus { }
+export interface IRemoteComponentBase extends IComponentBase, IRemoteTargetAndZone { }
 
 /** Interface for a remote component displaying a single data item. */
-export interface IRemoteComponentData extends IComponentData<TDataPointRecord>, IRemoteComponentBase {
+export interface IRemoteComponentData extends IRemoteComponentBase, IComponentFields {
   /** Custom renderers for data points within this component. */
   customDataPointRenderers?: TCustomDataPointRenderers;
 }
 
 /** Interface for a remote component with list capabilities. */
-export interface IRemoteComponentDataList extends IComponentDataList<TDataPointRecordList>, IRemoteComponentBase {
-  /** Custom renderers for data points within this component. */
-  customDataPointRenderers?: TCustomDataPointRenderers;
-}
+export interface IRemoteComponentDataList extends IRemoteComponentData, IPagination { }

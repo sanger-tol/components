@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { buildDataRecords, buildFieldMetaDefaults, useComponentData, useQueryData } from "..";
+import { useState } from "react";
+import { API_METHODS, API_OPERATIONS, buildDataRecords, buildFieldMetaDefaults, useComponentData, useQueryData } from "..";
 import type { IFieldMeta, IUseComponentData, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecordList, TsDataSource } from "..";
 
 
@@ -16,11 +17,11 @@ export interface IUseComponentListData extends Omit<IUseComponentData<IFieldMeta
   dataSource: TsDataSource;
   /** The fields to enrich with metadata from `getAttributeDescriptor`, and to request from `getListPage`. */
   fields: IFieldMeta;
-  /** The page of results to fetch. */
-  page: number;
-  /** The number of results to fetch per page. */
-  pageSize: number;
-  /** Sort string passed straight to `getListPage`, e.g. from `createSort`. */
+  /** The initial page to fetch; pagination state is then managed internally by this hook. */
+  page?: number;
+  /** The initial number of results to fetch per page; pagination state is then managed internally by this hook. */
+  pageSize?: number;
+  /** Sort string passed straight to `getListPage`. */
   sortBy?: string;
   /** Custom cell renderers to use in addition to the pre-defined ones when building the returned `data`. */
   customCellRenderers?: TCustomDataPointRenderers;
@@ -34,20 +35,26 @@ export interface IUseComponentListData extends Omit<IUseComponentData<IFieldMeta
  *
  * Extends `IUseComponentData`, so it supports everything `useComponentData` does (zone/filter syncing,
  * `forceUpdate`, etc.) for the fields; the data page reuses that same resolved `filter`.
+ *
+ * Also manages its own `page`/`pageSize` state (seeded from the given initial values) and fetches the
+ * matching total row count, so the result can be spread straight into `RemoteComponentBase` for pagination.
  */
 export function useComponentListData({
   id,
   objectType,
   dataSource,
   fields,
-  page,
-  pageSize,
+  page: initialPage = 1,
+  pageSize: initialPageSize = 1,
   sortBy,
   customCellRenderers,
   queryKey = [],
   ...rest
 }: IUseComponentListData) {
   const attributes = fields.order.active.concat(fields.order.inactive || []);
+
+  const [page, setPage] = useState(initialPage);
+  const [pageSize, setPageSize] = useState(initialPageSize);
 
   const {
     filter,
@@ -75,6 +82,15 @@ export function useComponentListData({
     { enabled: !isLoadingFields },
   );
 
+  const { data: totalSize } = useQueryData<number>(
+    [id, "listPageCount", JSON.stringify(filter)],
+    () =>
+      dataSource
+        .custom({ method: API_METHODS.POST, resource: `${objectType}${API_OPERATIONS.COUNT}`, body: { filter } })
+        .then((res: any) => res?.data?.meta?.total ?? 0),
+    { enabled: !isLoadingFields },
+  );
+
   const data: TDataRecordList = buildDataRecords(dataObjects, dataSource, fieldMeta as IFieldMeta, customCellRenderers);
 
   return {
@@ -82,5 +98,11 @@ export function useComponentListData({
     data,
     isLoading: isLoadingFields || isLoadingData,
     errorMessage: fieldsErrorMessage ?? (isError ? (error?.message ?? "An error occurred") : undefined),
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    totalSize: (totalSize as number) ?? 0,
   };
 }
+

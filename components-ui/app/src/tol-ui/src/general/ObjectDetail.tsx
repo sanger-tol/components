@@ -16,12 +16,12 @@ export function ObjectDetail(props: IComponentData) {
       {...rest}
       classNames={["tol-object-detail", ...classNames]}
     >
-      {fields.order.active.map((attribute) => {
+      {fields?.order?.active?.map((attribute) => {
         const field = getField(fields, attribute);
         return (
-          <p key={attribute}>
+          <div key={attribute} className="tol-object-detail-field">
             <strong>{field?.rename ?? attribute}:</strong> {data[attribute]}
-          </p>
+          </div>
         );
       })}
     </ComponentBase>
