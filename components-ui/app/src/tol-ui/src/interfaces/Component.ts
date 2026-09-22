@@ -50,16 +50,6 @@ export interface IPagination {
   totalSize?: number;
 }
 
-/** Loading/error/warning status for components that fetch their own data remotely. */
-export interface IRemoteStatus {
-  /** Loading state, shown in place of the component's body. */
-  isLoading?: boolean;
-  /** Error message, shown in place of the component's body. */
-  errorMessage?: string;
-  /** Warning message for a non-critical issue, shown in place of the component's body. */
-  warningMessage?: string;
-}
-
 /** Represents a component with associated fields. */
 export interface IComponentFields extends IComponentBase {
   /** The fields associated with this component. */

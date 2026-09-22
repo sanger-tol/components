@@ -13,7 +13,7 @@ import {
   FieldDropdown,
   AutoHeightCell,
   PTable,
-  IFieldBasic,
+  IFieldTable,
   DEFAULT_COLUMN_WIDTH,
   MIN_COLUMN_WIDTH,
   MAX_COLUMN_WIDTH,
@@ -27,11 +27,10 @@ const lastWidths = new Map<string, number>();
 
 export interface PDataColumn extends PTable {
   fieldKey: string;
-  field: IFieldBasic;
+  field: IFieldTable;
   sortable: boolean;
   filterable: boolean;
   resizeable?: boolean;
-  onResize?: (columnWidth?: number, dataKey?: string) => void;
   handleCellHeightChange: (
     rowId: string,
     columnId: string,
@@ -84,7 +83,7 @@ export function DataColumn(props: PDataColumn) {
     if (lastWidth === clampedWidth) return;
 
     lastWidths.set(columnKey, clampedWidth);
-    props.onResize?.(clampedWidth, dataKey);
+    props.onResizeColumn?.(clampedWidth, dataKey);
   };
 
   return (

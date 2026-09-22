@@ -36,13 +36,13 @@ import {
   ITableRecord,
   TFilterOrUndefined,
   IRemoteComponentDataList,
+  IFieldTable,
 } from "..";
 
 
 // TODO FUTURE: Remove IRemoteComponentList as this is for a remote component.
 export interface PTable extends IRemoteComponentDataList {
   data: any;
-  fieldMeta: IFieldMeta;
   baseFieldMeta?: Partial<IFieldMeta>;
   filter: TFilterOrUndefined;
   filterVisibility?: boolean;
@@ -71,6 +71,7 @@ export interface PTable extends IRemoteComponentDataList {
   fieldDropdownChoices?: TFieldDropdownChoices;
   onConfigSave: (config: ITableConfigSave) => void;
   onResizeColumn?: (columnWidth?: number, dataKey?: string) => void;
+  loading?: boolean;
   downloadInProgress: boolean;
   setDownloadInProgress: (downloadInProgress: boolean) => void;
   utilityBarConfig?: PUtilityBar;
@@ -83,14 +84,14 @@ export function Table(props: PTable) {
   let {
     id,
     data,
-    fieldMeta,
+    fields,
     baseFieldMeta,
     height,
     loading,
     resizeableColumns = false,
     page,
     pageSize,
-    totalSize,
+    totalSize = 0,
     filter,
     filterVisibility,
     setFilterVisibility,
@@ -101,7 +102,6 @@ export function Table(props: PTable) {
     onSortColumn,
     expandedRows,
     groupBy,
-    onResizeColumn,
     noFilter,
     noPagination,
     noSorting,
@@ -134,7 +134,7 @@ export function Table(props: PTable) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   // Check if there are no fields selected in the table
-  const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
+  const noFieldsSelected = fields?.order?.active?.length === 0;
 
   // Check if all rows are expanded
   const allRowsExpanded = (
@@ -259,7 +259,7 @@ export function Table(props: PTable) {
   };
 
   const filterButton: PButton = {
-    visible: !noFilter && fieldMeta.order.active.length !== 0 && editMode,
+    visible: !noFilter && fields.order.active.length !== 0 && editMode,
     position: "right",
     type: "primary",
     onClick: () => setFilterVisibility(!filterVisibility),
@@ -331,10 +331,10 @@ export function Table(props: PTable) {
 
   const customAttributeSelection =
     !editMode
-      && ((baseFieldMeta?.order?.limitVisibility ?? fieldMeta?.order?.limitVisibility) === true)
+      && ((baseFieldMeta?.order?.limitVisibility ?? fields?.order?.limitVisibility) === true)
       ? [
-        ...((baseFieldMeta?.order?.active || fieldMeta.order.active) ?? []),
-        ...((baseFieldMeta?.order?.inactive || fieldMeta.order.inactive) ?? []),
+        ...((baseFieldMeta?.order?.active || fields.order.active) ?? []),
+        ...((baseFieldMeta?.order?.inactive || fields.order.inactive) ?? []),
       ]
       : undefined;
 
@@ -352,19 +352,20 @@ export function Table(props: PTable) {
       />
       <DownloadModal
         {...props}
+        totalSize={totalSize}
         disabledTabs={["Image"]}
         size="sm"
         componentId={id}
         open={downloadOpen}
         setOpen={setDownloadOpen}
-        requestedFields={fieldMeta?.order?.active}
+        requestedFields={fields?.order?.active}
         title={ubc.title}
-        fieldMeta={fieldMeta}
+        fieldMeta={fields}
       />
       <ColumnConfigDrawer
         {...props}
         title="Table Configuration"
-        fieldMeta={fieldMeta}
+        fieldMeta={fields}
         actions={actions}
         defaultSortByAttribute={defaultSortByAttribute}
         defaultSortByType={defaultSortByType}
@@ -383,7 +384,7 @@ export function Table(props: PTable) {
       <UtilityBar id={id} {...ubc} />
       {contents || (
         <>
-          <RecordCounter {...props} />
+          <RecordCounter {...props} totalSize={totalSize} />
           <div className="tol-table-inner">
             <RSTable
               bordered
@@ -424,8 +425,8 @@ export function Table(props: PTable) {
                 setHeightExpandedRows,
                 handleToggleAllRowHeights,
               })}
-              {fieldMeta!.order.active.map((key: string) => {
-                const field = fieldMeta.dataWithDefaults![key];
+              {fields!.order.active.map((key: string) => {
+                const field = fields.dataWithDefaults![key] as IFieldTable;
                 if (!field) return null;
 
                 const sortable: boolean =
@@ -439,7 +440,6 @@ export function Table(props: PTable) {
                   sortable,
                   filterable,
                   resizeable: resizeableColumns,
-                  onResize: onResizeColumn,
                   handleCellHeightChange,
                 });
               })}

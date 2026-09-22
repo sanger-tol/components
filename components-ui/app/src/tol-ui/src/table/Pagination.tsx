@@ -25,7 +25,7 @@ export function Pagination(props: PPagination) {
     setPage,
     pageSize,
     setPageSize,
-    totalSize,
+    totalSize = 0,
     pageSizePickerVisible = true,
   } = props;
 
