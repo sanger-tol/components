@@ -10,6 +10,7 @@ import "./scss/styling.scss";
 import {
   API_PATHS,
   generateAutoDocNavigation,
+  PAGE_ACCESS,
   SmartApp,
   TsDataSource
 } from "./tol-ui/src";
