@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CellDisplay,
   CellEditable,
@@ -31,9 +31,8 @@ export function DataPoint(props: PDataPoint) {
   const {
     field,
     dataObject,
-    editable,
+    editable = true,
     isMany,
-    meta,
   } = props;
 
   const attributeValue = getFieldByName(dataObject, field);
@@ -41,11 +40,16 @@ export function DataPoint(props: PDataPoint) {
   const [value, setValue] = useState(attributeValue);
   const [editMode, setEditMode] = useState(false);
 
+  /** 
+   * Updates the local state `value` whenever the underlying attribute value changes,
+   * but only if the component is not currently in edit mode.
+   */
+  useEffect(() => {
+    if (!editMode) setValue(attributeValue);
+  }, [attributeValue, editMode]);
+
   // TODO FUTURE: Allow for string and date updates via permissions
-  const canEdit = (
-    meta.actsAs === "status" ||
-    meta.actsAs === "relationshipIdentifier"
-  );
+  const canEdit = true;
 
   const onDoubleClick = () => {
     if (!editable) return;
