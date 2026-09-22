@@ -5,13 +5,26 @@
  */
 
 .tol-object-detail {
+  padding: var(--tol-spacing-xs);
+
   h2,
   .tol-object-detail-field {
     margin: 0;
   }
 
   .tol-object-detail-field {
+    display: flex;
+    align-items: flex-start;
     margin-left: 5px;
     margin-bottom: 5px;
+
+    strong {
+      flex: 0 0 auto;
+      margin-right: 4px;
+    }
+
+    .tol-data-points {
+      min-width: 0;
+    }
   }
 }
