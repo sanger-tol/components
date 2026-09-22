@@ -36,6 +36,16 @@ export interface IComponentBase extends ComponentPropsWithoutRef<"div"> {
   forceUpdate?: boolean;
 }
 
+/** Loading/error/warning state shared by components that fetch their own data remotely. */
+export interface IRemoteStatus {
+  /** Whether the component's data is currently being fetched. */
+  isLoading?: boolean;
+  /** Error message to display in place of the component's contents. */
+  errorMessage?: string;
+  /** Warning message to display in place of the component's contents. */
+  warningMessage?: string;
+}
+
 /** State required for pagination controls. */
 export interface IPagination {
   /** The current active page. */
