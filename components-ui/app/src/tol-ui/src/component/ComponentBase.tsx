@@ -33,17 +33,25 @@ export function ComponentBase(props: PComponentBase) {
   } = props;
 
   const ubc = mergeUtilityBarConfigs(utilityBarConfig ?? undefined);
+  const hasUtilityBar = Boolean(
+    utilityBarConfig && (
+      utilityBarConfig.title ||
+      utilityBarConfig.description ||
+      utilityBarConfig.buttons?.some(Boolean) ||
+      utilityBarConfig.elements?.some(Boolean)
+    )
+  );
 
   return (
     <div
       id={id}
       style={{ height }}
     >
-      {utilityBarConfig !== null && <UtilityBar id={id} {...ubc} />}
+      {hasUtilityBar && <UtilityBar id={id} {...ubc} />}
       <div
         className={joinClassNames(
           "tol-component-contents",
-          utilityBarConfig !== null ? "with-offset" : undefined,
+          hasUtilityBar ? "with-offset" : undefined,
           className,
           ...classNames,
         )}

@@ -11,16 +11,19 @@ export function Sandbox() {
     objectType: "species",
     dataSource: TOL_DS,
     components: [
-      { id: "remote-object-detail-example" },
-      { id: "remote-table-example" },
-    ],
-    filter: {
-      and_: {
-        "sts_scientific_name": {
-          "exists": {}
+      {
+        id: "remote-table-example",
+        filter: {
+          and_: {
+            //"id": { "contains": { "value": 1002971 } },
+            "sts_scientific_name": {
+              "exists": {}
+            }
+          }
         }
-      }
-    }
+      },
+      { id: "remote-object-detail-example" },
+    ],
   });
 
   const remoteObjectDetail = (
@@ -31,6 +34,7 @@ export function Sandbox() {
         order: {
           active: [
             "id",
+            "sts_sample_sts_project_union",
             "sts_scientific_name"
           ],
         },
@@ -46,7 +50,8 @@ export function Sandbox() {
         order: {
           active: [
             "id",
-            "sts_scientific_name"
+            "sts_scientific_name",
+            "sts_sample_sts_project_union"
           ],
         },
       }}
@@ -55,11 +60,11 @@ export function Sandbox() {
 
   const components = [
     {
-      component: remoteObjectDetail,
+      component: remoteTable,
       type: "md",
     },
     {
-      component: remoteTable,
+      component: remoteObjectDetail,
       type: "md",
     },
   ];
