@@ -51,7 +51,7 @@ export function useComponentListData({
   queryKey = [],
   ...rest
 }: IUseComponentListData) {
-  const attributes = fields.order.active.concat(fields.order.inactive || []);
+  const allAttributes = fields.order.active.concat(fields.order.inactive || []);
 
   const [page, setPage] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialPageSize);
@@ -64,10 +64,10 @@ export function useComponentListData({
   } = useComponentData<IFieldMeta>({
     ...rest,
     id,
-    queryKey: [...attributes, "fields", ...queryKey],
+    queryKey: [...allAttributes, "fields", ...queryKey],
     fetchData: async () => ({
       ...fields,
-      dataWithDefaults: await buildFieldMetaDefaults(objectType, attributes, dataSource, fields.dataWithDefaults),
+      dataWithDefaults: await buildFieldMetaDefaults(objectType, allAttributes, dataSource, fields.dataWithDefaults),
     }),
   });
 
@@ -90,8 +90,12 @@ export function useComponentListData({
     error,
   } = useQueryData<TDataObjectListOrNull>(
     [id, "listPage", JSON.stringify(filter), String(page), String(pageSize), String(sortBy)],
-    () => dataSource.getListPage({ objectType, page, pageSize, filter, sortBy, requestedFields: attributes }),
-    { enabled: !isLoadingFields && !isLoadingTotalSize },
+    () => dataSource.getListPage({ objectType, page, pageSize, filter, sortBy, requestedFields: allAttributes }),
+    {
+      enabled: !isLoadingFields && !isLoadingTotalSize,
+      // TODO: Investigate targeted cache invalidation for editable data points.
+      gcTime: 0,
+    },
   );
 
   const data: TDataRecordList = buildDataRecords(dataObjects, dataSource, fieldMeta as IFieldMeta, customCellRenderers);
@@ -99,7 +103,8 @@ export function useComponentListData({
   return {
     fieldMeta: (fieldMeta as IFieldMeta),
     data,
-    isLoading: isLoadingFields || isLoadingData,
+    // Waits for all necessary data to be loaded: field metadata, total size, and the current page of data.
+    isLoading: isLoadingFields || isLoadingTotalSize || isLoadingData,
     errorMessage: fieldsErrorMessage ?? (isError ? (error?.message ?? "An error occurred") : undefined),
     page,
     setPage,

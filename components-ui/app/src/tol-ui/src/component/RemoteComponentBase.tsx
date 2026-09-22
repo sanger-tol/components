@@ -62,6 +62,7 @@ export function RemoteComponentBase(props: PRemoteComponentBase) {
           pageSize={pageSize}
           setPageSize={setPageSize}
           totalSize={totalSize}
+          pageSizePickerVisible={false}
         />,
       ]
       : [],

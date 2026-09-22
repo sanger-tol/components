@@ -13,6 +13,8 @@ import { componentResizeListener, IPagination, PAGE_SIZE_OPTIONS } from "..";
 export interface PPagination extends IPagination {
   /** Parent element ref from the table container used for width-based layout. */
   parentRef: RefObject<HTMLDivElement | null>;
+  /** Whether the page size picker should be visible. */
+  pageSizePickerVisible?: boolean;
 }
 
 /** A self-contained pagination control that adapts its layout based on the component's width. */
@@ -23,7 +25,8 @@ export function Pagination(props: PPagination) {
     setPage,
     pageSize,
     setPageSize,
-    totalSize
+    totalSize,
+    pageSizePickerVisible = true,
   } = props;
 
   const [isCompact, setIsCompact] = useState<boolean>(false);
@@ -33,9 +36,11 @@ export function Pagination(props: PPagination) {
     if (width !== undefined) setIsCompact(width < 750);
   });
 
+  const showPageSizePicker = pageSizePickerVisible && !isCompact;
+
   return (
     <div className="tol-pagination">
-      {!isCompact && (
+      {showPageSizePicker && (
         <span className="tol-page-size">
           <SelectPicker
             value={pageSize}
@@ -54,7 +59,7 @@ export function Pagination(props: PPagination) {
         className="tol-pagination"
         size="sm"
         layout={isCompact ? ["pager"] : ["pager", "skip"]}
-        total={totalSize <= 10000 ? totalSize : 10000}
+        total={totalSize && totalSize <= 10000 ? totalSize : 10000}
         activePage={page}
         onChangePage={setPage}
         limit={pageSize}

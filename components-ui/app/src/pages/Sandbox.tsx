@@ -15,7 +15,7 @@ export function Sandbox() {
         id: "remote-table-example",
         filter: {
           and_: {
-            //"id": { "contains": { "value": 1002971 } },
+            "id": { "contains": { "value": 1002971 } },
             "sts_scientific_name": {
               "exists": {}
             }

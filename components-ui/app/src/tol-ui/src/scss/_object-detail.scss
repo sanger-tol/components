@@ -5,7 +5,7 @@
  */
 
 .tol-object-detail {
-  padding: var(--tol-spacing-xs);
+  padding: var(--tol-spacing-sm);
 
   h2,
   .tol-object-detail-field {
@@ -15,12 +15,11 @@
   .tol-object-detail-field {
     display: flex;
     align-items: flex-start;
-    margin-left: 5px;
-    margin-bottom: 5px;
+    margin-bottom: var(--tol-spacing-sm);
 
     strong {
       flex: 0 0 auto;
-      margin-right: 4px;
+      margin-right: var(--tol-spacing-sm);
     }
 
     .tol-data-points {
