@@ -48,7 +48,7 @@ export interface PUserProfile {
   transformSubmitData?: (
     formData: object,
     currentData: TUserProfileFormDataOrNull,
-  ) => object;
+  ) => object | Promise<object>;
   /** Return an error message to abort submission, or null to proceed. */
   validateSubmission?: (
     formData: object,
@@ -121,7 +121,7 @@ export function UserProfile(props: PUserProfile) {
 
   const patchedConfig = applyReadOnlyFields(mergedConfig, readOnlyFields);
 
-  const handleSubmit = (formData: object, isValid: boolean) => {
+  const handleSubmit = async (formData: object, isValid: boolean) => {
     if (!isValid) return;
 
     const error = validateSubmission?.(formData, profile);
@@ -132,7 +132,7 @@ export function UserProfile(props: PUserProfile) {
 
     const wasIncomplete = !hasCompletedProfile;
     const payload = transformSubmitData
-      ? transformSubmitData(formData, profile)
+      ? await transformSubmitData(formData, profile)
       : formData;
 
     const from = location.state?.from;
