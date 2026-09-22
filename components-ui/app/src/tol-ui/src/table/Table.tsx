@@ -316,7 +316,7 @@ export function Table(props: PTable) {
         downloadButton,
       ],
       elements:
-        !noPagination && noFieldsSelected ? [PaginationPicker] : [],
+        !noPagination && !noFieldsSelected ? [PaginationPicker] : [],
     }
   )
 
