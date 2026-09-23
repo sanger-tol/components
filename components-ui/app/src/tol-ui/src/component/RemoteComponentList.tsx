@@ -12,13 +12,11 @@ import {
   useComponentListData,
 } from "..";
 import { RecordCounter } from "./RecordCounter";
-import type { IComponentData, IRemoteComponentDataList, IRemoteTargetAndZone } from "..";
+import type { IComponentData, IRemoteComponentDataList } from "..";
 
 
-/** Props for the `RemoteComponentList` wrapper component. */
-export interface PRemoteComponentList extends IRemoteComponentDataList, IRemoteTargetAndZone {
-  /** The number of items to fetch per page. */
-  pageSize?: number;
+/** Props for the `RemoteComponentDataList` wrapper component. */
+export interface PRemoteComponentDataList extends IRemoteComponentDataList {
   /** The single top-level component to enhance with fetched data, e.g. an `<ObjectDetail />`. */
   children: ReactElement<IComponentData>;
 }
@@ -28,7 +26,7 @@ export interface PRemoteComponentList extends IRemoteComponentDataList, IRemoteT
  * Wraps the result in `RemoteComponentBase` to handle loading, error, and no-fields-selected states.
  * Also provides pagination controls and a record counter when applicable.
  */
-export function RemoteComponentList(props: PRemoteComponentList) {
+export function RemoteComponentDataList(props: PRemoteComponentDataList) {
   const {
     id,
     dataSource,

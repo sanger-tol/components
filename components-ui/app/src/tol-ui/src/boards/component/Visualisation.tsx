@@ -123,7 +123,7 @@ export function Visualisation(props: PVisualisation) {
 
   let Component: JSX.ElementType = BoardTable;
   // Extra props only some Component types need, e.g. BoardDataList's `type`.
-  let extraProps: Record<string, unknown> = {};
+  let componentSpecificProps: Record<string, unknown> = {};
 
   switch (componentType) {
     case "count":
@@ -147,13 +147,13 @@ export function Visualisation(props: PVisualisation) {
       break;
     case COMPONENT_TYPES.OBJECT_DETAIL:
       Component = BoardDataList;
-      extraProps = { type: DATA_LIST_COMPONENT_TYPES_.OBJECT_DETAIL };
+      componentSpecificProps = { type: DATA_LIST_COMPONENT_TYPES_.OBJECT_DETAIL };
   }
 
   const Visualisation = (
     <Component
       {...props}
-      {...extraProps}
+      {...componentSpecificProps}
       utilityBarConfig={ubc}
     />
   );

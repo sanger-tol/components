@@ -14,6 +14,8 @@ import {
 } from "..";
 import type { IFieldMeta } from "..";
 
+
+/** Props for the `ObjectDetailConfigDrawer` component. */
 export interface PObjectDetailConfigDrawer extends IRemoteTarget {
   /** Whether the drawer is open. */
   open: boolean;

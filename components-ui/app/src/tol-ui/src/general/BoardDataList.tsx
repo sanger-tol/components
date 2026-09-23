@@ -15,13 +15,12 @@ import {
   updateComponentConfigAndUpsert,
   DATA_LIST_COMPONENT_TYPES_,
 } from "..";
-import type { IFieldMeta } from "..";
+import type { IFieldMeta, TDataListComponentType } from "..";
 
-export type TDataListType = (typeof DATA_LIST_COMPONENT_TYPES_)[keyof typeof DATA_LIST_COMPONENT_TYPES_];
-
+/** Props for the `BoardDataList` component. */
 export interface PBoardDataList extends PVisualisation {
   /** Which underlying component `BoardDataList` should render. */
-  type: TDataListType;
+  type: TDataListComponentType;
 }
 
 /**

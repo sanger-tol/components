@@ -6,14 +6,14 @@ SPDX-License-Identifier: MIT
 
 import {
   ObjectDetail,
-  RemoteComponentList,
+  RemoteComponentDataList,
 } from "..";
-import type { IRemoteComponentData } from "..";
+import type { IRemoteComponentDataList } from "..";
 
-export function RemoteObjectDetail(props: IRemoteComponentData) {
+export function RemoteObjectDetail(props: IRemoteComponentDataList) {
   return (
-    <RemoteComponentList {...props}>
+    <RemoteComponentDataList {...props}>
       <ObjectDetail {...props}/>
-    </RemoteComponentList>
+    </RemoteComponentDataList>
   );
 }

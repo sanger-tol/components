@@ -87,4 +87,4 @@ export interface IRemoteComponentData extends IRemoteComponentBase, IComponentFi
 }
 
 /** Interface for a remote component with list capabilities. */
-export interface IRemoteComponentDataList extends IRemoteComponentData, IPagination { }
+export interface IRemoteComponentDataList extends IRemoteComponentData, IRemoteTargetAndZone, IPagination { }
