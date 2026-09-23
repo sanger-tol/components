@@ -12,7 +12,7 @@ import {
   IChartConfig,
   updateComponentConfigAndUpsert,
   PVisualisation,
-  NoAttributesPlaceholder,
+  NotConfiguredPlaceholder,
   useBoard,
   PButton,
   mergeUtilityBarConfigs
@@ -61,7 +61,7 @@ export function BoardChart(props: PVisualisation) {
 
   const Contents = () => {
     if (!config.xAxis && !config.breakDownBy) {
-      return <NoAttributesPlaceholder />;
+      return <NotConfiguredPlaceholder />;
     }
   }
 

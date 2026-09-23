@@ -34,6 +34,8 @@ export interface IUseComponentData<T> {
   queryKey?: string[];
   /** Flipping this forces a re-fetch, even if the filter is otherwise unchanged. */
   forceUpdate?: boolean;
+  /** Whether to actually run the query; set to `false` to skip fetching entirely. Defaults to `true`. */
+  enabled?: boolean;
 }
 
 /**
@@ -52,6 +54,7 @@ export function useComponentData<T>(params: IUseComponentData<T>) {
     setZone,
     queryKey = [],
     forceUpdate,
+    enabled = true,
   } = params;
 
   const [filter, setFilter] = useState<TFilterOrUndefined>({});
@@ -80,6 +83,7 @@ export function useComponentData<T>(params: IUseComponentData<T>) {
         console.error("useComponentData fetchData failed:", err);
         throw err;
       }),
+    { enabled },
   );
 
   return {

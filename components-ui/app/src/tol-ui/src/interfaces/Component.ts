@@ -44,6 +44,8 @@ export interface IRemoteStatus {
   errorMessage?: string;
   /** Warning message to display in place of the component's contents. */
   warningMessage?: string;
+  /** Message to display when no fields are selected for the component. */
+  noFieldsSelected?: boolean;
 }
 
 /** State required for pagination controls. */
@@ -63,20 +65,20 @@ export interface IPagination {
 /** Represents a component with associated fields. */
 export interface IComponentFields extends IComponentBase {
   /** The fields associated with this component. */
-  fields: IFieldMeta;
+  fields?: IFieldMeta;
 }
 
 /** Represents a component with associated data. */
 export interface IComponentData<TData = TDataRecord> extends IComponentFields {
   /** The data associated with this component. */
-  data: TData;
+  data?: TData;
 }
 
 /** Represents a component with associated list data. */
 export interface IComponentListData extends IComponentData<TDataRecordList> { }
 
 /** Base properties for components that fetch their own data from a remote data source. */
-export interface IRemoteComponentBase extends IComponentBase, IRemoteTargetAndZone { }
+export interface IRemoteComponentBase extends IComponentBase, IRemoteStatus { }
 
 /** Interface for a remote component displaying a single data item. */
 export interface IRemoteComponentData extends IRemoteComponentBase, IComponentFields {

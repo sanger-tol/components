@@ -29,7 +29,7 @@ import {
   mergeUtilityBarConfigs,
   getTableRowClassName,
   getTableRowHeight,
-  NoAttributesPlaceholder,
+  NotConfiguredPlaceholder,
   IConfigDifferences,
   TableResetConfirmationModal,
   Pagination,
@@ -339,7 +339,7 @@ export function Table(props: PTable) {
       : undefined;
 
   const contents =
-    props.contents || (noFieldsSelected ? <NoAttributesPlaceholder /> : null);
+    props.contents || (noFieldsSelected ? <NotConfiguredPlaceholder /> : null);
 
   return (
     <div id={id} ref={ref} className="tol-table" style={{ height: height }}>

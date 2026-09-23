@@ -38,7 +38,7 @@ export function buildDataRecords(
 
   return dataObjects.map((dataObject) => {
     const record: TDataRecord = {};
-    for (const field of fieldMeta.order.active) {
+    for (const field of fieldMeta?.order?.active ?? []) {
       record[field] = (
         <DataPoints
           field={field}
