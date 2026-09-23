@@ -9,10 +9,11 @@ SPDX-License-Identifier: MIT
 ## tol-ui `5.6.0`
 
 22-09-26
-- BGA
+- BGA & Generic
   - Generic base/remote component wrappers (TOLP-10249)
   - Generic useComponentData hooks (TOLP-10249)
-  - Generic remote data list component (TOLP-10262)
+  - Generic remote data list component wrapper (TOLP-10262)
+  - Add 'Detail Card' to boards (TOLP-10262)
   - Temp config drawer for object detail (TOLP-10262)
 
 - Track
