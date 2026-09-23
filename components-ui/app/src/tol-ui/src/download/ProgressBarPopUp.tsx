@@ -11,7 +11,7 @@ import {
   ProgressBar,
   PProgressBar,
   PPopUpMessage,
-  StaticMessage
+  StaticMessage,
 } from "..";
 
 export interface PProgressBarPopUp extends PProgressBar, Pick<PPopUpMessage, "onClose" | "persist" | "header"> {
@@ -38,7 +38,7 @@ export function ProgressBarPopUp(props: PProgressBarPopUp) {
     return (
       <StaticMessage
         message={progressPopupType === "success" && hideProgressOnComplete
-          ? <div className="tol-progress-popup-complete-message">{messageOnComplete}</div>
+          ? messageOnComplete
           : (
             <ProgressBar
               {...progressBarProps}
