@@ -32,9 +32,10 @@ import type {
   IUserProfileFormData,
   TUserProfileFormDataOrNull,
   TProfileBaseConfig,
+  IUserProfileFunctions,
 } from "../..";
 
-export interface PUserProfile {
+export interface PUserProfile extends IUserProfileFunctions {
   /** Base form configuration, or a factory receiving `hasUnsavedChanges` followed by any `baseConfigArgs`. */
   baseConfig?: TProfileBaseConfig;
   /** Extra arguments forwarded to `baseConfig` when it's a factory (e.g. `[termsaccepted]`). */
@@ -44,20 +45,6 @@ export interface PUserProfile {
   additionalConfigs?: IUserProfileAdditionalConfigs;
   /** Optional boolean flag to indicate whether to show a logout button in the profile page. */
   logout?: boolean;
-  /** Transform form valuse into the upsert payload */
-  transformSubmitData?: (
-    formData: object,
-    currentData: TUserProfileFormDataOrNull,
-  ) => object | Promise<object>;
-  /** Return an error message to abort submission, or null to proceed. */
-  validateSubmission?: (
-    formData: object,
-    currentData: TUserProfileFormDataOrNull,
-  ) => string | null;
-  /** Called after a successful save that completed the profile for the first time. */
-  onFirstSubmitSuccess?: () => void;
-  /** Transform persisted data into form-ready values. */
-  transformInitialData?: (data: TUserProfileFormDataOrNull) => object;
 }
 
 export function UserProfile(props: PUserProfile) {

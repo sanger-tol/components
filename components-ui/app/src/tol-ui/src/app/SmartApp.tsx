@@ -49,7 +49,7 @@ import {
   AppContextProvider,
   PFooter,
   IMobileOptions,
-  PUserProfile
+  IUserProfileFunctions
 } from "..";
 
 export interface PSmartApp {
@@ -118,13 +118,7 @@ export interface PSmartApp {
     baseConfig?: any;
     baseConfigArgs?: any[];
     additionalConfigs?: IUserProfileAdditionalConfigs;
-  } & Pick<
-    PUserProfile,
-    | "transformSubmitData"
-    | "validateSubmission"
-    | "onFirstSubmitSuccess"
-    | "transformInitialData"
-  >;
+  } & IUserProfileFunctions;
   /**
    * Optional boolean flag to indicate whether to show a logout button in the profile page.
    */
