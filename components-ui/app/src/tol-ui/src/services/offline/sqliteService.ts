@@ -19,7 +19,9 @@ export class SqliteService {
   private readonly dbPromise: Promise<SQLiteDBConnection>;
 
   constructor(
+    /* The name of the database to connect to. */
     private readonly databaseName: string,
+    /* The list of upgrade options for the database schema (similar to alembic in SQLAlchemy). */
     private readonly upgrades: CapacitorSQLiteUpgradeOptions[]
   ) {
     this.dbPromise = this.getDatabase();
