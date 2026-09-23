@@ -63,12 +63,12 @@ export function ProgressBar(props: PProgressBar) {
   }, [percentageComplete]);
 
   return (
-    <div>
+    <>
       {text}
       <Progress.Line
         percent={percentageComplete}
         status={percentageComplete === 100 ? "success" : "active"}
       />
-    </div>
+    </>
   );
 }
