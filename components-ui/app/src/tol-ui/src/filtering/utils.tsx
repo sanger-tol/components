@@ -203,7 +203,6 @@ export function generateFilter(
       )
     ) continue;
 
-    // Keep self filter as-is; all other components use defaultFilter as back-up if filter is empty
     let currentFilter: IFilter = deepCopy(zone.children?.[currentId].filter || {});
 
     // Include sub filter if required

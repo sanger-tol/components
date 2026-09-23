@@ -23,9 +23,11 @@
   font-size: 1.05rem;
   font-weight: 500;
   line-height: 1.75rem;
+  margin: 0;
 }
 
 .tol-social-viewer-parent .tol-social-viewer-child {
   display: flex;
+  align-items: center;
   gap: 0.25rem;
 }

@@ -62,6 +62,23 @@ $tol-royal-translucent: rgba($tol-royal, 0.1) !default;
 $tol-royal-light: lighten($tol-royal, 15%) !default;
 $tol-royal-dark: darken($tol-royal, 15%) !default;
 
+$tol-brand-github: #181717 !default;
+$tol-brand-github-dark: #f5f5f5 !default;
+$tol-brand-gitlab: #fc6d26 !default;
+$tol-brand-gitlab-dark: #ff9a54 !default;
+$tol-brand-linkedin: #0a66c2 !default;
+$tol-brand-linkedin-dark: #7bb7ff !default;
+$tol-brand-facebook: #1877f2 !default;
+$tol-brand-facebook-dark: #7aa9ff !default;
+$tol-brand-discord: #5865f2 !default;
+$tol-brand-discord-dark: #b3b8ff !default;
+$tol-brand-slack: #4a154b !default;
+$tol-brand-slack-dark: #f2c4ff !default;
+$tol-brand-bluesky: #1185fe !default;
+$tol-brand-bluesky-dark: #8ec8ff !default;
+$tol-brand-wechat: #07c160 !default;
+$tol-brand-wechat-dark: #7fe7b4 !default;
+
 // ToL CSS Variable Conversion
 :root {
   --tol-light: #{$tol-light};
@@ -107,6 +124,23 @@ $tol-royal-dark: darken($tol-royal, 15%) !default;
   --tol-royal-translucent: #{$tol-royal-translucent};
   --tol-royal-light: #{$tol-royal-light};
   --tol-royal-dark: #{$tol-royal-dark};
+
+  --tol-brand-github: #{$tol-brand-github};
+  --tol-brand-github-dark: #{$tol-brand-github-dark};
+  --tol-brand-gitlab: #{$tol-brand-gitlab};
+  --tol-brand-gitlab-dark: #{$tol-brand-gitlab-dark};
+  --tol-brand-linkedin: #{$tol-brand-linkedin};
+  --tol-brand-linkedin-dark: #{$tol-brand-linkedin-dark};
+  --tol-brand-facebook: #{$tol-brand-facebook};
+  --tol-brand-facebook-dark: #{$tol-brand-facebook-dark};
+  --tol-brand-discord: #{$tol-brand-discord};
+  --tol-brand-discord-dark: #{$tol-brand-discord-dark};
+  --tol-brand-slack: #{$tol-brand-slack};
+  --tol-brand-slack-dark: #{$tol-brand-slack-dark};
+  --tol-brand-bluesky: #{$tol-brand-bluesky};
+  --tol-brand-bluesky-dark: #{$tol-brand-bluesky-dark};
+  --tol-brand-wechat: #{$tol-brand-wechat};
+  --tol-brand-wechat-dark: #{$tol-brand-wechat-dark};
 }
 
 @media (prefers-color-scheme: dark) {
@@ -121,6 +155,15 @@ $tol-royal-dark: darken($tol-royal, 15%) !default;
     --tol-grey-subtle: #{$tol-grey-subtle-DARK-MODE};
     --tol-grey-subtle-plus: #{$tol-grey-subtle-plus-DARK-MODE};
     --tol-grey-light: #{$tol-grey-light-DARK-MODE};
+
+    --tol-brand-github: #{$tol-brand-github-dark};
+    --tol-brand-gitlab: #{$tol-brand-gitlab-dark};
+    --tol-brand-linkedin: #{$tol-brand-linkedin-dark};
+    --tol-brand-facebook: #{$tol-brand-facebook-dark};
+    --tol-brand-discord: #{$tol-brand-discord-dark};
+    --tol-brand-slack: #{$tol-brand-slack-dark};
+    --tol-brand-bluesky: #{$tol-brand-bluesky-dark};
+    --tol-brand-wechat: #{$tol-brand-wechat-dark};
   }
 }
 

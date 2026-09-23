@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `5.4.0`
+## tol-ui `5.6.0`
 
 22-09-26
 
@@ -17,6 +17,18 @@ SPDX-License-Identifier: MIT
 items (e.g a checkbox is not checked)
 - Added offline service class to initialize a sqlite database locally 
 (look at services/offline/README.md for more detail on the offline service)
+
+## tol-ui `5.5.0`
+
+21-09-26
+
+- IconLinkText and IconLinkTextsViewer
+
+## tol-ui `5.4.0`
+
+16-09-26
+
+- Param Boards
 
 ## tol-ui `5.3.0`
 

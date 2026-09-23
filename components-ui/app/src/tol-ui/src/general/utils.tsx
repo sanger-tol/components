@@ -20,6 +20,7 @@ import type {
   TPlateData,
   TPlateSize,
   TDataObjectListOrNull,
+  IVideoDetails,
 } from "..";
 
 export function formatPath(name: string) {
@@ -401,6 +402,8 @@ export function getLg(type: string) {
       return 3;
     case "md":
       return 6;
+    case "wide":
+      return 9;
     default:
       return 12;
   }
@@ -411,6 +414,8 @@ export function getHeight(type: string) {
     case "sm":
       return 150;
     case "md":
+      return 450;
+    case "wide":
       return 450;
     case "lg":
       return 450;
@@ -568,4 +573,32 @@ export function constructRemoteLinks(
   });
 
   return links.filter((link) => link.text !== "Unknown");
+}
+
+/**
+ * Extracts service and video identifiers from supported YouTube and Vimeo URLs.
+ *
+ * @param url - The URL to inspect.
+ * @returns The video service and identifier, or `undefined` when the URL is unsupported.
+ */
+export function getVideoDetails(url: string): IVideoDetails | undefined {
+  const youtubeMatch = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^?&/]+)/i,
+  );
+  if (youtubeMatch) return { host: "youtube", videoId: youtubeMatch[1] };
+
+  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+  if (vimeoMatch) return { host: "vimeo", videoId: vimeoMatch[1] };
+
+  return undefined;
+}
+
+/**
+ * Checks whether a URL identifies a video hosted on a supported service.
+ *
+ * @param url - The URL to inspect.
+ * @returns `true` when video details can be extracted; otherwise, `false`.
+ */
+export function isVideo(url: string): boolean {
+  return getVideoDetails(url) !== undefined;
 }

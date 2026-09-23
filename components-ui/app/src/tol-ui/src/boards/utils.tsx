@@ -19,6 +19,7 @@ import {
   TsDataSource,
 } from "..";
 import type {
+  IFilter,
   TBoardChildren,
   TBoardEntity,
   TBoardEntityType,
@@ -247,6 +248,8 @@ export function removeBoardEntityInParent(id: string, parentEntity: TParentBoard
 export async function fetchBoardEntityAndChildren(
   boardDataSource: TsDataSource,
   parentId: string,
+  objectType?: string,
+  filter?: IFilter,
 ): Promise<TParentBoardEntity> {
   const entityType = deriveBoardObjectType(parentId);
   return await boardDataSource
@@ -255,7 +258,13 @@ export async function fetchBoardEntityAndChildren(
       resource: `${BOARDS_API.OPERATIONS.GET}/${parentId}`,
     })
     .then((res: { data: TParentBoardEntity }) => {
-      return defineBoardEntity(res.data, entityType) as TParentBoardEntity;
+      // Allow UI passed objectType and filter
+      const data: TParentBoardEntity = {
+        object_type: objectType,
+        filter: filter,
+        ...res.data,
+      }
+      return defineBoardEntity(data, entityType) as TParentBoardEntity;
     })
     .catch(() => {
       PopUpMessage({

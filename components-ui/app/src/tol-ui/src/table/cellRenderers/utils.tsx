@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  CELL_RENDERER_PARENT_OPERATOR,
-  CELL_RENDERER_PROP_ATTRIBUTE,
-  CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
-  CELL_RENDERER_PROP_TAG_START,
-  CELL_RENDERER_SPREAD_OPERATOR,
+  ORIGIN_OPERATOR,
+  PARAM_ATTRIBUTE,
+  PARAM_ATTRIBUTE_OBJECT_KEY,
+  PARAM_TAG_START,
+  SPREAD_OPERATOR,
   getFieldByName,
   IFilter,
   TDataObjectOrNull,
@@ -83,7 +83,7 @@ export function processConditionToBoolean(
 export function resolveObjectKeys(value: any, keyPath: string): any {
   if (typeof value !== "object" || value === null) return value;
   for (const match of keyPath.matchAll(
-    CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
+    PARAM_ATTRIBUTE_OBJECT_KEY,
   )) {
     const objectKey = match[0].slice(1, -1);
     value = value?.[objectKey];
@@ -108,19 +108,19 @@ export function processTagsToValues(
   dataObject: TDataObjectOrNull,
   originDataObject: TDataObjectOrNull,
 ): any {
-  const isList = key.includes(CELL_RENDERER_SPREAD_OPERATOR);
+  const isList = key.includes(SPREAD_OPERATOR);
 
   // Determine which data object to use based on presence of parent operator
-  const requiresoriginDataObject = key.includes(CELL_RENDERER_PARENT_OPERATOR);
+  const requiresoriginDataObject = key.includes(ORIGIN_OPERATOR);
   const chosenDataObject = requiresoriginDataObject ? originDataObject : dataObject;
-  const keyWithoutParentOperator = key.replace(CELL_RENDERER_PARENT_OPERATOR, "").trim();
+  const keyWithoutParentOperator = key.replace(ORIGIN_OPERATOR, "").trim();
 
   // Remove spread operator if present - still includes object keys
-  const keyWithoutSpread = keyWithoutParentOperator.replace(CELL_RENDERER_SPREAD_OPERATOR, "");
+  const keyWithoutSpread = keyWithoutParentOperator.replace(SPREAD_OPERATOR, "");
 
   // Remove the attribute object key prefixes to get the actual field name
   const fieldName = keyWithoutSpread
-    .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
+    .replace(PARAM_ATTRIBUTE_OBJECT_KEY, "")
     .trim();
 
   // If spread operator is used for this field, return the current value
@@ -154,10 +154,10 @@ export function getCellRendererPropValue(
   dataObject: TDataObjectOrNull,
   originDataObject: TDataObjectOrNull,
 ) {
-  if (typeof propValue === "string" && propValue.includes(CELL_RENDERER_PROP_TAG_START)) {
+  if (typeof propValue === "string" && propValue.includes(PARAM_TAG_START)) {
     // replace placeholders '${}' with values from a dataObject
     elementProps[prop] = propValue.replace(
-      CELL_RENDERER_PROP_ATTRIBUTE,
+      PARAM_ATTRIBUTE,
       (_, key) => processTagsToValues(key, field, value, dataObject, originDataObject),
     );
   } else if (typeof propValue === "object" && "and_" in propValue) {
