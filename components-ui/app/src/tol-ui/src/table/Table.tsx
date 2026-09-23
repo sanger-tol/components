@@ -259,7 +259,7 @@ export function Table(props: PTable) {
   };
 
   const filterButton: PButton = {
-    visible: !noFilter && fields.order.active.length !== 0 && editMode,
+    visible: !noFilter && fields?.order?.active.length !== 0 && editMode,
     position: "right",
     type: "primary",
     onClick: () => setFilterVisibility(!filterVisibility),
@@ -333,8 +333,8 @@ export function Table(props: PTable) {
     !editMode
       && ((baseFieldMeta?.order?.limitVisibility ?? fields?.order?.limitVisibility) === true)
       ? [
-        ...((baseFieldMeta?.order?.active || fields.order.active) ?? []),
-        ...((baseFieldMeta?.order?.inactive || fields.order.inactive) ?? []),
+        ...((baseFieldMeta?.order?.active || fields?.order?.active) ?? []),
+        ...((baseFieldMeta?.order?.inactive || fields?.order?.inactive) ?? []),
       ]
       : undefined;
 
@@ -358,14 +358,14 @@ export function Table(props: PTable) {
         componentId={id}
         open={downloadOpen}
         setOpen={setDownloadOpen}
-        requestedFields={fields?.order?.active}
+        requestedFields={fields?.order?.active || []}
         title={ubc.title}
         fieldMeta={fields}
       />
       <ColumnConfigDrawer
         {...props}
         title="Table Configuration"
-        fieldMeta={fields}
+        fieldMeta={fields!}
         actions={actions}
         defaultSortByAttribute={defaultSortByAttribute}
         defaultSortByType={defaultSortByType}
@@ -426,7 +426,7 @@ export function Table(props: PTable) {
                 handleToggleAllRowHeights,
               })}
               {fields!.order.active.map((key: string) => {
-                const field = fields.dataWithDefaults![key] as IFieldTable;
+                const field = fields?.dataWithDefaults![key] as IFieldTable;
                 if (!field) return null;
 
                 const sortable: boolean =
