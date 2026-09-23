@@ -22,6 +22,7 @@ import type {
   IConfigPromises,
   ICustom,
   IDataSource,
+  ITSDataSource,
   IEntityMeta,
   IEntityMetaPromises,
   IGetAttributeDescriptor,
@@ -49,7 +50,7 @@ import type {
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
-export class TsDataSource {
+export class TsDataSource implements IDataSource {
   private client: TClient;
   private url: string | undefined;
   private apiPath: string | undefined;
@@ -59,7 +60,7 @@ export class TsDataSource {
   private baseURL: string | undefined;
   private sourceKey: string;
 
-  constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: IDataSource = {}) {
+  constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: ITSDataSource = {}) {
     this.client = client ?? httpClient;
     this.url = url;
     this.apiPath = apiPath;
