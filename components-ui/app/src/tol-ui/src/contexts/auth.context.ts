@@ -22,7 +22,7 @@ export const AuthContext = createContext<AuthContextValue>({
   user: null,
   setUser() {
     throw new Error("Missing AuthContext Provider");
-  },
+  }
 });
 
 export const AuthProvider = AuthContext.Provider;

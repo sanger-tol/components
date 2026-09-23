@@ -49,6 +49,7 @@ import {
   AppContextProvider,
   PFooter,
   IMobileOptions,
+  IUserProfileFunctions
 } from "..";
 
 export interface PSmartApp {
@@ -117,7 +118,7 @@ export interface PSmartApp {
     baseConfig?: any;
     baseConfigArgs?: any[];
     additionalConfigs?: IUserProfileAdditionalConfigs;
-  };
+  } & IUserProfileFunctions;
   /**
    * Optional boolean flag to indicate whether to show a logout button in the profile page.
    */
