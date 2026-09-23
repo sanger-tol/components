@@ -8,25 +8,25 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 import { Progress } from "rsuite";
 
 export interface PProgressBar {
-  /**
-   * Async generator that produces items to track progress for. (e.g., getListByCursor)
-   */
+	/**
+	 * Async generator that produces items to track progress for. (e.g., getListByCursor)
+	 */
 	generator: AsyncIterable<any>;
-  /**
-   * Total number of items expected from the generator.
-   */
+	/**
+	 * Total number of items expected from the generator.
+	 */
 	totalExpected: number;
-  /**
-   * Optional message to display above the progress bar.
-   */
+	/**
+	 * Optional message to display above the progress bar.
+	 */
 	message?: ReactNode;
-  /**
-   * Callback invoked when the generator completes successfully.
-   */
+	/**
+	 * Callback invoked when the generator completes successfully.
+	 */
 	onComplete?: (items: any[]) => void;
-  /**
-   * Callback invoked if an error occurs while consuming the generator.
-   */
+	/**
+	 * Callback invoked if an error occurs while consuming the generator.
+	 */
 	onError?: (error: any) => void;
 }
 
