@@ -108,6 +108,3 @@ export function RemoteComponentList(props: PRemoteComponentList) {
     </div>
   );
 }
-
-
-
