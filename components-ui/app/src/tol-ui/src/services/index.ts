@@ -7,3 +7,4 @@ SPDX-License-Identifier: MIT
 export * from "./auth";
 export * from "./http";
 export * from "./localStorage";
+export * from "./offline";

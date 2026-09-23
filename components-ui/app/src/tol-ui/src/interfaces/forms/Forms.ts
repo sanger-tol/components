@@ -192,32 +192,62 @@ export interface IAutocompleteField extends IFormComponent {
 }
 
 export interface IMultipleselectField extends IFormComponent {
+  /* Whether the multiple select field should stick to the top when scrolling. */
   type: "multipleselect";
+  /* Whether the multiple select field should be displayed as a block element. */
   sticky?: boolean;
+  /* The data for the multiple select field, either an array of strings or an array of IData objects. */
   block?: boolean;
+  /** The options for the multiple select field. */
   data: string[] | IMultiSelectData[];
+  /** Placeholder text for the multiple select field. */
   placeholder?: string;
+  /* Whether the multiple select field should be disabled. */
   disabled?: boolean;
+  /* Function to determine if the multiple select field should be disabled based on the form data. */
+  disabledWhen?: (formData: Record<string, any>) => boolean;
+  /* Whether the multiple select field is currently loading. */
   loading?: boolean;
+  /* Whether the multiple select field is currently open. */
   open?: boolean;
+  /* The datasource for fetching actions.
+   * Function to be called when the multiple select field is opened. */
   onOpen?: any;
+  /* Function to be called when the multiple select field is entering. */
   onEntering?: any;
+  /* Function to be called when the multiple select field is closed. */
   onClose?: any;
+  /* Function to be called when the multiple select field is cleaned. */
   onClean?: any;
+  /* Function to be called when the multiple select field is clicked. */
   onClick?: any;
+  /* Function to render each menu item in the multiple select field. */
   renderMenuItem?: any;
+  /* Function to render the selected value in the multiple select field. */
   renderValue?: any;
+  /* Whether the multiple select field should have a search input. */
   noSearch?: boolean;
+  /* Whether the multiple select field should have a "Select All" option. */
   noSelectAll?: boolean;
+  /* The label for the multiple select field. */
   label?: string;
+  /* The values of the items that should be disabled in the multiple select field. */
   disabledItemValues?: string[];
+  /* Function to determine if an item should be included in the search results. */
   searchBy?: (keyword: string, label: any, item: any) => boolean;
+  /* The caret element for the multiple select field. */
   caretAs?: any;
+  /* Function to render extra footer content in the multiple select field. */
   renderExtraFooter?: any;
+  /* The CSS class name for the multiple select field. */
   className?: string;
+  /* Function to be called when the multiple select field is exiting. */
   onExit?: any;
+  /* Function to be called when the multiple select field is exiting. */
   onExiting?: any;
+  /* The datasource for fetching actions. */
   groupBy?: string;
+  /* The property by which to group the items in the multiple select field. */
 }
 
 export interface IMarkdownField extends IFormComponent {

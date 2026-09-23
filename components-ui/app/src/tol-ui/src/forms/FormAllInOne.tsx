@@ -235,6 +235,10 @@ export function FormAllInOne(props: PFormAllInOne) {
         return (
           <MultipleSelect
             {...multipleselectField}
+            disabled={Boolean(
+              multipleselectField.disabled ||
+              multipleselectField.disabledWhen?.(formData),
+            )}
             value={Array.isArray(multipleSelectValue) ? multipleSelectValue : []}
             setValue={(value: any) =>
               handleInputChange(multipleselectField.name, value)

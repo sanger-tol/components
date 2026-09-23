@@ -6,6 +6,18 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.6.0`
+
+22-09-26
+
+- Added ProgressBar component
+- Allowed UserProfile functions to be passed within the profile config to SmartApp
+- Allowed form checkboxes to use async functions
+- Added 'disabledWhen' prop that allows for dynamic disabling of form 
+items (e.g a checkbox is not checked)
+- Added offline service class to initialize a sqlite database locally 
+(look at services/offline/README.md for more detail on the offline service)
+
 ## tol-ui `5.5.0`
 
 21-09-26
