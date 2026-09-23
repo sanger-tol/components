@@ -17,6 +17,7 @@ export interface IUser {
   tours_seen: Record<string, boolean> | null;
 } // eslint-disable-line
 
+/* Functions related to user profile management. */
 export interface IUserProfileFunctions {
   /** Transform form valuse into the upsert payload */
   transformSubmitData?: (

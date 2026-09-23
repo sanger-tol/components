@@ -14,6 +14,12 @@ import {
 import type { HTMLJeepSqliteElement } from 'jeep-sqlite';
 import { SYNC_METADATA_STATEMENT, ONE_DAY_MS } from '../..';
 
+/**
+ * @autodoc
+ * 
+ * SqliteService is a service class that manages SQLite database connections and schema upgrades,
+ * providing methods to interact with the local database and track synchronization metadata.
+ */
 export class SqliteService {
   private sqliteConnection: SQLiteConnection | undefined;
   private readonly dbPromise: Promise<SQLiteDBConnection>;
@@ -27,11 +33,15 @@ export class SqliteService {
     this.dbPromise = this.getDatabase();
   }
 
+  /**
+   * Initializes the offline storage by setting up the SQLite connection.
+   * For the web platform, it injects the <jeep-sqlite> custom element and initializes the web store.
+   * For other platforms, it simply creates a new SQLite connection.
+   */
   private async initOfflineStorage(): Promise<SQLiteConnection> {
     if (this.sqliteConnection) return this.sqliteConnection;
     if (Capacitor.getPlatform() === 'web') {
-      // Inject the <jeep-sqlite> custom element programmatically —
-      // consuming apps don't need to touch their HTML at all
+      // Inject the <jeep-sqlite> custom element programmatically
       const { defineCustomElements } = await import('jeep-sqlite/loader');
       await defineCustomElements(window);
 
@@ -50,6 +60,11 @@ export class SqliteService {
     return this.sqliteConnection;
   }
 
+  /**
+   * Builds the list of SQLite schema upgrades, ensuring the sync metadata table is included.
+   * If the first upgrade is not for version 1, it inserts an upgrade for version 1 with the sync metadata table.
+   * Otherwise, it prepends the sync metadata table to the statements of the first upgrade.
+   */
   private buildUpgrades(): CapacitorSQLiteUpgradeOptions[] {
     const [first, ...rest] = this.upgrades;
     // Looks for the first version of upgrades in the schema and inserts the sync table
@@ -64,6 +79,9 @@ export class SqliteService {
     ];
   }
 
+  /**
+   * Retrieves the SQLite database connection, creating it if it doesn't already exist.
+   */
   private async getDatabase(): Promise<SQLiteDBConnection> {
     const upgrades = this.buildUpgrades();
     const conn = await this.initOfflineStorage();
