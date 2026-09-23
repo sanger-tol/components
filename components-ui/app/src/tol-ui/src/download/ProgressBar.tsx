@@ -17,13 +17,17 @@ export interface PProgressBar {
    */
   totalExpected: number;
   /**
-   * Optional message to display above the progress bar.
+   * Optional text to display above the progress bar.
    */
-  message?: ReactNode;
+  text?: ReactNode;
   /**
-   * Callback invoked when the generator completes successfully.
+   * Callback invoked when percentage reaches 100%.
    */
-  onComplete?: (items: any[]) => void;
+  onComplete?: () => any;
+  /**
+   * Callback invoked when the generator completes a fetch successfully.
+   */
+  onFetch?: (items: any[]) => void;
   /**
    * Callback invoked if an error occurs while consuming the generator.
    */
@@ -36,7 +40,7 @@ export interface PProgressBar {
  * ProgressBar consumes an async generator and displays its progress.
  */
 export function ProgressBar(props: PProgressBar) {
-  const { generator, totalExpected, message, onComplete, onError } = props;
+  const { generator, totalExpected, text, onComplete, onFetch, onError } = props;
   const [percentageComplete, setPercentageComplete] = useState<number>(0);
   const started = useRef<boolean>(false);
 
@@ -55,18 +59,24 @@ export function ProgressBar(props: PProgressBar) {
             : 0;
           setPercentageComplete(Math.min(percentage, 100));
         }
-        onComplete?.(items);
+        onFetch?.(items);
       } catch (error) {
         onError?.(error);
       }
     };
 
     void consumeGenerator();
-  }, [generator, onComplete, onError, totalExpected]);
+  }, [generator, onFetch, onError, totalExpected]);
+
+  useEffect(() => {
+    if (percentageComplete === 100) {
+      onComplete?.();
+    }
+  }, [percentageComplete]);
 
   return (
     <div>
-      {message}
+      {text}
       <Progress.Line
         percent={percentageComplete}
         status={percentageComplete === 100 ? "success" : "active"}

@@ -8,15 +8,13 @@ import { Capacitor } from '@capacitor/core';
 import {
   CapacitorSQLite,
   SQLiteConnection,
-  CapacitorSQLiteUpgradeOptions,
+  capSQLiteUpgradeOptions,
   SQLiteDBConnection,
 } from '@capacitor-community/sqlite';
 import type { HTMLJeepSqliteElement } from 'jeep-sqlite';
 import { SYNC_METADATA_STATEMENT, ONE_DAY_MS } from '../..';
 
 /**
- * @autodoc
- * 
  * SqliteService is a service class that manages SQLite database connections and schema upgrades,
  * providing methods to interact with the local database and track synchronization metadata.
  */
@@ -28,7 +26,7 @@ export class SqliteService {
     /* The name of the database to connect to. */
     private readonly databaseName: string,
     /* The list of upgrade options for the database schema (similar to alembic in SQLAlchemy). */
-    private readonly upgrades: CapacitorSQLiteUpgradeOptions[]
+    private readonly upgrades: capSQLiteUpgradeOptions[]
   ) {
     this.dbPromise = this.getDatabase();
   }
@@ -65,12 +63,12 @@ export class SqliteService {
    * If the first upgrade is not for version 1, it inserts an upgrade for version 1 with the sync metadata table.
    * Otherwise, it prepends the sync metadata table to the statements of the first upgrade.
    */
-  private buildUpgrades(): CapacitorSQLiteUpgradeOptions[] {
+  private buildUpgrades(): capSQLiteUpgradeOptions[] {
     const [first, ...rest] = this.upgrades;
     // Looks for the first version of upgrades in the schema and inserts the sync table
     if (!first || first.toVersion !== 1) {
       return [{ toVersion: 1, statements: [SYNC_METADATA_STATEMENT] }, first, ...rest].filter(
-        (upgrade): upgrade is CapacitorSQLiteUpgradeOptions => upgrade !== undefined
+        (upgrade): upgrade is capSQLiteUpgradeOptions => upgrade !== undefined
       );
     }
     return [
