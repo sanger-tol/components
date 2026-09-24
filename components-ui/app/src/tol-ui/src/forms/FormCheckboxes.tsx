@@ -24,26 +24,24 @@ export function FormCheckboxes(props: PFormCheckboxes) {
     indeterminate,
     hidden,
     defaultChecked = [],
-    checkedItems,
-    setCheckedItems,
   } = props;
 
-  const [currentCheckedItems, setCurrentCheckedItems] = useState(
-    defaultChecked === undefined ? checkedItems : defaultChecked,
+  const [checkedItems, setCheckedItems] = useState(
+    props.defaultChecked === undefined ? props.checkedItems : defaultChecked,
   );
 
   useEffect(() => {
-    if (defaultChecked === undefined) {
-      setCurrentCheckedItems(checkedItems);
+    if (props.defaultChecked === undefined) {
+      setCheckedItems(props.checkedItems);
     }
-  }, [checkedItems, defaultChecked]);
+  }, [props.checkedItems, props.defaultChecked]);
 
   const handleCheckboxChange = (value: string) => {
-    const updatedCheckedItems = currentCheckedItems.includes(value)
-      ? currentCheckedItems.filter((item: string) => item !== value)
-      : [...currentCheckedItems, value];
-    setCurrentCheckedItems(updatedCheckedItems);
+    const updatedCheckedItems = checkedItems.includes(value)
+      ? checkedItems.filter((item: string) => item !== value)
+      : [...checkedItems, value];
     setCheckedItems(updatedCheckedItems);
+    props.setCheckedItems(updatedCheckedItems);
   };
 
   return (
@@ -52,7 +50,7 @@ export function FormCheckboxes(props: PFormCheckboxes) {
         <CheckboxGroup
           id={id}
           name={`${id}-checkbox-group`}
-          value={currentCheckedItems}
+          value={checkedItems}
           inline={inline}
         >
           {checkboxConfig.fields.map((field, index) => (
