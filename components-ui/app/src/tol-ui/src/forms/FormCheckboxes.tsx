@@ -6,12 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { Checkbox, CheckboxGroup } from "rsuite";
 import { FormComponentWrapper, TFormCheckboxFields } from "..";
+import { useEffect, useState } from "react";
 
 export interface PFormCheckboxes extends TFormCheckboxFields {
   id: string;
   errorText?: string;
   checkedItems: string[];
   setCheckedItems: (value: string[]) => void;
+  defaultChecked?: string[];
 }
 
 export function FormCheckboxes(props: PFormCheckboxes) {
@@ -21,14 +23,27 @@ export function FormCheckboxes(props: PFormCheckboxes) {
     inline,
     indeterminate,
     hidden,
+    defaultChecked = [],
     checkedItems,
+    setCheckedItems,
   } = props;
 
+  const [currentCheckedItems, setCurrentCheckedItems] = useState(
+    defaultChecked === undefined ? checkedItems : defaultChecked,
+  );
+
+  useEffect(() => {
+    if (defaultChecked === undefined) {
+      setCurrentCheckedItems(checkedItems);
+    }
+  }, [checkedItems, defaultChecked]);
+
   const handleCheckboxChange = (value: string) => {
-    const updatedCheckedItems = checkedItems.includes(value)
-      ? checkedItems.filter((item: string) => item !== value)
-      : [...checkedItems, value];
-    props.setCheckedItems(updatedCheckedItems);
+    const updatedCheckedItems = currentCheckedItems.includes(value)
+      ? currentCheckedItems.filter((item: string) => item !== value)
+      : [...currentCheckedItems, value];
+    setCurrentCheckedItems(updatedCheckedItems);
+    setCheckedItems(updatedCheckedItems);
   };
 
   return (
@@ -37,7 +52,7 @@ export function FormCheckboxes(props: PFormCheckboxes) {
         <CheckboxGroup
           id={id}
           name={`${id}-checkbox-group`}
-          value={checkedItems}
+          value={currentCheckedItems}
           inline={inline}
         >
           {checkboxConfig.fields.map((field, index) => (

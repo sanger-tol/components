@@ -44,7 +44,9 @@ export function createInitialDataSnapshot<T>(
 ): Record<string, any> {
   const initialData: Record<string, any> = {};
   formConfig.fields.forEach((field: TFormField) => {
-    if (field.type === "checkbox" && field.defaultChecked) {
+    // Assume that if the field is a checkbox with a defaultChecked value, it should only be set
+    // in the initial data if no value is already provided from the DB.
+    if (field.type === "checkbox" && field.defaultChecked && data?.[field.name] === undefined) {
       initialData[field.name] = field.defaultChecked;
     } else if (field.multiple) {
       initialData[field.name] = data?.[field.name] || {};
