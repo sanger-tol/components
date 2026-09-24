@@ -16,7 +16,8 @@ import type {
   ISQLiteDataSource,
   IGetList,
   TDataObjectOrNull,
-  IQueryResult
+  IQueryResult,
+  IFilter
 } from "..";
 
 
@@ -45,9 +46,12 @@ export class SQLiteDataSource extends ListGetter {
     filter,
     requestedFields,
   }: IGetList): Promise<TDataObjectOrNull[]> {
-
     const db = await this.database;
-    const queryResults = await db.query(`SELECT * FROM ${objectType}`)
+    const fields = requestedFields?.join(',') || '*';
+
+    // const filter = this.parseDataObjectFilter(filter);
+
+    const queryResults = await db.query(`SELECT ${fields} FROM ${objectType}`)
 
     return this.parseQueryToDataObject(objectType, queryResults);
   }
@@ -56,7 +60,6 @@ export class SQLiteDataSource extends ListGetter {
     objectType: string,
     results: IQueryResult
   ): IDataObject[] {
-    console.log(results)
     return results['values'].map(result => {
       const { id, ...attributes } = result as any;
       return {
@@ -65,6 +68,13 @@ export class SQLiteDataSource extends ListGetter {
         ...attributes
       } as IDataObject;
     });
+  }
+
+  private parseDataObjectFilter(filter?: IFilter): string {
+    if (!filter) {
+      return '';
+    }
+    return ''
   }
 
 }
