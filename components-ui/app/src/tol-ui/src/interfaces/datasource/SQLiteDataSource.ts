@@ -14,3 +14,8 @@ export interface IQueryResult {
     [key: string]: any;
   }[];
 }
+
+export interface IParsedFilter {
+  clause: string;
+  values: any[];
+}
