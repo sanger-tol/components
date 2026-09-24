@@ -11,10 +11,11 @@ import type {
   IRemoteAutoCompleteData,
   TAutoCompleteValue,
   TFormRemoteAutoCompleteField,
+  IListGetter
 } from "..";
 
 export interface PRemoteAutoComplete
-  extends TFormRemoteAutoCompleteField, IRemoteTarget {
+  extends TFormRemoteAutoCompleteField, IRemoteTarget<IListGetter> {
   /**
   * The current value of the autocomplete input field.
   */

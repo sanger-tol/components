@@ -14,6 +14,7 @@ import {
   httpClient,
   isAttributeField,
   splitRelationshipsForField,
+  DetailGetter
 } from "..";
 import type {
   IAttributeDescriptor,
@@ -21,12 +22,10 @@ import type {
   TClient,
   IConfigPromises,
   ICustom,
-  IDataSource,
   ITSDataSource,
   IEntityMeta,
   IEntityMetaPromises,
   IGetAttributeDescriptor,
-  IGetByIds,
   IGetList,
   IGetListCursor,
   IGetListPage,
@@ -50,7 +49,7 @@ import type {
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
-export class TsDataSource implements IDataSource {
+export class TsDataSource extends DetailGetter {
   private client: TClient;
   private url: string | undefined;
   private apiPath: string | undefined;
@@ -61,6 +60,7 @@ export class TsDataSource implements IDataSource {
   private sourceKey: string;
 
   constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: ITSDataSource = {}) {
+    super();
     this.client = client ?? httpClient;
     this.url = url;
     this.apiPath = apiPath;
@@ -449,14 +449,6 @@ export class TsDataSource implements IDataSource {
         if (error?.response?.status === 404) return null;
         throw error;
       });
-  }
-
-  public async getByIds({
-    objectType,
-    ids,
-  }: IGetByIds): Promise<TDataObjectOrNull[]> {
-    const promiseBulk = ids.map((id) => this.getOne({ objectType, id }));
-    return await Promise.all(promiseBulk);
   }
 
   public async getListPage({
