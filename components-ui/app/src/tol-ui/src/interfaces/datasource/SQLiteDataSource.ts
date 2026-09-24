@@ -7,3 +7,10 @@ SPDX-License-Identifier: MIT
 export interface ISQLiteDataSource {
   database: any;
 }
+
+export interface IQueryResult {
+  values: {
+    id: string;
+    [key: string]: any;
+  }[];
+}

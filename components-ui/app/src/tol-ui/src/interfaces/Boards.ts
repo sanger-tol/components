@@ -165,11 +165,11 @@ export type TBoardEntityType =
  */
 
 /** Target metadata for fetching data from a remote object. */
-export interface IRemoteTarget {
+export interface IRemoteTarget<T = TsDataSource> {
   /** Object type name used when fetching data from the data source. */
   objectType: string;
   /** Data source used to execute API requests. */
-  dataSource: TsDataSource;
+  dataSource: T;
 }
 
 /** Zone state and updater used by board controls. */
