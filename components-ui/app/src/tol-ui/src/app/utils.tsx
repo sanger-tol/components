@@ -29,6 +29,7 @@ import {
   API_PATHS,
   IMobileOptions,
   PARAM_ATTRIBUTE,
+  TParamConverters,
 } from "..";
 
 
@@ -154,21 +155,30 @@ export function generateRoutePath(
  *
  * @param queryParams - Query parameters whose values may include template placeholders.
  * @param routeParams - Route parameter values keyed by placeholder name.
+ * @param paramConverters - Optional converters applied in order to every substituted route value.
  *
  * @returns A new query parameter object with each placeholder replaced by the matching
- * route value, or an empty string when the route value is missing.
+ * route value, or an empty string when the route value is missing, then converted when
+ * converters are provided.
  */
 export function resolveTemplateValues(
   queryParams: TQueryParams,
   routeParams: Record<string, unknown>,
+  paramConverters?: TParamConverters,
 ): TQueryParams {
   const templateAttribute = new RegExp(PARAM_ATTRIBUTE.source, "g");
   const serializedQueryParams = JSON.stringify(queryParams).replace(
     templateAttribute,
-    (_placeholder, parameterName: string) => String(routeParams[parameterName] ?? ""),
+    (_placeholder, parameterName: string) => {
+      const value = String(routeParams[parameterName] ?? "");
+      return paramConverters?.reduce((convertedValue, converter) => converter(convertedValue), value) ?? value;
+    },
   );
   return JSON.parse(serializedQueryParams) as TQueryParams;
 }
+
+/** Converts dash-separated route parameters to space-separated values. */
+export const dashesToSpaces = (value: string): string => value.replace(/-/g, " ");
 
 /**
  * Resolves the routes for navigation items that should hide the navigation bar.

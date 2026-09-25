@@ -16,6 +16,9 @@ SPDX-License-Identifier: MIT
   - Add 'Detail Card' to boards (TOLP-10262)
   - Temp config drawer for object detail (TOLP-10262)
 
+- Navigation
+  - Added configurable route parameter converters, including `dashesToSpaces`
+
 - Track
   - Added ProgressBar component
   - Allowed UserProfile functions to be passed within the profile config to SmartApp
