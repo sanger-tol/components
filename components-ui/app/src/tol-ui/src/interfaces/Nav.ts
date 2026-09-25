@@ -9,11 +9,8 @@ import { PAGE_ACCESS } from "..";
 /** Query parameters for a navigation page, including nested filter values. */
 export type TQueryParams = Record<string, unknown>;
 
-/** Converts a route parameter before it is inserted into query parameters. */
-export type TParamConverter = (value: string) => string;
-
 /** Converters applied to every route parameter used in query placeholders. */
-export type TParamConverters = TParamConverter[];
+export type TParamConverters = string[];
 
 /** A navigation destination represented by an internal page or external link. */
 export type TPagePath = IPageElement | IPageLink;

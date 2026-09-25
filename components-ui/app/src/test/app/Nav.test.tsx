@@ -13,7 +13,6 @@ import {
   mergeAndNormaliseNavConfig,
   generateRoutePath,
   resolveTemplateValues,
-  dashesToSpaces,
   getSystemDefaultNavConfig,
 } from "../../tol-ui/src";
 import {
@@ -165,12 +164,12 @@ describe("resolveTemplateValues function", () => {
     expect(resolveTemplateValues({ value: "${id}" }, {})).toEqual({ value: "" });
   });
 
-  test("applies parameter converters to route parameters", () => {
+  test("resolves named parameter converters from navigation config", () => {
     expect(
       resolveTemplateValues(
         { value: "${region_name}" },
         { region_name: "north-america" },
-        [dashesToSpaces],
+        ["dashesToSpaces"],
       ),
     ).toEqual({ value: "north america" });
   });

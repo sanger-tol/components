@@ -171,7 +171,10 @@ export function resolveTemplateValues(
     templateAttribute,
     (_placeholder, parameterName: string) => {
       const value = String(routeParams[parameterName] ?? "");
-      return paramConverters?.reduce((convertedValue, converter) => converter(convertedValue), value) ?? value;
+      return paramConverters?.reduce((convertedValue, converter) => {
+        const converterFunction = paramConverterRegistry[converter];
+        return converterFunction ? converterFunction(convertedValue) : convertedValue;
+      }, value) ?? value;
     },
   );
   return JSON.parse(serializedQueryParams) as TQueryParams;
@@ -179,6 +182,10 @@ export function resolveTemplateValues(
 
 /** Converts dash-separated route parameters to space-separated values. */
 export const dashesToSpaces = (value: string): string => value.replace(/-/g, " ");
+
+const paramConverterRegistry: Record<string, (value: string) => string> = {
+  dashesToSpaces,
+};
 
 /**
  * Resolves the routes for navigation items that should hide the navigation bar.
