@@ -31,6 +31,7 @@ export function DataPoint(props: PDataPoint) {
   const {
     field,
     dataObject,
+    meta,
     editable = true,
     isMany,
   } = props;
@@ -49,7 +50,11 @@ export function DataPoint(props: PDataPoint) {
   }, [attributeValue, editMode]);
 
   // TODO FUTURE: Allow for string and date updates via permissions
-  const canEdit = true;
+  const canEdit = (
+    meta.actsAs === "status" ||
+    meta.actsAs === "relationshipIdentifier",
+    meta.actsAs === "editable"
+  );
 
   const onDoubleClick = () => {
     if (!editable) return;

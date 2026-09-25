@@ -9,11 +9,12 @@ import type { IComponentData } from "..";
 
 
 export function ObjectDetail(props: IComponentData) {
-  const { fields, data, classNames = [], ...rest } = props;
+  const { fields, data = {}, classNames = [], ...rest } = props;
 
   return (
     <ComponentBase
       {...rest}
+      className="with-overflow"
     >
       <div className="tol-object-detail">
         {fields?.order?.active?.map((attribute) => {

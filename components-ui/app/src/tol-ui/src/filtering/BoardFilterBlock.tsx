@@ -12,7 +12,7 @@ import {
   FilterBlockConfigDrawer,
   RemoteFilters,
   mergeUtilityBarConfigs,
-  NoAttributesPlaceholder,
+  NotConfiguredPlaceholder,
   updateComponentConfigAndUpsert,
 } from "..";
 
@@ -55,7 +55,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
 
   const Contents = () => {
     if (!filterBlockConfig.attributes || filterBlockConfig.attributes.length === 0) {
-      return <NoAttributesPlaceholder />;
+      return <NotConfiguredPlaceholder />;
     }
   }
 

@@ -8,7 +8,7 @@ export * from "./ConfirmationModal";
 export * from "./board";
 export * from "./component";
 export * from "./my-boards";
-export * from "./NoAttributesPlaceholder";
+export * from "./NotConfiguredPlaceholder";
 export * from "./TitleTooltip";
 export * from "./view";
 export * from "./utils";

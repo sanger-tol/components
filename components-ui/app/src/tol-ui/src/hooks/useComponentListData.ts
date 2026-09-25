@@ -16,15 +16,15 @@ export interface IUseComponentListData extends Omit<IUseComponentData<IFieldMeta
   /** Data source used to fetch each field's attribute descriptor and the page of data. */
   dataSource: TsDataSource;
   /** The fields to enrich with metadata from `getAttributeDescriptor`, and to request from `getListPage`. */
-  fields: IFieldMeta;
+  fields?: IFieldMeta;
   /** The initial page to fetch; pagination state is then managed internally by this hook. */
   page?: number;
   /** The initial number of results to fetch per page; pagination state is then managed internally by this hook. */
   pageSize?: number;
   /** Sort string passed straight to `getListPage`. */
   sortBy?: string;
-  /** Custom cell renderers to use in addition to the pre-defined ones when building the returned `data`. */
-  customCellRenderers?: TCustomDataPointRenderers;
+  /** Custom data point renderers to use in addition to the pre-defined ones when building the returned `data`. */
+  customDataPointRenderers?: TCustomDataPointRenderers;
 }
 
 /**
@@ -47,11 +47,12 @@ export function useComponentListData({
   page: initialPage = 1,
   pageSize: initialPageSize = 1,
   sortBy,
-  customCellRenderers,
+  customDataPointRenderers,
   queryKey = [],
   ...rest
 }: IUseComponentListData) {
-  const allAttributes = fields.order.active.concat(fields.order.inactive || []);
+  const allAttributes = fields ? fields.order.active.concat(fields.order.inactive || []) : [];
+  const noFieldsSelected = allAttributes.length === 0;
 
   const [page, setPage] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialPageSize);
@@ -65,10 +66,12 @@ export function useComponentListData({
     ...rest,
     id,
     queryKey: [...allAttributes, "fields", ...queryKey],
+    // Guarded by noFieldsSelected, so fields is guaranteed to be set whenever this actually runs.
     fetchData: async () => ({
-      ...fields,
-      dataWithDefaults: await buildFieldMetaDefaults(objectType, allAttributes, dataSource, fields.dataWithDefaults),
+      ...fields!,
+      dataWithDefaults: await buildFieldMetaDefaults(objectType, allAttributes, dataSource, fields?.dataWithDefaults),
     }),
+    enabled: !noFieldsSelected,
   });
 
   const {
@@ -80,7 +83,8 @@ export function useComponentListData({
       dataSource
         .custom({ method: API_METHODS.POST, resource: `${objectType}${API_OPERATIONS.COUNT}`, body: { filter } })
         .then((res: any) => res?.data?.meta?.total ?? 0),
-    { enabled: !isLoadingFields },
+    // No fields means no valid request to make, so skip it entirely rather than letting the API reject it.
+    { enabled: !isLoadingFields && !noFieldsSelected },
   );
 
   const {
@@ -92,25 +96,28 @@ export function useComponentListData({
     [id, "listPage", JSON.stringify(filter), String(page), String(pageSize), String(sortBy)],
     () => dataSource.getListPage({ objectType, page, pageSize, filter, sortBy, requestedFields: allAttributes }),
     {
-      enabled: !isLoadingFields && !isLoadingTotalSize,
+      enabled: !isLoadingFields && !isLoadingTotalSize && !noFieldsSelected,
       // TODO: Investigate targeted cache invalidation for editable data points.
       gcTime: 0,
     },
   );
 
-  const data: TDataRecordList = buildDataRecords(dataObjects, dataSource, fieldMeta as IFieldMeta, customCellRenderers);
+  const data: TDataRecordList = noFieldsSelected
+    ? []
+    : buildDataRecords(dataObjects, dataSource, fieldMeta as IFieldMeta, customDataPointRenderers);
 
   return {
     fieldMeta: (fieldMeta as IFieldMeta),
     data,
+    noFieldsSelected,
     // Waits for all necessary data to be loaded: field metadata, total size, and the current page of data.
-    isLoading: isLoadingFields || isLoadingTotalSize || isLoadingData,
+    isLoading: isLoadingFields || (!noFieldsSelected && (isLoadingTotalSize || isLoadingData)),
     errorMessage: fieldsErrorMessage ?? (isError ? (error?.message ?? "An error occurred") : undefined),
     page,
     setPage,
     pageSize,
     setPageSize,
-    totalSize: (totalSize as number) ?? 0,
+    totalSize: noFieldsSelected ? 0 : ((totalSize as number) ?? 0),
   };
 }
 

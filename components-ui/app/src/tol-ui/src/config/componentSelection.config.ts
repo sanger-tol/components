@@ -54,6 +54,13 @@ export const componentOptions = [
     disabled: false,
     defaultSize: "lg",
   },
+  {
+    type: "objectDetail",
+    text: "Detail Card",
+    icon: "rectangle-list",
+    disabled: false,
+    defaultSize: "lg",
+  },
 ];
 
 const SMALL_DISABLED = ["table", "chart", "filterBlock", "map"];

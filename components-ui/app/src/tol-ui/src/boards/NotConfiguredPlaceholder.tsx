@@ -7,16 +7,16 @@ SPDX-License-Identifier: MIT
 import { Icon, Placeholder, useBoard } from "..";
 
 
-export function NoAttributesPlaceholder() {
+export function NotConfiguredPlaceholder() {
   const { editMode } = useBoard();
 
   const message = editMode ? (
     <>
-      Please add an attribute to get started. Click <Icon icon="sliders" size="sm" /> to configure.
+      Please click <Icon icon="sliders" size="sm" /> to get started.
     </>
   ) : (
     <>
-      No attributes currently selected.
+      This component is still being set up.
     </>
   );
 

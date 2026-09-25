@@ -14,7 +14,7 @@ import {
   useBoard,
   PVisualisation,
   mergeUtilityBarConfigs,
-  NoAttributesPlaceholder
+  NotConfiguredPlaceholder
 } from "..";
 
 
@@ -41,7 +41,7 @@ export function BoardSunburst(props: PVisualisation) {
 
   const Contents = () => {
     if (!config.sliceBy || config.sliceBy.length <= 0) {
-      return <NoAttributesPlaceholder />;
+      return <NotConfiguredPlaceholder />;
     }
   }
 

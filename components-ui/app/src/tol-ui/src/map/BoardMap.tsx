@@ -16,7 +16,7 @@ import {
   IMapConfig,
   MapConfigDrawer,
   deepCopy,
-  NoAttributesPlaceholder
+  NotConfiguredPlaceholder
 } from "..";
 
 
@@ -65,7 +65,7 @@ export function BoardMap(props: PVisualisation) {
 
   const Contents = () => {
     if (!config.longitudeKey || !config.latitudeKey) {
-      return <NoAttributesPlaceholder />;
+      return <NotConfiguredPlaceholder />;
     } else {
       return null;
     }

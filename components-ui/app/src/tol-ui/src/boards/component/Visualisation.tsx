@@ -10,12 +10,15 @@ import {
   BoardTable,
   BoardSunburst,
   BoardChart,
+  BoardDataList,
   IBoardTargetAndZone,
   BoardMarkdown,
   PUtilityBar,
   useBoard,
   upsertTitle,
   BOARD_ENTITIES,
+  COMPONENT_TYPES,
+  DATA_LIST_COMPONENT_TYPES,
   PButton,
   TitleTooltip,
   mergeUtilityBarConfigs,
@@ -119,31 +122,38 @@ export function Visualisation(props: PVisualisation) {
   )
 
   let Component: JSX.ElementType = BoardTable;
+  // Extra props only some Component types need, e.g. BoardDataList's `type`.
+  let componentSpecificProps: Record<string, unknown> = {};
 
   switch (componentType) {
     case "count":
-    case "statistics":
+    case COMPONENT_TYPES.STATISTICS:
       Component = BoardStatistics;
       break;
-    case "sunburst":
+    case COMPONENT_TYPES.SUNBURST:
       Component = BoardSunburst;
       break;
-    case "chart":
+    case COMPONENT_TYPES.CHART:
       Component = BoardChart;
       break;
-    case "text":
+    case COMPONENT_TYPES.TEXT:
       Component = BoardMarkdown;
       break;
-    case "filterBlock":
+    case COMPONENT_TYPES.FILTER_BLOCK:
       Component = BoardFilterBlock;
       break;
-    case "map":
+    case COMPONENT_TYPES.MAP:
       Component = BoardMap;
+      break;
+    case COMPONENT_TYPES.OBJECT_DETAIL:
+      Component = BoardDataList;
+      componentSpecificProps = { type: DATA_LIST_COMPONENT_TYPES.OBJECT_DETAIL };
   }
 
   const Visualisation = (
     <Component
       {...props}
+      {...componentSpecificProps}
       utilityBarConfig={ubc}
     />
   );
