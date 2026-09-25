@@ -63,7 +63,7 @@ export const componentOptions = [
   },
 ];
 
-const SMALL_DISABLED = ["table", "chart", "filterBlock", "map", "objectDetail"];
+const SMALL_DISABLED = ["table", "chart", "filterBlock", "map"];
 const MEDIUM_DISABLED = ["count", "filterBlock", "statistics"];
 const LARGE_DISABLED = ["statistics", "count"];
 
