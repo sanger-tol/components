@@ -44,8 +44,15 @@ export function createInitialDataSnapshot<T>(
 ): Record<string, any> {
   const initialData: Record<string, any> = {};
   formConfig.fields.forEach((field: TFormField) => {
-    if (field.type === "checkbox" && field.defaultChecked) {
-      initialData[field.name] = field.defaultChecked;
+    if (field.type === "checkbox") {
+      // CheckboxGroup always requires an array value, so non-array DB values
+      // (e.g. a boolean flag) must not be passed through as-is.
+      const existing = data?.[field.name];
+      initialData[field.name] = Array.isArray(existing)
+        ? existing
+        : existing === undefined && field.defaultChecked
+          ? field.defaultChecked
+          : [];
     } else if (field.multiple) {
       initialData[field.name] = data?.[field.name] || {};
     } else {
