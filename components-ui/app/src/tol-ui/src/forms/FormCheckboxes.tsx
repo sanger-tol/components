@@ -6,12 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { Checkbox, CheckboxGroup } from "rsuite";
 import { FormComponentWrapper, TFormCheckboxFields } from "..";
+import { useEffect, useState } from "react";
 
 export interface PFormCheckboxes extends TFormCheckboxFields {
   id: string;
   errorText?: string;
   checkedItems: string[];
   setCheckedItems: (value: string[]) => void;
+  defaultChecked?: string[];
 }
 
 export function FormCheckboxes(props: PFormCheckboxes) {
@@ -21,13 +23,24 @@ export function FormCheckboxes(props: PFormCheckboxes) {
     inline,
     indeterminate,
     hidden,
-    checkedItems,
+    defaultChecked = [],
   } = props;
+
+  const [checkedItems, setCheckedItems] = useState(
+    props.defaultChecked === undefined ? props.checkedItems : defaultChecked,
+  );
+
+  useEffect(() => {
+    if (props.defaultChecked === undefined) {
+      setCheckedItems(props.checkedItems);
+    }
+  }, [props.checkedItems, props.defaultChecked]);
 
   const handleCheckboxChange = (value: string) => {
     const updatedCheckedItems = checkedItems.includes(value)
       ? checkedItems.filter((item: string) => item !== value)
       : [...checkedItems, value];
+    setCheckedItems(updatedCheckedItems);
     props.setCheckedItems(updatedCheckedItems);
   };
 

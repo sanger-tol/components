@@ -272,10 +272,15 @@ export function FormAllInOne(props: PFormAllInOne) {
         );
       case "checkbox":
         const checkboxField = field as ICheckboxFormField;
+        const { defaultChecked, ...checkboxProps } = checkboxField;
+        const hasInitialValue =
+          (initialData as Record<string, any> | undefined)?.[
+            checkboxField.name
+          ] !== undefined;
         return (
           <FormCheckboxes
             id={`${formId}-${checkboxField.name}-checkbox`}
-            {...checkboxField}
+            {...(hasInitialValue ? checkboxProps : checkboxField)}
             checkedItems={formData[checkboxField.name] ?? []}
             setCheckedItems={(value: any) =>
               handleInputChange(checkboxField.name, value)
