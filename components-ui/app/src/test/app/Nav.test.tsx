@@ -163,4 +163,14 @@ describe("resolveTemplateValues function", () => {
   test("replaces missing route parameters with an empty string", () => {
     expect(resolveTemplateValues({ value: "${id}" }, {})).toEqual({ value: "" });
   });
+
+  test("resolves named parameter converters from navigation config", () => {
+    expect(
+      resolveTemplateValues(
+        { value: "${region_name}" },
+        { region_name: "north-america" },
+        ["dashesToSpaces"],
+      ),
+    ).toEqual({ value: "north america" });
+  });
 });

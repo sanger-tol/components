@@ -67,7 +67,7 @@ export function Route(props: PRoute) {
         // If not, assume it's a boardId and render a Board component
       } else if (boardDataSource) {
         const queryParams = path.queryParams
-          ? resolveTemplateValues(path.queryParams, routeParams)
+          ? resolveTemplateValues(path.queryParams, routeParams, path.paramConverters)
           : undefined;
         const objectType = queryParams?.objectType as string;
         const filter = queryParams?.filter as IFilter;

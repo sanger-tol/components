@@ -4,10 +4,13 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { PAGE_ACCESS } from "src";
+import { PAGE_ACCESS } from "..";
 
 /** Query parameters for a navigation page, including nested filter values. */
 export type TQueryParams = Record<string, unknown>;
+
+/** Converters applied to every route parameter used in query placeholders. */
+export type TParamConverters = string[];
 
 /** A navigation destination represented by an internal page or external link. */
 export type TPagePath = IPageElement | IPageLink;
@@ -20,6 +23,8 @@ export interface IPageElement {
   route?: string;
   /** Query parameters for the page, represented as a key-value object. */
   queryParams?: TQueryParams;
+  /** Optional converters applied to all route parameters in query placeholders. */
+  paramConverters?: TParamConverters;
 }
 
 /** Configuration for an external navigation link. */

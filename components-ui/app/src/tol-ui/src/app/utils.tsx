@@ -29,6 +29,8 @@ import {
   API_PATHS,
   IMobileOptions,
   PARAM_ATTRIBUTE,
+  TParamConverters,
+  PARAM_CONVERTERS,
 } from "..";
 
 
@@ -149,26 +151,57 @@ export function generateRoutePath(
 }
 
 /**
+ * Applies configured converters to a resolved route parameter value.
+ *
+ * @param value - Route parameter value to convert.
+ * @param paramConverters - Optional converter names to apply in order.
+ * @returns The converted route parameter value.
+ */
+export function applyParamConverters(
+  value: string,
+  paramConverters?: TParamConverters,
+): string {
+  return paramConverters?.reduce((convertedValue, converter) => {
+    const converterFunction = PARAM_CONVERTERS[converter];
+    return converterFunction ? converterFunction(convertedValue) : convertedValue;
+  }, value) ?? value;
+}
+
+/**
  * Resolves `${parameterName}` placeholders in query parameter values using the
  * current route parameter map.
  *
  * @param queryParams - Query parameters whose values may include template placeholders.
  * @param routeParams - Route parameter values keyed by placeholder name.
+ * @param paramConverters - Optional converters applied in order to every substituted route value.
  *
  * @returns A new query parameter object with each placeholder replaced by the matching
- * route value, or an empty string when the route value is missing.
+ * route value, or an empty string when the route value is missing, then converted when
+ * converters are provided.
  */
 export function resolveTemplateValues(
   queryParams: TQueryParams,
   routeParams: Record<string, unknown>,
+  paramConverters?: TParamConverters,
 ): TQueryParams {
   const templateAttribute = new RegExp(PARAM_ATTRIBUTE.source, "g");
   const serializedQueryParams = JSON.stringify(queryParams).replace(
     templateAttribute,
-    (_placeholder, parameterName: string) => String(routeParams[parameterName] ?? ""),
+    (_placeholder, parameterName: string) => {
+      const value = String(routeParams[parameterName] ?? "");
+      return applyParamConverters(value, paramConverters);
+    },
   );
   return JSON.parse(serializedQueryParams) as TQueryParams;
 }
+
+/**
+ * Converts dashes in a route parameter value to spaces.
+ *
+ * @param value - Route parameter value to convert.
+ * @returns The value with each dash replaced by a space.
+ */
+export const dashesToSpaces = (value: string): string => value.replace(/-/g, " ");
 
 /**
  * Resolves the routes for navigation items that should hide the navigation bar.

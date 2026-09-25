@@ -95,3 +95,5 @@ Store the query parameters as a `IFilter` in the database and use a route parame
 ```
 
 Opening `/species/9606` resolves the filter value to `"9606"` before it is passed to the board. The route remains readable while the filter is still stored in the database as configuration.
+
+Converters can be applied to all route parameter values before they are substituted. The `dashesToSpaces` converter allows a readable URL such as `/region/north-america` to resolve `${region_name}` to `"north america"`.
