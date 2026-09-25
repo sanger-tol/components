@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { ComponentType } from "react";
 import { CELL_RENDERER_PARAMS } from "..";
 import type { IFilter } from "..";
 
@@ -34,9 +35,7 @@ export type TCellRenderer =
   ICellRenderer
   | undefined;
 
-export interface ICustomCellRenderers {
-  [customType: string]: any;
-}
+export type TCustomDataPointRenderers = Record<string, ComponentType<any>>;
 
 export type TCellRendererParamType = (typeof CELL_RENDERER_PARAMS)[keyof typeof CELL_RENDERER_PARAMS];
 

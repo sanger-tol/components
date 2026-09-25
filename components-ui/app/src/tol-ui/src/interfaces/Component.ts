@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from "react";
-import type { IRemoteTargetAndZone, TUtilityBarOrNull } from "..";
+import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, TCustomDataPointRenderers, TDataRecord, TDataRecordList } from "..";
+
 
 // TODO FUTURE: Remove IHeightDeprecated and migrate all components to use the height property in IComponentBase.
 /** Represents the height property for a component. Will be deprecated in future versions. */
@@ -23,6 +24,8 @@ export interface IHeightDeprecated {
 export interface IComponentBase extends ComponentPropsWithoutRef<"div"> {
   /** Ensure that each component has a unique identifier. */
   id: string;
+  /** A list of CSS class names to apply to this component. */
+  classNames?: string[];
   /** Custom contents to render in place of the default component body. */
   contents?: ReactNode;
   /** The height of this component as a React CSS value, such as "100%" or 320. */
@@ -33,29 +36,53 @@ export interface IComponentBase extends ComponentPropsWithoutRef<"div"> {
   forceUpdate?: boolean;
 }
 
-/** Base properties for components that fetch their own data from a remote data source. */
-export interface IRemoteComponentBase extends IComponentBase, IRemoteTargetAndZone {
-  /** Loading state for components that fetch content. */
-  loading?: boolean;
-  /** Error message for components that encounter an error while fetching content. */
+/** Loading/error/warning state shared by components that fetch their own data remotely. */
+export interface IRemoteStatus {
+  /** Whether the component's data is currently being fetched. */
+  isLoading?: boolean;
+  /** Error message to display in place of the component's contents. */
   errorMessage?: string;
-  /** Warning message for components that encounter a non-critical issue while fetching content. */
+  /** Warning message to display in place of the component's contents. */
   warningMessage?: string;
 }
 
 /** State required for pagination controls. */
 export interface IPagination {
   /** The current active page. */
-  page: number;
+  page?: number;
   /** Callback to change the active page. */
-  setPage: (page: number) => void;
+  setPage?: (page: number) => void;
   /** The number of rows displayed per page. */
-  pageSize: number;
+  pageSize?: number;
   /** Callback to change the page size. */
-  setPageSize: (pageSize: number) => void;
+  setPageSize?: (pageSize: number) => void;
   /** The total number of rows across all pages. */
-  totalSize: number;
+  totalSize?: number;
 }
 
-/** Used for a list component that fetches its data remotely and supports pagination. */
-export interface IRemoteComponentList extends IRemoteComponentBase, IPagination { }
+/** Represents a component with associated fields. */
+export interface IComponentFields extends IComponentBase {
+  /** The fields associated with this component. */
+  fields: IFieldMeta;
+}
+
+/** Represents a component with associated data. */
+export interface IComponentData<TData = TDataRecord> extends IComponentFields {
+  /** The data associated with this component. */
+  data: TData;
+}
+
+/** Represents a component with associated list data. */
+export interface IComponentListData extends IComponentData<TDataRecordList> { }
+
+/** Base properties for components that fetch their own data from a remote data source. */
+export interface IRemoteComponentBase extends IComponentBase, IRemoteTargetAndZone { }
+
+/** Interface for a remote component displaying a single data item. */
+export interface IRemoteComponentData extends IRemoteComponentBase, IComponentFields {
+  /** Custom renderers for data points within this component. */
+  customDataPointRenderers?: TCustomDataPointRenderers;
+}
+
+/** Interface for a remote component with list capabilities. */
+export interface IRemoteComponentDataList extends IRemoteComponentData, IPagination { }

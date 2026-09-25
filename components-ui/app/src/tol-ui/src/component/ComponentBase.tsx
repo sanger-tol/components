@@ -5,12 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode } from "react";
-import { IComponentBase, UtilityBar, mergeUtilityBarConfigs } from "..";
+import { IComponentBase, UtilityBar, mergeUtilityBarConfigs, joinClassNames } from "..";
 
 
 /** Props for the `ComponentBase` wrapper component. */
 export interface PComponentBase extends IComponentBase {
-  /** The component's own body, rendered when not `loading` and no override `contents` is supplied. */
+  /** The component's own body, rendered when no override `contents` is supplied. */
   children?: ReactNode;
 }
 
@@ -24,6 +24,7 @@ export function ComponentBase(props: PComponentBase) {
   const {
     id,
     className,
+    classNames = [],
     style,
     contents,
     height = "100%",
@@ -32,22 +33,33 @@ export function ComponentBase(props: PComponentBase) {
   } = props;
 
   const ubc = mergeUtilityBarConfigs(utilityBarConfig ?? undefined);
+  const hasUtilityBar = Boolean(
+    utilityBarConfig && (
+      utilityBarConfig.title ||
+      utilityBarConfig.description ||
+      utilityBarConfig.buttons?.some(Boolean) ||
+      utilityBarConfig.elements?.some(Boolean)
+    )
+  );
 
   return (
     <div
       id={id}
-      className={["tol-component", className].filter(Boolean).join(" ")}
-      style={{ ...style, height }}
+      style={{ height }}
     >
-      {utilityBarConfig !== null && <UtilityBar id={id} {...ubc} />}
+      {hasUtilityBar && <UtilityBar id={id} {...ubc} />}
       <div
-        className={[
+        className={joinClassNames(
           "tol-component-contents",
-          utilityBarConfig !== null ? "with-offset" : undefined,
-        ].filter(Boolean).join(" ")}
+          hasUtilityBar ? "with-offset" : undefined,
+          className,
+          ...classNames,
+        )}
+        style={style}
       >
         {contents ?? children}
       </div>
     </div>
   );
 }
+

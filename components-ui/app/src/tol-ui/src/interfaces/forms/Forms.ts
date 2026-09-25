@@ -42,7 +42,7 @@ export interface IFileData {
   status: string;
 }
 
-export interface IData {
+export interface IMultiSelectData {
   label: string;
   value: string;
 }
@@ -198,9 +198,9 @@ export interface IMultipleselectField extends IFormComponent {
   sticky?: boolean;
   /* The data for the multiple select field, either an array of strings or an array of IData objects. */
   block?: boolean;
-  /* The data to use for the multiple select field. */
-  data: string[] | IData[];
-  /* Placeholder text for the multiple select field. */
+  /** The options for the multiple select field. */
+  data: string[] | IMultiSelectData[];
+  /** Placeholder text for the multiple select field. */
   placeholder?: string;
   /* Whether the multiple select field should be disabled. */
   disabled?: boolean;

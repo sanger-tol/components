@@ -35,7 +35,7 @@ import {
   TsDataSource,
   initialiseFieldMeta,
   TDataObjectListOrNull,
-  ICustomCellRenderers,
+  TCustomDataPointRenderers,
   ITableDrawerSave,
   ITableConfigSave,
   optimiseFieldMetaForSave,
@@ -79,7 +79,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeightDeprecated {
   /**
    * Custom cell renderers by field key to override default cell display
    */
-  cellRenderers?: ICustomCellRenderers;
+  cellRenderers?: TCustomDataPointRenderers;
   /**
    * Whether the width of columns are allowed to be manually resized by users
    */
@@ -245,7 +245,7 @@ export function RemoteTable(props: PRemoteTable) {
     resizeableColumns = true,
     zone,
     setZone,
-    fields,
+    fields: initialFieldMeta,
     defaultSortByAttribute = getTableConfigLocalStorage(
       id,
       "defaultSortByAttribute",
@@ -281,7 +281,7 @@ export function RemoteTable(props: PRemoteTable) {
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<IFieldMeta>(
-    initialiseFieldMeta(getTableConfigLocalStorage(id, "fieldMeta") || fields),
+    initialiseFieldMeta(getTableConfigLocalStorage(id, "fieldMeta") || initialFieldMeta),
   );
 
   // pagination
@@ -402,11 +402,11 @@ export function RemoteTable(props: PRemoteTable) {
     (async () => {
       clearTableConfigLocalStorage(id);
       if (showConfigReset === undefined) setLocalHasDiff(false);
-      const resetFieldMeta = initialiseFieldMeta(fields);
+      const resetFieldMeta = initialiseFieldMeta(initialFieldMeta);
       setFieldMeta(resetFieldMeta);
       setPageSize(props.pageSize ?? 50);
       setSortByAttribute(
-        props.defaultSortByAttribute ?? fields?.order?.active?.[0],
+        props.defaultSortByAttribute ?? initialFieldMeta?.order?.active?.[0],
       );
       setSortByType(props.defaultSortByType ?? "asc");
       setFilterVisibility(props.filterVisibility ?? true);
@@ -638,7 +638,7 @@ export function RemoteTable(props: PRemoteTable) {
         {...props}
         contents={Contents()}
         data={data}
-        fieldMeta={fieldMeta!}
+        fields={fieldMeta!}
         expandedRows={expandedRows}
         resizeableColumns={resizeableColumns}
         height={height}

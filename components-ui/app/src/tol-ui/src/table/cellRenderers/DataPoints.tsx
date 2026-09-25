@@ -7,12 +7,12 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import {
   TDataObjectOrNull,
-  ICustomCellRenderers,
+  TCustomDataPointRenderers,
   TsDataSource,
   getChildObjectsByName,
   DataPoint,
   getAttributeNameByField,
-  IField
+  IFieldBasic
 } from "../..";
 
 
@@ -24,11 +24,11 @@ export interface PDataPoints {
   /** The data source which the data object belongs to. */
   dataSource: TsDataSource,
   /** Metadata about a field. Includes the renderer. */
-  meta: IField,
+  meta: IFieldBasic,
   /** Setter function to set the expanded rows in a table. */
   setExpandedRows?: (ids: string[]) => void,
   /** Custom cell renderers that can be used in addition to the pre-defined renderers. */
-  customCellRenderers?: ICustomCellRenderers;
+  customCellRenderers?: TCustomDataPointRenderers;
   /** Flag to indicate if the cell is editable. */
   editable?: boolean;
   /**

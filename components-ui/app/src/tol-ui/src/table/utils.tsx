@@ -30,7 +30,6 @@ import {
   MESSAGE_TYPE,
   BOARD_MESSAGE_TEXT,
   updateComponentConfigAndUpsert,
-  isRelationshipField,
   TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND,
   TABLE_ERROR_FIELD_METADATA_NOT_FOUND,
   PARAM_TAG_START,
@@ -44,7 +43,7 @@ import type {
   ITableData,
   ITableRecord,
   TCellRenderer,
-  ICustomCellRenderers,
+  TCustomDataPointRenderers,
   IFilter,
   TCellHeights,
   ITableConfigSave,
@@ -99,7 +98,7 @@ export function convertTableData(
   dataSource: TsDataSource,
   fieldMeta: IFieldMeta,
   setExpandedRows: (expandedRows: string[]) => void,
-  customCellRenderers?: ICustomCellRenderers,
+  customCellRenderers?: TCustomDataPointRenderers,
   editableCells?: boolean,
   isManyByField?: { [field: string]: boolean },
 ): ITableData {
@@ -154,7 +153,7 @@ export async function getIsManyByField(
   return Object.fromEntries(entries);
 }
 
-function addDefaultCellRenderer(type?: string): TCellRenderer {
+export function addDefaultCellRenderer(type?: string): TCellRenderer {
   switch (type) {
     case "datetime":
       return { type: "datetime" };
@@ -191,7 +190,6 @@ export function addDefaultsFromEntityMeta(
   const defaults = {
     cellRenderer: addDefaultCellRenderer(meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
-    isAttribute: isRelationshipField(key),
     rename: meta.display_name || normaliseCaps(key),
     sort: true,
     type: meta.python_type,
@@ -371,11 +369,6 @@ export async function getActions(
   });
 
   return actionsList;
-}
-
-export function formatTotalSize(totalSize: number) {
-  if (totalSize === 1) return "1 Row";
-  return totalSize.toLocaleString() + " Rows";
 }
 
 export function copyPageColumnValues(
