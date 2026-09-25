@@ -30,6 +30,7 @@ import {
   IMobileOptions,
   PARAM_ATTRIBUTE,
   TParamConverters,
+  PARAM_CONVERTERS,
 } from "..";
 
 
@@ -150,6 +151,23 @@ export function generateRoutePath(
 }
 
 /**
+ * Applies configured converters to a resolved route parameter value.
+ *
+ * @param value - Route parameter value to convert.
+ * @param paramConverters - Optional converter names to apply in order.
+ * @returns The converted route parameter value.
+ */
+export function applyParamConverters(
+  value: string,
+  paramConverters?: TParamConverters,
+): string {
+  return paramConverters?.reduce((convertedValue, converter) => {
+    const converterFunction = PARAM_CONVERTERS[converter];
+    return converterFunction ? converterFunction(convertedValue) : convertedValue;
+  }, value) ?? value;
+}
+
+/**
  * Resolves `${parameterName}` placeholders in query parameter values using the
  * current route parameter map.
  *
@@ -171,21 +189,19 @@ export function resolveTemplateValues(
     templateAttribute,
     (_placeholder, parameterName: string) => {
       const value = String(routeParams[parameterName] ?? "");
-      return paramConverters?.reduce((convertedValue, converter) => {
-        const converterFunction = paramConverterRegistry[converter];
-        return converterFunction ? converterFunction(convertedValue) : convertedValue;
-      }, value) ?? value;
+      return applyParamConverters(value, paramConverters);
     },
   );
   return JSON.parse(serializedQueryParams) as TQueryParams;
 }
 
-/** Converts dash-separated route parameters to space-separated values. */
+/**
+ * Converts dashes in a route parameter value to spaces.
+ *
+ * @param value - Route parameter value to convert.
+ * @returns The value with each dash replaced by a space.
+ */
 export const dashesToSpaces = (value: string): string => value.replace(/-/g, " ");
-
-const paramConverterRegistry: Record<string, (value: string) => string> = {
-  dashesToSpaces,
-};
 
 /**
  * Resolves the routes for navigation items that should hide the navigation bar.
