@@ -13,7 +13,7 @@ import {
   useBoard,
   mergeUtilityBarConfigs,
   updateComponentConfigAndUpsert,
-  DATA_LIST_COMPONENT_TYPES_,
+  DATA_LIST_COMPONENT_TYPES,
 } from "..";
 import type { IFieldMeta, TDataListComponentType } from "..";
 
@@ -62,7 +62,7 @@ export function BoardDataList(props: PBoardDataList) {
   let Component: JSX.ElementType = RemoteObjectDetail;
 
   switch (type) {
-    case DATA_LIST_COMPONENT_TYPES_.OBJECT_DETAIL:
+    case DATA_LIST_COMPONENT_TYPES.OBJECT_DETAIL:
       Component = RemoteObjectDetail;
   }
 

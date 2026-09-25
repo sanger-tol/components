@@ -39,7 +39,7 @@ export const COMPONENT_TYPES = {
 } as const;
 
 /** Sub-types rendered by the generic BoardDataList component. */
-export const DATA_LIST_COMPONENT_TYPES_ = {
+export const DATA_LIST_COMPONENT_TYPES = {
   OBJECT_DETAIL: "objectDetail",
 } as const;
 

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import {
   HistogramGrouping,
   COMPONENT_TYPES,
-  DATA_LIST_COMPONENT_TYPES_,
+  DATA_LIST_COMPONENT_TYPES,
   STATISTICS_TYPES,
   CHART_TYPES,
 } from "..";
@@ -18,7 +18,7 @@ export type TStatisticsType =
 export type TComponentType =
   (typeof COMPONENT_TYPES)[keyof typeof COMPONENT_TYPES];
 export type TDataListComponentType =
-  (typeof DATA_LIST_COMPONENT_TYPES_)[keyof typeof DATA_LIST_COMPONENT_TYPES_];
+  (typeof DATA_LIST_COMPONENT_TYPES)[keyof typeof DATA_LIST_COMPONENT_TYPES];
 
 export interface IChartConfig {
   breakDownBy: string;

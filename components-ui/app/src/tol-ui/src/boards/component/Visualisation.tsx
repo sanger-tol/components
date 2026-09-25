@@ -18,7 +18,7 @@ import {
   upsertTitle,
   BOARD_ENTITIES,
   COMPONENT_TYPES,
-  DATA_LIST_COMPONENT_TYPES_,
+  DATA_LIST_COMPONENT_TYPES,
   PButton,
   TitleTooltip,
   mergeUtilityBarConfigs,
@@ -147,7 +147,7 @@ export function Visualisation(props: PVisualisation) {
       break;
     case COMPONENT_TYPES.OBJECT_DETAIL:
       Component = BoardDataList;
-      componentSpecificProps = { type: DATA_LIST_COMPONENT_TYPES_.OBJECT_DETAIL };
+      componentSpecificProps = { type: DATA_LIST_COMPONENT_TYPES.OBJECT_DETAIL };
   }
 
   const Visualisation = (
