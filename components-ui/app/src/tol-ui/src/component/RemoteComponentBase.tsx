@@ -33,12 +33,16 @@ export function RemoteComponentBase(props: PRemoteComponentBase) {
     children,
   } = props;
 
+  // A percentage height collapses in auto-sized layouts (e.g. "full" widgets).
+  // Give placeholders a definite height so their centered contents remain visible.
+  const placeholderHeight = height === "100%" ? 150 : "100%";
+
   const resolvedContents = errorMessage
-    ? <Placeholder errorMessage={errorMessage} height={height} />
+    ? <Placeholder errorMessage={errorMessage} height={placeholderHeight} />
     : warningMessage
-      ? <Placeholder warningMessage={warningMessage} height={height} />
+      ? <Placeholder warningMessage={warningMessage} height={placeholderHeight} />
       : isLoading
-        ? <Placeholder loader height={height} />
+        ? <Placeholder loader height={placeholderHeight} />
         : noFieldsSelected
           ? <NotConfiguredPlaceholder />
           : contents;
