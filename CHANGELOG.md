@@ -6,6 +6,11 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.6.1`
+
+28-09-26
+- Dependency hotfix for sqlite
+
 ## tol-ui `5.6.0`
 
 22-09-26
