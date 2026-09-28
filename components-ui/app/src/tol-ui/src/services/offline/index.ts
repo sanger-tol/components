@@ -5,3 +5,4 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./sqliteService";
+export * from "./utils";
