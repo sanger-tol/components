@@ -5,13 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  IGetList,
+  IGetListPage,
   TDataObjectListOrNull
 } from "../.."
 
 
 /* Abstract class for fetching lists of data objects */
-export interface ListGetter {
+export interface PageGetter {
   /* Fetches a list of data objects based on the provided filter and requested fields */
-  getList(args: IGetList): Promise<TDataObjectListOrNull>;
+  getListPage(args: IGetListPage): Promise<TDataObjectListOrNull>;
 }

@@ -7,27 +7,29 @@ SPDX-License-Identifier: MIT
 import {
   SQLiteDBConnection,
 } from '@capacitor-community/sqlite';
-import {
-  ListGetter,
-} from "..";
 import type {
+  ListGetter,
+  PageGetter,
   TDataObjectOrNull,
   IDataObject,
+  IAttributeDescriptor,
   IGetList,
+  IGetListPage,
   ISQLiteDataSource,
   IQueryResult,
   IFilter,
   IFilterOperators,
   IFilterOperatorOptions,
   TFilterOperatorType,
-  IParsedFilter
+  IGetAttributeDescriptor,
+  IParsedFilter,
+  TDataObjectListOrNull
 } from "..";
 
-export class SQLiteDataSource extends ListGetter {
+export class SQLiteDataSource implements ListGetter, PageGetter {
   private database: Promise<SQLiteDBConnection>;
 
   constructor({ database }: ISQLiteDataSource) {
-    super();
     this.database = database;
   }
 
@@ -49,12 +51,68 @@ export class SQLiteDataSource extends ListGetter {
     return this.parseQueryToDataObject(objectType, queryResults);
   }
 
+  public async getListPage({
+    objectType,
+    page = 1,
+    pageSize = 100,
+    filter,
+    sortBy,
+    requestedFields
+  }: IGetListPage): Promise<TDataObjectListOrNull> {
+    const db = await this.database;
+    const fields = requestedFields?.join(',') || '*';
+
+    const { clause, values } = this.parseDataObjectFilter(filter);
+    const orderBy = this.parseSortBy(sortBy);
+    const limit = Math.max(1, Math.floor(pageSize));
+    const offset = (Math.max(1, Math.floor(page)) - 1) * limit;
+
+    const queryResults = await db.query(
+      `SELECT ${fields} FROM ${objectType} ${clause} ${orderBy} LIMIT ? OFFSET ?`,
+      [...values, limit, offset]
+    );
+
+    return this.parseQueryToDataObject(objectType, queryResults);
+  }
+
+  // sortBy follows the API convention: comma-separated columns, "-" prefix for descending
+  private parseSortBy(sortBy?: string): string {
+    if (!sortBy) {
+      return '';
+    }
+
+    const terms = sortBy
+      .split(',')
+      .map((term) => term.trim())
+      .filter((term) => term.length > 0)
+      .map((term) => {
+        const descending = term.startsWith('-');
+        const column = descending ? term.slice(1) : term;
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(column)) {
+          throw new Error(`Invalid sort column: ${column}`);
+        }
+        return `${column} ${descending ? 'DESC' : 'ASC'}`;
+      });
+
+    return terms.length ? `ORDER BY ${terms.join(', ')}` : '';
+  }
+
   private parseQueryToDataObject(
     objectType: string,
     results: IQueryResult
   ): IDataObject[] {
     return results['values'].map(result => {
       const { id, ...attributes } = result as any;
+      // SQLite stores arrays as JSON text, so decode them back
+      for (const [key, value] of Object.entries(attributes)) {
+        if (typeof value === 'string' && value.startsWith('[')) {
+          try {
+            attributes[key] = JSON.parse(value);
+          } catch {
+            // not JSON, keep as string
+          }
+        }
+      }
       return {
         objectType,
         id,
@@ -167,5 +225,31 @@ export class SQLiteDataSource extends ListGetter {
   private escapeLike(value: string): string {
     return value.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_');
   }
+
+  public async getAttributeDescriptor({
+  }: IGetAttributeDescriptor): Promise<IAttributeDescriptor | undefined> {
+
+    return undefined;
+  }
+
+  /**
+     * Determines whether a dot-delimited relationship path resolves to a `many` relationship.
+     *
+     * @param objectType - Root object type to start traversal from.
+     * @param field - Dot-delimited relationship path (for example: `"samples.accession.id"`).
+     * @returns always returns `false` until full implementation is done.
+     */
+    public async isManyDataPointsByName(
+      objectType: string,
+      field: string
+    ): Promise<boolean> {
+      // I really do not like this approach but it is a quick way around a bigger problem.
+      // Ideally we would have some kind of local attribute metadata, similar to the SQLite
+      // schema.
+      if (field == "goat_synonym") {
+        return true;
+      }
+      return false;
+    }
 
 }

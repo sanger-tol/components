@@ -6,3 +6,4 @@ SPDX-License-Identifier: MIT
 
 export * from "./DetailGetter";
 export * from "./ListGetter";
+export * from "./PageGetter";

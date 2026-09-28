@@ -17,6 +17,8 @@ import {
   DetailGetter
 } from "..";
 import type {
+  ListGetter,
+  PageGetter,
   IAttributeDescriptor,
   TAttributes,
   TClient,
@@ -29,6 +31,7 @@ import type {
   IGetList,
   IGetListCursor,
   IGetListPage,
+  IGetByIds,
   IGetOne,
   IGetToOneRelation,
   IIncludedLookup,
@@ -49,7 +52,8 @@ import type {
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
-export class TsDataSource extends DetailGetter {
+export class TsDataSource implements ListGetter, PageGetter {
+  private readonly detailGetter = new DetailGetter((args) => this.getOne(args));
   private client: TClient;
   private url: string | undefined;
   private apiPath: string | undefined;
@@ -60,7 +64,6 @@ export class TsDataSource extends DetailGetter {
   private sourceKey: string;
 
   constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: ITSDataSource = {}) {
-    super();
     this.client = client ?? httpClient;
     this.url = url;
     this.apiPath = apiPath;
@@ -431,6 +434,10 @@ export class TsDataSource extends DetailGetter {
         if (error?.response?.status === 404) return null;
         throw error;
       });
+  }
+
+  public getByIds(args: IGetByIds): Promise<TDataObjectOrNull[]> {
+    return this.detailGetter.getByIds(args);
   }
 
   public async getToOneRelation({
