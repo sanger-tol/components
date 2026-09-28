@@ -48,7 +48,10 @@ export class SQLiteDataSource implements ListGetter, PageGetter {
       values
     );
 
-    return this.parseQueryToDataObject(objectType, queryResults);
+    return this.parseQueryToDataObject(objectType, {
+      ...queryResults,
+      values: queryResults.values ?? []
+    });
   }
 
   public async getListPage({
@@ -72,7 +75,10 @@ export class SQLiteDataSource implements ListGetter, PageGetter {
       [...values, limit, offset]
     );
 
-    return this.parseQueryToDataObject(objectType, queryResults);
+    return this.parseQueryToDataObject(objectType, {
+      ...queryResults,
+      values: queryResults.values ?? []
+    });
   }
 
   // sortBy follows the API convention: comma-separated columns, "-" prefix for descending
@@ -240,7 +246,7 @@ export class SQLiteDataSource implements ListGetter, PageGetter {
      * @returns always returns `false` until full implementation is done.
      */
     public async isManyDataPointsByName(
-      objectType: string,
+      _objectType: string,
       field: string
     ): Promise<boolean> {
       // I really do not like this approach but it is a quick way around a bigger problem.

@@ -202,7 +202,7 @@ export function FormAllInOne(props: PFormAllInOne) {
       case "autocomplete":
         const autocompleteField = field as IAutocompleteField;
         if (autocompleteField.dataSource) {
-          const remoteAutocompleteField = field as Omit<
+          const remoteAutocompleteField = field as unknown as Omit<
             IAutocompleteField,
             "dataSource"
           > &
