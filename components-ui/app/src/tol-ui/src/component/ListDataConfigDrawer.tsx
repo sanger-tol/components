@@ -15,8 +15,8 @@ import {
 import type { IFieldMeta } from "..";
 
 
-/** Props for the `ObjectDetailConfigDrawer` component. */
-export interface PObjectDetailConfigDrawer extends IRemoteTarget {
+/** Props for the `ListDataConfigDrawer` component. */
+export interface PListDataConfigDrawer extends IRemoteTarget {
   /** Whether the drawer is open. */
   open: boolean;
   /** Setter for toggling drawer open state. */
@@ -25,24 +25,21 @@ export interface PObjectDetailConfigDrawer extends IRemoteTarget {
   title: string;
   /** Current field metadata for the component. */
   fieldMeta: IFieldMeta;
-  /** Optional list of selectable attributes. */
-  customAttributeSelection?: string[];
   /** Callback used to persist the updated field selection. */
   onConfigSave: (config: { fieldMeta: IFieldMeta }) => void;
 }
 
 /**
- * ObjectDetailConfigDrawer provides field-selection controls for RemoteObjectDetail/BoardDataList,
+ * ListDataConfigDrawer provides field-selection controls for RemoteObjectDetail/BoardDataList,
  * mirroring ColumnConfigDrawer's basic attribute selector but without table-only concerns
  * (sorting, cell renderers, active/inactive column visibility limiting).
  */
-export function ObjectDetailConfigDrawer(props: PObjectDetailConfigDrawer) {
+export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
   const {
     open,
     setOpen,
     title,
     onConfigSave,
-    customAttributeSelection,
     fieldMeta,
   } = props;
 
@@ -75,7 +72,6 @@ export function ObjectDetailConfigDrawer(props: PObjectDetailConfigDrawer) {
           {...props}
           sticky
           recommendedFilterAvailable
-          renderSearchBySource
           placeholder="Select fields to display..."
           attribute={attributes}
           setAttributes={setAttributes}
@@ -83,7 +79,6 @@ export function ObjectDetailConfigDrawer(props: PObjectDetailConfigDrawer) {
           numPopulatedFields={0}
           populatedFieldType={"field"}
           additionalPopulatedFieldData={"."}
-          customAttributeSelection={customAttributeSelection}
         />
       </div>
       <SelectedAttributesContainer
