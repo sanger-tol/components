@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.7.0`
+
+29-09-26
+- Adding SQLiteDataSource to handle offline functionality
+- Added new operator interfaces/classes
+- Fixed Sqlite initialisation for native devices
+
 ## tol-ui `5.6.1`
 
 28-09-26

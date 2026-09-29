@@ -11,19 +11,6 @@ import type {
 } from "..";
 
 
-export interface IDataSource {
-  custom(args: ICustom): Promise<any>;
-  getToOneRelation(args: IGetToOneRelation): Promise<TDataObjectOrNull>;
-  getByIds(args: IGetByIds): Promise<TDataObjectOrNull[]>;
-  getListPage(args: IGetListPage): Promise<TDataObjectListOrNull>;
-  getListByCursor(args: IGetListCursor): AsyncGenerator<TDataObjectOrNull>;
-  getCursorPage(args: IGetListCursor): Promise<TCursorObjectOrNull>;
-  deleteByID(args: IGetOne): Promise<void>;
-  upsert(args: IUpsert): Promise<TDataObjectListOrNull>;
-  getList(args: IGetList): Promise<TDataObjectListOrNull>;
-}
-
-
 export interface IGetOne {
   objectType: string;
   id: string;
