@@ -82,11 +82,13 @@ export class SqliteService {
   private async getDatabase(): Promise<SQLiteDBConnection> {
     const upgrades = this.buildUpgrades();
     const conn = await this.initOfflineStorage();
+    // Native connections survive WebView reloads; this closes any the JS side no longer tracks
+    const isConsistent = (await conn.checkConnectionsConsistency()).result;
     const isConn = (await conn.isConnection(this.databaseName, false)).result;
 
     await conn.addUpgradeStatement(this.databaseName, upgrades);
 
-    const db = isConn
+    const db = isConsistent && isConn
       ? await conn.retrieveConnection(this.databaseName, false)
       : await conn.createConnection(
           this.databaseName,
