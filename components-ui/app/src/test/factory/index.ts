@@ -4,4 +4,5 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export * from "./sqliteDataSource.factory";
+export * from "./SQLiteDataSource.factory";
+export * from "./SQLiteService.factory";

@@ -14,10 +14,10 @@ import {
 import { SYNC_METADATA_STATEMENT, ONE_DAY_MS } from '../..';
 
 /**
- * SqliteService is a service class that manages SQLite database connections and schema upgrades,
+ * SQLiteService is a service class that manages SQLite database connections and schema upgrades,
  * providing methods to interact with the local database and track synchronization metadata.
  */
-export class SqliteService {
+export class SQLiteService {
   private sqliteConnection: SQLiteConnection | undefined;
   private readonly dbPromise: Promise<SQLiteDBConnection>;
 
