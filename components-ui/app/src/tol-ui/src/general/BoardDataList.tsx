@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   RemoteObjectDetail,
-  ObjectDetailConfigDrawer,
+  ListDataConfigDrawer,
   PVisualisation,
   PButton,
   useBoard,
@@ -27,7 +27,7 @@ export interface PBoardDataList extends PVisualisation {
  * BoardDataList is a generic wrapper adapting components that display a data list/record
  * (e.g. RemoteObjectDetail) for use within a Board, switching on `type` to pick the underlying
  * component. Kept simple for now: no config-diff management, but does support editing which
- * fields are displayed via `ObjectDetailConfigDrawer`.
+ * fields are displayed via `ListDataConfigDrawer`.
  */
 export function BoardDataList(props: PBoardDataList) {
   const { id, utilityBarConfig, dataSource, objectType, zone, setZone, boardDataSource, config, type } = props;
@@ -68,7 +68,7 @@ export function BoardDataList(props: PBoardDataList) {
 
   return (
     <>
-      <ObjectDetailConfigDrawer
+      <ListDataConfigDrawer
         {...props}
         open={openConfig}
         setOpen={setOpenConfig}

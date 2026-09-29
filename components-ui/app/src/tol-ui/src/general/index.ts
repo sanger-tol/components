@@ -24,7 +24,6 @@ export * from "./LoadingContent";
 export * from "./Markdown";
 export * from "./NoneValue";
 export * from "./ObjectDetail";
-export * from "./ObjectDetailConfigDrawer";
 export * from "./Placeholder";
 export * from "./Plate";
 export * from "./RemoteBreadcrumbNav";
