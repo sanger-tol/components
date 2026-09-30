@@ -11,7 +11,7 @@ import type {
 } from "../.."
 
 
-/* Reusable bulk lookup using a data source's single-object lookup */
+/** Reusable bulk lookup using a data source's single-object lookup */
 export class DetailGetter {
   constructor(private readonly getOne: (args: IGetOne) => Promise<TDataObjectOrNull>) {}
 

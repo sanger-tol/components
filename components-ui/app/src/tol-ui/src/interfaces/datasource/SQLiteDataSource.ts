@@ -20,7 +20,7 @@ export interface IQueryResult {
 }
 
 /** Interface representing a parsed filter for a query. */
-export interface IParsedFilter {
+export interface IParsedSQLFilter {
   /** The SQL clause representing the filter (e.g., "WHERE id = ?"). */
   clause: string;
   /** The values to be used in the filter clause. */

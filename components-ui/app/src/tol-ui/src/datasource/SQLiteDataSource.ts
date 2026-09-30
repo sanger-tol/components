@@ -22,7 +22,7 @@ import type {
   IFilterOperatorOptions,
   TFilterOperatorType,
   IGetAttributeDescriptor,
-  IParsedFilter,
+  IParsedSQLFilter,
   TDataObjectListOrNull
 } from "..";
 
@@ -131,7 +131,7 @@ export class SQLiteDataSource implements ListGetter, PageGetter {
    * Converts an `IFilter` (currently only its `and_` clause) into a parameterised
    * `WHERE` clause and the corresponding bound values, for use with `db.query`.
    */
-  private parseDataObjectFilter(filter?: IFilter): IParsedFilter {
+  private parseDataObjectFilter(filter?: IFilter): IParsedSQLFilter {
     if (!filter?.and_) {
       return { clause: '', values: [] };
     }
