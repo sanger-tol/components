@@ -229,14 +229,6 @@ export async function addFieldMetaDefaults(
   return fieldMeta;
 }
 
-export function createSort(sortColumn?: string, sortType?: string) {
-  if (!sortColumn) return undefined;
-  if (sortType === "desc" && !sortColumn.startsWith("-")) {
-    return "-" + sortColumn;
-  }
-  return sortColumn;
-}
-
 /**
  * Resolves the CSS class for a table row based on selection state.
  *

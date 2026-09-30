@@ -87,4 +87,9 @@ export interface IRemoteComponentData extends IRemoteComponentBase, IComponentFi
 }
 
 /** Interface for a remote component with list capabilities. */
-export interface IRemoteComponentDataList extends IRemoteComponentData, IRemoteTargetAndZone, IPagination { }
+export interface IRemoteComponentDataList extends IRemoteComponentData, IRemoteTargetAndZone, IPagination {
+  /** Default attribute used for sorting when the component has list data. */
+  defaultSortByAttribute?: string;
+  /** Default direction used for sorting when the component has list data. */
+  defaultSortByType?: string;
+}

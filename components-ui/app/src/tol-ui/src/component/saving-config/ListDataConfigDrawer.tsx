@@ -7,12 +7,13 @@ SPDX-License-Identifier: MIT
 import { useEffect, useRef, useState } from "react";
 import {
   AttributeSelector,
+  Button,
   deepEqual,
   Drawer,
   SelectedAttributesContainer,
   IRemoteTarget,
-} from "..";
-import type { IFieldMeta } from "..";
+} from "../..";
+import type { IFieldMeta, IListDataConfigSave } from "../..";
 
 
 /** Props for the `ListDataConfigDrawer` component. */
@@ -21,12 +22,14 @@ export interface PListDataConfigDrawer extends IRemoteTarget {
   open: boolean;
   /** Setter for toggling drawer open state. */
   setOpen: (open: boolean) => void;
-  /** Drawer title. */
-  title: string;
   /** Current field metadata for the component. */
   fieldMeta: IFieldMeta;
+  /** Default sort attribute. */
+  defaultSortByAttribute?: string;
+  /** Default sort direction. */
+  defaultSortByType?: string;
   /** Callback used to persist the updated field selection. */
-  onConfigSave: (config: { fieldMeta: IFieldMeta }) => void;
+  onConfigSave: (config: IListDataConfigSave) => void;
 }
 
 /**
@@ -38,20 +41,29 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
   const {
     open,
     setOpen,
-    title,
     onConfigSave,
     fieldMeta,
+    defaultSortByAttribute,
+    defaultSortByType,
   } = props;
 
   const initialAttributesRef = useRef<string[]>(fieldMeta.order.active);
   const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
+  const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
+  const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
 
-  const hasPendingChanges = !deepEqual(attributes, initialAttributesRef.current);
+  const hasPendingChanges = (
+    !deepEqual(attributes, initialAttributesRef.current) ||
+    defaultSortByAttribute !== sortByAttribute ||
+    defaultSortByType !== sortByType
+  );
 
   useEffect(() => {
     setAttributes(fieldMeta.order.active);
     initialAttributesRef.current = fieldMeta.order.active;
-  }, [open]);
+    setSortByAttribute(defaultSortByAttribute);
+    setSortByType(defaultSortByType);
+  }, [open, defaultSortByAttribute, defaultSortByType]);
 
   const onSave = () => {
     if (hasPendingChanges) {
@@ -60,12 +72,49 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
           ...fieldMeta,
           order: { ...fieldMeta.order, active: attributes },
         },
+        defaultSortByAttribute: sortByAttribute,
+        defaultSortByType: sortByType,
       });
     }
   };
 
-  const AttributeSelecting = (
+  const SortByButtons = (
+    <div className="tol-board-chart-interval-btn-container">
+      {["asc", "desc"].map((direction: string) => (
+        <Button
+          outline
+          key={direction}
+          text={direction}
+          type="primary"
+          onClick={() => setSortByType(direction)}
+          active={sortByType === direction}
+          size="lg"
+          className="tol-board-chart-sort-buttons"
+        />
+      ))}
+    </div>
+  );
+
+  const Content = (
     <>
+      <h6>Default Sort:</h6>
+      <AttributeSelector
+        {...props}
+        testid="default-sort-dropdown"
+        maxSelections={1}
+        placeholder="Default Sort Column"
+        attribute={sortByAttribute ? [sortByAttribute] : []}
+        setAttributes={(a) => {
+          setSortByAttribute(a[0]);
+          setSortByType(a[0] ? "asc" : undefined);
+        }}
+        disabledValues={null}
+        numPopulatedFields={0}
+        populatedFieldType={"field"}
+        additionalPopulatedFieldData={"."}
+        sticky
+      />
+      {sortByAttribute && SortByButtons}
       <h6 className="tol-config-drawer-column-title">Active Fields:</h6>
       <div>
         <AttributeSelector
@@ -91,13 +140,13 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
 
   return (
     <Drawer
-      title={title}
+      title="Configure List Component"
       open={open}
       setOpen={setOpen}
       onSave={onSave}
       hasPendingChanges={hasPendingChanges}
     >
-      {AttributeSelecting}
+      {Content}
     </Drawer>
   );
 }
