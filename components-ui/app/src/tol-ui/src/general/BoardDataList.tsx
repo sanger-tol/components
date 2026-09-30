@@ -4,18 +4,8 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
-import {
-  RemoteObjectDetail,
-  ListDataConfigDrawer,
-  PVisualisation,
-  PButton,
-  useBoard,
-  mergeUtilityBarConfigs,
-  updateComponentConfigAndUpsert,
-  DATA_LIST_COMPONENT_TYPES,
-} from "..";
-import type { IFieldMeta, TDataListComponentType } from "..";
+import { RemoteObjectDetail, PVisualisation, DATA_LIST_COMPONENT_TYPES } from "..";
+import type { TDataListComponentType } from "..";
 
 /** Props for the `BoardDataList` component. */
 export interface PBoardDataList extends PVisualisation {
@@ -30,34 +20,9 @@ export interface PBoardDataList extends PVisualisation {
  * fields are displayed via `ListDataConfigDrawer`.
  */
 export function BoardDataList(props: PBoardDataList) {
-  const { id, utilityBarConfig, dataSource, objectType, zone, setZone, boardDataSource, config, type } = props;
+  const { id, dataSource, objectType, zone, setZone, config, type } = props;
 
-  const { editMode } = useBoard();
-  const [openConfig, setOpenConfig] = useState(false);
-  const [fields, setFields] = useState<IFieldMeta>(config?.fieldMeta ?? { order: { active: [] } });
-
-  const onConfigSave = (updatedConfig: { fieldMeta: IFieldMeta }) => {
-    setFields(updatedConfig.fieldMeta);
-    updateComponentConfigAndUpsert(id, updatedConfig, zone, boardDataSource, editMode);
-  };
-
-  const configButton: PButton = {
-    outline: true,
-    position: "right",
-    type: "primary",
-    onClick: () => setOpenConfig(true),
-    icon: "sliders",
-    visible: editMode,
-  };
-
-  const ubc = mergeUtilityBarConfigs(
-    utilityBarConfig,
-    {
-      buttons: [
-        configButton,
-      ],
-    }
-  );
+  const fields = config?.fieldMeta ?? { order: { active: [] } };
 
   let Component: JSX.ElementType = RemoteObjectDetail;
 
@@ -67,25 +32,15 @@ export function BoardDataList(props: PBoardDataList) {
   }
 
   return (
-    <>
-      <ListDataConfigDrawer
-        {...props}
-        open={openConfig}
-        setOpen={setOpenConfig}
-        title="Detail Card Configuration"
-        fieldMeta={fields}
-        onConfigSave={onConfigSave}
-      />
-      <Component
-        id={id}
-        dataSource={dataSource}
-        objectType={objectType}
-        zone={zone}
-        setZone={setZone}
-        fields={fields}
-        utilityBarConfig={ubc}
-      />
-    </>
+    <Component
+      id={id}
+      dataSource={dataSource}
+      objectType={objectType}
+      zone={zone}
+      setZone={setZone}
+      fields={fields}
+      utilityBarConfig={props.utilityBarConfig}
+    />
   );
 }
 
