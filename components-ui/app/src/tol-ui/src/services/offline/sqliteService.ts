@@ -14,10 +14,10 @@ import {
 import { SYNC_METADATA_STATEMENT, ONE_DAY_MS } from '../..';
 
 /**
- * SqliteService is a service class that manages SQLite database connections and schema upgrades,
+ * SQLiteService is a service class that manages SQLite database connections and schema upgrades,
  * providing methods to interact with the local database and track synchronization metadata.
  */
-export class SqliteService {
+export class SQLiteService {
   private sqliteConnection: SQLiteConnection | undefined;
   private readonly dbPromise: Promise<SQLiteDBConnection>;
 
@@ -82,11 +82,13 @@ export class SqliteService {
   private async getDatabase(): Promise<SQLiteDBConnection> {
     const upgrades = this.buildUpgrades();
     const conn = await this.initOfflineStorage();
+    // Native connections survive WebView reloads; this closes any the JS side no longer tracks
+    const isConsistent = (await conn.checkConnectionsConsistency()).result;
     const isConn = (await conn.isConnection(this.databaseName, false)).result;
 
     await conn.addUpgradeStatement(this.databaseName, upgrades);
 
-    const db = isConn
+    const db = isConsistent && isConn
       ? await conn.retrieveConnection(this.databaseName, false)
       : await conn.createConnection(
           this.databaseName,

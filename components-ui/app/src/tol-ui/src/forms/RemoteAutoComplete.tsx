@@ -11,10 +11,11 @@ import type {
   IRemoteAutoCompleteData,
   TAutoCompleteValue,
   TFormRemoteAutoCompleteField,
+  ListGetter
 } from "..";
 
 export interface PRemoteAutoComplete
-  extends TFormRemoteAutoCompleteField, IRemoteTarget {
+  extends TFormRemoteAutoCompleteField, IRemoteTarget<ListGetter> {
   /**
   * The current value of the autocomplete input field.
   */
@@ -60,11 +61,15 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const valueIDRef = useRef<string | undefined>(undefined);
+  const requestIdRef = useRef<number>(0);
 
   const handleChange = (value: string) => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
+
+    // Invalidate any in-flight request so its late response cannot overwrite this value
+    const requestId = ++requestIdRef.current;
 
     // Always propagate value changes immediately (no ID yet)
     onChange?.({ value, id: undefined });
@@ -72,6 +77,7 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
     // Stops API getting everything when value is empty
     if (value === "") {
       setFilteredData({});
+      setLoading(false);
       return;
     }
 
@@ -88,6 +94,10 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
             },
           },
         });
+
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
 
         const displayData: Record<string, any> = {};
         let matchedId: string | undefined = undefined;
@@ -126,7 +136,9 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
       } catch (err) {
         console.error("RemoteAutoComplete error:", err);
       } finally {
-        setLoading(false);
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+        }
       }
     }, 400);
   };

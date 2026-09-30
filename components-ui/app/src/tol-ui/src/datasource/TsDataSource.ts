@@ -14,21 +14,24 @@ import {
   httpClient,
   isAttributeField,
   splitRelationshipsForField,
+  DetailGetter
 } from "..";
 import type {
+  ListGetter,
+  PageGetter,
   IAttributeDescriptor,
   TAttributes,
   TClient,
   IConfigPromises,
   ICustom,
-  IDataSource,
+  ITSDataSource,
   IEntityMeta,
   IEntityMetaPromises,
   IGetAttributeDescriptor,
-  IGetByIds,
   IGetList,
   IGetListCursor,
   IGetListPage,
+  IGetByIds,
   IGetOne,
   IGetToOneRelation,
   IIncludedLookup,
@@ -49,7 +52,8 @@ import type {
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
-export class TsDataSource {
+export class TsDataSource implements ListGetter, PageGetter {
+  private readonly detailGetter = new DetailGetter((args) => this.getOne(args));
   private client: TClient;
   private url: string | undefined;
   private apiPath: string | undefined;
@@ -59,7 +63,7 @@ export class TsDataSource {
   private baseURL: string | undefined;
   private sourceKey: string;
 
-  constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: IDataSource = {}) {
+  constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: ITSDataSource = {}) {
     this.client = client ?? httpClient;
     this.url = url;
     this.apiPath = apiPath;
@@ -432,6 +436,10 @@ export class TsDataSource {
       });
   }
 
+  public getByIds(args: IGetByIds): Promise<TDataObjectOrNull[]> {
+    return this.detailGetter.getByIds(args);
+  }
+
   public async getToOneRelation({
     objectType,
     id,
@@ -448,14 +456,6 @@ export class TsDataSource {
         if (error?.response?.status === 404) return null;
         throw error;
       });
-  }
-
-  public async getByIds({
-    objectType,
-    ids,
-  }: IGetByIds): Promise<TDataObjectOrNull[]> {
-    const promiseBulk = ids.map((id) => this.getOne({ objectType, id }));
-    return await Promise.all(promiseBulk);
   }
 
   public async getListPage({
