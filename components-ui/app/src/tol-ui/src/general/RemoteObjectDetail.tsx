@@ -10,12 +10,12 @@ import {
 } from "..";
 import type {
   IRemoteComponentDataList,
-  PObjectDetailBase
+  PObjectDetailOptions
 } from "..";
 
 
 /** Props for the `RemoteObjectDetail` component. */
-export interface PRemoteObjectDetail extends PObjectDetailBase, IRemoteComponentDataList {}
+export interface PRemoteObjectDetail extends PObjectDetailOptions, IRemoteComponentDataList {}
 
 /** A remote version of the `ObjectDetail` component that fetches its data remotely. */
 export function RemoteObjectDetail(props: PRemoteObjectDetail) {

@@ -9,12 +9,12 @@ import type { IComponentData } from "..";
 
 
 /** Props for the `ObjectDetail` component. */
-export interface PObjectDetailBase {
+export interface PObjectDetailOptions {
   /** Whether to display field keys alongside their values. Defaults to true. */
   showKeys?: boolean;
 }
 
-export interface PObjectDetail extends PObjectDetailBase, IComponentData {}
+export interface PObjectDetail extends PObjectDetailOptions, IComponentData {}
 
 export function ObjectDetail(props: PObjectDetail) {
   const { fields, data = {}, classNames = [], showKeys = false, ...rest } = props;
