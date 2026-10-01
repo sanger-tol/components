@@ -6,6 +6,11 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.7.1`
+
+01-10-26
+- Fixing bug on ProgressBarPopUp
+
 ## tol-ui `5.7.0`
 
 29-09-26

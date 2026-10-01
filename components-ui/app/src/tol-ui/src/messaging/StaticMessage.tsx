@@ -13,6 +13,8 @@ interface PStaticMessage {
   header?: boolean;
   onClose?: () => void;
   bordered?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 function InternalStaticMessage(props: PStaticMessage, ref: React.Ref<HTMLDivElement>) {
