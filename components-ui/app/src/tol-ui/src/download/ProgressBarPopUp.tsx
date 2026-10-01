@@ -42,23 +42,28 @@ const ProgressBarPopUpMessage = forwardRef<
     ...progressBarProps
   } = props;
 
+  const Message = () => {
+    if (progressPopupType === "success" && hideProgressOnComplete) {
+      return messageOnComplete;
+    }
+    return (
+      <ProgressBar
+        {...progressBarProps}
+        text={progressPopupType === "success" ? messageOnComplete : message ?? ""}
+        onComplete={() => {
+          setProgressPopupType("success");
+          onComplete?.();
+        }}
+      />
+    );
+  };
+
   return (
     <StaticMessage
       ref={ref}
       className={className}
       style={style}
-      message={progressPopupType === "success" && hideProgressOnComplete
-        ? messageOnComplete
-        : (
-          <ProgressBar
-            {...progressBarProps}
-            text={progressPopupType === "success" ? messageOnComplete : message ?? ""}
-            onComplete={() => {
-              setProgressPopupType("success");
-              onComplete?.();
-            }}
-          />
-        )}
+      message={Message()}
       type={progressPopupType}
       header={header}
       bordered={true}
