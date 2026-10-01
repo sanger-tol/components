@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-
 /**
  * Interface for the data object representing a field in the remote object detail
  */

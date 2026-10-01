@@ -8,8 +8,16 @@ import { ComponentBase, getField } from "..";
 import type { IComponentData } from "..";
 
 
-export function ObjectDetail(props: IComponentData) {
-  const { fields, data = {}, classNames = [], ...rest } = props;
+/** Props for the `ObjectDetail` component. */
+export interface PObjectDetailBase {
+  /** Whether to display field keys alongside their values. Defaults to true. */
+  showKeys?: boolean;
+}
+
+export interface PObjectDetail extends PObjectDetailBase, IComponentData {}
+
+export function ObjectDetail(props: PObjectDetail) {
+  const { fields, data = {}, classNames = [], showKeys = false, ...rest } = props;
 
   return (
     <ComponentBase
@@ -21,7 +29,8 @@ export function ObjectDetail(props: IComponentData) {
           const field = getField(fields, attribute);
           return (
             <div key={attribute} className="tol-object-detail-field">
-              <strong>{field?.rename ?? attribute}:</strong> {data[attribute]}
+              {showKeys && <strong>{field?.rename ?? attribute}:</strong>}
+              {data[attribute]}
             </div>
           );
         })}
