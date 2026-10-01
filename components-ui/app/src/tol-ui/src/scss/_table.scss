@@ -497,8 +497,8 @@ span.rs-dropdown-toggle-icon {
 }
 
 .tol-table .tol-component-counter {
-  bottom: 6px;
-  right: 6px;
+  bottom: var(--tol-spacing-sm);
+  right: var(--tol-spacing-sm);
 }
 
 // pagination buttons on smaller devices

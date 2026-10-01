@@ -48,32 +48,32 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     ...rest
   } = props;
 
-  const { editMode } = useBoard();
+  const { board, editMode } = useBoard();
   const [openConfig, setOpenConfig] = useState(false);
   const [savedConfig, setSavedConfig] = useState<IListDataConfigSave>(() => {
     const storedConfig = getComponentConfigLocalStorage<IListDataConfigSave>(id) ?? {};
     return {
-      fieldMeta: fields ?? storedConfig.fieldMeta,
-      defaultSortByAttribute: defaultSortByAttribute ?? storedConfig.defaultSortByAttribute,
-      defaultSortByType: defaultSortByType ?? storedConfig.defaultSortByType,
+      fieldMeta: storedConfig.fieldMeta ?? fields,
+      defaultSortByAttribute: storedConfig.defaultSortByAttribute ?? defaultSortByAttribute,
+      defaultSortByType: storedConfig.defaultSortByType ?? defaultSortByType,
     };
   });
 
   useEffect(() => {
     setSavedConfig((current) => ({
       ...current,
-      fieldMeta: fields ?? current.fieldMeta,
-      defaultSortByAttribute: defaultSortByAttribute ?? current.defaultSortByAttribute,
-      defaultSortByType: defaultSortByType ?? current.defaultSortByType,
+      fieldMeta: current.fieldMeta ?? fields,
+      defaultSortByAttribute: current.defaultSortByAttribute ?? defaultSortByAttribute,
+      defaultSortByType: current.defaultSortByType ?? defaultSortByType,
     }));
   }, [fields, defaultSortByAttribute, defaultSortByType]);
 
   const activeFieldMeta = savedConfig.fieldMeta ?? fields ?? { order: { active: [] } };
   // Use the first active field only for the API request when no explicit sort is configured.
-  const apiSortByAttribute = defaultSortByAttribute ?? savedConfig.defaultSortByAttribute ?? activeFieldMeta.order?.active?.[0];
-  const apiSortByType = defaultSortByType ?? savedConfig.defaultSortByType ?? "asc";
-  const drawerSortByAttribute = defaultSortByAttribute ?? savedConfig.defaultSortByAttribute;
-  const drawerSortByType = defaultSortByType ?? savedConfig.defaultSortByType;
+  const apiSortByAttribute = savedConfig.defaultSortByAttribute ?? defaultSortByAttribute ?? activeFieldMeta.order?.active?.[0];
+  const apiSortByType = savedConfig.defaultSortByType ?? defaultSortByType ?? "asc";
+  const drawerSortByAttribute = savedConfig.defaultSortByAttribute ?? defaultSortByAttribute;
+  const drawerSortByType = savedConfig.defaultSortByType ?? defaultSortByType;
 
   const {
     fieldMeta,
@@ -117,7 +117,8 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     type: "primary",
     onClick: () => setOpenConfig(true),
     icon: "sliders",
-    visible: editMode,
+    // Standalone components are always configurable; board components require edit mode.
+    visible: !board.id || editMode,
   };
 
   const ubc = mergeUtilityBarConfigs(utilityBarConfig ?? undefined, {
@@ -139,7 +140,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
   });
 
   return (
-    <>
+    <div ref={parentRef} className="tol-remote-component-list" style={{ height }}>
       <ListDataConfigDrawer
         {...props}
         open={openConfig}
@@ -149,24 +150,22 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         defaultSortByType={drawerSortByType}
         onConfigSave={onConfigSave}
       />
-      <div ref={parentRef} style={{ height }}>
-        {showPagination && <RecordCounter totalSize={totalSize} loading={isLoading} />}
-        <RemoteComponentBase
-          {...rest}
-          id={id}
-          height={height}
-          isLoading={isLoading}
-          errorMessage={errorMessage}
-          noFieldsSelected={noFieldsSelected}
-          utilityBarConfig={ubc}
-        >
-          {cloneElement(children, {
-            id,
-            data: data[0] ?? {},
-            fields: fieldMeta,
-          })}
-        </RemoteComponentBase>
-      </div>
-    </>
+      {showPagination && <RecordCounter totalSize={totalSize} loading={isLoading} />}
+      <RemoteComponentBase
+        {...rest}
+        id={id}
+        height={height}
+        isLoading={isLoading}
+        errorMessage={errorMessage}
+        noFieldsSelected={noFieldsSelected}
+        utilityBarConfig={ubc}
+      >
+        {cloneElement(children, {
+          id,
+          data: data[0] ?? {},
+          fields: fieldMeta,
+        })}
+      </RemoteComponentBase>
+    </div>
   );
 }

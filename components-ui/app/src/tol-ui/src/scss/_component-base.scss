@@ -4,13 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
+.tol-remote-component-list {
+  position: relative;
+}
+
 .tol-component-counter {
   z-index: 2;
   border-radius: var(--tol-border-radius);
   background-color: var(--tol-grey-translucent);
   position: absolute;
-  bottom: var(--tol-spacing-sm);
-  right: var(--tol-spacing-sm);
+  bottom: 0;
+  right: 0;
   top: auto;
   left: auto;
   padding: 4px 8px;
