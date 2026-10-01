@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.7.1`
+
+01-10-26
+- Fixing bug on ProgressBarPopUp
+- Added className and style to StaticMessage
+- Adding filter prop to RemoteAutoComplete
+
 ## tol-ui `5.7.0`
 
 29-09-26
