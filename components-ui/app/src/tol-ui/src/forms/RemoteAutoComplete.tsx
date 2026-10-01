@@ -5,13 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useRef } from "react";
-import { AutoComplete } from "..";
+import { AutoComplete, mergeFilters } from "..";
 import type {
   IRemoteTarget,
   IRemoteAutoCompleteData,
   TAutoCompleteValue,
   TFormRemoteAutoCompleteField,
-  ListGetter
+  ListGetter,
+  IFilter
 } from "..";
 
 export interface PRemoteAutoComplete
@@ -44,6 +45,10 @@ export interface PRemoteAutoComplete
    * The fields to return from the remote data source.
    */
   returnFields?: string[];
+  /**
+   * The filter to apply when querying the remote data source.
+   */
+  filter?: IFilter;
 }
 
 export function RemoteAutoComplete(props: PRemoteAutoComplete) {
@@ -55,6 +60,7 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
     searchBy,
     setReturnedValues,
     returnFields,
+    filter
   } = props;
   const [filteredData, setFilteredData] = useState<IRemoteAutoCompleteData>({});
   const [loading, setLoading] = useState<boolean>(false);
@@ -84,15 +90,14 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
     timeoutRef.current = setTimeout(async () => {
       setLoading(true);
       try {
+        const mergedFilter = mergeFilters({and_: {
+          [searchBy]: {
+            contains: { value },
+          },
+        }}, filter);
         const data = await dataSource.getList({
           objectType,
-          filter: {
-            and_: {
-              [searchBy]: {
-                contains: { value },
-              },
-            },
-          },
+          filter: mergedFilter,
         });
 
         if (requestId !== requestIdRef.current) {
