@@ -15,7 +15,10 @@
   .tol-object-detail-field {
     display: flex;
     align-items: flex-start;
-    margin-bottom: var(--tol-spacing-sm);
+
+    &:not(:last-child) {
+      margin-bottom: var(--tol-spacing-xs);
+    }
 
     strong {
       flex: 0 0 auto;

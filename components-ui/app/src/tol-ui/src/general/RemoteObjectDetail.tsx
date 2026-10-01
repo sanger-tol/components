@@ -8,12 +8,20 @@ import {
   ObjectDetail,
   RemoteComponentDataList,
 } from "..";
-import type { IRemoteComponentDataList } from "..";
+import type {
+  IRemoteComponentDataList,
+  PObjectDetailBase
+} from "..";
 
-export function RemoteObjectDetail(props: IRemoteComponentDataList) {
+
+/** Props for the `RemoteObjectDetail` component. */
+export interface PRemoteObjectDetail extends PObjectDetailBase, IRemoteComponentDataList {}
+
+/** A remote version of the `ObjectDetail` component that fetches its data remotely. */
+export function RemoteObjectDetail(props: PRemoteObjectDetail) {
   return (
     <RemoteComponentDataList pageSize={50} {...props}>
-      <ObjectDetail {...props}/>
+      <ObjectDetail {...props} />
     </RemoteComponentDataList>
   );
 }
