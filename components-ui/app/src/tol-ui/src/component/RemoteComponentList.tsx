@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { ReactElement, cloneElement, useEffect, useRef, useState } from "react";
 import {
+  ComponentList,
   createSort,
   getComponentConfigLocalStorage,
   ListDataConfigDrawer,
@@ -42,6 +43,8 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     defaultSortByType,
     zone,
     setZone,
+    page: initialPage,
+    pageSize: initialPageSize,
     children,
     utilityBarConfig,
     height = "100%",
@@ -93,13 +96,16 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     fields: activeFieldMeta,
     zone,
     setZone,
+    page: initialPage,
+    pageSize: initialPageSize,
     customDataPointRenderers,
     sortBy: createSort(apiSortByAttribute, apiSortByType),
   });
 
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const showPagination = totalSize !== undefined && totalSize > 1;
+  const showPagination = totalSize !== undefined && totalSize > pageSize;
+  const showCounter = totalSize !== undefined && totalSize > 1;
 
   const onConfigSave = ({ fieldMeta: nextFieldMeta, defaultSortByAttribute, defaultSortByType }: IListDataConfigSave) => {
     const nextConfig: IListDataConfigSave = {
@@ -139,6 +145,23 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
       : [],
   });
 
+  const DataComponent = pageSize > 1
+    ? (
+      <ComponentList
+        id={id}
+        page={page}
+        data={data}
+        fields={fieldMeta}
+      >
+        {children}
+      </ComponentList>
+    )
+    : cloneElement(children, {
+      id,
+      data: data[0] ?? {},
+      fields: fieldMeta,
+    });
+
   return (
     <div ref={parentRef} className="tol-remote-component-list" style={{ height }}>
       <ListDataConfigDrawer
@@ -150,7 +173,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         defaultSortByType={drawerSortByType}
         onConfigSave={onConfigSave}
       />
-      {showPagination && <RecordCounter totalSize={totalSize} loading={isLoading} />}
+      {showCounter && <RecordCounter totalSize={totalSize} loading={isLoading} />}
       <RemoteComponentBase
         {...rest}
         id={id}
@@ -160,11 +183,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         noFieldsSelected={noFieldsSelected}
         utilityBarConfig={ubc}
       >
-        {cloneElement(children, {
-          id,
-          data: data[0] ?? {},
-          fields: fieldMeta,
-        })}
+        {DataComponent}
       </RemoteComponentBase>
     </div>
   );

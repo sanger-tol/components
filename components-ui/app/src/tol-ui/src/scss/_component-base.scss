@@ -8,6 +8,23 @@
   position: relative;
 }
 
+.tol-component-list-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tol-spacing-sm);
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-radius: var(--tol-border-radius);
+}
+
+.tol-component-list-scroll-item {
+  flex: 0 0 auto;
+  min-width: 0;
+  border: 1px solid var(--tol-grey);
+  border-radius: var(--tol-border-radius);
+}
+
 .tol-component-counter {
   z-index: 2;
   border-radius: var(--tol-border-radius);
@@ -19,4 +36,10 @@
   left: auto;
   padding: 4px 8px;
   backdrop-filter: blur(3px);
+}
+
+// Keep the counter inside the bordered viewport when rendering a ComponentList.
+.tol-remote-component-list:has(.tol-component-list-scroll) .tol-component-counter {
+  bottom: var(--tol-spacing-sm);
+  right: var(--tol-spacing-sm);
 }

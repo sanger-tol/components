@@ -12,7 +12,7 @@ import type { IRemoteComponentDataList } from "..";
 
 export function RemoteObjectDetail(props: IRemoteComponentDataList) {
   return (
-    <RemoteComponentDataList {...props}>
+    <RemoteComponentDataList pageSize={50} {...props}>
       <ObjectDetail {...props}/>
     </RemoteComponentDataList>
   );
