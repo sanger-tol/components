@@ -237,10 +237,10 @@ export function CellRendererModal(props: PCellRendererModal) {
   const FirstPage = (
     <>
       {CellRendererSelector}
-      <p>
+      <p className="tol-mt-sm">
         {renderer && cellRendererParams[renderer.type]?.description}
       </p>
-      <hr />
+      {renderer && <hr />}
       {ParameterList}
     </>
   );
