@@ -65,7 +65,12 @@ export function useComponentListData({
   } = useComponentData<IFieldMeta>({
     ...rest,
     id,
-    queryKey: [...allAttributes, "fields", ...queryKey],
+    queryKey: [
+      ...allAttributes,
+      JSON.stringify([fields?.data, fields?.dataWithDefaults]),
+      "fields",
+      ...queryKey,
+    ],
     // Guarded by noFieldsSelected, so fields is guaranteed to be set whenever this actually runs.
     fetchData: async () => ({
       ...fields!,

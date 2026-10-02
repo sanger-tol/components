@@ -11,6 +11,7 @@ import {
   getComponentConfigLocalStorage,
   ListDataConfigDrawer,
   mergeUtilityBarConfigs,
+  normaliseFieldMeta,
   Pagination,
   RemoteComponentBase,
   saveComponentConfigLocalStorage,
@@ -19,7 +20,6 @@ import {
 } from "..";
 import { RecordCounter } from "./RecordCounter";
 import type { IComponentData, IListDataConfigSave, IRemoteComponentDataList, PButton } from "..";
-
 
 /** Props for the `RemoteComponentDataList` wrapper component. */
 export interface PRemoteComponentDataList extends IRemoteComponentDataList {
@@ -56,7 +56,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
   const [savedConfig, setSavedConfig] = useState<IListDataConfigSave>(() => {
     const storedConfig = getComponentConfigLocalStorage<IListDataConfigSave>(id) ?? {};
     return {
-      fieldMeta: storedConfig.fieldMeta ?? fields,
+      fieldMeta: normaliseFieldMeta(storedConfig.fieldMeta ?? fields),
       defaultSortByAttribute: storedConfig.defaultSortByAttribute ?? defaultSortByAttribute,
       defaultSortByType: storedConfig.defaultSortByType ?? defaultSortByType,
     };
@@ -65,13 +65,14 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
   useEffect(() => {
     setSavedConfig((current) => ({
       ...current,
-      fieldMeta: current.fieldMeta ?? fields,
+      fieldMeta: normaliseFieldMeta(current.fieldMeta ?? fields),
       defaultSortByAttribute: current.defaultSortByAttribute ?? defaultSortByAttribute,
       defaultSortByType: current.defaultSortByType ?? defaultSortByType,
     }));
   }, [fields, defaultSortByAttribute, defaultSortByType]);
 
-  const activeFieldMeta = savedConfig.fieldMeta ?? fields ?? { order: { active: [] } };
+  // Normalize the configured metadata from props/storage before passing it to the data hook.
+  const activeFieldMeta = normaliseFieldMeta(savedConfig.fieldMeta ?? fields);
   // Use the first active field only for the API request when no explicit sort is configured.
   const apiSortByAttribute = savedConfig.defaultSortByAttribute ?? defaultSortByAttribute ?? activeFieldMeta.order?.active?.[0];
   const apiSortByType = savedConfig.defaultSortByType ?? defaultSortByType ?? "asc";
@@ -79,6 +80,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
   const drawerSortByType = savedConfig.defaultSortByType ?? defaultSortByType;
 
   const {
+    // This is still IFieldMeta; the hook adds fetched descriptor defaults to the configured metadata.
     fieldMeta,
     data,
     noFieldsSelected,

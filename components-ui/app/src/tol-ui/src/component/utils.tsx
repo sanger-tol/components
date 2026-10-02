@@ -8,6 +8,24 @@ import { DataPoints } from "..";
 import type { IFieldMeta, TField, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecord, TsDataSource, TDataRecordList } from "..";
 
 /**
+ * Ensures component field metadata has the maps and active-field order required by list rendering.
+ *
+ * @param fieldMeta Field metadata from component props or persisted configuration.
+ * @returns Complete field metadata, defaulting missing maps and active fields to empty values.
+ */
+export function normaliseFieldMeta(fieldMeta?: Partial<IFieldMeta>): IFieldMeta {
+  return {
+    ...fieldMeta,
+    data: fieldMeta?.data ?? {},
+    dataWithDefaults: fieldMeta?.dataWithDefaults ?? {},
+    order: {
+      ...fieldMeta?.order,
+      active: Array.isArray(fieldMeta?.order?.active) ? fieldMeta.order.active : [],
+    },
+  };
+}
+
+/**
  * Looks up a field's metadata, preferring defaults over the field's own configuration.
  *
  * @param fields - The field metadata to look up the attribute in.
