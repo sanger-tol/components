@@ -8,7 +8,9 @@ import { useEffect, useRef, useState } from "react";
 import {
   AttributeSelector,
   Button,
+  CellRendererConfigurer,
   deepEqual,
+  deepCopy,
   Drawer,
   SelectedAttributesContainer,
   IRemoteTarget,
@@ -33,9 +35,8 @@ export interface PListDataConfigDrawer extends IRemoteTarget {
 }
 
 /**
- * ListDataConfigDrawer provides field-selection controls for RemoteObjectDetail/BoardDataList,
- * mirroring ColumnConfigDrawer's basic attribute selector but without table-only concerns
- * (sorting, cell renderers, active/inactive column visibility limiting).
+ * ListDataConfigDrawer provides field selection, sorting, and renderer configuration
+ * for RemoteObjectDetail and other list-style components.
  */
 export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
   const {
@@ -47,6 +48,11 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     defaultSortByType,
   } = props;
 
+  const [draftFieldMeta, setDraftFieldMeta] = useState<IFieldMeta>(() => ({
+    ...deepCopy(fieldMeta),
+    data: deepCopy(fieldMeta.data ?? {}),
+    dataWithDefaults: deepCopy(fieldMeta.dataWithDefaults ?? {}),
+  }));
   const initialAttributesRef = useRef<string[]>(fieldMeta.order.active);
   const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
@@ -54,23 +60,40 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
 
   const hasPendingChanges = (
     !deepEqual(attributes, initialAttributesRef.current) ||
+    !deepEqual(draftFieldMeta, fieldMeta) ||
     defaultSortByAttribute !== sortByAttribute ||
     defaultSortByType !== sortByType
   );
 
   useEffect(() => {
+    setDraftFieldMeta({
+      ...deepCopy(fieldMeta),
+      data: deepCopy(fieldMeta.data ?? {}),
+      dataWithDefaults: deepCopy(fieldMeta.dataWithDefaults ?? {}),
+    });
     setAttributes(fieldMeta.order.active);
     initialAttributesRef.current = fieldMeta.order.active;
     setSortByAttribute(defaultSortByAttribute);
     setSortByType(defaultSortByType);
-  }, [open, defaultSortByAttribute, defaultSortByType]);
+  }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta]);
+
+  const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
+    <CellRendererConfigurer
+      {...props}
+      attributeId={attributeId}
+      fieldMeta={draftFieldMeta}
+      setFieldMeta={setDraftFieldMeta}
+    />
+  );
+
+  const additionalIcons = [CellRendererConfigurerWrapper];
 
   const onSave = () => {
     if (hasPendingChanges) {
       onConfigSave({
         fieldMeta: {
-          ...fieldMeta,
-          order: { ...fieldMeta.order, active: attributes },
+          ...draftFieldMeta,
+          order: { ...draftFieldMeta.order, active: attributes },
         },
         defaultSortByAttribute: sortByAttribute,
         defaultSortByType: sortByType,
@@ -134,6 +157,8 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
         {...props}
         attributes={attributes}
         setAttributes={setAttributes}
+        additionalIcons={additionalIcons}
+        fieldMeta={draftFieldMeta}
       />
     </>
   );
