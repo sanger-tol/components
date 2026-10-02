@@ -47,6 +47,7 @@ export * from "./map";
 export * from "./messaging";
 export * from "./interfaces";
 export * from "./links";
+export * from "./notify";
 export * from "./overlays";
 export * from "./relationships";
 export * from "./services";

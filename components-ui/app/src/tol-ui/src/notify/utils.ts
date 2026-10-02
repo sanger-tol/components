@@ -12,7 +12,7 @@ import {
   NOTIFY_CATEGORY,
   APP_NAME,
 } from "..";
-import type { TsDataSource, INotificationOptions } from "..";
+import type { TsDataSource, INotificationOptions, TDataObjectListOrNull } from "..";
 
 /**
  * Builds a bus message that requests an email notification.
@@ -77,14 +77,15 @@ export async function sendNotification(
   dataSource: TsDataSource,
   options: INotificationOptions,
   params?: Record<string, unknown>,
-): Promise<void> {
+): Promise<TDataObjectListOrNull> {
+
   const payload = buildNotificationMessage(options);
 
   if (!payload) {
-    return;
+    return null;
   }
 
-  await dataSource.insert({
+  return await dataSource.insert({
     payload: [payload],
     objectType: BUS_MESSAGE_OBJECT_TYPE,
     params,
