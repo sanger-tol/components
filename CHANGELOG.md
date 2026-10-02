@@ -9,8 +9,8 @@ SPDX-License-Identifier: MIT
 ## tol-ui `5.7.2`
 
 02-10-26
-- Fixed bug: Sunburst now showing legend on load
-- Fixed bug: Higher cardinality fields not showing for breakDownBy
+- Fixed bug: Sunburst not showing legend on load
+- Fixed bug: Higher cardinality fields not showing for breakDownBy on charts
 
 ## tol-ui `5.7.1`
 
