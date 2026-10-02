@@ -46,6 +46,7 @@ import type {
   TDataObjectListOrNull,
   TDataObjectOrNull,
   TRelationshipValues,
+  IInsert,
 } from "..";
 
 
@@ -63,7 +64,14 @@ export class TsDataSource implements ListGetter, PageGetter {
   private baseURL: string | undefined;
   private sourceKey: string;
 
-  constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: ITSDataSource = {}) {
+  constructor({
+    url,
+    apiPath,
+    apiDataPath,
+    dataspace,
+    dataSourceInstanceId,
+    client,
+  }: ITSDataSource = {}) {
     this.client = client ?? httpClient;
     this.url = url;
     this.apiPath = apiPath;
@@ -103,7 +111,7 @@ export class TsDataSource implements ListGetter, PageGetter {
     return `${tg}${sf}`;
   }
 
-  private normaliseParams = (params?: Record<string, any>) => (
+  private normaliseParams = (params?: Record<string, any>) =>
     Object.fromEntries(
       Object.entries(params ?? {})
         .filter(([_, v]) => {
@@ -117,12 +125,11 @@ export class TsDataSource implements ListGetter, PageGetter {
             return [k, v.join(",")];
           }
           return [k, v];
-        })
-    )
-  );
+        }),
+    );
 
   private createRelationshipHandler(
-    fetcher?: (args: IGetToOneRelation) => Promise<TDataObjectOrNull>
+    fetcher?: (args: IGetToOneRelation) => Promise<TDataObjectOrNull>,
   ) {
     return {
       get: (relationships: ISourceDataObject, relationKey: string) => {
@@ -139,7 +146,7 @@ export class TsDataSource implements ListGetter, PageGetter {
               __includedLookup: relationships.__includedLookup,
               __meta: relationships.__meta,
             },
-            this.dataObjectHandler
+            this.dataObjectHandler,
           );
         };
 
@@ -151,7 +158,7 @@ export class TsDataSource implements ListGetter, PageGetter {
 
         if (Array.isArray(relation?.data)) {
           return relation.data.map((item: IRelationshipPointer) =>
-            createIncludedProxy(item)
+            createIncludedProxy(item),
           );
         }
 
@@ -168,8 +175,8 @@ export class TsDataSource implements ListGetter, PageGetter {
 
   private relationshipHandler = this.createRelationshipHandler();
 
-  private fetchRelationshipHandler = this.createRelationshipHandler(
-    (args) => this.getToOneRelation(args)
+  private fetchRelationshipHandler = this.createRelationshipHandler((args) =>
+    this.getToOneRelation(args),
   );
 
   private createRelationshipsProxy = (target: any, handler: any) => {
@@ -205,7 +212,10 @@ export class TsDataSource implements ListGetter, PageGetter {
       if (key === "id") return data.id;
 
       if (key === "fetchRelationships") {
-        return this.createRelationshipsProxy(data, this.fetchRelationshipHandler);
+        return this.createRelationshipsProxy(
+          data,
+          this.fetchRelationshipHandler,
+        );
       }
 
       if (key === "relationships") {
@@ -222,22 +232,25 @@ export class TsDataSource implements ListGetter, PageGetter {
 
     const data: IJsonApiData[] = isSingleObject
       ? [responseData.data as IJsonApiData]
-      : responseData.data as IJsonApiData[];
-    const included: IIncludedLookup = this.buildIncludedLookup(responseData.included);
+      : (responseData.data as IJsonApiData[]);
+    const included: IIncludedLookup = this.buildIncludedLookup(
+      responseData.included,
+    );
     const meta = responseData.meta;
 
-    const dataObjects = data?.map((datum: IJsonApiData) => (
-      new Proxy(
-        {
-          ...datum,
-          __includedLookup: included,
-          __meta: meta,
-        },
-        this.dataObjectHandler
-      )
-    ));
+    const dataObjects = data?.map(
+      (datum: IJsonApiData) =>
+        new Proxy(
+          {
+            ...datum,
+            __includedLookup: included,
+            __meta: meta,
+          },
+          this.dataObjectHandler,
+        ),
+    );
     return isSingleObject ? dataObjects[0] : dataObjects;
-  }
+  };
 
   private getLocalStorageKey(o: string): string {
     return `${o}-${this.sourceKey}`;
@@ -257,7 +270,7 @@ export class TsDataSource implements ListGetter, PageGetter {
       baseURL: this.baseURL,
       params: this.normaliseParams(params),
       ...options,
-    }
+    };
 
     switch (method.toUpperCase()) {
       case API_METHODS.GET:
@@ -287,7 +300,10 @@ export class TsDataSource implements ListGetter, PageGetter {
     return !(expiry && now < expiry);
   }
 
-  private fetchAndSaveConfig(resource: string, key: string): Promise<Record<string, any>> {
+  private fetchAndSaveConfig(
+    resource: string,
+    key: string,
+  ): Promise<Record<string, any>> {
     const anHourFromNow = new Date();
     anHourFromNow.setHours(anHourFromNow.getHours() + 1);
     if (!configPromises[key]) {
@@ -337,9 +353,12 @@ export class TsDataSource implements ListGetter, PageGetter {
    * @param objectType - The object type that owns the field.
    * @returns `true` if the field has `available_on_relationships` set, otherwise `false`.
    */
-  public async isAvailableOnRelationships(field: string, objectType: string): Promise<boolean> {
+  public async isAvailableOnRelationships(
+    field: string,
+    objectType: string,
+  ): Promise<boolean> {
     const attributeMetadata = await this.attributeMetadata();
-    const attribute = field.split(".").pop() ?? ""
+    const attribute = field.split(".").pop() ?? "";
     const attributeDescriptor = attributeMetadata[objectType]?.[attribute];
     return attributeDescriptor?.available_on_relationships ?? false;
   }
@@ -354,7 +373,7 @@ export class TsDataSource implements ListGetter, PageGetter {
 
   private flattenAttributes(
     attributes: TAttributes,
-    relationships: TRelationships
+    relationships: TRelationships,
   ) {
     const newAttributes: TAttributes = deepCopy(attributes);
     this.addObjectTypeToAttributes(newAttributes);
@@ -363,7 +382,7 @@ export class TsDataSource implements ListGetter, PageGetter {
       const oneRelationships = relationships[entity]?.one;
       if (oneRelationships) {
         for (const [relationship, objType] of Object.entries(
-          oneRelationships
+          oneRelationships,
         )) {
           for (const [key, meta] of Object.entries(attributes[objType])) {
             const metaCopy = deepCopy(meta);
@@ -400,7 +419,7 @@ export class TsDataSource implements ListGetter, PageGetter {
             data: {
               flatAttributes: this.flattenAttributes(
                 attributes as TAttributes,
-                relationships as TRelationships
+                relationships as TRelationships,
               ),
               relationships,
             },
@@ -428,7 +447,9 @@ export class TsDataSource implements ListGetter, PageGetter {
       },
     })
       .then((response: IJsonApiResponse) => {
-        return this.jsonApiResponseToDataObject(response) as unknown as TDataObjectOrNull;
+        return this.jsonApiResponseToDataObject(
+          response,
+        ) as unknown as TDataObjectOrNull;
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -447,10 +468,15 @@ export class TsDataSource implements ListGetter, PageGetter {
   }: IGetToOneRelation): Promise<TDataObjectOrNull> {
     return this.custom({
       method: API_METHODS.GET,
-      resource: this.generateEndpoint(objectType, `${API_OPERATIONS.TO_ONE}/${id}/${relation}`),
+      resource: this.generateEndpoint(
+        objectType,
+        `${API_OPERATIONS.TO_ONE}/${id}/${relation}`,
+      ),
     })
       .then((response: IJsonApiResponse) => {
-        return this.jsonApiResponseToDataObject(response) as unknown as TDataObjectOrNull;
+        return this.jsonApiResponseToDataObject(
+          response,
+        ) as unknown as TDataObjectOrNull;
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -464,7 +490,7 @@ export class TsDataSource implements ListGetter, PageGetter {
     pageSize,
     filter,
     sortBy,
-    requestedFields
+    requestedFields,
   }: IGetListPage): Promise<TDataObjectListOrNull> {
     return this.custom({
       method: API_METHODS.POST,
@@ -480,7 +506,9 @@ export class TsDataSource implements ListGetter, PageGetter {
       },
     })
       .then((response: IJsonApiResponse) => {
-        return this.jsonApiResponseToDataObject(response) as unknown as TDataObjectListOrNull;
+        return this.jsonApiResponseToDataObject(
+          response,
+        ) as unknown as TDataObjectListOrNull;
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -575,17 +603,16 @@ export class TsDataSource implements ListGetter, PageGetter {
     return this.custom({
       method: API_METHODS.DELETE,
       resource: this.generateEndpoint(objectType, `/${id}`),
-    })
-      .catch((error: any) => {
-        if (error?.response?.status === 404) return null;
-        throw error;
-      });
+    }).catch((error: any) => {
+      if (error?.response?.status === 404) return null;
+      throw error;
+    });
   }
 
   public async upsert({
     payload,
     objectType,
-    params
+    params,
   }: IUpsert): Promise<TDataObjectListOrNull> {
     return this.custom({
       method: API_METHODS.POST,
@@ -594,7 +621,31 @@ export class TsDataSource implements ListGetter, PageGetter {
       params,
     })
       .then((response: IJsonApiResponse) => {
-        return this.jsonApiResponseToDataObject(response) as unknown as TDataObjectListOrNull;
+        return this.jsonApiResponseToDataObject(
+          response,
+        ) as unknown as TDataObjectListOrNull;
+      })
+      .catch((error: any) => {
+        if (error?.response?.status === 404) return null;
+        throw error;
+      });
+  }
+
+  public async insert({
+    payload,
+    objectType,
+    params,
+  }: IInsert): Promise<TDataObjectListOrNull> {
+    return this.custom({
+      method: API_METHODS.POST,
+      resource: this.generateEndpoint(objectType, API_OPERATIONS.INSERT),
+      body: { data: payload },
+      params,
+    })
+      .then((response: IJsonApiResponse) => {
+        return this.jsonApiResponseToDataObject(
+          response,
+        ) as unknown as TDataObjectListOrNull;
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -604,18 +655,22 @@ export class TsDataSource implements ListGetter, PageGetter {
 
   private async getAttributeDescriptorValue(
     field: string,
-    objectType: string
+    objectType: string,
   ): Promise<IAttributeDescriptor | undefined> {
     const attributes = await this.attributeMetadata();
     const splitField = field.split(".");
-    const combinedRelationships = await this.getMergedRelationshipConfig(objectType);
+    const combinedRelationships =
+      await this.getMergedRelationshipConfig(objectType);
     if (splitField.length > 1 && combinedRelationships) {
       // Checks if the object type exists in the relationships of previous "jump"
       // If relationship exists, get the related object type and continue down the field path
       if (splitField[0] in combinedRelationships) {
         const relatedObjectType = combinedRelationships[splitField[0]];
         const remainingField = splitField.slice(1).join(".");
-        return this.getAttributeDescriptorValue(remainingField, relatedObjectType);
+        return this.getAttributeDescriptorValue(
+          remainingField,
+          relatedObjectType,
+        );
       }
     } else if (splitField.length === 1) {
       if (field in attributes[objectType]) {
@@ -632,51 +687,52 @@ export class TsDataSource implements ListGetter, PageGetter {
     // not the Provenance variation
     const fieldToGet = field.split("[")[0];
 
-    return this.getAttributeDescriptorValue(
-      fieldToGet,
-      objectType
-    );
+    return this.getAttributeDescriptorValue(fieldToGet, objectType);
   }
 
   public async getMergedRelationshipConfig(
-    objectType: string
+    objectType: string,
   ): Promise<TRelationshipValues> {
     const relationships = await this.relationshipConfig();
     const objectRelationships = relationships[objectType];
     const one = objectRelationships?.one ?? {};
     const many = objectRelationships?.many ?? {};
-    return { ...one, ...many }
+    return { ...one, ...many };
   }
 
   // This function works in the same way as getAttributeDescriptorValue but returns available relationships
   private async getAvailableRelationshipsRecursive(
     field: string,
-    objectType: string
+    objectType: string,
   ): Promise<string[] | undefined> {
     const splitField = field.split(".");
-    const combinedRelationships = await this.getMergedRelationshipConfig(objectType);
+    const combinedRelationships =
+      await this.getMergedRelationshipConfig(objectType);
     if (splitField.length > 1 && combinedRelationships) {
       if (splitField[0] in combinedRelationships) {
         const relatedObjectType = combinedRelationships[splitField[0]];
         const remainingField = splitField.slice(1).join(".");
-        return this.getAvailableRelationshipsRecursive(remainingField, relatedObjectType);
+        return this.getAvailableRelationshipsRecursive(
+          remainingField,
+          relatedObjectType,
+        );
       }
     } else if (splitField.length === 1) {
       if (!combinedRelationships) return undefined;
       const finalRelationshipObject = combinedRelationships[splitField[0]];
-      const availableRelationshipsObject = await this.getMergedRelationshipConfig(finalRelationshipObject);
-      return availableRelationshipsObject ? Object.keys(availableRelationshipsObject) : undefined;
+      const availableRelationshipsObject =
+        await this.getMergedRelationshipConfig(finalRelationshipObject);
+      return availableRelationshipsObject
+        ? Object.keys(availableRelationshipsObject)
+        : undefined;
     }
   }
 
   public async getAvailableRelationships(
     objectType: string,
-    field: string
+    field: string,
   ): Promise<string[] | undefined> {
-    return this.getAvailableRelationshipsRecursive(
-      field,
-      objectType
-    )
+    return this.getAvailableRelationshipsRecursive(field, objectType);
   }
 
   /**
@@ -688,15 +744,17 @@ export class TsDataSource implements ListGetter, PageGetter {
    */
   public async isManyDataPointsByName(
     objectType: string,
-    field: string
+    field: string,
   ): Promise<boolean> {
-    const relationshipConfig = await this.relationshipConfig() as TRelationships;
+    const relationshipConfig =
+      (await this.relationshipConfig()) as TRelationships;
     const [relationship, ...rest] = field.split(".");
     const hasMoreRelationshipJumps = rest.length > 1;
 
     if (relationshipConfig[objectType]?.one?.[relationship]) {
       if (hasMoreRelationshipJumps) {
-        const relatedObjectType = relationshipConfig[objectType].one[relationship];
+        const relatedObjectType =
+          relationshipConfig[objectType].one[relationship];
         const remainingField = rest.join(".");
         return this.isManyDataPointsByName(relatedObjectType, remainingField);
       }
@@ -718,17 +776,21 @@ export class TsDataSource implements ListGetter, PageGetter {
    */
   public async getObjectTypeByField(
     field: string,
-    objectType: string
+    objectType: string,
   ): Promise<string | null> {
     const relationshipConfig = await this.relationshipConfig();
     const objectRelationships = relationshipConfig[objectType];
 
-    for (const [relationshipName, relatedObjectType] of Object.entries(objectRelationships?.one ?? {})) {
+    for (const [relationshipName, relatedObjectType] of Object.entries(
+      objectRelationships?.one ?? {},
+    )) {
       if (field.startsWith(relationshipName + ".")) {
         return relatedObjectType;
       }
     }
-    for (const [relationshipName, relatedObjectType] of Object.entries(objectRelationships?.many ?? {})) {
+    for (const [relationshipName, relatedObjectType] of Object.entries(
+      objectRelationships?.many ?? {},
+    )) {
       if (field.startsWith(relationshipName + ".")) {
         return relatedObjectType;
       }
@@ -747,12 +809,13 @@ export class TsDataSource implements ListGetter, PageGetter {
    */
   public async findShortestRelationshipPath(
     sourceObjectType: string,
-    targetObjectType?: string
+    targetObjectType?: string,
   ): Promise<string | null> {
     const resolvedRelationshipConfig = await this.relationshipConfig();
 
     if (!resolvedRelationshipConfig[sourceObjectType]) return null;
-    if (targetObjectType && !resolvedRelationshipConfig[targetObjectType]) return null;
+    if (targetObjectType && !resolvedRelationshipConfig[targetObjectType])
+      return null;
     if (sourceObjectType === targetObjectType) return "";
 
     // Each queue entry holds the current object type and the path of relationship names taken to reach it
@@ -765,7 +828,9 @@ export class TsDataSource implements ListGetter, PageGetter {
       const relationships = resolvedRelationshipConfig[currentType];
 
       for (const side of ["one", "many"] as const) {
-        for (const [relationshipName, relatedType] of Object.entries(relationships?.[side] ?? {})) {
+        for (const [relationshipName, relatedType] of Object.entries(
+          relationships?.[side] ?? {},
+        )) {
           if (visited.has(relatedType)) continue;
           const newPath = [...currentPath, relationshipName];
           // Because we're using breadth-first search, the first time we reach the target is the shortest path
@@ -804,11 +869,11 @@ export class TsDataSource implements ListGetter, PageGetter {
   private async addShortestPathToAttributeField(
     incomingField: string,
     incomingObjectType: string,
-    targetObjectType: string
+    targetObjectType: string,
   ): Promise<string | null> {
     const shortestPath = await this.findShortestRelationshipPath(
       targetObjectType,
-      incomingObjectType
+      incomingObjectType,
     );
     // If no path exists, return null to indicate that the field cannot be resolved from the source object type.
     if (shortestPath === null) return null;
@@ -828,13 +893,15 @@ export class TsDataSource implements ListGetter, PageGetter {
   private resolveObjectTypeFromRelationshipSegments(
     startObjectType: string,
     relationshipSegments: string[],
-    resolvedRelationshipConfig: TRelationships
+    resolvedRelationshipConfig: TRelationships,
   ): string | null {
     let currentObjectType = startObjectType;
 
     for (const relationshipName of relationshipSegments) {
       const nextObjectType =
-        resolvedRelationshipConfig[currentObjectType]?.one?.[relationshipName] ??
+        resolvedRelationshipConfig[currentObjectType]?.one?.[
+          relationshipName
+        ] ??
         resolvedRelationshipConfig[currentObjectType]?.many?.[relationshipName];
 
       if (!nextObjectType) return null;
@@ -863,7 +930,7 @@ export class TsDataSource implements ListGetter, PageGetter {
     incomingField: string,
     incomingObjectType: string,
     targetObjectType: string,
-    resolvedRelationshipConfig: TRelationships
+    resolvedRelationshipConfig: TRelationships,
   ): Promise<string | null> {
     const attribute = getAttributeNameByField(incomingField);
     const relationshipSegments = splitRelationshipsForField(incomingField);
@@ -873,7 +940,7 @@ export class TsDataSource implements ListGetter, PageGetter {
     let currentObjectType = this.resolveObjectTypeFromRelationshipSegments(
       targetObjectType,
       relationshipSegments,
-      resolvedRelationshipConfig
+      resolvedRelationshipConfig,
     );
 
     // If traversal from targetObjectType failed, try from incomingObjectType instead.
@@ -881,14 +948,14 @@ export class TsDataSource implements ListGetter, PageGetter {
       currentObjectType = this.resolveObjectTypeFromRelationshipSegments(
         incomingObjectType,
         relationshipSegments,
-        resolvedRelationshipConfig
+        resolvedRelationshipConfig,
       );
       if (currentObjectType === null) return null;
     }
 
     const shortestPath = await this.findShortestRelationshipPath(
       targetObjectType,
-      currentObjectType
+      currentObjectType,
     );
 
     if (shortestPath === null) return null;
@@ -898,17 +965,17 @@ export class TsDataSource implements ListGetter, PageGetter {
   }
 
   /**
-    * Returns a field that uses the shortest relationship path from `sourceObjectType`.
-    *
-    * @param incomingField - Field name, with or without relationship segments.
-    * @param incomingObjectType - Object type that owns `field` when `field` has no relationship segments.
-    * @param targetObjectType - The object type that the field should be relative to.
-    * @returns Shortened field, or the original field if no valid path is found.
+   * Returns a field that uses the shortest relationship path from `sourceObjectType`.
+   *
+   * @param incomingField - Field name, with or without relationship segments.
+   * @param incomingObjectType - Object type that owns `field` when `field` has no relationship segments.
+   * @param targetObjectType - The object type that the field should be relative to.
+   * @returns Shortened field, or the original field if no valid path is found.
    */
   public async findShortestRelationshipField(
     incomingField: string,
     incomingObjectType: string,
-    targetObjectType: string
+    targetObjectType: string,
   ): Promise<string | null> {
     const resolvedRelationshipConfig = await this.relationshipConfig();
 
@@ -916,7 +983,8 @@ export class TsDataSource implements ListGetter, PageGetter {
     if (
       !resolvedRelationshipConfig[incomingObjectType] ||
       !resolvedRelationshipConfig[targetObjectType]
-    ) return null;
+    )
+      return null;
 
     // If the incoming field is not a valid dot-delimited path, return null
     if (!this.isValidFieldPath(incomingField)) return null;
@@ -926,7 +994,7 @@ export class TsDataSource implements ListGetter, PageGetter {
       return this.addShortestPathToAttributeField(
         incomingField,
         incomingObjectType,
-        targetObjectType
+        targetObjectType,
       );
     }
 
@@ -935,7 +1003,7 @@ export class TsDataSource implements ListGetter, PageGetter {
       incomingField,
       incomingObjectType,
       targetObjectType,
-      resolvedRelationshipConfig
+      resolvedRelationshipConfig,
     );
   }
 }

@@ -4,12 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import type {
-  IFilter,
-  IJsonApiDataExtra,
-  TApiMethod,
-} from "..";
-
+import type { IFilter, IJsonApiDataExtra, TApiMethod } from "..";
 
 export interface IGetOne {
   objectType: string;
@@ -32,6 +27,12 @@ export interface IUpsert {
   payload: IUpsertData[];
   objectType: string;
   params?: Record<string, any>;
+}
+
+interface IInsertData extends IUpsertData {};
+
+export interface IInsert extends Omit<IUpsert, "payload"> {
+  payload: IInsertData[];
 }
 
 interface IUpsertData {
@@ -104,4 +105,6 @@ export type TDataObjectOrNull = IDataObject | null;
 export type TDataObjectListOrNull = TDataObjectOrNull[] | null;
 
 export type TCursorSearchAfterOrNull = string[] | null;
-export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null
+export type TCursorObjectOrNull =
+  | [TDataObjectListOrNull, TCursorSearchAfterOrNull]
+  | null;

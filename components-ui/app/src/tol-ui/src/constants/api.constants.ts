@@ -16,6 +16,7 @@ export const API_METHODS: Record<string, string> = {
 
 export const API_OPERATIONS: Record<string, string> = {
   UPSERT: ":upsert",
+  INSERT: ":insert",
   CURSOR: ":cursor",
   COUNT: ":count",
   ACTION: ":action",
