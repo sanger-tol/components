@@ -6,10 +6,16 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.7.2`
+
+02-10-26
+- Fixed bug: Sunburst not showing legend on load
+- Fixed bug: Higher cardinality fields not showing for breakDownBy on charts
+
 ## tol-ui `5.7.1`
 
 01-10-26
-- Fixing bug on ProgressBarPopUp
+- Fixed bug on ProgressBarPopUp
 - Added className and style to StaticMessage
 - Adding filter prop to RemoteAutoComplete
 
