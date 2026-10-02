@@ -17,7 +17,7 @@ export interface PObjectDetailOptions {
 export interface PObjectDetail extends PObjectDetailOptions, IComponentData {}
 
 export function ObjectDetail(props: PObjectDetail) {
-  const { fields, data = {}, classNames = [], showKeys = false, ...rest } = props;
+  const { fields, data = {}, classNames = [], showKeys = true, ...rest } = props;
 
   return (
     <ComponentBase

@@ -33,7 +33,7 @@ export function normaliseFieldMeta(fieldMeta?: Partial<IFieldMeta>): IFieldMeta 
  * @returns The field's metadata, or `undefined` if not present in either `dataWithDefaults` or `data`.
  */
 export function getField(fields: IFieldMeta, attribute: string): TField | undefined {
-  return fields.dataWithDefaults?.[attribute] ?? fields.data?.[attribute];
+  return fields.data?.[attribute] ?? fields.dataWithDefaults?.[attribute];
 }
 
 /**
