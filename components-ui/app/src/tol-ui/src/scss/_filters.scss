@@ -22,11 +22,11 @@
   padding-right: 0;
 }
 
-.tol-text-filter,
-.tol-date-filter,
-.tol-multi-filter {
+.tol-filter-input {
   display: flex;
   align-items: center;
+  flex: 1 1 0;
+  min-width: 0;
   width: 100%;
   gap: 1px;
 
@@ -102,7 +102,6 @@
 }
 
 .tol-num-filter {
-  @extend .tol-text-filter;
   position: relative;
 
   // re-position dropdown toggle inline with input

@@ -21,8 +21,8 @@
 .tol-placeholder {
   background-image: linear-gradient(var(--tol-grey-subtle), rgba(255, 255, 255, 0));
   position: relative !important;
-  height: auto !important;
-  min-height: 150px !important;
+  height: 100% !important;
+  min-height: 100px !important;
   border: var(--tol-border-grey-subtle);
 }
 

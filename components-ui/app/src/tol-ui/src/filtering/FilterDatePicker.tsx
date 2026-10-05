@@ -119,7 +119,7 @@ export function FilterDatePicker(props: IFilterInput) {
   };
 
   return (
-    <div className="tol-date-filter" onClick={stopPropagation}>
+    <div className="tol-filter-input tol-date-filter" onClick={stopPropagation}>
       <DateRangePicker
         block
         onChange={onFilter}
