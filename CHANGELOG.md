@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 - Fixed bug: Sunburst not showing legend on load
 - Fixed bug: Higher cardinality fields not showing for breakDownBy on charts
 - Fixed bug: Overhanging multi-select filters
+- Capped the size that a filter description can be. If it's too large, it scrolls
 
 ## tol-ui `5.7.1`
 

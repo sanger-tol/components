@@ -348,6 +348,11 @@
 .tol-read-only-filters {
   list-style: none;
 
+  .tol-read-only-filter {
+    overflow-y: auto;
+    max-height: 5rem;
+  }
+
   .tol-read-only-filter > * {
     display: inline;
   }

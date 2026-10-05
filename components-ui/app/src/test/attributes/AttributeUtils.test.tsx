@@ -109,7 +109,7 @@ describe("getProseForAndFilters function", () => {
   });
 });
 
-describe("getReadOnlyFiltersText function", () => {
+describe("generateFilterDescriptions function", () => {
   // This is the only test needed, as the transformation into prose is handled by
   // the getProseForAndFilters function, which is separately tested above
   test("Function returns an object in the correct format", () => {
