@@ -47,7 +47,7 @@ const filterStatisticsComponent = async (page: Page) => {
   expect(countAfter).not.toBe(countBefore);
 }
 
-test("manage dashboard", async ({ page }) => {
+test("Add and filter statistics component", async ({ page }) => {
   await addComponent(page, page.getByTestId("zone").first(), "statistics", "Small");
 
   await filterStatisticsComponent(page);

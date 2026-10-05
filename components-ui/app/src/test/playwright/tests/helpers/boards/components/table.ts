@@ -29,7 +29,7 @@ export async function configureTable(
 
   // Add the default sort attribute if one was provided
   if (config.defaultSort) {
-    await selectFromDropdown(
+    await selectFromAttributeSelector(
       page,
       configDrawer.getByRole("combobox").nth(0),
       [config.defaultSort]

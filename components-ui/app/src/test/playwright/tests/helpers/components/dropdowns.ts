@@ -5,7 +5,6 @@
 import type { Locator, Page } from "@playwright/test";
 
 import { BASE_ATTRIBUTE_PROVENANCE_INDICATOR } from "../../";
-import { sleep } from "../sleep";
 
 /**
  * Selects the requested attributes from an AttributeSelector
@@ -18,21 +17,7 @@ export async function selectFromAttributeSelector (
   dropdown: Locator,
   fields: string[],
 ) {
-  // Make sure the dropdown is ready to be used
-  await dropdown.waitFor({ state: "visible" });
-  
-  // Open the dropdown
-  await dropdown.click();
-
-  // Resolve the listbox controlled by this combobox so we always target the right menu.
-  const listboxId = await dropdown.getAttribute("aria-controls");
-  if (!listboxId) {
-    throw new Error("Could not resolve dropdown listbox id from aria-controls.");
-  }
-
-  // Get a handle to the listbox with this ID (the area that shows all the clickable options)
-  const listbox = page.locator(`[id="${listboxId}"]`);
-  await listbox.waitFor({ state: "visible" });
+  const listbox = await openDropdown(page, dropdown);
 
   // `fields` contains an entry for each field separately;
   // reformat it into a record for what to select for each attribute.
@@ -101,11 +86,7 @@ export async function selectFromAttributeSelector (
     }
   }
 
-  // Close the dropdown.
-  // There's some weird thing where it doesn't register properly for a moment, so unfortunately
-  // a manual sleep is needed.
   await dropdown.click();
-  await sleep(page);
 }
 
 /**
@@ -115,13 +96,30 @@ export async function selectFromAttributeSelector (
  * @param values The values to select
  */
 export async function selectFromDropdown (page: Page, dropdown: Locator, values: string[]) {
-  // The same logic is used to select from an attribute selector, so we can reuse this function.
-  // If no provenance options are provided, we make every attribute in the `fieldsRecord` have
-  // `null` for provenances selected, which just means "select only the field itself, not any of its provenances",
-  // which is the behaviour we want here (the provenance pickers don't exist)
-  await selectFromAttributeSelector(
-    page,
-    dropdown,
-    values
-  );
+  await openDropdown(page, dropdown);
+
+  for (const value of values) {
+    await page.getByLabel(value).click();
+  }
+
+  await dropdown.click();
+}
+
+async function openDropdown(page: Page, dropdown: Locator) {
+  // Make sure the dropdown is ready to be used
+  await dropdown.waitFor({ state: "visible" });
+  
+  // Open the dropdown
+  await dropdown.click();
+
+  // Resolve the listbox controlled by this combobox so we always target the right menu.
+  const listboxId = await dropdown.getAttribute("aria-controls");
+  if (!listboxId) {
+    throw new Error("Could not resolve dropdown listbox id from aria-controls.");
+  }
+
+  // Get a handle to the listbox with this ID (the area that shows all the clickable options)
+  const listbox = page.locator(`[id="${listboxId}"]`);
+  await listbox.waitFor({ state: "visible" });
+  return listbox;
 }
