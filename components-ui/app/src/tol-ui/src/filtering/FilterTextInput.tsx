@@ -230,7 +230,7 @@ export function FilterTextInput(props: PFilterTextInput) {
 
   return (
     <div
-      className={isNumber ? "tol-num-filter" : "tol-text-filter"}
+      className={`tol-filter-control ${isNumber ? "tol-num-filter" : "tol-text-filter"}`}
       onClick={stopPropagation}
     >
       {isNumber && (
@@ -242,7 +242,7 @@ export function FilterTextInput(props: PFilterTextInput) {
         />
       )}
       {!isNumber && values.length > 1 ? (
-        <span className="tol-multi-filter">
+        <span className="tol-filter-control tol-multi-filter">
           <MultipleSelect
             block
             data={values}
