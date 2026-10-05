@@ -6,6 +6,11 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.7.3`
+
+05-10-26
+- Capped the size that a filter description can be. If it's too large, it scrolls
+
 ## tol-ui `5.7.2`
 
 05-10-26
