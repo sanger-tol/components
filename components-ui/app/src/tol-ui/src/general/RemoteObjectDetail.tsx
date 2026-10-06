@@ -20,7 +20,7 @@ export interface PRemoteObjectDetail extends PObjectDetailOptions, IRemoteCompon
 /** A remote version of the `ObjectDetail` component that fetches its data remotely. */
 export function RemoteObjectDetail(props: PRemoteObjectDetail) {
   return (
-    <RemoteComponentDataList pageSize={50} {...props}>
+    <RemoteComponentDataList {...props}>
       <ObjectDetail {...props} />
     </RemoteComponentDataList>
   );

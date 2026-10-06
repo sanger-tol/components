@@ -7,6 +7,24 @@
 .tol-object-detail {
   padding: var(--tol-spacing-sm);
 
+  &--columns {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--tol-spacing-md);
+  }
+
+  &-column {
+    min-width: 0;
+
+    &--right {
+      text-align: right;
+
+      .tol-object-detail-field {
+        justify-content: flex-end;
+      }
+    }
+  }
+
   h2,
   .tol-object-detail-field {
     margin: 0;
@@ -30,3 +48,4 @@
     }
   }
 }
+

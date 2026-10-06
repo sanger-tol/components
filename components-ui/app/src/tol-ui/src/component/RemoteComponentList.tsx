@@ -17,14 +17,17 @@ import {
   saveComponentConfigLocalStorage,
   useBoard,
   useComponentListData,
+  RecordCounter,
 } from "..";
-import { RecordCounter } from "./RecordCounter";
 import type { IComponentData, IListDataConfigSave, IRemoteComponentDataList, PButton } from "..";
+
 
 /** Props for the `RemoteComponentDataList` wrapper component. */
 export interface PRemoteComponentDataList extends IRemoteComponentDataList {
   /** The single top-level component to enhance with fetched data, e.g. an `<ObjectDetail />`. */
   children: ReactElement<IComponentData>;
+  /** Whether to display the page size picker in the utility bar. Defaults to true. */
+  pageSizePicker?: boolean;
 }
 
 /**
@@ -45,6 +48,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     setZone,
     page: initialPage,
     pageSize: initialPageSize,
+    pageSizePicker,
     children,
     utilityBarConfig,
     height = "100%",
@@ -141,7 +145,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
           pageSize={pageSize}
           setPageSize={setPageSize}
           totalSize={totalSize}
-          pageSizePickerVisible={false}
+          pageSizePicker={pageSizePicker}
         />,
       ]
       : [],
