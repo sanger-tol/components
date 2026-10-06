@@ -44,6 +44,22 @@
   }
 }
 
+.tol-form-search-controls {
+  display: grid;
+  gap: var(--tol-spacing-sm);
+
+  .tol-form-search-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--tol-spacing-sm);
+  }
+
+  .tol-form-search-error {
+    margin: 0;
+    color: var(--tol-danger);
+  }
+}
+
 .tol-form-checkboxes-text {
   display: flex;
   flex-direction: column;

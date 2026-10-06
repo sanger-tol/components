@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { FormComponentWrapper, ITextField, RSForm } from "..";
-import type { TTextFieldType } from "..";
+import type { KeyboardEventHandler } from "react";
+import { FormComponentWrapper, RSForm } from "..";
+import type { ITextField, TTextFieldType } from "..";
 
 export interface PFormTextField extends Omit<ITextField, "type"> {
   /**
@@ -20,6 +21,8 @@ export interface PFormTextField extends Omit<ITextField, "type"> {
    * The callback function that is called when the value of the form field changes.
    */
   onChange?: (value: string) => void;
+  /** Keyboard event handler for the text input. */
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
   /**
    * The type of the form field. This can be "text", "email", or "password".
    */
