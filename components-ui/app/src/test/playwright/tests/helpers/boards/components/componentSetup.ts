@@ -6,8 +6,8 @@ import { expect } from "@playwright/test";
 import type { Locator, Page } from "@playwright/test";
 
 import { clickUtilityBarButton } from "../../utility-bar";
-import { selectFromDropdown } from "../../components";
 import { getComponentCount } from "./componentInfo";
+import { selectFromAttributeSelector, selectFromDropdown } from "../..";
 
 /**
  * Adds the specified component to the specified zone.
@@ -71,7 +71,7 @@ export async function addComponentFilter(
   const filterDrawer = page.locator(".tol-drawer");
 
   // Select the attribute to filter
-  await selectFromDropdown(page, filterDrawer.getByRole("combobox").first(), [attribute]);
+  await selectFromAttributeSelector(page, filterDrawer.getByRole("combobox").first(), [attribute]);
 
   // Provide the filter value
   switch (filterType) {

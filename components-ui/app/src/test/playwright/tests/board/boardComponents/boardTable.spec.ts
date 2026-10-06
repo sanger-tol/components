@@ -29,15 +29,15 @@ test.afterEach(async ({ page }) => {
   }
 });
 
-test("manage dashboard", async ({ page }) => {
+test("Add and configure table", async ({ page }) => {
   await addComponent(page, page.getByTestId("zone").first(), "table", "large");
   await configureTable(
     page,
     page.getByTestId("board-component-table"),
     {
-      defaultSort: "Priority",
+      defaultSort: "sts_sample_sts_priority",
       limitColumnVisibility: true,
-      activeColumns: ["Species Name", "Priority"],
+      activeColumns: ["sts_scientific_name","sts_sample_sts_priority"],
     }
   )
   await deleteComponent(page, page.getByTestId("board-component-table"), "table");
