@@ -17,9 +17,13 @@ export interface IFieldTimeline extends IFieldBasic {
 
 /** Timeline display options using shared field metadata and component data. */
 export interface ITimeline extends IComponentData {
+  /** Timeline endless */
   endless?: boolean;
+  /** Hide undefined. */
   hideUndefined?: boolean;
+  /** Hide future date. */
   hideFuture?: boolean;
+  /** Hide past  date. */
   hidePast?: boolean;
   /** Show field descriptions below labels; defaults to true. */
   showDescription?: boolean;
