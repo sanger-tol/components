@@ -384,6 +384,11 @@ const mockClient: TClient = () => ({
       payload.search_after == "newTestSpeciesIdX3"
     ) {
       return Promise.resolve(speciesCursorMockData3);
+    } else if (
+      endpoint === "/species:insert" &&
+      config.baseURL === "/test-data-path"
+    ) {
+      return Promise.resolve(speciesUpsertMockData)
     }
     return Promise.reject({ response: { status: HTTP_STATUS_CODES.NOT_FOUND } });
   },

@@ -5,14 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { nanoid } from "nanoid";
-import {
-  PopUpMessage,
-  BUS_MESSAGE_OBJECT_TYPE,
-  MAX_EMAILS_ALLOWED,
-  NOTIFY_CATEGORY,
-  APP_NAME,
+import { PopUpMessage, BUS_MESSAGE_OBJECT_TYPE, MAX_EMAILS_ALLOWED } from "..";
+import type {
+  TsDataSource,
+  INotificationOptions,
+  TDataObjectListOrNull,
 } from "..";
-import type { TsDataSource, INotificationOptions, TDataObjectListOrNull } from "..";
 
 /**
  * Builds a bus message that requests an email notification.
@@ -28,7 +26,7 @@ export function buildNotificationMessage({
   emails,
   type,
   context,
-  targetApp = APP_NAME,
+  targetApp,
 }: INotificationOptions) {
   const id = nanoid();
   const recipients = [
@@ -47,20 +45,9 @@ export function buildNotificationMessage({
     type: BUS_MESSAGE_OBJECT_TYPE,
     id,
     attributes: {
-      routing_key: `${NOTIFY_CATEGORY}.${targetApp}.${type}`,
-      body: {
-        id,
-        type: "notification",
-        source: APP_NAME,
-        created_at: new Date().toISOString(),
-        context: {
-          id,
-          channels: ["email"],
-          type,
-          recipients,
-          context,
-        },
-      },
+      message_type: "notification",
+      context: { id, channels: ["email"], type, recipients, context },
+      ...(targetApp && { target_app: targetApp }),
     },
   };
 }
@@ -78,7 +65,6 @@ export async function sendNotification(
   options: INotificationOptions,
   params?: Record<string, unknown>,
 ): Promise<TDataObjectListOrNull> {
-
   const payload = buildNotificationMessage(options);
 
   if (!payload) {

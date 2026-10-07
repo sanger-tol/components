@@ -10,9 +10,9 @@ import type { TTolApp, TNotificationContext } from "..";
 export interface INotificationOptions {
   /** List of recipient email addresses. */
   emails: string[];
-  /** Template name on the consumer; also the routing-key subtype. */
+  /** Template name on the consumer (`<type>.subject.txt` / `<type>.body.html`). */
   type: string;
-  /** Defaults to this app. Other apps are rejected (403) until site-to-site is enabled. */
+  /** Variables available to the email template. */
   context: TNotificationContext;
   /** Defaults to this app. Other apps are rejected (403) until site-to-site is enabled. */
   targetApp?: TTolApp;
