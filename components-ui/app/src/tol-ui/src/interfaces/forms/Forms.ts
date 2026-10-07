@@ -289,6 +289,30 @@ export interface IFormConfig {
   buttonConfig?: IFormButtons;
 }
 
+/** Optional search-first controls for forms that can prefill their fields from a lookup. */
+export interface IFormSearchConfig<TResult extends object> {
+  /** Label for the search input. */
+  searchLabel: string;
+  /** Placeholder shown in the search input. */
+  searchPlaceholder: string;
+  /** Text for the search action. */
+  searchButtonText: string;
+  /** Text for the action that reveals the editable fields without a lookup. */
+  manualEntryButtonText: string;
+  /** Message shown when search is submitted with an empty query. */
+  emptySearchMessage: string;
+  /** Fallback message shown when lookup rejects without a useful error. */
+  searchErrorMessage: string;
+  /** Performs the lookup and returns values to merge into the form. */
+  onSearch: (query: string) => Promise<TResult>;
+  /** Receives successful lookup results. */
+  onSearchResult?: (result: TResult) => void;
+  /** Called when the user chooses manual entry. */
+  onManualEntry?: () => void;
+  /** Reports when an asynchronous lookup starts and finishes. */
+  onSearchStateChange?: (searching: boolean) => void;
+}
+
 export interface IFieldMapping {
   sourceField: string;
   targetField: string;
