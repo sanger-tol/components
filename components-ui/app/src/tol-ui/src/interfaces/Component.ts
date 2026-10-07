@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from "react";
-import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, TCustomDataPointRenderers, TDataRecord, TDataRecordList } from "..";
+import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, IListDataConfigSave, TCustomDataPointRenderers, TDataRecord, TDataRecordList } from "..";
 
 
 // TODO FUTURE: Remove IHeightDeprecated and migrate all components to use the height property in IComponentBase.
@@ -92,4 +92,6 @@ export interface IRemoteComponentDataList extends IRemoteComponentData, IRemoteT
   defaultSortByAttribute?: string;
   /** Default direction used for sorting when the component has list data. */
   defaultSortByType?: string;
+  /** Persist configuration externally instead of reading or writing standalone local storage. */
+  onConfigSave?: (config: IListDataConfigSave) => void;
 }

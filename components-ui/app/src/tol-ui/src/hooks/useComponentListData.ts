@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { API_METHODS, API_OPERATIONS, buildDataRecords, buildFieldMetaDefaults, useComponentData, useQueryData } from "..";
 import type { IFieldMeta, IUseComponentData, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecordList, TsDataSource } from "..";
 
@@ -19,7 +19,7 @@ export interface IUseComponentListData extends Omit<IUseComponentData<IFieldMeta
   fields?: IFieldMeta;
   /** The initial page to fetch; pagination state is then managed internally by this hook. */
   page?: number;
-  /** The initial number of results to fetch per page; pagination state is then managed internally by this hook. */
+  /** Configured number of results per page; changes reset pagination to the first page. */
   pageSize?: number;
   /** Sort string passed straight to `getListPage`. */
   sortBy?: string;
@@ -45,7 +45,7 @@ export function useComponentListData({
   dataSource,
   fields,
   page: initialPage = 1,
-  pageSize: initialPageSize = 1,
+  pageSize: initialPageSize = 50,
   sortBy,
   customDataPointRenderers,
   queryKey = [],
@@ -56,6 +56,15 @@ export function useComponentListData({
 
   const [page, setPage] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialPageSize);
+
+  useEffect(() => {
+    setPageSize(initialPageSize);
+    setPage(1);
+  }, [initialPageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize]);
 
   const {
     filter,

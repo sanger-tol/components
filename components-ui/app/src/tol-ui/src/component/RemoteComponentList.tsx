@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactElement, cloneElement, useEffect, useRef, useState } from "react";
+import { ReactElement, cloneElement, useMemo, useRef, useState } from "react";
 import {
   ComponentList,
   createSort,
@@ -48,6 +48,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     setZone,
     page: initialPage,
     pageSize: initialPageSize,
+    onConfigSave,
     pageSizePicker,
     children,
     utilityBarConfig,
@@ -58,30 +59,23 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
   const { board, editMode } = useBoard();
   const [openConfig, setOpenConfig] = useState(false);
   const [savedConfig, setSavedConfig] = useState<IListDataConfigSave>(() => {
-    const storedConfig = getComponentConfigLocalStorage<IListDataConfigSave>(id) ?? {};
-    return {
-      fieldMeta: normaliseFieldMeta(storedConfig.fieldMeta ?? fields),
-      defaultSortByAttribute: storedConfig.defaultSortByAttribute ?? defaultSortByAttribute,
-      defaultSortByType: storedConfig.defaultSortByType ?? defaultSortByType,
-    };
+    return onConfigSave ? {} : getComponentConfigLocalStorage<IListDataConfigSave>(id) ?? {};
   });
 
-  useEffect(() => {
-    setSavedConfig((current) => ({
-      ...current,
-      fieldMeta: normaliseFieldMeta(current.fieldMeta ?? fields),
-      defaultSortByAttribute: current.defaultSortByAttribute ?? defaultSortByAttribute,
-      defaultSortByType: current.defaultSortByType ?? defaultSortByType,
-    }));
-  }, [fields, defaultSortByAttribute, defaultSortByType]);
+  // External configuration (e.g. a board) must never inherit standalone saved settings.
+  const config: IListDataConfigSave = onConfigSave ? {} : savedConfig;
+  const configuredPageSize = config.pageSize ?? initialPageSize ?? 50;
 
   // Normalize the configured metadata from props/storage before passing it to the data hook.
-  const activeFieldMeta = normaliseFieldMeta(savedConfig.fieldMeta ?? fields);
+  const activeFieldMeta = useMemo(
+    () => normaliseFieldMeta(config.fieldMeta ?? fields),
+    [config.fieldMeta, fields],
+  );
   // Use the first active field only for the API request when no explicit sort is configured.
-  const apiSortByAttribute = savedConfig.defaultSortByAttribute ?? defaultSortByAttribute ?? activeFieldMeta.order?.active?.[0];
-  const apiSortByType = savedConfig.defaultSortByType ?? defaultSortByType ?? "asc";
-  const drawerSortByAttribute = savedConfig.defaultSortByAttribute ?? defaultSortByAttribute;
-  const drawerSortByType = savedConfig.defaultSortByType ?? defaultSortByType;
+  const apiSortByAttribute = config.defaultSortByAttribute ?? defaultSortByAttribute ?? activeFieldMeta.order?.active?.[0];
+  const apiSortByType = config.defaultSortByType ?? defaultSortByType ?? "asc";
+  const drawerSortByAttribute = config.defaultSortByAttribute ?? defaultSortByAttribute;
+  const drawerSortByType = config.defaultSortByType ?? defaultSortByType;
 
   const {
     // This is still IFieldMeta; the hook adds fetched descriptor defaults to the configured metadata.
@@ -103,7 +97,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     zone,
     setZone,
     page: initialPage,
-    pageSize: initialPageSize,
+    pageSize: configuredPageSize,
     customDataPointRenderers,
     sortBy: createSort(apiSortByAttribute, apiSortByType),
   });
@@ -113,14 +107,26 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
   const showPagination = totalSize !== undefined && totalSize > pageSize;
   const showCounter = totalSize !== undefined && totalSize > 1;
 
-  const onConfigSave = ({ fieldMeta: nextFieldMeta, defaultSortByAttribute, defaultSortByType }: IListDataConfigSave) => {
+  const onSave = ({
+    fieldMeta: nextFieldMeta,
+    defaultSortByAttribute,
+    defaultSortByType,
+    pageSize: nextPageSize
+  }: IListDataConfigSave) => {
     const nextConfig: IListDataConfigSave = {
       fieldMeta: nextFieldMeta ?? activeFieldMeta,
       defaultSortByAttribute: defaultSortByAttribute ?? undefined,
       defaultSortByType: defaultSortByType ?? undefined,
+      pageSize: nextPageSize ?? configuredPageSize,
     };
-    setSavedConfig(nextConfig);
-    saveComponentConfigLocalStorage(id, nextConfig);
+    setPage(1);
+    setPageSize(nextConfig.pageSize!);
+    if (onConfigSave) {
+      onConfigSave(nextConfig);
+    } else {
+      setSavedConfig(nextConfig);
+      saveComponentConfigLocalStorage(id, nextConfig);
+    }
   };
 
   const configButton: PButton = {
@@ -177,7 +183,8 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         fieldMeta={activeFieldMeta}
         defaultSortByAttribute={drawerSortByAttribute}
         defaultSortByType={drawerSortByType}
-        onConfigSave={onConfigSave}
+        pageSize={configuredPageSize}
+        onConfigSave={onSave}
       />
       {showCounter && <RecordCounter totalSize={totalSize} loading={isLoading} />}
       <RemoteComponentBase

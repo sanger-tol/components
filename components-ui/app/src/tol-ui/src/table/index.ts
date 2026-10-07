@@ -18,6 +18,7 @@ export * from "./ConfigDrawerTabs";
 export * from "./DataColumn";
 export * from "./FieldDropdown";
 export * from "./ImageCellModal";
+export * from "./PageSizePicker";
 export * from "./Pagination";
 export * from "./RemoteTable";
 export * from "./RemovedColumnsModal";

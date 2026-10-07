@@ -14,6 +14,8 @@ import {
   Drawer,
   SelectedAttributesContainer,
   IRemoteTarget,
+  PageSizePicker,
+  Tabs,
 } from "../..";
 import type { IFieldMeta, IListDataConfigSave } from "../..";
 
@@ -30,6 +32,8 @@ export interface PListDataConfigDrawer extends IRemoteTarget {
   defaultSortByAttribute?: string;
   /** Default sort direction. */
   defaultSortByType?: string;
+  /** Default number of records displayed per page. */
+  pageSize?: number;
   /** Callback used to persist the updated field selection. */
   onConfigSave: (config: IListDataConfigSave) => void;
 }
@@ -46,6 +50,7 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     fieldMeta,
     defaultSortByAttribute,
     defaultSortByType,
+    pageSize = 50,
   } = props;
 
   const [draftFieldMeta, setDraftFieldMeta] = useState<IFieldMeta>(() => ({
@@ -57,12 +62,14 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
   const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
   const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
+  const [draftPageSize, setDraftPageSize] = useState(pageSize);
 
   const hasPendingChanges = (
     !deepEqual(attributes, initialAttributesRef.current) ||
     !deepEqual(draftFieldMeta, fieldMeta) ||
     defaultSortByAttribute !== sortByAttribute ||
-    defaultSortByType !== sortByType
+    defaultSortByType !== sortByType ||
+    pageSize !== draftPageSize
   );
 
   useEffect(() => {
@@ -75,7 +82,8 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     initialAttributesRef.current = fieldMeta.order.active;
     setSortByAttribute(defaultSortByAttribute);
     setSortByType(defaultSortByType);
-  }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta]);
+    setDraftPageSize(pageSize);
+  }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta, pageSize]);
 
   const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
     <CellRendererConfigurer
@@ -97,6 +105,7 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
         },
         defaultSortByAttribute: sortByAttribute,
         defaultSortByType: sortByType,
+        pageSize: draftPageSize,
       });
     }
   };
@@ -118,9 +127,16 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     </div>
   );
 
-  const Content = (
+  const OptionsContent = (
     <>
-      <h6>Default Sort:</h6>
+      <h6 className="tol-mb-sm">Default Page Size:</h6>
+      <PageSizePicker
+        block
+        data-testid="default-page-size-dropdown"
+        pageSize={draftPageSize}
+        setPageSize={setDraftPageSize}
+      />
+      <h6 className="tol-mt-md tol-mb-sm">Default Sort:</h6>
       <AttributeSelector
         {...props}
         testid="default-sort-dropdown"
@@ -138,7 +154,11 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
         sticky
       />
       {sortByAttribute && SortByButtons}
-      <h6 className="tol-config-drawer-column-title">Active Fields:</h6>
+    </>
+  );
+
+  const FieldsContent = (
+    <>
       <div>
         <AttributeSelector
           {...props}
@@ -163,9 +183,24 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     </>
   );
 
+  const Content = (
+    <Tabs defaultActiveKey="fields">
+      <Tabs.Tab eventKey="fields" title="Fields">
+        <div className="tol-section-spacing-top">
+          {FieldsContent}
+        </div>
+      </Tabs.Tab>
+      <Tabs.Tab eventKey="options" title="Options">
+        <div className="tol-section-spacing-top">
+          {OptionsContent}
+        </div>
+      </Tabs.Tab>
+    </Tabs>
+  );
+
   return (
     <Drawer
-      title="Configure List Component"
+      title="Configure Component"
       open={open}
       setOpen={setOpen}
       onSave={onSave}

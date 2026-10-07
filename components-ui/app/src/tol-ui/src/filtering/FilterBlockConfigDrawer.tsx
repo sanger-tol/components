@@ -53,7 +53,7 @@ export function FilterBlockConfigDrawer(props: PFilterBlockConfigDrawer) {
 
   const AttributeSelecting = (
     <>
-      <h6 className="tol-config-drawer-column-title">Active Filters:</h6>
+      <h6 className="tol-mb-sm">Active Filters:</h6>
       <div>
         <AttributeSelector
           {...props}

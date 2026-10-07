@@ -5,7 +5,17 @@ SPDX-License-Identifier: MIT
 */
 
 import { DataPoints } from "..";
-import type { IFieldMeta, TField, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecord, TsDataSource, TDataRecordList } from "..";
+import type { IFieldMeta, TField, TCellRenderer, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecord, TsDataSource, TDataRecordList } from "..";
+
+/** Resolves the default data point renderer for an attribute's Python type. */
+export function addDefaultDataPointRenderer(type?: string): TCellRenderer {
+  switch (type) {
+    case "datetime":
+      return { type: "datetime" };
+    case "bool":
+      return { type: "boolean" };
+  }
+}
 
 /**
  * Ensures component field metadata has the maps and active-field order required by list rendering.

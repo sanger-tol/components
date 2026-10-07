@@ -14,4 +14,6 @@ export interface IListDataConfigSave {
   defaultSortByAttribute?: string;
   /** Default sort direction for the list. */
   defaultSortByType?: string;
+  /** Default number of records displayed per page. */
+  pageSize?: number;
 }

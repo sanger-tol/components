@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { RefObject, useState } from "react";
-import { Pagination as RSPagination, SelectPicker } from "rsuite";
-import { componentResizeListener, IPagination, PAGE_SIZE_OPTIONS } from "..";
+import { Pagination as RSPagination } from "rsuite";
+import { componentResizeListener, IPagination, PageSizePicker } from "..";
 
 
 /** Props for the `Pagination` component. */
@@ -42,13 +42,10 @@ export function Pagination(props: PPagination) {
     <div className="tol-pagination">
       {showPageSizePicker && (
         <span className="tol-page-size">
-          <SelectPicker
-            value={pageSize}
-            onChange={setPageSize}
+          <PageSizePicker
+            pageSize={pageSize}
+            setPageSize={setPageSize}
             size="sm"
-            cleanable={false}
-            searchable={false}
-            data={PAGE_SIZE_OPTIONS}
           />
         </span>
       )}

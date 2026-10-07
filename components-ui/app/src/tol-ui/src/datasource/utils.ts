@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import {
   ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX,
   RELATIONSHIP_SEPARATOR,
-  addDefaultCellRenderer,
+  addDefaultDataPointRenderer,
 } from "..";
 import type {
   TDataObjectOrNull,
@@ -78,7 +78,7 @@ export async function buildFieldMetaDefaults(
         description: descriptor?.description,
         source: descriptor?.source,
         actsAs: descriptor?.acts_as,
-        cellRenderer: addDefaultCellRenderer(descriptor?.python_type),
+        cellRenderer: addDefaultDataPointRenderer(descriptor?.python_type),
         // caller-provided config for this field overrides the fetched defaults
         ...existingDataWithDefaults?.[field],
       };
