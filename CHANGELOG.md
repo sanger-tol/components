@@ -6,9 +6,17 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.7.3-b0`
+
+07-10-26
+
+- **BETA RELEASE**
+- Added `sendNotification` function that sends a notification message to the RabbitMQ server.
+
 ## tol-ui `5.7.2`
 
 05-10-26
+
 - Fixed bug: Sunburst not showing legend on load
 - Fixed bug: Higher cardinality fields not showing for breakDownBy on charts
 - Fixed bug: Overhanging multi-select filters
@@ -17,6 +25,7 @@ SPDX-License-Identifier: MIT
 ## tol-ui `5.7.1`
 
 01-10-26
+
 - Fixed bug on ProgressBarPopUp
 - Added className and style to StaticMessage
 - Adding filter prop to RemoteAutoComplete
@@ -24,6 +33,7 @@ SPDX-License-Identifier: MIT
 ## tol-ui `5.7.0`
 
 29-09-26
+
 - Adding SQLiteDataSource to handle offline functionality
 - Added new operator interfaces/classes
 - Fixed Sqlite initialisation for native devices
@@ -31,11 +41,13 @@ SPDX-License-Identifier: MIT
 ## tol-ui `5.6.1`
 
 28-09-26
+
 - Dependency hotfix for sqlite
 
 ## tol-ui `5.6.0`
 
 22-09-26
+
 - BGA & Generic
   - Generic base/remote component wrappers (TOLP-10249)
   - Generic useComponentData hooks (TOLP-10249)
@@ -50,10 +62,10 @@ SPDX-License-Identifier: MIT
   - Added ProgressBar component
   - Allowed UserProfile functions to be passed within the profile config to SmartApp
   - Allowed form checkboxes to use async functions
-  - Added 'disabledWhen' prop that allows for dynamic disabling of form 
-  items (e.g a checkbox is not checked)
-  - Added offline service class to initialize a sqlite database locally 
-  (look at services/offline/README.md for more detail on the offline service)
+  - Added 'disabledWhen' prop that allows for dynamic disabling of form
+    items (e.g a checkbox is not checked)
+  - Added offline service class to initialize a sqlite database locally
+    (look at services/offline/README.md for more detail on the offline service)
 
 ## tol-ui `5.5.0`
 
