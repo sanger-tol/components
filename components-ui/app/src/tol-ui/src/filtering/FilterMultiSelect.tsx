@@ -195,7 +195,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   };
 
   return (
-    <div className="tol-multi-filter" onClick={stopPropagation}>
+    <div className="tol-filter-input tol-multi-filter" onClick={stopPropagation}>
       <MultipleSelect
         block
         data={data}

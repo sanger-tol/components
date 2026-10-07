@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect, ReactNode } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import {
   aggsToSunburstData,
   createAggsViaSliceBy,
@@ -14,7 +14,7 @@ import {
   Sunburst,
   Placeholder,
   useEffectUpdate,
-  resizeListener,
+  componentResizeListener,
   useZoneStateFallback,
   normaliseCaps,
   generateFilter,
@@ -96,6 +96,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
     noLabel,
   } = props;
   const wrapperId = "tol-sunburst-wrapper-" + id;
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [datasets, setDatasets] = useState({});
   const [subDatasets, setSubDatasets] = useState({});
   const [zone, setZone] = useZoneStateFallback({ ...props });
@@ -109,8 +110,8 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   const [subFilter, setSubFilter] = useState<TFilterOrUndefined>({});
   const [noLegend, setNoLegend] = useState(false);
 
-  resizeListener(() => {
-    const width = document.getElementById(wrapperId)?.offsetWidth;
+  componentResizeListener(wrapperRef, () => {
+    const width = wrapperRef.current?.offsetWidth;
     if (width !== undefined) setNoLegend(width < 578);
   });
 
@@ -275,6 +276,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   return (
     <div
       id={wrapperId}
+      ref={wrapperRef}
       style={{ height: height, position: miniActive ? "relative" : undefined }}
     >
       <UtilityBar id={id} {...ubc} />

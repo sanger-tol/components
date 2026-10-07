@@ -65,7 +65,7 @@ TRANSLATOR_TEST_INPUTS.forEach(({ zoneObjectTypes, TableFields }) => {
 
     test(`${zoneObjectTypes.join(" -> ")}`, async ({ page }) => {
       const filterString = "ABC";
-      const firstRowCounter = page.getByTestId("table-row-counter").nth(1);
+      const firstRowCounter = page.getByTestId("record-counter").nth(1);
       const initialSampleRow = (await firstRowCounter.textContent())?.trim();
       const firstFilterInput = page.getByTestId("Scientific Name-filter-input").first();
       await firstFilterInput.fill(filterString);

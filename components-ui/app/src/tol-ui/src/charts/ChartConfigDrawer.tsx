@@ -233,7 +233,7 @@ export function ChartConfigDrawer(props: IChartConfigDrawer) {
           additionalPopulatedFieldData={"."}
           renderSearchBySource={true}
           sticky={true}
-          allowedCardinality={{ operator: "<=", value: 50 }}
+          allowedCardinality={{ operator: "<=", value: 100 }}
         />
       </>
       {chartType == "bar" && (
