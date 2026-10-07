@@ -13,11 +13,12 @@ import { getTimelineFields } from "./utils";
 /** Renders selected date and boolean fields as a vertical timeline. */
 export function Timeline(props: ITimeline) {
   const {
-    fields, data = {}, endless = false, orderByDateFirst = true,
-    hideUndefined = false, hideFuture = false, hidePast = false, ...rest
+    fields, data = {}, endless = false,
+    hideUndefined = false, hideFuture = false, hidePast = false,
+    showDescription = true, ...rest
   } = props;
   const events = getTimelineFields({
-    id: rest.id, fields, data, orderByDateFirst, hideUndefined, hideFuture, hidePast,
+    id: rest.id, fields, data, hideUndefined, hideFuture, hidePast,
   });
 
   return (
@@ -47,7 +48,7 @@ export function Timeline(props: ITimeline) {
             >
               <strong>{field.rename ?? attribute}</strong>
               {!date && <p>{value === undefined ? "Not defined" : value ? "True" : "False"}</p>}
-              {field.description && <p>{field.description}</p>}
+              {showDescription && field.description && <p>{field.description}</p>}
             </RSTimeline.Item>
           );
         })}

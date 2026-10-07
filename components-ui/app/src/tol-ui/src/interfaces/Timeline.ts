@@ -18,9 +18,9 @@ export interface IFieldTimeline extends IFieldBasic {
 /** Timeline display options using shared field metadata and component data. */
 export interface ITimeline extends IComponentData {
   endless?: boolean;
-  /** Order by date first, then booleans in fields.order.active order. */
-  orderByDateFirst?: boolean;
   hideUndefined?: boolean;
   hideFuture?: boolean;
   hidePast?: boolean;
+  /** Show field descriptions below labels; defaults to true. */
+  showDescription?: boolean;
 }

@@ -11,11 +11,11 @@ import type { IFieldTimeline, ITimeline } from "..";
  * Selects and orders timeline fields without modifying their metadata or values.
  * @param props - Field selection, data, and timeline visibility options.
  * @param now - Reference time used by the past and future filters.
- * @returns Dated events followed by booleans and missing values, or active field order.
+ * @returns Events sorted by date, then booleans and missing values in active field order.
  */
 export function getTimelineFields(props: ITimeline, now = new Date()) {
   const {
-    fields, data = {}, orderByDateFirst = true,
+    fields, data = {},
     hideUndefined = false, hideFuture = false, hidePast = false,
   } = props;
 
@@ -33,10 +33,10 @@ export function getTimelineFields(props: ITimeline, now = new Date()) {
     return [{ attribute, field, date, value: typeof value === "boolean" ? value : undefined }];
   });
 
-  return orderByDateFirst ? events.sort((first, second) => {
+  return events.sort((first, second) => {
     if (first.date && second.date) return first.date.getTime() - second.date.getTime();
     if (first.date) return -1;
     if (second.date) return 1;
     return 0;
-  }) : events;
+  });
 }
