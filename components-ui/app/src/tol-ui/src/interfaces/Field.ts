@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import type { TCellRenderer } from "./Cells";
+import type { IFieldTimeline } from "./Timeline";
 
 /** Core metadata shared by all fields. */
 export interface IFieldBasic {
@@ -37,7 +38,7 @@ export interface IFieldTable extends IFieldBasic {
 }
 
 /** A field's metadata. */
-export type TField = IFieldBasic | IFieldTable;
+export type TField = IFieldBasic | IFieldTable | IFieldTimeline;
 
 /** Mapping of field identifiers to their metadata. */
 export type TFieldMetaData = Record<string, TField>;

@@ -43,3 +43,4 @@ export * from "./User";
 export * from "./Video";
 export * from "./Visualisation";
 export * from "./Widgets";
+export * from "./Timeline";

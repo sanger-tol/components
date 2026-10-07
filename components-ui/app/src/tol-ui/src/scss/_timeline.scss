@@ -4,55 +4,33 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-.timeline-header-text {
-  font-size: 14px;
-  font-weight: bolder;
-}
+@import "../deprecated/timeline/timeline";
 
-.timeline-item-header-text {
-  font-size: 14px;
-  font-weight: bolder;
-}
+.tol-timeline {
+  padding: var(--tol-spacing-sm);
 
-.rs-timeline-item-last {
-  margin-bottom: 20px;
-}
+  .tol-timeline-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--tol-timeline-color, var(--tol-grey));
+    color: var(--tol-light);
+  }
 
-.rs-timeline-item:not(:last-child) {
-  margin-bottom: 12px;
-}
+  .tol-timeline-marker-icon {
+    width: 30px;
+    height: 30px;
+    transform: translate(-10px, -10px);
 
-.timeline-custom-icon-background-color {
-  display: flex;
-  border-radius: 50%;
-  left: -16px;
-  position: relative;
-  top: -8px;
-}
-
-.rs-timeline-item-tail {
-  width: 2px;
-  height: 80px;
-}
-
-.timeline-custom-dot-color {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.rs-timeline-item-dot {
-  top: 0;
-}
-
-.timeline-wrapper {
-  margin-top: 20px;
-}
-
-@media screen and (max-width: 768px) {
-  .timeline-wrapper {
-    margin-left: -1.5rem;
-    padding-top: 0.75rem;
-    padding-bottom: 0.5rem;
+    .svg-inline--fa {
+      width: 14px;
+      height: 14px;
+      border: 0;
+      padding: 0;
+      color: inherit;
+    }
   }
 }

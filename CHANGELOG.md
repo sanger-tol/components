@@ -14,6 +14,7 @@ SPDX-License-Identifier: MIT
 - Fixed bug: Higher cardinality fields not showing for breakDownBy on charts
 - Fixed bug: Overhanging multi-select filters
 - Capped the size that a filter description can be. If it's too large, it scrolls
+- Refactored Timeline to use field metadata, configurable markers, date ordering, and visibility filters; deprecated the old timelines.
 
 ## tol-ui `5.7.1`
 

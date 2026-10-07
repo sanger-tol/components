@@ -12,9 +12,9 @@ import {
   RemoteGet,
   Widgets,
   formatDate,
-  Timeline,
   TOL_DS,
 } from "../../tol-ui/src";
+import { Timeline } from "../../tol-ui/src/deprecated/timeline";
 
 export function DetailInfo() {
   const { id } = useParams<{ id: string }>();

@@ -6,13 +6,11 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  TimeLineData,
-  TimelineItem,
-  Timeline,
   Placeholder,
-  IRemoteTarget,
-  TDataObjectOrNull
-} from "..";
+} from "../..";
+import type { IRemoteTarget, TDataObjectOrNull } from "../..";
+import { Timeline } from "./Timeline";
+import type { TimeLineData, TimelineItem } from "./Timeline";
 
 interface PRemoteTimeline extends IRemoteTarget {
   /**
