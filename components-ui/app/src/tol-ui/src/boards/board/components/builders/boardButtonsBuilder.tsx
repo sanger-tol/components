@@ -64,6 +64,8 @@ export interface IBoardButtonsBuilder {
    * Opens the board configuration drawer.
    */
   onOpenBoardConfigDrawer: () => void;
+  /** Whether copying the board is enabled. */
+  allowBoardCopy: boolean;
 }
 
 /**
@@ -79,6 +81,7 @@ export function boardButtonsBuilder({
   newBoardCopyTitle, setNewBoardCopyTitle,
   onOpenBoardCopyModal,
   onOpenBoardConfigDrawer,
+  allowBoardCopy,
 }: IBoardButtonsBuilder) {
   const editOrExitButton: PButton = {
     ...(editMode ? BOARD_BUTTONS.EDIT_MODE_EXIT : BOARD_BUTTONS.EDIT_MODE_ENTER),
@@ -137,7 +140,7 @@ export function boardButtonsBuilder({
   };
 
   const copyButton: PDropdownButton = {
-    toggle: BUTTONS.COPY,
+    toggle: { ...BUTTONS.COPY, visible: allowBoardCopy || editMode },
     buttons: [copyBoardButton, copyViewIdButton],
     testid: "board-copy-dropdown",
   };

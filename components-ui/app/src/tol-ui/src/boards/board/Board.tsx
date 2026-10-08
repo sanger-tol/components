@@ -270,6 +270,7 @@ export function Board(props: PBoard) {
       <BoardConfigDrawer
         open={boardConfigDrawerOpen}
         setOpen={setBoardConfigDrawerOpen}
+        boardDataSource={boardDataSource}
       />
       {mountedViewIds.map((viewId) => (
         <View
