@@ -6,6 +6,16 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `5.8.0`
+
+08-10-26
+
+- Generic list config drawer for list components
+  - Datapoint renderers
+  - Default page size
+  - Default sort by
+- Add scrollable list layer to generic paginated components
+
 ## tol-ui `5.7.2`
 
 05-10-26
