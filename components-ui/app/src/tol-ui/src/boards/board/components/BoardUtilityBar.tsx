@@ -155,6 +155,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     setNewBoardCopyTitle,
     onOpenBoardCopyModal,
     onOpenBoardConfigDrawer,
+    allowBoardCopy: board?.config?.allowBoardCopy ?? true,
   });
 
   const addZone: PButton = {
@@ -177,6 +178,8 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     <ViewModeBoardTitle text={board?.title!} editable={editMode} />
   );
 
+  const showProfileAvatar = editMode || (board?.config?.showProfileAvatar ?? true);
+
   return (
     <div className="tol-board-bar">
       <div className="tol-board-bar-container">
@@ -191,20 +194,22 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
             elements={editMode ? undefined : [ViewModeTitle]}
           />
         </div>
-        <ProfileAvatar
-          className="tol-board-bar-profile-bubble"
-          children={
-            <HoverOverlay
-              children={
-                board?.order
-                  ? `${board.owner_email?.split("@")[0].replace(/\d/g, "").toUpperCase()}`
-                  : "..."
-              }
-              contents={`Board owner: ${board.owner_email}`}
-              placement="left"
-            />
-          }
-        />
+        {showProfileAvatar && (
+          <ProfileAvatar
+            className="tol-board-bar-profile-bubble"
+            children={
+              <HoverOverlay
+                children={
+                  board?.order
+                    ? `${board.owner_email?.split("@")[0].replace(/\d/g, "").toUpperCase()}`
+                    : "..."
+                }
+                contents={`Board owner: ${board.owner_email}`}
+                placement="left"
+              />
+            }
+          />
+        )}
       </div>
       {editMode && <hr />}
       {(board?.order?.length > 1 || editMode) && (

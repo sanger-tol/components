@@ -8,6 +8,8 @@ import type { IFieldMeta } from "./Field";
 
 /** Board-level configuration options. */
 export interface IBoardConfig {
+  /** Whether users can copy the board. Defaults to true. */
+  allowBoardCopy?: boolean;
   /** Whether to show the board owner's profile avatar. Defaults to true. */
   showProfileAvatar?: boolean;
 }
