@@ -67,6 +67,10 @@ export interface IBoardUtilityBar {
    * Opens the view import modal.
    */
   onOpenViewImportModal: () => void;
+  /**
+   * Opens the board configuration drawer.
+   */
+  onOpenBoardConfigDrawer: () => void;
 }
 
 /**
@@ -81,6 +85,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     onOpenBoardCopyModal,
     setNewBoardCopyTitle,
     onOpenAddZone,
+    onOpenBoardConfigDrawer,
   } = props;
 
   const {
@@ -149,6 +154,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     newBoardCopyTitle,
     setNewBoardCopyTitle,
     onOpenBoardCopyModal,
+    onOpenBoardConfigDrawer,
   });
 
   const addZone: PButton = {
