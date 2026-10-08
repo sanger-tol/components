@@ -60,6 +60,10 @@ export interface IBoardButtonsBuilder {
    * Open the board copy modal.
    */
   onOpenBoardCopyModal: () => void;
+  /**
+   * Opens the board configuration drawer.
+   */
+  onOpenBoardConfigDrawer: () => void;
 }
 
 /**
@@ -74,6 +78,7 @@ export function boardButtonsBuilder({
   boardTitle,
   newBoardCopyTitle, setNewBoardCopyTitle,
   onOpenBoardCopyModal,
+  onOpenBoardConfigDrawer,
 }: IBoardButtonsBuilder) {
   const editOrExitButton: PButton = {
     ...(editMode ? BOARD_BUTTONS.EDIT_MODE_EXIT : BOARD_BUTTONS.EDIT_MODE_ENTER),
@@ -105,6 +110,12 @@ export function boardButtonsBuilder({
     },
   };
 
+  const boardConfigButton: PButton = {
+    ...BOARD_BUTTONS.BOARD_CONFIG,
+    onClick: onOpenBoardConfigDrawer,
+    visible: editMode,
+  };
+
   const copyBoardButton: PButton = {
     ...BOARD_BUTTONS.COPY_BOARD,
     onClick: () => {
@@ -134,6 +145,7 @@ export function boardButtonsBuilder({
   return [
     editOrExitButton,
     layoutOrExitButton,
+    boardConfigButton,
     copyButton,
     shareButton,
   ];

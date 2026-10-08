@@ -32,7 +32,7 @@ import {
   isEmptyObject,
   translateBoardFilters,
 } from "../..";
-import { BoardUtilityBar, ImportViewModal } from "./components";
+import { BoardConfigDrawer, BoardUtilityBar, ImportViewModal } from "./components";
 import type { IBoard, IBoardFilter, TsDataSource } from "../..";
 
 
@@ -60,6 +60,8 @@ export function Board(props: PBoard) {
   const [newBoardCopyTitle, setNewBoardCopyTitle] = useState<string>("");
   const [viewImportId, setViewImportId] = useState<string>("");
   const [viewImportModalOpen, setViewImportModalOpen] =
+    useState<boolean>(false);
+  const [boardConfigDrawerOpen, setBoardConfigDrawerOpen] =
     useState<boolean>(false);
 
   // Ability to override boardId from props over URL params
@@ -253,6 +255,7 @@ export function Board(props: PBoard) {
       />
       <BoardUtilityBar
         onOpenBoardCopyModal={() => setBoardCopyModalOpen(true)}
+        onOpenBoardConfigDrawer={() => setBoardConfigDrawerOpen(true)}
         setNewBoardCopyTitle={setNewBoardCopyTitle}
         onOpenAddZone={() => setOpenAddZoneModal(true)}
         newBoardCopyTitle={newBoardCopyTitle}
@@ -263,6 +266,10 @@ export function Board(props: PBoard) {
         onClickView={onClickView}
         onAddView={onAddView}
         onReorderView={onReorderViews}
+      />
+      <BoardConfigDrawer
+        open={boardConfigDrawerOpen}
+        setOpen={setBoardConfigDrawerOpen}
       />
       {mountedViewIds.map((viewId) => (
         <View
