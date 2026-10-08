@@ -41,6 +41,9 @@ export interface PListDataConfigDrawer extends IRemoteTarget {
 /**
  * ListDataConfigDrawer provides field selection, sorting, and renderer configuration
  * for RemoteObjectDetail and other list-style components.
+ * 
+ * Parameters are prefixed with draft as they represent the temporary state
+ * of the configuration before it is saved.
  */
 export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
   const {
@@ -58,17 +61,17 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     data: deepCopy(fieldMeta.data ?? {}),
     dataWithDefaults: deepCopy(fieldMeta.dataWithDefaults ?? {}),
   }));
-  const initialAttributesRef = useRef<string[]>(fieldMeta.order.active);
-  const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
-  const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
-  const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
+  const savedAttributesRef = useRef<string[]>(fieldMeta.order.active);
+  const [draftAttributes, setDraftAttributes] = useState<string[]>(fieldMeta.order.active);
+  const [draftSortByAttribute, setDraftSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
+  const [draftSortByType, setDraftSortByType] = useState<string | undefined>(defaultSortByType);
   const [draftPageSize, setDraftPageSize] = useState(pageSize);
 
   const hasPendingChanges = (
-    !deepEqual(attributes, initialAttributesRef.current) ||
+    !deepEqual(draftAttributes, savedAttributesRef.current) ||
     !deepEqual(draftFieldMeta, fieldMeta) ||
-    defaultSortByAttribute !== sortByAttribute ||
-    defaultSortByType !== sortByType ||
+    defaultSortByAttribute !== draftSortByAttribute ||
+    defaultSortByType !== draftSortByType ||
     pageSize !== draftPageSize
   );
 
@@ -78,10 +81,10 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
       data: deepCopy(fieldMeta.data ?? {}),
       dataWithDefaults: deepCopy(fieldMeta.dataWithDefaults ?? {}),
     });
-    setAttributes(fieldMeta.order.active);
-    initialAttributesRef.current = fieldMeta.order.active;
-    setSortByAttribute(defaultSortByAttribute);
-    setSortByType(defaultSortByType);
+    setDraftAttributes(fieldMeta.order.active);
+    savedAttributesRef.current = fieldMeta.order.active;
+    setDraftSortByAttribute(defaultSortByAttribute);
+    setDraftSortByType(defaultSortByType);
     setDraftPageSize(pageSize);
   }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta, pageSize]);
 
@@ -101,10 +104,10 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
       onConfigSave({
         fieldMeta: {
           ...draftFieldMeta,
-          order: { ...draftFieldMeta.order, active: attributes },
+          order: { ...draftFieldMeta.order, active: draftAttributes },
         },
-        defaultSortByAttribute: sortByAttribute,
-        defaultSortByType: sortByType,
+        defaultSortByAttribute: draftSortByAttribute,
+        defaultSortByType: draftSortByType,
         pageSize: draftPageSize,
       });
     }
@@ -118,8 +121,8 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
           key={direction}
           text={direction}
           type="primary"
-          onClick={() => setSortByType(direction)}
-          active={sortByType === direction}
+          onClick={() => setDraftSortByType(direction)}
+          active={draftSortByType === direction}
           size="lg"
           className="tol-board-chart-sort-buttons"
         />
@@ -142,10 +145,10 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
         testid="default-sort-dropdown"
         maxSelections={1}
         placeholder="Default Sort Column"
-        attribute={sortByAttribute ? [sortByAttribute] : []}
+        attribute={draftSortByAttribute ? [draftSortByAttribute] : []}
         setAttributes={(a) => {
-          setSortByAttribute(a[0]);
-          setSortByType(a[0] ? "asc" : undefined);
+          setDraftSortByAttribute(a[0]);
+          setDraftSortByType(a[0] ? "asc" : undefined);
         }}
         disabledValues={null}
         numPopulatedFields={0}
@@ -153,7 +156,7 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
         additionalPopulatedFieldData={"."}
         sticky
       />
-      {sortByAttribute && SortByButtons}
+      {draftSortByAttribute && SortByButtons}
     </>
   );
 
@@ -165,8 +168,8 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
           sticky
           recommendedFilterAvailable
           placeholder="Select fields to display..."
-          attribute={attributes}
-          setAttributes={setAttributes}
+          attribute={draftAttributes}
+          setAttributes={setDraftAttributes}
           disabledValues={null}
           numPopulatedFields={0}
           populatedFieldType={"field"}
@@ -175,8 +178,8 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
       </div>
       <SelectedAttributesContainer
         {...props}
-        attributes={attributes}
-        setAttributes={setAttributes}
+        attributes={draftAttributes}
+        setAttributes={setDraftAttributes}
         additionalIcons={additionalIcons}
         fieldMeta={draftFieldMeta}
       />
