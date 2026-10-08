@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 # Changelog
 
 ## tol-ui `5.7.4`
-- Refactored Timeline with field metadata, configurable markers, automatic date ordering, visibility filters, and optional descriptions; deprecated the old timelines.
+- Refactored Timeline with field metadata, configurable markers, automatic date ordering, visibility filters, and optional descriptions; removed the deprecated timelines and their examples.
 
 ## tol-ui `5.7.2`
 
