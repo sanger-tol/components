@@ -106,6 +106,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
 
   const showPagination = totalSize !== undefined && totalSize > pageSize;
   const showCounter = totalSize !== undefined && totalSize > 1;
+  const showPageSizePicker = configuredPageSize !== 1 && pageSizePicker !== false;
 
   const onSave = ({
     fieldMeta: nextFieldMeta,
@@ -151,7 +152,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
           pageSize={pageSize}
           setPageSize={setPageSize}
           totalSize={totalSize}
-          pageSizePicker={pageSizePicker}
+          pageSizePicker={showPageSizePicker}
         />,
       ]
       : [],

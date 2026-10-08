@@ -46,6 +46,7 @@ export function Pagination(props: PPagination) {
             pageSize={pageSize}
             setPageSize={setPageSize}
             size="sm"
+            pageSizeOfOneIsSelectable={false}
           />
         </span>
       )}

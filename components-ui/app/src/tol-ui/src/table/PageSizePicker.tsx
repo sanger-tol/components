@@ -15,6 +15,8 @@ export interface PPageSizePicker extends Pick<IPagination, "pageSize" | "setPage
   block?: boolean;
   /** The size of the picker. */
   size?: "xs" | "sm" | "md" | "lg";
+  /** Whether the page size picker should allow selecting the 1 option. */
+  pageSizeOfOneIsSelectable?: boolean;
   /** Test identifier for the picker. */
   "data-testid"?: string;
 }
@@ -24,7 +26,10 @@ export function PageSizePicker(props: PPageSizePicker) {
   const {
     pageSize,
     setPageSize,
+    block,
+    size,
     "data-testid": testId,
+    pageSizeOfOneIsSelectable = true,
   } = props;
 
   const onChange = (value: number | null) => {
@@ -35,9 +40,10 @@ export function PageSizePicker(props: PPageSizePicker) {
 
   return (
     <SelectPicker
-      {...props}
+      block={block}
+      size={size}
       data-testid={testId}
-      data={PAGE_SIZE_OPTIONS}
+      data={PAGE_SIZE_OPTIONS(pageSizeOfOneIsSelectable)}
       value={pageSize}
       onChange={onChange}
       cleanable={false}

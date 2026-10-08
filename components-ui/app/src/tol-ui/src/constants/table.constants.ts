@@ -25,8 +25,8 @@ export const TABLE_ERROR_ATTRIBUTE_METADATA_NOT_FOUND = (field: string, objectTy
 export const TABLE_ERROR_FIELD_METADATA_NOT_FOUND = (field: string): string =>
   `Field metadata not found for attribute: ${field}`;
 
-export const PAGE_SIZE_OPTIONS = [
-  { label: "1", value: 1 },
+export const PAGE_SIZE_OPTIONS = (pageSizeOfOneIsSelectable?: boolean) => [
+  ...(pageSizeOfOneIsSelectable ? [{ label: "1", value: 1 }] : []),
   { label: "5", value: 5 },
   { label: "10", value: 10 },
   { label: "25", value: 25 },
