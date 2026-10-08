@@ -42,8 +42,8 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     objectType,
     fields,
     customDataPointRenderers,
-    defaultSortByAttribute,
-    defaultSortByType,
+    sortByAttribute,
+    sortByType,
     zone,
     setZone,
     page: initialPage,
@@ -72,10 +72,10 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     [config.fieldMeta, fields],
   );
   // Use the first active field only for the API request when no explicit sort is configured.
-  const apiSortByAttribute = config.defaultSortByAttribute ?? defaultSortByAttribute ?? activeFieldMeta.order?.active?.[0];
-  const apiSortByType = config.defaultSortByType ?? defaultSortByType ?? "asc";
-  const drawerSortByAttribute = config.defaultSortByAttribute ?? defaultSortByAttribute;
-  const drawerSortByType = config.defaultSortByType ?? defaultSortByType;
+  const apiSortByAttribute = config.sortByAttribute ?? sortByAttribute ?? activeFieldMeta.order?.active?.[0];
+  const apiSortByType = config.sortByType ?? sortByType ?? "asc";
+  const drawerSortByAttribute = config.sortByAttribute ?? sortByAttribute;
+  const drawerSortByType = config.sortByType ?? sortByType;
 
   const {
     // This is still IFieldMeta; the hook adds fetched descriptor defaults to the configured metadata.
@@ -110,14 +110,14 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
 
   const onSave = ({
     fieldMeta: nextFieldMeta,
-    defaultSortByAttribute,
-    defaultSortByType,
+    sortByAttribute,
+    sortByType,
     pageSize: nextPageSize
   }: IListDataConfigSave) => {
     const nextConfig: IListDataConfigSave = {
       fieldMeta: nextFieldMeta ?? activeFieldMeta,
-      defaultSortByAttribute: defaultSortByAttribute ?? undefined,
-      defaultSortByType: defaultSortByType ?? undefined,
+      sortByAttribute: sortByAttribute ?? undefined,
+      sortByType: sortByType ?? undefined,
       pageSize: nextPageSize ?? configuredPageSize,
     };
     setPage(1);
@@ -182,8 +182,8 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         open={openConfig}
         setOpen={setOpenConfig}
         fieldMeta={activeFieldMeta}
-        defaultSortByAttribute={drawerSortByAttribute}
-        defaultSortByType={drawerSortByType}
+        sortByAttribute={drawerSortByAttribute}
+        sortByType={drawerSortByType}
         pageSize={configuredPageSize}
         onConfigSave={onSave}
       />

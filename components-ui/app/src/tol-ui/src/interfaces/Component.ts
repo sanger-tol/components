@@ -62,12 +62,12 @@ export interface IPagination {
   totalSize?: number;
 }
 
-/** Default sort configuration for list components. */
-export interface IDefaultSort {
-  /** Default attribute used for sorting. */
-  defaultSortByAttribute?: string;
-  /** Default sort direction. */
-  defaultSortByType?: string;
+/** Sort configuration for list components. */
+export interface ISortBy {
+  /** Attribute used for sorting. */
+  sortByAttribute?: string;
+  /** Sort direction. */
+  sortByType?: string;
 }
 
 /** Represents a component with associated fields. */
@@ -95,7 +95,7 @@ export interface IRemoteComponentData extends IRemoteComponentBase, IComponentFi
 }
 
 /** Interface for a remote component with list capabilities. */
-export interface IRemoteComponentDataList extends IRemoteComponentData, IRemoteTargetAndZone, IPagination, IDefaultSort {
+export interface IRemoteComponentDataList extends IRemoteComponentData, IRemoteTargetAndZone, IPagination, ISortBy {
   /** Persist configuration externally instead of reading or writing standalone local storage. */
   onConfigSave?: (config: IListDataConfigSave) => void;
 }

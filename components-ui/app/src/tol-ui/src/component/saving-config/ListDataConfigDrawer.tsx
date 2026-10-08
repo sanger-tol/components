@@ -29,9 +29,9 @@ export interface PListDataConfigDrawer extends IRemoteTarget {
   /** Current field metadata for the component. */
   fieldMeta: IFieldMeta;
   /** Default sort attribute. */
-  defaultSortByAttribute?: string;
-  /** Default sort direction. */
-  defaultSortByType?: string;
+  sortByAttribute?: string;
+  /** Sort direction. */
+  sortByType?: string;
   /** Default number of records displayed per page. */
   pageSize?: number;
   /** Callback used to persist the updated field selection. */
@@ -51,8 +51,8 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     setOpen,
     onConfigSave,
     fieldMeta,
-    defaultSortByAttribute,
-    defaultSortByType,
+    sortByAttribute,
+    sortByType,
     pageSize = 50,
   } = props;
 
@@ -63,15 +63,15 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
   }));
   const savedAttributesRef = useRef<string[]>(fieldMeta.order.active);
   const [draftAttributes, setDraftAttributes] = useState<string[]>(fieldMeta.order.active);
-  const [draftSortByAttribute, setDraftSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
-  const [draftSortByType, setDraftSortByType] = useState<string | undefined>(defaultSortByType);
+  const [draftSortByAttribute, setDraftSortByAttribute] = useState<string | undefined>(sortByAttribute);
+  const [draftSortByType, setDraftSortByType] = useState<string | undefined>(sortByType);
   const [draftPageSize, setDraftPageSize] = useState(pageSize);
 
   const hasPendingChanges = (
     !deepEqual(draftAttributes, savedAttributesRef.current) ||
     !deepEqual(draftFieldMeta, fieldMeta) ||
-    defaultSortByAttribute !== draftSortByAttribute ||
-    defaultSortByType !== draftSortByType ||
+    sortByAttribute !== draftSortByAttribute ||
+    sortByType !== draftSortByType ||
     pageSize !== draftPageSize
   );
 
@@ -83,10 +83,10 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     });
     setDraftAttributes(fieldMeta.order.active);
     savedAttributesRef.current = fieldMeta.order.active;
-    setDraftSortByAttribute(defaultSortByAttribute);
-    setDraftSortByType(defaultSortByType);
+    setDraftSortByAttribute(sortByAttribute);
+    setDraftSortByType(sortByType);
     setDraftPageSize(pageSize);
-  }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta, pageSize]);
+  }, [open, sortByAttribute, sortByType, fieldMeta, pageSize]);
 
   const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
     <CellRendererConfigurer
@@ -106,8 +106,8 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
           ...draftFieldMeta,
           order: { ...draftFieldMeta.order, active: draftAttributes },
         },
-        defaultSortByAttribute: draftSortByAttribute,
-        defaultSortByType: draftSortByType,
+        sortByAttribute: draftSortByAttribute,
+        sortByType: draftSortByType,
         pageSize: draftPageSize,
       });
     }
