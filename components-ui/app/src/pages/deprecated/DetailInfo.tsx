@@ -21,7 +21,7 @@ export function DetailInfo() {
   const [response, setResponse] = useState();
 
   if (response === null) {
-    return <Header title="Species not found." pageEmpty />;
+    return <Header title="Species not found." />;
   }
 
   if (response === undefined) {

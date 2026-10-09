@@ -79,7 +79,7 @@ export function View(props: PView) {
           {editMode ? (
             <p>Please click the 'Add Zone' button to get started.</p>
           ) : (
-            <p>No zones found</p>
+            <p>No content found</p>
           )}
         </div>
       ) : (

@@ -16,3 +16,4 @@ export * from "./useTimeout";
 export * from "./useFormData";
 export * from "./useComponentData";
 export * from "./useComponentListData";
+export * from "./useStickyShadow";
