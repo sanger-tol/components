@@ -11,14 +11,12 @@ export const BOARD_BUTTONS: Record<string, PButton> = {
   EDIT_MODE_ENTER: {
     ...BUTTONS.EDIT,
     type: "warning",
-    text: "Edit",
-    tooltip: "Enter Edit Mode",
+    text: "Edit Board",
   },
   EDIT_MODE_EXIT: {
     ...BUTTONS.CONFIRM,
     type: "primary",
-    text: "Exit",
-    tooltip: "Exit Edit Mode"
+    text: "Exit Edit Mode",
   },
   LAYOUT_MODE_ENTER: {
     ...BUTTONS.EDIT,

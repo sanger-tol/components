@@ -10,3 +10,7 @@ export const PRIVILEGE = {
     VIEWABLE: "viewable"
   }
 } as const;
+
+export const USER_ROLES = {
+  WARDEN: "warden",
+} as const;

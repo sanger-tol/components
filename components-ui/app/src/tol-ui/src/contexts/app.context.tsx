@@ -9,9 +9,7 @@ import type { ReactNode } from "react";
 import type { TNavConfig } from "..";
 
 export interface IAppContextValue {
-  /**
-   * The navigation configuration for the application.
-   */
+  /** The navigation configuration for the application. */
   navConfig: TNavConfig;
 }
 

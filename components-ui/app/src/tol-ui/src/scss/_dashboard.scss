@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-#tol-smart-app-background:has(.tol-board) > .tol-board-backing-fade {
+// Add the fixed navbar backing only for boards using the sticky utility bar, not masthead headers.
+#tol-smart-app-background:has(.tol-board-bar):not(:has(.masthead)) > .tol-board-backing-fade {
   position: fixed;
   top: 0;
   left: 0;
@@ -45,7 +46,7 @@
   .tol-edit-mode-button {
     position: fixed;
     bottom: 20px;
-    left: 20px;
+    right: 20px;
     z-index: 1000;
   }
 }
@@ -194,6 +195,11 @@
       margin-top: 6px;
     }
   }
+}
+
+// Adjust the margin of the board bar when it follows the masthead offset.
+.masthead-offset + .tol-board-bar {
+  margin-top: -6px !important;
 }
 
 .tol-zone-bar {

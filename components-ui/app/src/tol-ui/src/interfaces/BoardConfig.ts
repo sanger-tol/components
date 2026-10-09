@@ -12,6 +12,15 @@ export interface IBoardConfig {
   allowBoardCopy?: boolean;
   /** Whether to show the board owner's profile avatar. Defaults to true. */
   showProfileAvatar?: boolean;
+  /** Board header configuration. */
+  header?: {
+    /** Whether to show the board header. Defaults to false. */
+    visible: boolean;
+    /** Optional URL for the header background image. */
+    image?: string;
+  };
+  /** Whether to hide the board share button. Defaults to false. */
+  hideShareButton?: boolean;
 }
 
 /**

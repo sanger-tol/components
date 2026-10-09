@@ -36,6 +36,7 @@ import { BoardConfigDrawer, BoardUtilityBar, ImportViewModal } from "./component
 import type { IBoard, IBoardFilter, TsDataSource } from "../..";
 
 
+/** Props for the Board component. */
 export interface PBoard extends IBoardFilter {
   /** The ID of the board to be displayed. */
   boardId?: string;
@@ -126,20 +127,6 @@ export function Board(props: PBoard) {
     );
   }, [activeViewId]);
 
-  // Scroll listener for sticky board bar shadow effect
-  useEffect(() => {
-    if (!isSuccess) return;
-    const bar = document.querySelector<HTMLElement>(".tol-board-bar");
-    if (!bar) return;
-    const onScroll = () => {
-      const progress = Math.min(window.scrollY / 20, 1);
-      bar.style.setProperty("--tol-bar-scroll", progress.toString());
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isSuccess]);
-
   const onClickView = (viewId: string) => () => {
     setActiveViewId(viewId);
     updateViewInUrl(viewId);
@@ -181,6 +168,37 @@ export function Board(props: PBoard) {
     );
   };
 
+  const onConfirmBoardCopy = async () => {
+    if (!newBoardCopyTitle.trim()) {
+      PopUpMessage({
+        type: MESSAGE_TYPE.WARNING,
+        message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD)
+          .BOARD_COPY.NO_TITLE_ERROR,
+      });
+      return;
+    }
+    const copiedBoard = await copyBoard(
+      boardDataSource,
+      id!,
+      newBoardCopyTitle,
+      BOARD_ENTITIES.ENTITIES.BOARD,
+    );
+    if (copiedBoard) {
+      setBoard(copiedBoard);
+      const firstViewId = copiedBoard.order?.[0];
+      if (firstViewId) {
+        setActiveViewId(firstViewId);
+        setMountedViewIds([firstViewId]);
+      }
+    }
+    setPrivilege(
+      copiedBoard?.write_privilege
+        ? PRIVILEGE.BOARD.WRITABLE
+        : PRIVILEGE.BOARD.VIEWABLE,
+    );
+    setBoardCopyModalOpen(false);
+  };
+
   if (isError || isBoardNotFound) {
     return <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />;
   }
@@ -208,36 +226,7 @@ export function Board(props: PBoard) {
         title={newBoardCopyTitle}
         setTitle={setNewBoardCopyTitle}
         itemType={BOARD_ENTITIES.ENTITIES.BOARD}
-        confirmationAction={async () => {
-          if (!newBoardCopyTitle.trim()) {
-            PopUpMessage({
-              type: MESSAGE_TYPE.WARNING,
-              message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD)
-                .BOARD_COPY.NO_TITLE_ERROR,
-            });
-            return;
-          }
-          const copiedBoard = await copyBoard(
-            boardDataSource,
-            id!,
-            newBoardCopyTitle,
-            BOARD_ENTITIES.ENTITIES.BOARD,
-          );
-          if (copiedBoard) {
-            setBoard(copiedBoard);
-            const firstViewId = copiedBoard.order?.[0];
-            if (firstViewId) {
-              setActiveViewId(firstViewId);
-              setMountedViewIds([firstViewId]);
-            }
-          }
-          setPrivilege(
-            copiedBoard?.write_privilege
-              ? PRIVILEGE.BOARD.WRITABLE
-              : PRIVILEGE.BOARD.VIEWABLE,
-          );
-          setBoardCopyModalOpen(false);
-        }}
+        confirmationAction={onConfirmBoardCopy}
         onExited={() => {
           !newBoardCopyTitle.trim()
             ? setNewBoardCopyTitle(`${board?.title} - copy`)

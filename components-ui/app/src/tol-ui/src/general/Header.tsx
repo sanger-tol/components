@@ -4,11 +4,11 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useState } from "react";
+import { useState, type ReactNode } from "react";
 import { resizeListener } from "..";
 
 export interface PHeader {
-  title?: string;
+  title?: ReactNode;
   subTitle?: string;
   image?: string;
   video?: string;
@@ -38,7 +38,7 @@ export function Header(props: PHeader) {
     const masthead = document.getElementById("tol-masthead");
     if (navbar) setNavbarOffset(navbar.offsetHeight);
     if (masthead) setMastheadOffset(masthead.offsetHeight);
-  });
+  }, "#tol-navbar, #tol-masthead");
 
   const Backing = (
     <div>

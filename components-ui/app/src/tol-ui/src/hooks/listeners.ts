@@ -34,11 +34,12 @@ export function themeListener(fn: () => void): void {
 }
 
 /**
- * Runs a callback on mount and whenever the browser window is resized.
+ * Runs a callback on mount, window resizes, and resizes of matching elements.
  *
- * @param fn Callback invoked immediately and on each window resize event.
+ * @param fn Callback invoked immediately and when a watched size changes.
+ * @param observeSelector Optional selector for elements to watch with ResizeObserver.
  */
-export function resizeListener(fn: () => void): void {
+export function resizeListener(fn: () => void, observeSelector?: string): void {
   const fnRef = useRef(fn);
   fnRef.current = fn;
 
@@ -46,10 +47,21 @@ export function resizeListener(fn: () => void): void {
     const handleResize = () => fnRef.current();
     handleResize();
     window.addEventListener("resize", handleResize, true);
+
+    const observer = typeof ResizeObserver !== "undefined" && observeSelector
+      ? new ResizeObserver(handleResize)
+      : undefined;
+    if (observer && observeSelector) {
+      document.querySelectorAll(observeSelector).forEach((element) => {
+        observer.observe(element);
+      });
+    }
+
     return () => {
       window.removeEventListener("resize", handleResize, true);
+      observer?.disconnect();
     };
-  }, []);
+  }, [observeSelector]);
 }
 
 /**
