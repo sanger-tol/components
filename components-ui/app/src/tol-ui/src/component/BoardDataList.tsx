@@ -4,12 +4,12 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
-import { RemoteObjectDetail, PVisualisation, DATA_LIST_COMPONENT_TYPES, updateComponentConfigAndUpsert, useBoard } from "..";
+import { RemoteObjectDetail, PVisualisationComponent, DATA_LIST_COMPONENT_TYPES, updateComponentConfigAndUpsert, useBoard } from "..";
 import type { IListDataConfigSave, TDataListComponentType } from "..";
 
+
 /** Props for the `BoardDataList` component. */
-export interface PBoardDataList extends PVisualisation {
+export interface PBoardDataList extends PVisualisationComponent<IListDataConfigSave> {
   /** Which underlying component `BoardDataList` should render. */
   type: TDataListComponentType;
 }
@@ -20,13 +20,8 @@ export interface PBoardDataList extends PVisualisation {
  * component. Configuration is saved to the board rather than standalone local storage.
  */
 export function BoardDataList(props: PBoardDataList) {
-  const { id, dataSource, objectType, zone, setZone, config: initialConfig, boardDataSource, type } = props;
+  const { id, dataSource, objectType, zone, setZone, config, setConfig, boardDataSource, type } = props;
   const { editMode } = useBoard();
-  const [config, setConfig] = useState<IListDataConfigSave>(initialConfig ?? {});
-
-  useEffect(() => {
-    setConfig(initialConfig ?? {});
-  }, [initialConfig]);
 
   const onConfigSave = (updatedConfig: IListDataConfigSave) => {
     const nextConfig = { ...config, ...updatedConfig };

@@ -11,20 +11,22 @@ import {
   ChartConfigDrawer,
   IChartConfig,
   updateComponentConfigAndUpsert,
-  PVisualisation,
+  PVisualisationComponent,
   NotConfiguredPlaceholder,
   useBoard,
   PButton,
   mergeUtilityBarConfigs
 } from "..";
 
+/** Props for the BoardChart component. */
+export interface PBoardChart extends PVisualisationComponent<IChartConfig> {}
 
-export function BoardChart(props: PVisualisation) {
-  const { id, utilityBarConfig, boardDataSource, zone } = props;
+/** Component for displaying and configuring a bar chart on the board. */
+export function BoardChart(props: PBoardChart) {
+  const { id, utilityBarConfig, boardDataSource, zone, config, setConfig } = props;
 
   const { editMode } = useBoard();
 
-  const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 

@@ -14,17 +14,17 @@ import {
   updateComponentConfigAndUpsert,
   useBoard,
   IMarkdownConfig,
-  PVisualisation,
+  PVisualisationComponent,
   mergeUtilityBarConfigs
 } from "..";
 
 
-export interface PBoardMarkdown extends PVisualisation {
-  config: IMarkdownConfig;
-}
+/** Props for the BoardMarkdown component. */
+export interface PBoardMarkdown extends PVisualisationComponent<IMarkdownConfig> {}
 
+/** Component for displaying and editing markdown content on the board. */
 export function BoardMarkdown(props: PBoardMarkdown) {
-  const { id, utilityBarConfig, config, size, boardDataSource, zone } = props;
+  const { id, utilityBarConfig, config, setConfig, size, boardDataSource, zone } = props;
 
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
@@ -36,8 +36,13 @@ export function BoardMarkdown(props: PBoardMarkdown) {
     (config.content || !(editMode)) && setShowMarkdownViewer(true);
   }, []);
 
+  useEffect(() => {
+    setContent(config.content || "");
+  }, [config.content]);
+
   const onMarkdownSave = (config: IMarkdownConfig) => {
     if (!showMarkdownViewer) {
+      setConfig(config);
       updateComponentConfigAndUpsert(
         id,
         config,

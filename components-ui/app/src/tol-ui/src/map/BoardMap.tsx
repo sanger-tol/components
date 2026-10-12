@@ -10,7 +10,7 @@ import {
   PButton,
   updateComponentConfigAndUpsert,
   useBoard,
-  PVisualisation,
+  PVisualisationComponent,
   mergeUtilityBarConfigs,
   RemoteMap,
   IMapConfig,
@@ -20,14 +20,16 @@ import {
 } from "..";
 
 
+/** Props for the BoardMap component. */
+export interface PBoardMap extends PVisualisationComponent<IMapConfig> {}
+
 /**
  * BoardMap is a wrapper around RemoteMap that provides configuration controls for map selection
  * to be used within a Board.
  */
-export function BoardMap(props: PVisualisation) {
-  const { id, utilityBarConfig, boardDataSource, zone } = props;
+export function BoardMap(props: PBoardMap) {
+  const { id, utilityBarConfig, boardDataSource, zone, config, setConfig } = props;
 
-  const [config, setConfig] = useState<IMapConfig>(props.config);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
   const { editMode } = useBoard();

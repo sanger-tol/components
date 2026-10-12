@@ -30,17 +30,18 @@ import {
 } from "..";
 import type {
   ITableConfigSave,
-  PVisualisation,
+  PVisualisationComponent,
   IDiffState,
   IComponentConfig,
 } from "..";
 
-export interface PBoardTable extends PVisualisation {
-  config: ITableConfigSave;
-}
 
+/** Props for the BoardTable component. */
+export interface PBoardTable extends PVisualisationComponent<ITableConfigSave> {}
+
+/** Table component for displaying board data with configuration and diff state handling. */
 export function BoardTable(props: PBoardTable) {
-  const { id, boardDataSource, zone, objectType, actionsDataSource } = props;
+  const { id, boardDataSource, zone, objectType, actionsDataSource, setConfig } = props;
 
   const { user } = useAuth();
   const { editMode } = useBoard();
@@ -253,7 +254,7 @@ export function BoardTable(props: PBoardTable) {
 
   // Create handlers for changing table config, including column resize, page size, etc.
   const {
-    onConfigSave,
+    onConfigSave: handleConfigSave,
     onFilterVisibilityChange,
     onResizeColumn,
     onPageSizeChange,
@@ -320,7 +321,13 @@ export function BoardTable(props: PBoardTable) {
         actions={actionList.data}
         actionDataSource={actionsDataSource}
         rowSelection={actionList.data && actionList.data.length > 0}
-        onConfigSave={(config) => onConfigSave({ ...config })}
+        onConfigSave={(config) => {
+          setConfig((currentConfig: ITableConfigSave) => ({
+            ...currentConfig,
+            ...config,
+          }));
+          handleConfigSave({ ...config });
+        }}
         onToggleFilterVisibility={onFilterVisibilityChange}
         onPageSizeChange={onPageSizeChange}
         onResizeColumn={onResizeColumn}
