@@ -197,8 +197,10 @@
   }
 }
 
-// Adjust the margin of the board bar when it follows the masthead offset.
-.masthead-offset + .tol-board-bar {
+// Keep the board content spacing consistent whether or not the utility bar has view tabs.
+.masthead-offset + .tol-board-content {
+  // Adjust spacing for board content when a board has a utility bar
+  display: flow-root;
   margin-top: -6px !important;
 }
 

@@ -31,6 +31,7 @@ import {
   defineBoardEntityInParent,
   isEmptyObject,
   translateBoardFilters,
+  Header,
 } from "../..";
 import { BoardConfigDrawer, BoardUtilityBar, ImportViewModal } from "./components";
 import type { IBoard, IBoardFilter, TsDataSource } from "../..";
@@ -242,36 +243,41 @@ export function Board(props: PBoard) {
           </>
         }
       />
-      <BoardUtilityBar
-        onOpenBoardCopyModal={() => setBoardCopyModalOpen(true)}
-        onOpenBoardConfigDrawer={() => setBoardConfigDrawerOpen(true)}
-        setNewBoardCopyTitle={setNewBoardCopyTitle}
-        onOpenAddZone={() => setOpenAddZoneModal(true)}
-        newBoardCopyTitle={newBoardCopyTitle}
-        activeViewId={activeViewId}
-        boardDataSource={boardDataSource}
-        onOpenDeleteViewModal={() => setDeleteViewConfirmModal(true)}
-        onOpenViewImportModal={() => setViewImportModalOpen(true)}
-        onClickView={onClickView}
-        onAddView={onAddView}
-        onReorderView={onReorderViews}
-      />
-      <BoardConfigDrawer
-        open={boardConfigDrawerOpen}
-        setOpen={setBoardConfigDrawerOpen}
-        boardDataSource={boardDataSource}
-      />
-      {mountedViewIds.map((viewId) => (
-        <View
-          key={viewId}
-          id={viewId}
+      {!editMode && board.config?.header?.visible && (
+        <Header title={board.title} image={board.config.header.image} />
+      )}
+      <div className="tol-board-content">
+        <BoardUtilityBar
+          onOpenBoardCopyModal={() => setBoardCopyModalOpen(true)}
+          onOpenBoardConfigDrawer={() => setBoardConfigDrawerOpen(true)}
+          setNewBoardCopyTitle={setNewBoardCopyTitle}
+          onOpenAddZone={() => setOpenAddZoneModal(true)}
+          newBoardCopyTitle={newBoardCopyTitle}
+          activeViewId={activeViewId}
           boardDataSource={boardDataSource}
-          actionsDataSource={actionsDataSource}
-          open={openAddZoneModal && viewId === activeViewId}
-          setOpen={setOpenAddZoneModal}
-          active={viewId === activeViewId}
+          onOpenDeleteViewModal={() => setDeleteViewConfirmModal(true)}
+          onOpenViewImportModal={() => setViewImportModalOpen(true)}
+          onClickView={onClickView}
+          onAddView={onAddView}
+          onReorderView={onReorderViews}
         />
-      ))}
+        <BoardConfigDrawer
+          open={boardConfigDrawerOpen}
+          setOpen={setBoardConfigDrawerOpen}
+          boardDataSource={boardDataSource}
+        />
+        {mountedViewIds.map((viewId) => (
+          <View
+            key={viewId}
+            id={viewId}
+            boardDataSource={boardDataSource}
+            actionsDataSource={actionsDataSource}
+            open={openAddZoneModal && viewId === activeViewId}
+            setOpen={setOpenAddZoneModal}
+            active={viewId === activeViewId}
+          />
+        ))}
+      </div>
       <ConfirmationModal
         open={deleteViewConfirmModal}
         setOpen={setDeleteViewConfirmModal}

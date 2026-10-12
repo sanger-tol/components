@@ -20,7 +20,6 @@ import {
   isBoardInNavConfig,
   useApp,
   useAuth,
-  Header,
   useStickyShadow,
   Button,
 } from "../../..";
@@ -169,18 +168,18 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     <ViewModeBoardTitle text={board?.title!} editable={editMode} />
   );
 
-  const isShowBoardHeader = !editMode && showBoardHeader;
+  const isHeaderView = !editMode && showBoardHeader;
   const isShowProfileAvatar = editMode || showProfileAvatar;
   // Don't display view tabs if there's only one view
   const hasViewTabs = (board?.order?.length ?? 0) > 1;
   const hasVisibleViewModeActions = showProfileAvatar || allowBoardCopy || !hideShareButton;
-  const shouldHideHeaderBoardBar =
-    isShowBoardHeader && !hasViewTabs && !hasVisibleViewModeActions;
+  const shouldShowEditButtonOnly =
+    isHeaderView && !hasViewTabs && !hasVisibleViewModeActions;
   const boardUtilityBarButtons = [editOrExitButton, ...boardActionButtons];
 
   const ViewTabsContent = <ViewTabs onSaveTitle={onSaveViewTitle} {...props} />;
   const BoardBarElements = () => {
-    if (isShowBoardHeader) return [ViewTabsContent];
+    if (isHeaderView) return [ViewTabsContent];
     if (!editMode) return [ViewModeTitle];
   };
 
@@ -192,7 +191,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
        * Displays a larger title in view mode (if no header)
        * and an editable title in edit mode.
        */
-      title={!isShowBoardHeader && editMode ? editModeBoardTitle : undefined}
+      title={!isHeaderView && editMode ? editModeBoardTitle : undefined}
       elements={BoardBarElements()}
     />
   );
@@ -221,26 +220,18 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
       buttons={[addZone]}
     />
   );
-  const BoardBar = (
+
+  // If only the edit button should be shown, render it alone instead of the full board bar.
+  if (shouldShowEditButtonOnly) return <Button {...editOrExitButton} />;
+
+  return (
     <div ref={boardBarRef} className="tol-board-bar">
       <div className="tol-board-bar-container">
         <div className="tol-board-bar-inner-container">{BoardActions}</div>
         {BoardOwnerAvatar}
       </div>
-      {!isShowBoardHeader && EditModeDivider}
-      {!isShowBoardHeader && ViewTabsBar}
+      {!isHeaderView && EditModeDivider}
+      {!isHeaderView && ViewTabsBar}
     </div>
-  );
-  const EditModeOnlyButton = shouldHideHeaderBoardBar && editOrExitButton && (
-    <Button {...editOrExitButton} />
-  );
-
-  return (
-    <>
-      {isShowBoardHeader && (
-        <Header title={board.title} image={board.config?.header?.image} />
-      )}
-      {shouldHideHeaderBoardBar ? EditModeOnlyButton : BoardBar}
-    </>
   );
 }
