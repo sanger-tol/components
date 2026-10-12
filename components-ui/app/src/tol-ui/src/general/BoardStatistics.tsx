@@ -28,7 +28,7 @@ export function BoardStatistics(props: PBoardStatistics) {
   const { editMode } = useBoard();
 
   const config = props.config;
-  const type: TStatisticsType = config.type ?? "count";
+  const statType: TStatisticsType = config.type ?? "count";
   const [openConfig, setOpenConfig] = useState(false);
 
   const onConfigSave = (updatedConfig: IStatisticsConfig) => {
@@ -66,7 +66,7 @@ export function BoardStatistics(props: PBoardStatistics) {
       />
       <RemoteStatistics
         {...props}
-        type={type}
+        type={statType}
         field={config.field}
         utilityBarConfig={ubc}
       />
