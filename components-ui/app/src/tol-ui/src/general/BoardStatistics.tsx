@@ -15,6 +15,7 @@ import {
   PVisualisationComponent,
   updateComponentConfigAndUpsert,
   mergeUtilityBarConfigs,
+  TStatisticsType,
 } from "..";
 
 /** Props for the BoardStatistics component. */
@@ -26,7 +27,8 @@ export function BoardStatistics(props: PBoardStatistics) {
 
   const { editMode } = useBoard();
 
-  const config = props.config?.type ? props.config : { type: "count" };
+  const config = props.config;
+  const type: TStatisticsType = config.type ?? "count";
   const [openConfig, setOpenConfig] = useState(false);
 
   const onConfigSave = (updatedConfig: IStatisticsConfig) => {
@@ -64,7 +66,7 @@ export function BoardStatistics(props: PBoardStatistics) {
       />
       <RemoteStatistics
         {...props}
-        type={config.type}
+        type={type}
         field={config.field}
         utilityBarConfig={ubc}
       />
