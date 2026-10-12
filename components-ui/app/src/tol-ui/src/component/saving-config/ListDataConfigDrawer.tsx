@@ -189,14 +189,14 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
   const Content = (
     <Tabs defaultActiveKey="fields">
       <Tabs.Tab eventKey="fields" title="Fields">
-        <div className="tol-section-spacing-top">
+        <section className="tol-section-spacing-top">
           {FieldsContent}
-        </div>
+        </section>
       </Tabs.Tab>
       <Tabs.Tab eventKey="options" title="Options">
-        <div className="tol-section-spacing-top">
+        <section className="tol-section-spacing-top">
           {OptionsContent}
-        </div>
+        </section>
       </Tabs.Tab>
     </Tabs>
   );

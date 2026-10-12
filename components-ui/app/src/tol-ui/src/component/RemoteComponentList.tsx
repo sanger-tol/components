@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactElement, cloneElement, useMemo, useRef, useState } from "react";
+import { cloneElement, ReactElement, useMemo, useRef, useState } from "react";
 import {
   ComponentList,
   createSort,
@@ -13,11 +13,11 @@ import {
   mergeUtilityBarConfigs,
   normaliseFieldMeta,
   Pagination,
+  RecordCounter,
   RemoteComponentBase,
   saveComponentConfigLocalStorage,
   useBoard,
   useComponentListData,
-  RecordCounter,
 } from "..";
 import type { IComponentData, IListDataConfigSave, IRemoteComponentDataList, PButton } from "..";
 
