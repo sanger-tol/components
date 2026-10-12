@@ -59,7 +59,6 @@ export function useComponentListData({
 
   useEffect(() => {
     setPageSize(initialPageSize);
-    setPage(1);
   }, [initialPageSize]);
 
   useEffect(() => {
