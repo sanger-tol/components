@@ -46,10 +46,13 @@ import type {
   IMarkdownField,
   ICheckboxFormField,
   ITextAreaField,
+  IFormSearchConfig,
 } from "..";
 
-export interface PFormAllInOne {
+export interface PFormAllInOne<TResult extends object = Record<string, unknown>> {
   formConfig: IFormConfig;
+  /** Optional lookup controls shown before fields and used to prefill them. */
+  searchConfig?: IFormSearchConfig<TResult>;
   initialData?: object;
   fluid?: boolean;
   model?: any;
@@ -58,12 +61,26 @@ export interface PFormAllInOne {
   onSubmit?: (formData: object, isValid: boolean) => void;
 }
 
-export function FormAllInOne(props: PFormAllInOne) {
-  const { formConfig, initialData, fluid = true, model, onValidate } = props;
+/** Renders a configured form with optional search-first lookup and manual-entry controls. */
+export function FormAllInOne<TResult extends object = Record<string, unknown>>(
+  props: PFormAllInOne<TResult>,
+) {
+  const {
+    formConfig,
+    initialData,
+    fluid = true,
+    model,
+    onValidate,
+    searchConfig,
+  } = props;
 
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [formErrors, setFormErrors] = useState<Record<string, any>>({});
   const [modifiedFields, setModifiedFields] = useState<Record<string, any>>({});
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchError, setSearchError] = useState<string>("");
+  const [searching, setSearching] = useState<boolean>(false);
+  const [showFields, setShowFields] = useState<boolean>(!searchConfig);
   const [formId, _] = useState<any>(() => crypto.randomUUID());
   const hasUnsavedChanges = useRef(false);
   const initialSnapshotRef = useRef<Record<string, any>>({});
@@ -115,6 +132,90 @@ export function FormAllInOne(props: PFormAllInOne) {
       return { ...prev, [name]: value };
     });
   };
+
+  const handleSearch = () => {
+    const query = searchQuery.trim();
+    setSearchError("");
+
+    if (!query) {
+      setSearchError(searchConfig?.emptySearchMessage ?? "Enter a search term.");
+      return;
+    }
+
+    if (!searchConfig) {
+      return;
+    }
+
+    setSearching(true);
+    searchConfig.onSearchStateChange?.(true);
+    Promise.resolve()
+      .then(() => searchConfig.onSearch(query))
+      .then((result) => {
+        const nextFormData = {
+          ...initialSnapshotRef.current,
+          ...(result as Record<string, unknown>),
+        };
+        initialSnapshotRef.current = nextFormData;
+        setFormData(nextFormData);
+        setModifiedFields({});
+        setShowFields(true);
+        searchConfig.onSearchResult?.(result);
+      })
+      .catch((error: unknown) => {
+        setSearchError(
+          error instanceof Error && error.message
+            ? error.message
+            : searchConfig.searchErrorMessage,
+        );
+      })
+      .finally(() => {
+        setSearching(false);
+        searchConfig.onSearchStateChange?.(false);
+      });
+  };
+
+  const SearchControls = searchConfig && (
+    <div className="tol-form-search-controls">
+      <FormTextField
+        id={`${formId}-search`}
+        name="search"
+        type="text"
+        label={searchConfig.searchLabel}
+        placeholder={searchConfig.searchPlaceholder}
+        value={searchQuery}
+        onChange={setSearchQuery}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            handleSearch();
+          }
+        }}
+      />
+      {searchError && (
+        <p className="tol-form-search-error" role="alert">
+          {searchError}
+        </p>
+      )}
+      <div className="tol-form-search-actions">
+        <Button
+          text={searchConfig.manualEntryButtonText}
+          disabled={searching}
+          onClick={() => {
+            setSearchError("");
+            setShowFields(true);
+            searchConfig.onManualEntry?.();
+          }}
+        />
+        <Button
+          text={searchConfig.searchButtonText}
+          icon="search"
+          loading={searching}
+          disabled={searching}
+          onClick={handleSearch}
+        />
+      </div>
+    </div>
+  );
 
   const renderField = (field: TFormField) => {
     if (!field) {
@@ -315,7 +416,8 @@ export function FormAllInOne(props: PFormAllInOne) {
         model={model || defaultModel}
         formValue={formData}
       >
-        {uniqueSections.length > 0 ? (
+        {SearchControls}
+        {showFields && uniqueSections.length > 0 ? (
           <>
             {uniqueSections.map((section) => (
               <div
@@ -394,7 +496,7 @@ export function FormAllInOne(props: PFormAllInOne) {
               </div>
             )}
           </>
-        ) : (
+        ) : showFields ? (
           formConfig.fields.map((field: any) => (
             <div key={`${formId}-${field.name}`}>
               {field.multiple ? (
@@ -418,8 +520,8 @@ export function FormAllInOne(props: PFormAllInOne) {
               )}
             </div>
           ))
-        )}
-        {formConfig.buttonConfig && (
+        ) : null}
+        {showFields && formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
             {formConfig.buttonConfig.buttons.map(
               (button: PButton, index: number) => (

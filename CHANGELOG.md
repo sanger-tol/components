@@ -17,6 +17,7 @@ SPDX-License-Identifier: MIT
 
 05-10-26
 
+- Added optional search-first/manual-entry mode to `FormAllInOne`, including async result prefilling
 - Fixed bug: Sunburst not showing legend on load
 - Fixed bug: Higher cardinality fields not showing for breakDownBy on charts
 - Fixed bug: Overhanging multi-select filters
