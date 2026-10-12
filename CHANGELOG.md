@@ -6,11 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `5.7.3-b0`
+## tol-ui `5.7.3-b1`
 
 07-10-26
 
 - **BETA RELEASE**
+- Merged latest dev changes
 - Added `sendNotification` function that sends a notification message to the RabbitMQ server.
 
 ## tol-ui `5.7.2`
