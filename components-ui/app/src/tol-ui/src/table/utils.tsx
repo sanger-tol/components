@@ -246,12 +246,6 @@ export function getTableRowClassName(
   return "";
 }
 
-export function optimiseFieldMetaForSave(fieldMeta?: IFieldMeta) {
-  const fm = deepCopy(fieldMeta);
-  delete fm.dataWithDefaults;
-  return fm;
-}
-
 function getTableConfigKey(id: string) {
   return `${id}-10-25`;
 }

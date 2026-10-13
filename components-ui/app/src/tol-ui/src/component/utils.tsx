@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { DataPoints } from "..";
+import { DataPoints, deepCopy } from "..";
 import type { IFieldMeta, TField, TCellRenderer, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecord, TsDataSource, TDataRecordList } from "..";
 
 /** Resolves the default data point renderer for an attribute's Python type. */
@@ -33,6 +33,18 @@ export function normaliseFieldMeta(fieldMeta?: Partial<IFieldMeta>): IFieldMeta 
       active: Array.isArray(fieldMeta?.order?.active) ? fieldMeta.order.active : [],
     },
   };
+}
+
+/**
+ * Removes derived field metadata before saving component configuration.
+ *
+ * @param fieldMeta - The field metadata to persist.
+ * @returns A copy of the field metadata without `dataWithDefaults`.
+ */
+export function optimiseFieldMetaForSave(fieldMeta?: IFieldMeta): IFieldMeta {
+  const fm = deepCopy(fieldMeta) as IFieldMeta;
+  delete fm.dataWithDefaults;
+  return fm;
 }
 
 /**

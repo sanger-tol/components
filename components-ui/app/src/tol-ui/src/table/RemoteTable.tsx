@@ -508,7 +508,7 @@ export function RemoteTable(props: PRemoteTable) {
 
     if (props.onConfigSave) {
       props.onConfigSave({
-        fieldMeta: fm,
+        fieldMeta: optimiseFieldMetaForSave(fm),
         defaultSortByAttribute: defaultSortByAttribute,
         defaultSortByType: defaultSortByType,
         editMode,
