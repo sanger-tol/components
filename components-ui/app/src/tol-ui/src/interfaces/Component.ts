@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from "react";
-import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, TCustomDataPointRenderers, TDataRecord, TDataRecordList } from "..";
+import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, IListDataConfigSave, TCustomDataPointRenderers, TDataRecord, TDataRecordList } from "..";
 
 
 // TODO FUTURE: Remove IHeightDeprecated and migrate all components to use the height property in IComponentBase.
@@ -62,6 +62,14 @@ export interface IPagination {
   totalSize?: number;
 }
 
+/** Sort configuration for list components. */
+export interface ISortBy {
+  /** Attribute used for sorting. */
+  sortByAttribute?: string;
+  /** Sort direction. */
+  sortByType?: string;
+}
+
 /** Represents a component with associated fields. */
 export interface IComponentFields extends IComponentBase {
   /** The fields associated with this component. */
@@ -87,4 +95,7 @@ export interface IRemoteComponentData extends IRemoteComponentBase, IComponentFi
 }
 
 /** Interface for a remote component with list capabilities. */
-export interface IRemoteComponentDataList extends IRemoteComponentData, IRemoteTargetAndZone, IPagination { }
+export interface IRemoteComponentDataList extends IRemoteComponentData, IRemoteTargetAndZone, IPagination, ISortBy {
+  /** Persist configuration externally instead of reading or writing standalone local storage. */
+  onConfigSave?: (config: IListDataConfigSave) => void;
+}

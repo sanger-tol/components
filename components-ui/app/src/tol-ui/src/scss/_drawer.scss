@@ -24,7 +24,7 @@
     }
 
     .rs-drawer-body {
-      padding: 24px;
+      padding: var(--tol-spacing-md);
     }
 
     .rs-drawer-header+.rs-drawer-body {
@@ -79,10 +79,6 @@
   overflow: auto;
   padding: 6px;
   margin: -6px;
-}
-
-.tol-config-drawer-column-title {
-  margin-bottom: 8px;
 }
 
 .tol-config-drawer-modal-btns {

@@ -8,7 +8,7 @@ import { useState } from "react";
 import {
   PButton,
   useBoard,
-  PVisualisation,
+  PVisualisationComponent,
   FilterBlockConfigDrawer,
   RemoteFilters,
   mergeUtilityBarConfigs,
@@ -17,20 +17,21 @@ import {
 } from "..";
 
 
-export interface PBoardFilterBlock extends PVisualisation {
-  config: { attributes: string[] };
-}
+/** Props for the BoardFilterBlock component. */
+export interface PBoardFilterBlock extends PVisualisationComponent {}
 
-export function BoardFilterBlock(props: PBoardFilterBlock) {
+/** Component for displaying and configuring board filter blocks. */
+export function BoardFilterBlock(props: PVisualisationComponent) {
   const {
     id,
     utilityBarConfig,
     boardDataSource,
     config,
+    setConfig,
     zone
   } = props;
+
   const [open, setOpen] = useState(false);
-  const [filterBlockConfig, setFilterBlockConfig] = useState<{ attributes: string[] }>(config);
   const { editMode } = useBoard();
 
   const configButton: PButton = {
@@ -43,7 +44,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
   }
 
   const onConfigSave = (updatedConfig: string[]) => {
-    setFilterBlockConfig({ attributes: updatedConfig });
+    setConfig({ attributes: updatedConfig });
     updateComponentConfigAndUpsert(
       id,
       { attributes: updatedConfig },
@@ -54,7 +55,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
   };
 
   const Contents = () => {
-    if (!filterBlockConfig.attributes || filterBlockConfig.attributes.length === 0) {
+    if (!config.attributes || config.attributes.length === 0) {
       return <NotConfiguredPlaceholder />;
     }
   }
@@ -75,13 +76,13 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
         open={open}
         setOpen={setOpen}
         title="Filter Configuration"
-        filterBlockConfig={filterBlockConfig.attributes}
+        filterBlockConfig={config.attributes}
         onConfigSave={onConfigSave}
       />
       <RemoteFilters
         {...props}
         className="tol-block-filter-col"
-        attributes={filterBlockConfig.attributes || []}
+        attributes={config.attributes || []}
         componentId={id}
         utilityBarConfig={ubc}
       />

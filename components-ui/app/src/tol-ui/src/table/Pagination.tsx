@@ -5,16 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { RefObject, useState } from "react";
-import { Pagination as RSPagination, SelectPicker } from "rsuite";
-import { componentResizeListener, IPagination, PAGE_SIZE_OPTIONS } from "..";
+import { Pagination as RSPagination } from "rsuite";
+import { componentResizeListener, IPagination, PageSizePicker } from "..";
 
 
 /** Props for the `Pagination` component. */
 export interface PPagination extends IPagination {
   /** Parent element ref from the table container used for width-based layout. */
   parentRef: RefObject<HTMLDivElement | null>;
-  /** Whether the page size picker should be visible. */
-  pageSizePickerVisible?: boolean;
+  /** Whether to display the page size picker. Defaults to true. */
+  pageSizePicker?: boolean;
 }
 
 /** A self-contained pagination control that adapts its layout based on the component's width. */
@@ -26,7 +26,7 @@ export function Pagination(props: PPagination) {
     pageSize,
     setPageSize,
     totalSize = 0,
-    pageSizePickerVisible = true,
+    pageSizePicker = true,
   } = props;
 
   const [isCompact, setIsCompact] = useState<boolean>(false);
@@ -36,19 +36,17 @@ export function Pagination(props: PPagination) {
     if (width !== undefined) setIsCompact(width < 750);
   });
 
-  const showPageSizePicker = pageSizePickerVisible && !isCompact;
+  const showPageSizePicker = pageSizePicker && !isCompact;
 
   return (
     <div className="tol-pagination">
       {showPageSizePicker && (
         <span className="tol-page-size">
-          <SelectPicker
-            value={pageSize}
-            onChange={setPageSize}
+          <PageSizePicker
+            pageSize={pageSize}
+            setPageSize={setPageSize}
             size="sm"
-            cleanable={false}
-            searchable={false}
-            data={PAGE_SIZE_OPTIONS}
+            pageSizeOfOneIsSelectable={false}
           />
         </span>
       )}

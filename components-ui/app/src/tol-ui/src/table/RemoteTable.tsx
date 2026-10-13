@@ -105,7 +105,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeightDeprecated {
    */
   onConfigSave?: (config: ITableDrawerSave) => void;
   /**
-   * Called when page size changes; if set, page size is not persisted locally
+    * Called when page size changes; if set, page size is not persisted locally
    */
   onPageSizeChange?: (pageSize: number) => void;
   /**

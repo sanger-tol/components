@@ -12,18 +12,21 @@ import {
   PButton,
   updateComponentConfigAndUpsert,
   useBoard,
-  PVisualisation,
+  PVisualisationComponent,
   mergeUtilityBarConfigs,
   NotConfiguredPlaceholder
 } from "..";
 
 
-export function BoardSunburst(props: PVisualisation) {
-  const { id, utilityBarConfig, boardDataSource, size, zone } = props;
+/** Props for the BoardSunburst component. */
+export interface PBoardSunbusrt extends PVisualisationComponent {}
+
+/** Component for displaying and configuring a sunburst chart on the board. */
+export function BoardSunburst(props: PBoardSunbusrt) {
+  const { id, utilityBarConfig, boardDataSource, size, zone, config, setConfig } = props;
 
   const { editMode } = useBoard();
 
-  const [config, setConfig] = useState<any>(props.config);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 

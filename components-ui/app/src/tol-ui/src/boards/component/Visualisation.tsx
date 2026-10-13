@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import {
   BoardStatistics,
   BoardTable,
@@ -32,17 +33,33 @@ import {
 } from "../..";
 
 
-export interface PVisualisation extends IBoardTargetAndZone {
+/** Props for the Visualisation component. */
+export interface PVisualisation<TConfig = any> extends IBoardTargetAndZone {
+  /** Component identifier. */
   id: string;
-  config: any;
+  /** Component-specific configuration. */
+  config: TConfig;
+  /** Visualisation type identifier. */
   componentType: string;
+  /** Component size. */
   size: string;
+  /** Display title. */
   title: string;
+  /** Utility bar configuration. */
   utilityBarConfig?: PUtilityBar;
+  /** Data source for component actions. */
   actionsDataSource: TsDataSource;
+  /** Callback invoked when the component is deleted. */
   onDeleteComponent: (id: string) => void;
 }
 
+/** Props for board visualisations that read or update their config. */
+export interface PVisualisationComponent<TConfig = any> extends PVisualisation<TConfig> {
+  /** State setter for the visualisation config, owned by `Visualisation`. */
+  setConfig: Dispatch<SetStateAction<TConfig>>;
+}
+
+/** Component for rendering a board visualisation based on its type. */
 export function Visualisation(props: PVisualisation) {
   const {
     id,
@@ -55,9 +72,14 @@ export function Visualisation(props: PVisualisation) {
 
   const { editMode, layoutMode } = useBoard();
 
+  const [config, setConfig] = useState(props.config ?? {});
   const [title, setTitle] = useState(props.title);
   const [openFilters, setOpenFilters] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+
+  useEffect(() => {
+    setConfig(props.config ?? {});
+  }, [props.config]);
 
   const { object_type, dataspace } = zone;
   const filter = generateFilter(zone, id);
@@ -153,6 +175,8 @@ export function Visualisation(props: PVisualisation) {
   const Visualisation = (
     <Component
       {...props}
+      config={config}
+      setConfig={setConfig}
       {...componentSpecificProps}
       utilityBarConfig={ubc}
     />

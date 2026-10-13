@@ -37,6 +37,10 @@
   }
 
   .tol-pagination {
+    // Pagination is also used by remote component lists, outside .tol-table.
+    display: flex;
+    align-items: center;
+
     .rs-pagination-btn {
       border: 1px solid var(--tol-bg);
     }
@@ -154,11 +158,6 @@
 
     .rs-table-body-row-wrapper .rs-table-cell-content {
       padding: 12px !important;
-    }
-
-    // rows per page
-    .tol-page-size {
-      float: left;
     }
 
     // filter show and hide
@@ -497,8 +496,8 @@ span.rs-dropdown-toggle-icon {
 }
 
 .tol-table .tol-component-counter {
-  bottom: 6px;
-  right: 6px;
+  bottom: var(--tol-spacing-sm);
+  right: var(--tol-spacing-sm);
 }
 
 // pagination buttons on smaller devices

@@ -31,7 +31,7 @@ export interface IChartConfigDrawer extends IRemoteTargetAndZone {
   title: string;
   sticky?: boolean;
   config: IChartConfig;
-  onConfigSave: (config: object) => void;
+  onConfigSave: (config: IChartConfig) => void;
 }
 
 export function ChartConfigDrawer(props: IChartConfigDrawer) {

@@ -5,7 +5,35 @@ SPDX-License-Identifier: MIT
 */
 
 import { DataPoints } from "..";
-import type { IFieldMeta, TField, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecord, TsDataSource, TDataRecordList } from "..";
+import type { IFieldMeta, TField, TCellRenderer, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecord, TsDataSource, TDataRecordList } from "..";
+
+/** Resolves the default data point renderer for an attribute's Python type. */
+export function addDefaultDataPointRenderer(type?: string): TCellRenderer {
+  switch (type) {
+    case "datetime":
+      return { type: "datetime" };
+    case "bool":
+      return { type: "boolean" };
+  }
+}
+
+/**
+ * Ensures component field metadata has the maps and active-field order required by list rendering.
+ *
+ * @param fieldMeta Field metadata from component props or persisted configuration.
+ * @returns Complete field metadata, defaulting missing maps and active fields to empty values.
+ */
+export function normaliseFieldMeta(fieldMeta?: Partial<IFieldMeta>): IFieldMeta {
+  return {
+    ...fieldMeta,
+    data: fieldMeta?.data ?? {},
+    dataWithDefaults: fieldMeta?.dataWithDefaults ?? {},
+    order: {
+      ...fieldMeta?.order,
+      active: Array.isArray(fieldMeta?.order?.active) ? fieldMeta.order.active : [],
+    },
+  };
+}
 
 /**
  * Looks up a field's metadata, preferring defaults over the field's own configuration.
