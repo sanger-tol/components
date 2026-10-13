@@ -89,6 +89,23 @@ describe("FormAllInOne search mode", () => {
     expect(screen.queryByRole("button", { name: "Search" })).not.toBeInTheDocument();
   });
 
+  test("runs a configured action without submitting the form", () => {
+    const onSubmit = vi.fn();
+    const onClick = vi.fn();
+    const formConfig: IFormConfig = {
+      ...FORM_CONFIG,
+      buttonConfig: {
+        buttons: [{ text: "Next", onClick }],
+      },
+    };
+
+    render(<FormAllInOne formConfig={formConfig} onSubmit={onSubmit} />);
+    fireEvent.click(screen.getByRole("button", { name: "Next" }));
+
+    expect(onClick).toHaveBeenCalledOnce();
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   test("does not request a record for an empty query", () => {
     const onSearch = vi.fn();
     render(<FormAllInOne formConfig={FORM_CONFIG} searchConfig={createSearchConfig({ onSearch })} />);
