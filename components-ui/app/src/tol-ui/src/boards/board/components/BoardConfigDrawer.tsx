@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { Input, Toggle } from "rsuite";
 import { Drawer, upsertBoardEntity, useBoard } from "../../..";
-import type { IBoardConfig, TsDataSource } from "../../..";
+import type { IBoardConfig, Upserter } from "../../..";
 
 
 /** Props for the `BoardConfigDrawer` component. */
@@ -18,7 +18,7 @@ export interface PBoardConfigDrawer {
   /** Updates whether the configuration drawer is open. */
   setOpen: Dispatch<SetStateAction<boolean>>;
   /** Data source used to persist board configuration. */
-  boardDataSource: TsDataSource;
+  boardDataSource: Upserter;
 }
 
 /** Renders board-level configuration options. */

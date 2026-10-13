@@ -14,7 +14,7 @@ import {
   Sunburst,
   Placeholder,
   useEffectUpdate,
-  componentResizeListener,
+  useOnResize,
   useZoneStateFallback,
   normaliseCaps,
   generateFilter,
@@ -110,7 +110,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   const [subFilter, setSubFilter] = useState<TFilterOrUndefined>({});
   const [noLegend, setNoLegend] = useState(false);
 
-  componentResizeListener(wrapperRef, () => {
+  useOnResize(wrapperRef, () => {
     const width = wrapperRef.current?.offsetWidth;
     if (width !== undefined) setNoLegend(width < 578);
   });

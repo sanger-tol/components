@@ -18,6 +18,7 @@ import {
   API_PATHS,
   IMobileOptions,
   NavBar,
+  setupBoardScrollEffects
 } from "..";
 
 
@@ -72,18 +73,9 @@ function Navigation(props: PNavigation) {
     }
   }, []);
 
-  // Fade the navbar backing to black while scrolling on header pages.
   useEffect(() => {
-    const navbar = document.getElementById("tol-navbar");
-    if (!navbar) return;
-    const onScroll = () => {
-      const progress = Math.min(window.scrollY / 100, 1);
-      navbar.style.setProperty("--tol-navbar-scroll", progress.toString());
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    return setupBoardScrollEffects();
+  }, [history.location.pathname]);
 
   const revokeOicd = (token: string) => {
     fetch(API_PATHS.API_PATH + "/auth/logout", {

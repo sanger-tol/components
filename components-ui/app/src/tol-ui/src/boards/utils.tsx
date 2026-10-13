@@ -25,6 +25,7 @@ import type {
   TBoardEntityType,
   TChildBoardEntity,
   TParentBoardEntity,
+  Upserter,
 } from "..";
 
 
@@ -318,7 +319,7 @@ export async function patchReorderBoardEntity(
  * @returns The response returned by the data source upsert operation.
  */
 export async function upsertBoardEntity(
-  boardDataSource: TsDataSource,
+  boardDataSource: Upserter,
   entityId: string,
   attributes: Record<string, any> = {},
 ) {

@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, type ReactNode } from "react";
-import { resizeListener } from "..";
+import { useRef, useState, type ReactNode } from "react";
+import { useOnResize } from "../hooks/useOnResize";
 
 export interface PHeader {
   title?: ReactNode;
@@ -32,13 +32,14 @@ export function Header(props: PHeader) {
 
   const [navbarOffset, setNavbarOffset] = useState<number>(0);
   const [mastheadOffset, setMastheadOffset] = useState<number>(0);
+  const mastheadRef = useRef<HTMLElement>(null);
 
-  resizeListener(() => {
+  useOnResize(mastheadRef, () => {
     const navbar = document.getElementById("tol-navbar");
     const masthead = document.getElementById("tol-masthead");
     if (navbar) setNavbarOffset(navbar.offsetHeight);
     if (masthead) setMastheadOffset(masthead.offsetHeight);
-  }, "#tol-navbar, #tol-masthead");
+  });
 
   const Backing = (
     <div>
@@ -75,6 +76,7 @@ export function Header(props: PHeader) {
       style={{ height: (fullHeight ? 0 : mastheadOffset) - navbarOffset }}
     >
       <header
+        ref={mastheadRef}
         id="tol-masthead"
         className="masthead"
         style={{

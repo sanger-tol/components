@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { RefObject, useState } from "react";
 import { Pagination as RSPagination } from "rsuite";
-import { componentResizeListener, IPagination, PageSizePicker } from "..";
+import { useOnResize, IPagination, PageSizePicker } from "..";
 
 
 /** Props for the `Pagination` component. */
@@ -31,7 +31,7 @@ export function Pagination(props: PPagination) {
 
   const [isCompact, setIsCompact] = useState<boolean>(false);
 
-  componentResizeListener(parentRef, () => {
+  useOnResize(parentRef, () => {
     const width = parentRef.current?.offsetWidth;
     if (width !== undefined) setIsCompact(width < 750);
   });

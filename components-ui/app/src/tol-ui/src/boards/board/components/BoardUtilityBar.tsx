@@ -6,22 +6,22 @@ SPDX-License-Identifier: MIT
 
 import { useRef } from "react";
 import {
-  upsertTitle,
-  useBoard,
-  UtilityBar,
-  TsDataSource,
   BOARD_BUTTONS,
-  BOARD_MESSAGE_TEXT,
   BOARD_ENTITIES,
+  BOARD_MESSAGE_TEXT,
+  Button,
   HoverOverlay,
+  isBoardInNavConfig,
+  PopUpMessage,
   ProfileAvatar,
   resetAllBoardFilters,
-  PopUpMessage,
-  isBoardInNavConfig,
+  TsDataSource,
+  upsertTitle,
+  UtilityBar,
   useApp,
   useAuth,
+  useBoard,
   useStickyShadow,
-  Button,
 } from "../../..";
 import { boardButtonsBuilder, ViewModeBoardTitle, ViewTabs } from ".";
 import type { PEditableTitle, PButton } from "../../..";
@@ -186,6 +186,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
   const BoardActions = (
     <UtilityBar
       id="tol-board-utility-bar"
+      compactButtonThreshold={2}
       buttons={boardUtilityBarButtons}
       /**
        * Displays a larger title in view mode (if no header)
