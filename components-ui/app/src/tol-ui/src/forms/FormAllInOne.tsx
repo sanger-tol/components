@@ -536,6 +536,11 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                   loading={button.loading}
                   icon={button.icon}
                   onClick={() => {
+                    if (button.onClick) {
+                      button.onClick(formData);
+                      return;
+                    }
+
                     let isValid = true;
                     if (onValidate || props.onSubmit) {
                       isValid = validateForm(
@@ -549,9 +554,6 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                     }
                     if (isValid) {
                       setModifiedFields({});
-                    }
-                    if (button.onClick) {
-                      button.onClick(formData);
                     }
                   }}
                 />
