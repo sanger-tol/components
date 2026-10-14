@@ -42,7 +42,7 @@ export function normaliseFieldMeta(fieldMeta?: Partial<IFieldMeta>): IFieldMeta 
  * @returns A copy of the field metadata without `dataWithDefaults`.
  */
 export function optimiseFieldMetaForSave(fieldMeta?: IFieldMeta): IFieldMeta {
-  const fm = deepCopy(fieldMeta) as IFieldMeta;
+  const fm = deepCopy(normaliseFieldMeta(fieldMeta));
   delete fm.dataWithDefaults;
   return fm;
 }

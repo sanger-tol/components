@@ -173,7 +173,9 @@ export function defineBoardEntity(
       ...entity,
       // Recusively define children with the same function, ensuring all nested entities are fully defined
       children:
-        isEmptyObject(entityWithChildren.children) ? {} : defineChildrenEntities(entityWithChildren, objectType),
+        (isEmptyObject(entityWithChildren.children)
+          ? {}
+          : defineChildrenEntities(entityWithChildren, objectType)) as TBoardChildren<any>,
     };
   }
 

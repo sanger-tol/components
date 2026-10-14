@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import type { Dispatch, SetStateAction } from "react";
 import type { Layout, Layouts } from "react-grid-layout";
 
 import {
@@ -37,14 +36,14 @@ export async function updateComponentConfigAndUpsert(
   zone: IZone,
   boardDataSource: TsDataSource,
   editMode: boolean,
-  setHasDiff?: Dispatch<SetStateAction<boolean>>,
+  setHasDiff?: (hasDiff: boolean) => void,
   userId?: string | undefined,
 ) {
   const component = zone.children?.[componentId];
   if (!component) return;
 
   if (editMode) {
-    component.config = { ...config };
+    component.config = { ...config } as IComponentConfig;
     return await upsertBoardEntity(boardDataSource, componentId, {
       config: config,
     });
