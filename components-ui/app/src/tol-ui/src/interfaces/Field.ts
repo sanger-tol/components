@@ -37,8 +37,14 @@ export interface IFieldTable extends IFieldBasic {
   width?: number;
 }
 
+/** Field metadata specific to card layout. */
+export interface IFieldCard extends IFieldBasic {
+  /** Position of the value within the card layout. */
+  position: "left" | "right";
+}
+
 /** A field's metadata. */
-export type TField = IFieldBasic | IFieldTable | IFieldTimeline;
+export type TField = IFieldBasic | IFieldTable | IFieldCard | IFieldTimeline;
 
 /** Mapping of field identifiers to their metadata. */
 export type TFieldMetaData = Record<string, TField>;

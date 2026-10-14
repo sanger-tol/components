@@ -8,7 +8,7 @@ import React, { useState, useRef, useCallback } from "react";
 import {
   ValidateStep,
   ErrorViewer,
-  componentResizeListener,
+  useOnResize,
   IValidationResult,
   WIDTH_REDUCER,
   IStepData,
@@ -75,7 +75,7 @@ export function ValidateSteps(props: PValidateSteps) {
     }
   }, [steps]);
 
-  componentResizeListener(containerRef, handleResize);
+  useOnResize(containerRef, handleResize);
 
   const handleToggleExpanded = useCallback((stepName: string) => {
     setExpandedIndex((prev: string) => (prev === stepName ? null : stepName));

@@ -56,7 +56,7 @@ export const componentOptions = [
   },
   {
     type: "objectDetail",
-    text: "Detail Card",
+    text: "Card",
     icon: "rectangle-list",
     disabled: false,
     defaultSize: "lg",

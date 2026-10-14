@@ -11,7 +11,7 @@ export const BOARD_BUTTONS: Record<string, PButton> = {
   EDIT_MODE_ENTER: {
     ...BUTTONS.EDIT,
     type: "warning",
-    text: "Edit",
+    text: "Edit Board",
   },
   EDIT_MODE_EXIT: {
     ...BUTTONS.CONFIRM,
@@ -21,11 +21,12 @@ export const BOARD_BUTTONS: Record<string, PButton> = {
   LAYOUT_MODE_ENTER: {
     ...BUTTONS.EDIT,
     type: "warning",
-    text: "Change Layout",
+    text: "Layout",
+    tooltip: "Change Layout"
   },
   LAYOUT_MODE_EXIT: {
     ...BUTTONS.SAVE,
-    text: "Save Layouts",
+    text: "Save",
   },
   COPY_VIEW_ID: {
     ...BUTTONS.COPY,
@@ -50,6 +51,12 @@ export const BOARD_BUTTONS: Record<string, PButton> = {
   SHARE_BOARD: {
     ...BUTTONS.SHARE,
     testid: "share-board-button",
+  },
+  BOARD_CONFIG: {
+    ...BUTTONS.SETTINGS,
+    text: "",
+    tooltip: "Board Options",
+    testid: "board-options",
   },
   DELETE_VIEW: {
     ...BUTTONS.DISCARD,

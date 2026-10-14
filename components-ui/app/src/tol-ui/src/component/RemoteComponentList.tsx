@@ -4,21 +4,30 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactElement, cloneElement, useRef } from "react";
+import { cloneElement, ReactElement, useMemo, useRef, useState } from "react";
 import {
+  ComponentList,
+  createSort,
+  getComponentConfigLocalStorage,
+  ListDataConfigDrawer,
   mergeUtilityBarConfigs,
+  normaliseFieldMeta,
   Pagination,
+  RecordCounter,
   RemoteComponentBase,
+  saveComponentConfigLocalStorage,
+  useBoard,
   useComponentListData,
 } from "..";
-import { RecordCounter } from "./RecordCounter";
-import type { IComponentData, IRemoteComponentDataList } from "..";
+import type { IComponentData, IListDataConfigSave, IRemoteComponentDataList, PButton } from "..";
 
 
 /** Props for the `RemoteComponentDataList` wrapper component. */
 export interface PRemoteComponentDataList extends IRemoteComponentDataList {
   /** The single top-level component to enhance with fetched data, e.g. an `<ObjectDetail />`. */
   children: ReactElement<IComponentData>;
+  /** Whether to display the page size picker in the utility bar. Defaults to true. */
+  pageSizePicker?: boolean;
 }
 
 /**
@@ -33,15 +42,44 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     objectType,
     fields,
     customDataPointRenderers,
+    sortByAttribute,
+    sortByType,
     zone,
     setZone,
+    page: initialPage,
+    pageSize: initialPageSize,
+    onConfigSave,
+    pageSizePicker,
     children,
     utilityBarConfig,
     height = "100%",
     ...rest
   } = props;
 
+  const { board, editMode } = useBoard();
+  const [openConfig, setOpenConfig] = useState(false);
+  const [savedConfig, setSavedConfig] = useState<IListDataConfigSave>(() => {
+    return onConfigSave ? {} : getComponentConfigLocalStorage<IListDataConfigSave>(id) ?? {};
+  });
+
+  // External configuration (e.g. a board) must never inherit standalone saved settings.
+  const config: IListDataConfigSave = onConfigSave ? {} : savedConfig;
+  const defaultPageSize = initialPageSize ?? 50;
+  const configuredPageSize = config.pageSize ?? defaultPageSize;
+
+  // Normalize the configured metadata from props/storage before passing it to the data hook.
+  const activeFieldMeta = useMemo(
+    () => normaliseFieldMeta(config.fieldMeta ?? fields),
+    [config.fieldMeta, fields],
+  );
+  // Use the first active field only for the API request when no explicit sort is configured.
+  const apiSortByAttribute = config.sortByAttribute ?? sortByAttribute ?? activeFieldMeta.order?.active?.[0];
+  const apiSortByType = config.sortByType ?? sortByType ?? "asc";
+  const drawerSortByAttribute = config.sortByAttribute ?? sortByAttribute;
+  const drawerSortByType = config.sortByType ?? sortByType;
+
   const {
+    // This is still IFieldMeta; the hook adds fetched descriptor defaults to the configured metadata.
     fieldMeta,
     data,
     noFieldsSelected,
@@ -56,19 +94,55 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     id,
     objectType,
     dataSource,
-    fields,
+    fields: activeFieldMeta,
     zone,
     setZone,
+    page: initialPage,
+    pageSize: configuredPageSize,
     customDataPointRenderers,
+    sortBy: createSort(apiSortByAttribute, apiSortByType),
   });
 
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const showPagination =
-    totalSize !== undefined &&
-    totalSize > 1;
+  const showPagination = totalSize !== undefined && totalSize > pageSize;
+  const showCounter = totalSize !== undefined && totalSize > 1;
+  const showPageSizePicker = configuredPageSize !== 1 && pageSizePicker !== false;
+
+  const onSave = ({
+    fieldMeta: nextFieldMeta,
+    sortByAttribute,
+    sortByType,
+    pageSize: nextPageSize
+  }: IListDataConfigSave) => {
+    const nextConfig: IListDataConfigSave = {
+      fieldMeta: nextFieldMeta ?? activeFieldMeta,
+      sortByAttribute: sortByAttribute ?? undefined,
+      sortByType: sortByType ?? undefined,
+      pageSize: nextPageSize === defaultPageSize ? undefined : nextPageSize,
+    };
+    setPage(1);
+    setPageSize(nextPageSize ?? defaultPageSize);
+    if (onConfigSave) {
+      onConfigSave(nextConfig);
+    } else {
+      setSavedConfig(nextConfig);
+      saveComponentConfigLocalStorage(id, nextConfig);
+    }
+  };
+
+  const configButton: PButton = {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => setOpenConfig(true),
+    icon: "sliders",
+    // Standalone components are always configurable; board components require edit mode.
+    visible: !board.id || editMode,
+  };
 
   const ubc = mergeUtilityBarConfigs(utilityBarConfig ?? undefined, {
+    buttons: [configButton],
     elements: showPagination
       ? [
         <Pagination
@@ -79,15 +153,49 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
           pageSize={pageSize}
           setPageSize={setPageSize}
           totalSize={totalSize}
-          pageSizePickerVisible={false}
+          pageSizePicker={showPageSizePicker}
         />,
       ]
       : [],
   });
 
+  const DataComponent = pageSize > 1
+    ? (
+      <ComponentList
+        id={id}
+        page={page}
+        data={data}
+        fields={fieldMeta}
+      >
+        {children}
+      </ComponentList>
+    )
+    : cloneElement(children, {
+      id,
+      data: data[0] ?? {},
+      fields: fieldMeta,
+    });
+
   return (
-    <div ref={parentRef} style={{ height }}>
-      {showPagination && <RecordCounter totalSize={totalSize} loading={isLoading} />}
+    <div ref={parentRef} className="tol-remote-component-list" style={{ height }}>
+      <ListDataConfigDrawer
+        {...props}
+        open={openConfig}
+        setOpen={setOpenConfig}
+        fieldMeta={activeFieldMeta}
+        sortByAttribute={drawerSortByAttribute}
+        sortByType={drawerSortByType}
+        pageSize={config.pageSize ?? initialPageSize}
+        onConfigSave={onSave}
+      />
+      {showCounter && (
+        <RecordCounter
+          totalSize={totalSize}
+          page={page}
+          pageSize={pageSize}
+          loading={isLoading}
+        />
+      )}
       <RemoteComponentBase
         {...rest}
         id={id}
@@ -97,11 +205,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         noFieldsSelected={noFieldsSelected}
         utilityBarConfig={ubc}
       >
-        {cloneElement(children, {
-          id,
-          data: data[0] ?? {},
-          fields: fieldMeta,
-        })}
+        {DataComponent}
       </RemoteComponentBase>
     </div>
   );

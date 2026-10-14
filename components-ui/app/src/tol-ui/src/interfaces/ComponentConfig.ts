@@ -1,16 +1,16 @@
 /*
-SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
+import type { IFieldMeta, ISortBy, HistogramGrouping } from "..";
 import {
-  HistogramGrouping,
+  CHART_TYPES,
   COMPONENT_TYPES,
   DATA_LIST_COMPONENT_TYPES,
   STATISTICS_TYPES,
-  CHART_TYPES,
-} from "..";
+} from "../constants/boards.constants";
 
 export type TChartType = (typeof CHART_TYPES)[keyof typeof CHART_TYPES];
 export type TStatisticsType =
@@ -20,6 +20,15 @@ export type TComponentType =
 export type TDataListComponentType =
   (typeof DATA_LIST_COMPONENT_TYPES)[keyof typeof DATA_LIST_COMPONENT_TYPES];
 
+/** Save payload for list-style component configuration. */
+export interface IListDataConfigSave extends ISortBy {
+  /** Field selection metadata for the list. */
+  fieldMeta?: IFieldMeta;
+  /** Default number of records displayed per page. */
+  pageSize?: number;
+}
+
+/** Configuration for board charts. */
 export interface IChartConfig {
   breakDownBy: string;
   xAxis: string;
@@ -28,11 +37,13 @@ export interface IChartConfig {
   chartType: TChartType;
 }
 
+/** Configuration for board statistics. */
 export interface IStatisticsConfig {
   type?: TStatisticsType;
   field?: string;
 }
 
+/** Configuration for board maps. */
 export interface IMapConfig {
   longitudeKey: string;
   latitudeKey: string;

@@ -6,8 +6,17 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `5.7.4`
-- Refactored Timeline with field metadata, configurable markers, automatic date ordering, visibility filters, and optional descriptions; removed the deprecated timelines and their examples.
+## tol-ui `6.0.0`
+
+14-10-26
+
+- Generic list config drawer for list components
+  - Datapoint renderers
+  - Default page size
+  - Default sort by
+- Add scrollable list layer to generic paginated components
+- Add config to boards, views, zones
+- Add options to boards, including custom headers
 
 ## tol-ui `5.7.2`
 

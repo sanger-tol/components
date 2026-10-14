@@ -194,7 +194,7 @@ export function CellRendererModal(props: PCellRendererModal) {
       // Make sure the data is a valid object
       fieldMeta.data![attributeId] = fieldMeta.data![attributeId] || {};
       fieldMeta.dataWithDefaults![attributeId] = fieldMeta.dataWithDefaults![attributeId] || {};
-      
+
       // Set the new cell renderer we made in this modal to the attribute
       fieldMeta.data![attributeId].cellRenderer = renderer;
       fieldMeta.dataWithDefaults![attributeId].cellRenderer = renderer;
@@ -237,10 +237,10 @@ export function CellRendererModal(props: PCellRendererModal) {
   const FirstPage = (
     <>
       {CellRendererSelector}
-      <p>
+      <p className="tol-mt-sm">
         {renderer && cellRendererParams[renderer.type]?.description}
       </p>
-      <hr />
+      {renderer && <hr />}
       {ParameterList}
     </>
   );

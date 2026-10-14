@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Container, Navbar, Nav } from "react-bootstrap";
+import { useState } from "react";
 import {
   getReturnUrlFromLocalStorage,
   tokenHasExpired,
@@ -87,6 +88,7 @@ export function NavBar(props: PNavBar) {
   } = props;
 
   const isMobile = mobileOptions?.enabled ?? false;
+  const [navbarExpanded, setNavbarExpanded] = useState(false);
   const showRegister = register && tokenHasExpired() && (!isMobile || mobileOptions?.register);
   const showLogin = login && tokenHasExpired() && (!isMobile || mobileOptions?.login);
   const showProfile = login && user && (!isMobile || mobileOptions?.profile);
@@ -100,9 +102,12 @@ export function NavBar(props: PNavBar) {
           "navbar-dark " +
           getNavBackgroundClass(environment) +
           " tol-navbar" +
-          (isMobile ? " tol-navbar-mobile" : "")
+          (isMobile ? " tol-navbar-mobile" : "") +
+          (navbarExpanded ? " tol-navbar-menu-open" : "")
         }
         expand="lg"
+        expanded={navbarExpanded}
+        onToggle={setNavbarExpanded}
       >
         <Container>
           {!isMobile && (

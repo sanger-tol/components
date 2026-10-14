@@ -64,7 +64,7 @@ export function SliceByDrawer(props: ISliceByDrawer) {
       onSave={onSave}
       hasPendingChanges={hasPendingChanges}
     >
-      <h6 className="tol-config-drawer-column-title">
+      <h6 className="tol-mb-sm">
         Selected Attributes (Inner Ring at the Top):
       </h6>
       <div>

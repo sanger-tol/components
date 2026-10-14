@@ -12,19 +12,23 @@ import {
   deepCopy,
   PButton,
   useBoard,
-  PVisualisation,
+  PVisualisationComponent,
   updateComponentConfigAndUpsert,
   mergeUtilityBarConfigs,
+  TStatisticsType,
 } from "..";
 
+/** Props for the BoardStatistics component. */
+export interface PBoardStatistics extends PVisualisationComponent<IStatisticsConfig> {}
 
-export function BoardStatistics(props: PVisualisation) {
-  const { id, utilityBarConfig, boardDataSource, zone } = props;
+/** BoardStatistics component for displaying and configuring board statistics. */
+export function BoardStatistics(props: PBoardStatistics) {
+  const { id, utilityBarConfig, boardDataSource, zone, setConfig } = props;
 
   const { editMode } = useBoard();
 
-  const initialConfig = props.config && props.config.type ? props.config : { type: "count" };
-  const [config, setConfig] = useState<IStatisticsConfig>(initialConfig);
+  const config = props.config;
+  const statType: TStatisticsType = config.type ?? "count";
   const [openConfig, setOpenConfig] = useState(false);
 
   const onConfigSave = (updatedConfig: IStatisticsConfig) => {
@@ -62,7 +66,7 @@ export function BoardStatistics(props: PVisualisation) {
       />
       <RemoteStatistics
         {...props}
-        type={config.type}
+        type={statType}
         field={config.field}
         utilityBarConfig={ubc}
       />

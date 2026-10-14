@@ -4,8 +4,48 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { DataPoints } from "..";
-import type { IFieldMeta, TField, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecord, TsDataSource, TDataRecordList } from "..";
+import { DataPoints, deepCopy } from "..";
+import type { IFieldMeta, IRecordRange, TField, TCellRenderer, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecord, TsDataSource, TDataRecordList } from "..";
+
+/** Resolves the default data point renderer for an attribute's Python type. */
+export function addDefaultDataPointRenderer(type?: string): TCellRenderer {
+  switch (type) {
+    case "datetime":
+      return { type: "datetime" };
+    case "bool":
+      return { type: "boolean" };
+  }
+}
+
+/**
+ * Ensures component field metadata has the maps and active-field order required by list rendering.
+ *
+ * @param fieldMeta Field metadata from component props or persisted configuration.
+ * @returns Complete field metadata, defaulting missing maps and active fields to empty values.
+ */
+export function normaliseFieldMeta(fieldMeta?: Partial<IFieldMeta>): IFieldMeta {
+  return {
+    ...fieldMeta,
+    data: fieldMeta?.data ?? {},
+    dataWithDefaults: fieldMeta?.dataWithDefaults ?? {},
+    order: {
+      ...fieldMeta?.order,
+      active: Array.isArray(fieldMeta?.order?.active) ? fieldMeta.order.active : [],
+    },
+  };
+}
+
+/**
+ * Removes derived field metadata before saving component configuration.
+ *
+ * @param fieldMeta - The field metadata to persist.
+ * @returns A copy of the field metadata without `dataWithDefaults`.
+ */
+export function optimiseFieldMetaForSave(fieldMeta?: IFieldMeta): IFieldMeta {
+  const fm = deepCopy(normaliseFieldMeta(fieldMeta));
+  delete fm.dataWithDefaults;
+  return fm;
+}
 
 /**
  * Looks up a field's metadata, preferring defaults over the field's own configuration.
@@ -64,12 +104,42 @@ export function joinClassNames(...classNames: (string | undefined | null | false
 }
 
 /**
- * Formats a total size as records for the record counter.
+ * Calculates the first and last record numbers shown on the current page.
+ *
+ * @param totalSize - The total number of records.
+ * @param page - The current page, starting at 1.
+ * @param pageSize - The number of records displayed per page.
+ * @returns The inclusive range of displayed records, or 0 to 0 when there are no records.
+ */
+export function getRecordRange(
+  totalSize: number,
+  page = 1,
+  pageSize?: number,
+): IRecordRange {
+  if (totalSize === 0) return { start: 0, end: 0 };
+
+  const start = pageSize === undefined ? 1 : (page - 1) * pageSize + 1;
+  const end = pageSize === undefined ? totalSize : Math.min(page * pageSize, totalSize);
+  return { start, end };
+}
+
+/**
+ * Formats a total size with localized number separators.
  *
  * @param totalSize - The total number of records.
  * @returns The formatted record count.
  */
 export function formatTotalSize(totalSize: number): string {
-  if (totalSize === 1) return "1 Record";
-  return totalSize.toLocaleString() + " Records";
+  return totalSize.toLocaleString();
+}
+
+/**
+ * Formats a record range using localized numbers and a compact separator.
+ *
+ * @param start - The first record number in the range.
+ * @param end - The last record number in the range.
+ * @returns The formatted range, e.g. "1–10".
+ */
+export function formatRecordRange(start: number, end: number): string {
+  return `${start.toLocaleString()}–${end.toLocaleString()}`;
 }

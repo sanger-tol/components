@@ -79,7 +79,7 @@ Store the query parameters as a `IFilter` in the database and use a route parame
     "pageElementReference": "b_123456",
     "route": "/species/:id",
     "queryParams": {
-      "object_type": "species",
+      "objectType": "species",
       "filter": {
         "and_": {
           "id": {

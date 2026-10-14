@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { useRef } from "react";
 import {
   IFieldMeta,
+  addDefaultDataPointRenderer,
   normaliseCaps,
   colours,
   getFieldByName,
@@ -35,6 +36,7 @@ import {
   PARAM_TAG_START,
   PARAM_TAG_END,
   ORIGIN_OPERATOR,
+  optimiseFieldMetaForSave
 } from "..";
 import type {
   TsDataSource,
@@ -42,7 +44,6 @@ import type {
   TDataObjectListOrNull,
   ITableData,
   ITableRecord,
-  TCellRenderer,
   TCustomDataPointRenderers,
   IFilter,
   TCellHeights,
@@ -153,15 +154,6 @@ export async function getIsManyByField(
   return Object.fromEntries(entries);
 }
 
-export function addDefaultCellRenderer(type?: string): TCellRenderer {
-  switch (type) {
-    case "datetime":
-      return { type: "datetime" };
-    case "bool":
-      return { type: "boolean" };
-  }
-}
-
 function addRemoteFilterType(type?: string, cardinality?: number) {
   if (cardinality && cardinality < 50 && type === "str") return "multi";
   if (type === "double") return "float";
@@ -188,7 +180,7 @@ export function addDefaultsFromEntityMeta(
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
-    cellRenderer: addDefaultCellRenderer(meta.python_type),
+    cellRenderer: addDefaultDataPointRenderer(meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
     rename: meta.display_name || normaliseCaps(key),
     sort: true,
@@ -229,14 +221,6 @@ export async function addFieldMetaDefaults(
   return fieldMeta;
 }
 
-export function createSort(sortColumn?: string, sortType?: string) {
-  if (!sortColumn) return undefined;
-  if (sortType === "desc" && !sortColumn.startsWith("-")) {
-    return "-" + sortColumn;
-  }
-  return sortColumn;
-}
-
 /**
  * Resolves the CSS class for a table row based on selection state.
  *
@@ -261,12 +245,6 @@ export function getTableRowClassName(
   }
 
   return "";
-}
-
-export function optimiseFieldMetaForSave(fieldMeta?: IFieldMeta) {
-  const fm = deepCopy(fieldMeta);
-  delete fm.dataWithDefaults;
-  return fm;
 }
 
 function getTableConfigKey(id: string) {
