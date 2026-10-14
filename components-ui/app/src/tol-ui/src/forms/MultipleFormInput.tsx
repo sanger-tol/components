@@ -92,6 +92,9 @@ export function MultipleFormInput(props: PMultipleFormInput) {
               label: undefined,
             })}
           </div>
+          {field.rowButton && (
+            <Button {...field.rowButton(input, fieldData[input])} />
+          )}
           {(!minOne || Object.keys(fieldData).length > 1) && (
             <div style={{ alignSelf: "center" }}>
               <Button
