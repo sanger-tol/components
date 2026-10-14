@@ -42,6 +42,8 @@ export function ActionStatus(props: PCellDisplay) {
   }
 
   useEffect(() => {
+    // Action responses can contain an immediate success/failure result; only rows
+    // without that result need to poll Prefect for their flow-run state.
     if (localStatus) {
       if (Object.keys(localStatus[0] ?? {}).includes("success")) {
         setStatus("Completed");
@@ -66,6 +68,7 @@ export function ActionStatus(props: PCellDisplay) {
     let intervalId: ReturnType<typeof setInterval>;
 
     const fetchStatus = async () => {
+      // Do not start another request while the previous poll is still in flight.
       if (!active || requestInProgress) return;
       requestInProgress = true;
       setLoading(true);
@@ -90,8 +93,10 @@ export function ActionStatus(props: PCellDisplay) {
         setInitialLoad(false);
 
         if (state === "Completed" || state === "Failed") {
+          // Terminal states need no further polling.
           clearInterval(intervalId);
         } else {
+          // Restart the countdown only after a successful non-terminal response.
           secondsUntilReload = RELOAD_INTERVAL;
           setSecondsSinceLastUpdate(RELOAD_INTERVAL);
         }
@@ -99,6 +104,7 @@ export function ActionStatus(props: PCellDisplay) {
         if (!active) return;
         setError(`Failed to fetch status: ${e instanceof Error ? e.message : String(e)}`);
         setInitialLoad(false);
+        // Stop after an error instead of repeatedly hammering a failing endpoint.
         clearInterval(intervalId);
       } finally {
         requestInProgress = false;
@@ -117,6 +123,7 @@ export function ActionStatus(props: PCellDisplay) {
     }, 1000);
 
     return () => {
+      // A cell may unmount or receive a different flowRunId while the request is pending.
       active = false;
       clearInterval(intervalId);
     };
