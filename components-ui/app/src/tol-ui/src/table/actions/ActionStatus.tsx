@@ -41,56 +41,86 @@ export function ActionStatus(props: PCellDisplay) {
     }
   }
 
-  const getActionStatus = async () => {
-    setLoading(true);
-    const dataSource = new TsDataSource({
-      apiPath: API_PATHS.API_PATH,
-      apiDataPath: API_PATHS.PREFECT,
-    });
-    return await dataSource.getOne({
-      objectType: "flow_run",
-      id: flowRunId,
-    })
-  }
-
   useEffect(() => {
-    if (!localStatus) {
-      const intervalId = setInterval(() => {
-        setSecondsSinceLastUpdate((prevSeconds) => {
-          if (prevSeconds === 0) {
-            getActionStatus()
-              .then((dataObject) => {
-                if (!dataObject) setError(`Failed to fetch status: ${flowRunId}`);
-                const state = dataObject?.state;
-                setStatus(state);
-                setLoading(false);
-                setInitialLoad(false);
-                if (state === "Completed" || state === "Failed") {
-                  clearInterval(intervalId);
-                }
-              })
-              .catch((e) => {
-                setError(`Failed to fetch status: ${e.message}`);
-                setLoading(false);
-                setInitialLoad(false);
-              });
-            return RELOAD_INTERVAL;
-          }
-          return prevSeconds - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(intervalId); // cleanup interval on component unmount
-    } else {
-      if (Object.keys(localStatus[0]).includes('success')) {
-        setStatus('Completed');
+    if (localStatus) {
+      if (Object.keys(localStatus[0] ?? {}).includes("success")) {
+        setStatus("Completed");
       } else {
-        setStatus('Failed');
+        setStatus("Failed");
       }
       setLoading(false);
       setInitialLoad(false);
+      return;
     }
-  }, []);
+
+    if (!flowRunId) {
+      setError("Cannot fetch flow status: missing flow run ID");
+      setLoading(false);
+      setInitialLoad(false);
+      return;
+    }
+
+    let active = true;
+    let requestInProgress = false;
+    let secondsUntilReload = 0;
+    let intervalId: ReturnType<typeof setInterval>;
+
+    const fetchStatus = async () => {
+      if (!active || requestInProgress) return;
+      requestInProgress = true;
+      setLoading(true);
+
+      try {
+        const dataSource = new TsDataSource({
+          apiPath: API_PATHS.API_PATH,
+          apiDataPath: API_PATHS.PREFECT,
+        });
+        const dataObject = await dataSource.getOne({
+          objectType: "flow_run",
+          id: flowRunId,
+        });
+        const state = dataObject?.state;
+
+        if (!state) {
+          throw new Error(`No flow status returned for ${flowRunId}`);
+        }
+
+        if (!active) return;
+        setStatus(state);
+        setInitialLoad(false);
+
+        if (state === "Completed" || state === "Failed") {
+          clearInterval(intervalId);
+        } else {
+          secondsUntilReload = RELOAD_INTERVAL;
+          setSecondsSinceLastUpdate(RELOAD_INTERVAL);
+        }
+      } catch (e) {
+        if (!active) return;
+        setError(`Failed to fetch status: ${e instanceof Error ? e.message : String(e)}`);
+        setInitialLoad(false);
+        clearInterval(intervalId);
+      } finally {
+        requestInProgress = false;
+        if (active) setLoading(false);
+      }
+    };
+
+    intervalId = setInterval(() => {
+      if (secondsUntilReload === 0) {
+        // Keep network work outside the React state updater; updater callbacks must stay pure.
+        void fetchStatus();
+      } else {
+        secondsUntilReload -= 1;
+        setSecondsSinceLastUpdate(secondsUntilReload);
+      }
+    }, 1000);
+
+    return () => {
+      active = false;
+      clearInterval(intervalId);
+    };
+  }, [flowRunId, localStatus]);
 
   if (error) {
     return (
