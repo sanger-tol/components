@@ -124,6 +124,8 @@ export interface IFormComponent {
    * If true, the user must provide at least one instance of this field before submitting the form.
    */
   minOne?: boolean;
+  /** Creates an optional action button for each row of a multiple field. */
+  rowButton?: (inputId: string, value: any) => PButton;
 }
 
 export interface ITextField extends IFormComponent {
