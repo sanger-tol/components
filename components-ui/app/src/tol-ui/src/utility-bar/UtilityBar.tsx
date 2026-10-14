@@ -56,7 +56,7 @@ export function UtilityBar(props: PUtilityBar) {
     elements,
     noLeftSide,
     className,
-    compactButtonThreshold = 3,
+    compactButtonThreshold = 2,
   } = props;
 
   const wrapperId = "tol-utility-bar-wrapper-" + id;
@@ -79,9 +79,15 @@ export function UtilityBar(props: PUtilityBar) {
   }, []);
 
   // Separate dropdown buttons from regular buttons
-  const regularButtons = buttons?.filter(button => button && !("dropdownButtons" in button) && !("toggle" in button));
-  const dropdownButtons = buttons?.filter(button => button && "toggle" in button);
-  const deprecatedDeprecatedDropdownButtons = buttons?.filter(button => button && "dropdownButtons" in button);
+  const regularButtons = buttons?.filter(
+    (button): button is PButton => Boolean(button && !("dropdownButtons" in button) && !("toggle" in button)),
+  );
+  const dropdownButtons = buttons?.filter(
+    (button): button is PDropdownButton => Boolean(button && "toggle" in button),
+  );
+  const deprecatedDeprecatedDropdownButtons = buttons?.filter(
+    (button): button is PDeprecatedDropdownButtons => Boolean(button && "dropdownButtons" in button),
+  );
 
   const ButtonsComponent = (
     <>
@@ -90,6 +96,7 @@ export function UtilityBar(props: PUtilityBar) {
           <Button
             key={index}
             {...button}
+            position="none"
             className={
               `tol-utility-bar-button ${button && "className" in button ? button.className : ""
               }`
@@ -105,7 +112,9 @@ export function UtilityBar(props: PUtilityBar) {
         dropdownButtons.map((dropdownButton, index) => (
           <DropdownButton
             key={`dropdown-${index}`}
-            {...(dropdownButton as PDropdownButton)}
+            {...dropdownButton}
+            placement={dropdownButton.placement ?? "bottomEnd"}
+            toggle={{ ...dropdownButton.toggle, position: "none" }}
           />
         ))}
     </>
@@ -115,16 +124,21 @@ export function UtilityBar(props: PUtilityBar) {
     <>
       {deprecatedDeprecatedDropdownButtons &&
         deprecatedDeprecatedDropdownButtons.map((button, index) => (
-          <div style={{ float: "right" }} key={`dropdown-${index}`}>
-            <DeprecatedDropdownButtons {...(button as PDeprecatedDropdownButtons)} />
-          </div>
+          <DeprecatedDropdownButtons
+            key={`dropdown-${index}`}
+            {...button}
+            mainButtonIcon={{ ...button.mainButtonIcon, position: "none" }}
+          />
         ))}
     </>
   );
 
   const CondensedButtons = (
-    <ClickOverlay contents={ButtonsComponent}>
-      <div style={{ float: "right" }}>
+    <ClickOverlay
+      className="tol-utility-bar-compact-popover"
+      contents={<div className="tol-utility-bar-buttons tol-utility-bar-buttons-compact">{ButtonsComponent}</div>}
+    >
+      <div>
         <Button
           testid="condensed-utility-bar-button"
           outline

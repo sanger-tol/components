@@ -20,6 +20,22 @@
   z-index: 5;
 }
 
+// Ensures that the editable title within the utility bar does not overflow and
+// is properly truncated with ellipsis
+.tol-utility-bar > .tol-editable-title {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+
+  .rs-plaintext {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 .tol-utility-bar-no-left-side {
   position: fixed;
   width: calc(100% - 16px);
@@ -32,7 +48,21 @@
   align-items: center;
   justify-content: flex-end;
   flex-wrap: nowrap;
+  gap: 6px;
   white-space: nowrap;
+}
+
+// Styles for the compact popover that appears when utility bar buttons are condensed
+.tol-utility-bar-compact-popover.rs-popover {
+  width: max-content;
+  max-width: min(360px, calc(100vw - 24px)) !important;
+  padding: 10px;
+}
+
+.tol-utility-bar-buttons-compact {
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  white-space: normal;
 }
 
 .tol-component-contents {

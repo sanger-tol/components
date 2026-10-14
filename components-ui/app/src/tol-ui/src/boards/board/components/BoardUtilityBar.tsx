@@ -186,7 +186,6 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
   const BoardActions = (
     <UtilityBar
       id="tol-board-utility-bar"
-      compactButtonThreshold={2}
       buttons={boardUtilityBarButtons}
       /**
        * Displays a larger title in view mode (if no header)
