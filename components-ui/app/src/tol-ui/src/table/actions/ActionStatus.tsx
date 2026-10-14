@@ -74,15 +74,15 @@ export function ActionStatus(props: PCellDisplay) {
       setLoading(true);
 
       try {
-        const dataSource = new TsDataSource({
+        const prefectDataSource = new TsDataSource({
           apiPath: API_PATHS.API_PATH,
           apiDataPath: API_PATHS.PREFECT,
         });
-        const dataObject = await dataSource.getOne({
+        const flowDataObject = await prefectDataSource.getOne({
           objectType: "flow_run",
           id: flowRunId,
         });
-        const state = dataObject?.state;
+        const state = flowDataObject?.state;
 
         if (!state) {
           throw new Error(`No flow status returned for ${flowRunId}`);
