@@ -6,7 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { RefObject, useEffect } from "react";
 
-/** Sets a CSS custom property when an element reaches its sticky position after scrolling. */
+/**
+ * Tracks whether an element has reached its sticky position while the window scrolls.
+ * Sets the provided CSS custom property to "1" after the element sticks and "0" otherwise,
+ * and removes the scroll listener when the effect is cleaned up.
+ *
+ * @param elementRef - Ref to the sticky element to track.
+ * @param cssVariable - CSS custom property name to set on the element.
+ */
 export function useStickyShadow(
   elementRef: RefObject<HTMLElement | null>,
   cssVariable: string,

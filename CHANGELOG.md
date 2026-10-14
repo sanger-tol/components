@@ -8,7 +8,7 @@ SPDX-License-Identifier: MIT
 
 ## tol-ui `6.0.0`
 
-12-10-26
+14-10-26
 
 - Generic list config drawer for list components
   - Datapoint renderers

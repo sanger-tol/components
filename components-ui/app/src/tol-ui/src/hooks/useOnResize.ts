@@ -8,7 +8,14 @@ import { useLayoutEffect, useRef } from "react";
 import type { RefObject } from "react";
 
 
-/** Calls a callback when the referenced element or optional selector targets are resized. */
+/**
+ * Calls a callback immediately and whenever the referenced element or selected targets are resized.
+ * The callback is kept current without reconnecting the observer, and the observer is disconnected on unmount.
+ *
+ * @param componentRef - Ref to the element whose size should be observed.
+ * @param callback - Function to call initially and after observed elements resize.
+ * @param observeSelector - Optional CSS selector for additional elements to observe.
+ */
 export function useOnResize(
   componentRef: RefObject<Element | null>,
   callback: () => void,
