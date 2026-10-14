@@ -17,6 +17,7 @@ SPDX-License-Identifier: MIT
 - Add scrollable list layer to generic paginated components
 - Add config to boards, views, zones
 - Add options to boards, including custom headers
+- Fixed bug: action modal causing too many renders (screen goes blank)
 
 ## tol-ui `5.7.2`
 
