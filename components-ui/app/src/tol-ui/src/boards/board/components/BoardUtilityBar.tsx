@@ -4,75 +4,57 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useRef } from "react";
 import {
-  upsertTitle,
-  useBoard,
-  UtilityBar,
-  TsDataSource,
   BOARD_BUTTONS,
-  BOARD_MESSAGE_TEXT,
   BOARD_ENTITIES,
+  BOARD_MESSAGE_TEXT,
+  Button,
   HoverOverlay,
+  isBoardInNavConfig,
+  PopUpMessage,
   ProfileAvatar,
   resetAllBoardFilters,
-  PopUpMessage,
-  isBoardInNavConfig,
+  TsDataSource,
+  upsertTitle,
+  UtilityBar,
   useApp,
+  useAuth,
+  useBoard,
+  useStickyShadow,
 } from "../../..";
 import { boardButtonsBuilder, ViewModeBoardTitle, ViewTabs } from ".";
 import type { PEditableTitle, PButton } from "../../..";
 
+/** Props for the BoardUtilityBar component. */
 export interface IBoardUtilityBar {
-  /**
-   * ID of the currently active view.
-   */
+  /** ID of the currently active view. */
   activeViewId: string | null;
-  /**
-   * DataSource for performing board operations.
-   */
+  /** Data source for performing board operations. */
   boardDataSource: TsDataSource;
-  /**
-   * Title for the new board copy.
-   */
+  /** Title for the new board copy. */
   newBoardCopyTitle: string;
-  /**
-   * Opens the board copy modal.
-   */
+  /** Opens the board copy modal. */
   onOpenBoardCopyModal: () => void;
-  /**
-   * Sets the new board copy title.
-   */
+  /** Sets the new board copy title. */
   setNewBoardCopyTitle: (title: string) => void;
-  /**
-   * Opens the add zone modal.
-   */
+  /** Opens the add zone modal. */
   onOpenAddZone: () => void;
-  /**
-   * Handles clicking a view tab.
-   */
+  /** Handles clicking a view tab. */
   onClickView: (viewId: string) => () => void;
-  /**
-   * Adds a new view.
-   */
+  /** Adds a new view. */
   onAddView: () => void;
-  /**
-   * Handles reordering views.
-   */
+  /** Handles reordering views. */
   onReorderView: (reorderedIds: string[]) => void;
-  /**
-   * Opens the delete view modal.
-   */
+  /** Opens the delete view modal. */
   onOpenDeleteViewModal: () => void;
-  /**
-   * Opens the view import modal.
-   */
+  /** Opens the view import modal. */
   onOpenViewImportModal: () => void;
+  /** Opens the board configuration drawer. */
+  onOpenBoardConfigDrawer: () => void;
 }
 
-/**
- * Wrapper of the UtilityBar component that contains board-level
- * buttons, titles and the view tabs.
- */
+/** Wraps the board-level buttons, titles, and view tabs. */
 export function BoardUtilityBar(props: IBoardUtilityBar) {
   const {
     activeViewId,
@@ -81,8 +63,11 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     onOpenBoardCopyModal,
     setNewBoardCopyTitle,
     onOpenAddZone,
+    onOpenBoardConfigDrawer,
   } = props;
 
+  const { navConfig } = useApp();
+  const { user } = useAuth();
   const {
     privilege,
     editMode,
@@ -93,7 +78,15 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     board,
     setBoard,
   } = useBoard();
-  const { navConfig } = useApp();
+  const {
+    allowBoardCopy = true,
+    hideShareButton = false,
+    showProfileAvatar = true,
+  } = board.config ?? {};
+  const showBoardHeader = board.config?.header?.visible ?? false;
+
+  const boardBarRef = useRef<HTMLDivElement>(null);
+  useStickyShadow(boardBarRef, "--tol-bar-scroll");
 
   const onSaveBoardTitle = (newTitle: string) => {
     upsertTitle(newTitle, board.id!, boardDataSource);
@@ -137,7 +130,7 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     setLayoutMode(!layoutMode);
   };
 
-  const boardUtilityBarButtons = boardButtonsBuilder({
+  const { editOrExitButton, buttons: boardActionButtons } = boardButtonsBuilder({
     activeViewId,
     privilege,
     editMode,
@@ -149,6 +142,10 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     newBoardCopyTitle,
     setNewBoardCopyTitle,
     onOpenBoardCopyModal,
+    onOpenBoardConfigDrawer,
+    allowBoardCopy,
+    hideShareButton,
+    roles: user?.roles ?? [],
   });
 
   const addZone: PButton = {
@@ -171,44 +168,70 @@ export function BoardUtilityBar(props: IBoardUtilityBar) {
     <ViewModeBoardTitle text={board?.title!} editable={editMode} />
   );
 
-  return (
-    <div className="tol-board-bar">
-      <div className="tol-board-bar-container">
-        <div className="tol-board-bar-inner-container">
-          <UtilityBar
-            id="tol-board-utility-bar"
-            buttons={boardUtilityBarButtons}
-            /**
-             * Display a larger title in view mode, and an editable title in edit mode.
-             */
-            title={editMode ? editModeBoardTitle : undefined}
-            elements={editMode ? undefined : [ViewModeTitle]}
-          />
-        </div>
-        <ProfileAvatar
-          className="tol-board-bar-profile-bubble"
+  const isHeaderView = !editMode && showBoardHeader;
+  const isShowProfileAvatar = editMode || showProfileAvatar;
+  // Don't display view tabs if there's only one view
+  const hasViewTabs = (board?.order?.length ?? 0) > 1;
+  const hasVisibleViewModeActions = showProfileAvatar || allowBoardCopy || !hideShareButton;
+  const shouldShowEditButtonOnly =
+    isHeaderView && !hasViewTabs && !hasVisibleViewModeActions;
+  const boardUtilityBarButtons = [editOrExitButton, ...boardActionButtons];
+
+  const ViewTabsContent = <ViewTabs onSaveTitle={onSaveViewTitle} {...props} />;
+  const BoardBarElements = () => {
+    if (isHeaderView) return [ViewTabsContent];
+    if (!editMode) return [ViewModeTitle];
+  };
+
+  const BoardActions = (
+    <UtilityBar
+      id="tol-board-utility-bar"
+      buttons={boardUtilityBarButtons}
+      /**
+       * Displays a larger title in view mode (if no header)
+       * and an editable title in edit mode.
+       */
+      title={!isHeaderView && editMode ? editModeBoardTitle : undefined}
+      elements={BoardBarElements()}
+    />
+  );
+  const BoardOwnerAvatar = isShowProfileAvatar && (
+    <ProfileAvatar
+      className="tol-board-bar-profile-bubble"
+      children={
+        <HoverOverlay
           children={
-            <HoverOverlay
-              children={
-                board?.order
-                  ? `${board.owner_email?.split("@")[0].replace(/\d/g, "").toUpperCase()}`
-                  : "..."
-              }
-              contents={`Board owner: ${board.owner_email}`}
-              placement="left"
-            />
+            board?.order
+              ? `${board.owner_email?.split("@")[0].replace(/\d/g, "").toUpperCase()}`
+              : "..."
           }
+          contents={`Board owner: ${board.owner_email}`}
+          placement="left"
         />
+      }
+    />
+  );
+  const EditModeDivider = editMode && <hr />;
+  const ViewTabsBar = (hasViewTabs || editMode) && (
+    <UtilityBar
+      id="tol-board-views-utility-bar"
+      className="tol-views-bar"
+      elements={[ViewTabsContent]}
+      buttons={[addZone]}
+    />
+  );
+
+  // If only the edit button should be shown, render it alone instead of the full board bar.
+  if (shouldShowEditButtonOnly) return <Button {...editOrExitButton} />;
+
+  return (
+    <div ref={boardBarRef} className="tol-board-bar">
+      <div className="tol-board-bar-container">
+        <div className="tol-board-bar-inner-container">{BoardActions}</div>
+        {BoardOwnerAvatar}
       </div>
-      {editMode && <hr />}
-      {(board?.order?.length > 1 || editMode) && (
-        <UtilityBar
-          id="tol-board-views-utility-bar"
-          className="tol-views-bar"
-          elements={[<ViewTabs onSaveTitle={onSaveViewTitle} {...props} />]}
-          buttons={[addZone]}
-        />
-      )}
+      {!isHeaderView && EditModeDivider}
+      {!isHeaderView && ViewTabsBar}
     </div>
   );
 }

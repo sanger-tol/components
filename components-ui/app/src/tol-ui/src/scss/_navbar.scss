@@ -11,7 +11,8 @@
 .tol-navbar {
   padding-top: 14px;
   padding-bottom: 1rem;
-  background-color: var(--tol-dark);
+  background-color: black;
+  transition: background-color 300ms ease;
   z-index: 1030;
   position: fixed;
   top: 0;
@@ -152,10 +153,6 @@
     border-radius: 12px;
   }
 
-  .nav-link svg {
-    // font-size: 1.1rem;
-  }
-
   .nav-right {
     margin-left: 0;
   }
@@ -164,6 +161,15 @@
 // clear navbar with header
 .tol-navigation:not(.tol-navigation-mobile):has(+ .tol-smart-app .masthead) .tol-navbar {
   background-color: rgba(0, 0, 0, var(--tol-navbar-scroll, 0)) !important;
+}
+
+.tol-navbar.tol-navbar-menu-open {
+  background-color: black !important;
+}
+
+// Keep the header navbar transparent when its menu is closed, including while its masthead loads.
+.tol-navigation:not(.tol-navigation-mobile):has(+ .tol-smart-app .masthead) .tol-navbar.tol-navbar-menu-open {
+  background-color: black !important;
 }
 
 // remove border around mobile nav

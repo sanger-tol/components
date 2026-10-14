@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { RemoteObjectDetail, PVisualisationComponent, DATA_LIST_COMPONENT_TYPES, updateComponentConfigAndUpsert, useBoard } from "..";
+import { RemoteObjectDetail, PVisualisationComponent, DATA_LIST_COMPONENT_TYPES, optimiseFieldMetaForSave, updateComponentConfigAndUpsert, useBoard } from "..";
 import type { IListDataConfigSave, TDataListComponentType } from "..";
 
 
@@ -24,7 +24,11 @@ export function BoardDataList(props: PBoardDataList) {
   const { editMode } = useBoard();
 
   const onConfigSave = (updatedConfig: IListDataConfigSave) => {
-    const nextConfig = { ...config, ...updatedConfig };
+    const nextConfig = {
+      ...config,
+      ...updatedConfig,
+      fieldMeta: optimiseFieldMetaForSave(updatedConfig.fieldMeta ?? config?.fieldMeta),
+    };
     setConfig(nextConfig);
     updateComponentConfigAndUpsert(id, nextConfig, zone, boardDataSource, editMode);
   };

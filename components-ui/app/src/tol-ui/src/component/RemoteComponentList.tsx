@@ -64,7 +64,8 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
 
   // External configuration (e.g. a board) must never inherit standalone saved settings.
   const config: IListDataConfigSave = onConfigSave ? {} : savedConfig;
-  const configuredPageSize = config.pageSize ?? initialPageSize ?? 50;
+  const defaultPageSize = initialPageSize ?? 50;
+  const configuredPageSize = config.pageSize ?? defaultPageSize;
 
   // Normalize the configured metadata from props/storage before passing it to the data hook.
   const activeFieldMeta = useMemo(
@@ -118,10 +119,10 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
       fieldMeta: nextFieldMeta ?? activeFieldMeta,
       sortByAttribute: sortByAttribute ?? undefined,
       sortByType: sortByType ?? undefined,
-      pageSize: nextPageSize ?? configuredPageSize,
+      pageSize: nextPageSize === defaultPageSize ? undefined : nextPageSize,
     };
     setPage(1);
-    setPageSize(nextConfig.pageSize!);
+    setPageSize(nextPageSize ?? defaultPageSize);
     if (onConfigSave) {
       onConfigSave(nextConfig);
     } else {
@@ -184,10 +185,17 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         fieldMeta={activeFieldMeta}
         sortByAttribute={drawerSortByAttribute}
         sortByType={drawerSortByType}
-        pageSize={configuredPageSize}
+        pageSize={config.pageSize ?? initialPageSize}
         onConfigSave={onSave}
       />
-      {showCounter && <RecordCounter totalSize={totalSize} loading={isLoading} />}
+      {showCounter && (
+        <RecordCounter
+          totalSize={totalSize}
+          page={page}
+          pageSize={pageSize}
+          loading={isLoading}
+        />
+      )}
       <RemoteComponentBase
         {...rest}
         id={id}

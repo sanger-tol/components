@@ -62,6 +62,14 @@ export interface IPagination {
   totalSize?: number;
 }
 
+/** Inclusive first and last record numbers displayed on a page. */
+export interface IRecordRange {
+  /** First record number in the range. */
+  start: number;
+  /** Last record number in the range. */
+  end: number;
+}
+
 /** Sort configuration for list components. */
 export interface ISortBy {
   /** Attribute used for sorting. */

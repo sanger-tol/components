@@ -14,11 +14,12 @@ import {
   httpClient,
   isAttributeField,
   splitRelationshipsForField,
-  DetailGetter
+  DetailGetter,
 } from "..";
 import type {
   ListGetter,
   PageGetter,
+  Upserter,
   IAttributeDescriptor,
   TAttributes,
   TClient,
@@ -52,7 +53,7 @@ import type {
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
-export class TsDataSource implements ListGetter, PageGetter {
+export class TsDataSource implements ListGetter, PageGetter, Upserter {
   private readonly detailGetter = new DetailGetter((args) => this.getOne(args));
   private client: TClient;
   private url: string | undefined;

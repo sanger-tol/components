@@ -19,39 +19,27 @@ import {
 } from "..";
 
 export interface PUtilityBar {
-  /**
-   * An optional ID for the utility bar, which can be used for testing or other purposes.
-   */
+  /** Optional utility bar ID, used for testing and other purposes. */
   id?: string;
-  /**
-   * A title to be displayed on the left side of the utility bar. This can be an editable title if an `onEdit` function is provided.
-   */
+  /** Title displayed on the left; it can be editable when an `onEdit` callback is provided. */
   title?: PEditableTitle;
-  /**
-   * A description to be displayed as a tooltip on an info icon next to the title.
-   */
+  /** Description shown in a tooltip beside the title. */
   description?: ReactNode;
-  /**
-   * An array of buttons to be displayed in the utility bar. These can be regular buttons or dropdown buttons.
-   */
+  /** Regular and dropdown buttons displayed in the utility bar. */
   buttons?: (
     PButton |
     PDropdownButton |
     PDeprecatedDropdownButtons |
     undefined
   )[];
-  /**
-   * Additional elements to be rendered in the utility bar, after the title and description but before the buttons. This can be used to add custom content to the utility bar.
-   */
+  /** Custom elements rendered after the title and description, before the buttons. */
   elements?: ReactNode[];
-  /**
-   * Whether to hide the left side of the utility bar, which includes the title and description.
-   */
+  /** Whether to hide the title and description area. */
   noLeftSide?: boolean;
-  /**
-   * Additional class name(s) to apply to the utility bar.
-   */
+  /** Additional CSS class names for the utility bar. */
   className?: string;
+  /** Maximum visible regular-button count before condensing; defaults to 3. */
+  compactButtonThreshold?: number;
 }
 
 /**
@@ -60,7 +48,16 @@ export interface PUtilityBar {
  * The utility bar is responsive and can condense buttons into a dropdown on smaller screens.
  */
 export function UtilityBar(props: PUtilityBar) {
-  const { id, title, description, buttons, elements, noLeftSide, className } = props;
+  const {
+    id,
+    title,
+    description,
+    buttons,
+    elements,
+    noLeftSide,
+    className,
+    compactButtonThreshold = 2,
+  } = props;
 
   const wrapperId = "tol-utility-bar-wrapper-" + id;
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -82,9 +79,15 @@ export function UtilityBar(props: PUtilityBar) {
   }, []);
 
   // Separate dropdown buttons from regular buttons
-  const regularButtons = buttons?.filter(button => button && !("dropdownButtons" in button) && !("toggle" in button));
-  const dropdownButtons = buttons?.filter(button => button && "toggle" in button);
-  const deprecatedDeprecatedDropdownButtons = buttons?.filter(button => button && "dropdownButtons" in button);
+  const regularButtons = buttons?.filter(
+    (button): button is PButton => Boolean(button && !("dropdownButtons" in button) && !("toggle" in button)),
+  );
+  const dropdownButtons = buttons?.filter(
+    (button): button is PDropdownButton => Boolean(button && "toggle" in button),
+  );
+  const deprecatedDeprecatedDropdownButtons = buttons?.filter(
+    (button): button is PDeprecatedDropdownButtons => Boolean(button && "dropdownButtons" in button),
+  );
 
   const ButtonsComponent = (
     <>
@@ -93,6 +96,7 @@ export function UtilityBar(props: PUtilityBar) {
           <Button
             key={index}
             {...button}
+            position="none"
             className={
               `tol-utility-bar-button ${button && "className" in button ? button.className : ""
               }`
@@ -108,7 +112,9 @@ export function UtilityBar(props: PUtilityBar) {
         dropdownButtons.map((dropdownButton, index) => (
           <DropdownButton
             key={`dropdown-${index}`}
-            {...(dropdownButton as PDropdownButton)}
+            {...dropdownButton}
+            placement={dropdownButton.placement ?? "bottomEnd"}
+            toggle={{ ...dropdownButton.toggle, position: "none" }}
           />
         ))}
     </>
@@ -118,20 +124,25 @@ export function UtilityBar(props: PUtilityBar) {
     <>
       {deprecatedDeprecatedDropdownButtons &&
         deprecatedDeprecatedDropdownButtons.map((button, index) => (
-          <div style={{ float: "right" }} key={`dropdown-${index}`}>
-            <DeprecatedDropdownButtons {...(button as PDeprecatedDropdownButtons)} />
-          </div>
+          <DeprecatedDropdownButtons
+            key={`dropdown-${index}`}
+            {...button}
+            mainButtonIcon={{ ...button.mainButtonIcon, position: "none" }}
+          />
         ))}
     </>
   );
 
   const CondensedButtons = (
-    <ClickOverlay contents={ButtonsComponent}>
-      <div style={{ float: "right" }}>
+    <ClickOverlay
+      className="tol-utility-bar-compact-popover"
+      contents={<div className="tol-utility-bar-buttons tol-utility-bar-buttons-compact">{ButtonsComponent}</div>}
+    >
+      <div>
         <Button
           testid="condensed-utility-bar-button"
           outline
-          position="right"
+          position="none"
           type="primary"
           icon="ellipsis-vertical"
         />
@@ -149,7 +160,7 @@ export function UtilityBar(props: PUtilityBar) {
         )}
         <div className="tol-utility-bar-buttons">
           {smallBreakpoint && regularButtons &&
-            regularButtons.filter((button) => button?.["visible"] !== false).length > 3
+            regularButtons.filter((button) => button?.["visible"] !== false).length > compactButtonThreshold
             ? CondensedButtons
             : ButtonsComponent
           }

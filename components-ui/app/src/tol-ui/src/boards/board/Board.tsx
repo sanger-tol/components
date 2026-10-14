@@ -31,11 +31,13 @@ import {
   defineBoardEntityInParent,
   isEmptyObject,
   translateBoardFilters,
+  Header,
 } from "../..";
-import { BoardUtilityBar, ImportViewModal } from "./components";
+import { BoardConfigDrawer, BoardUtilityBar, ImportViewModal } from "./components";
 import type { IBoard, IBoardFilter, TsDataSource } from "../..";
 
 
+/** Props for the Board component. */
 export interface PBoard extends IBoardFilter {
   /** The ID of the board to be displayed. */
   boardId?: string;
@@ -60,6 +62,8 @@ export function Board(props: PBoard) {
   const [newBoardCopyTitle, setNewBoardCopyTitle] = useState<string>("");
   const [viewImportId, setViewImportId] = useState<string>("");
   const [viewImportModalOpen, setViewImportModalOpen] =
+    useState<boolean>(false);
+  const [boardConfigDrawerOpen, setBoardConfigDrawerOpen] =
     useState<boolean>(false);
 
   // Ability to override boardId from props over URL params
@@ -124,20 +128,6 @@ export function Board(props: PBoard) {
     );
   }, [activeViewId]);
 
-  // Scroll listener for sticky board bar shadow effect
-  useEffect(() => {
-    if (!isSuccess) return;
-    const bar = document.querySelector<HTMLElement>(".tol-board-bar");
-    if (!bar) return;
-    const onScroll = () => {
-      const progress = Math.min(window.scrollY / 20, 1);
-      bar.style.setProperty("--tol-bar-scroll", progress.toString());
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isSuccess]);
-
   const onClickView = (viewId: string) => () => {
     setActiveViewId(viewId);
     updateViewInUrl(viewId);
@@ -179,6 +169,37 @@ export function Board(props: PBoard) {
     );
   };
 
+  const onConfirmBoardCopy = async () => {
+    if (!newBoardCopyTitle.trim()) {
+      PopUpMessage({
+        type: MESSAGE_TYPE.WARNING,
+        message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD)
+          .BOARD_COPY.NO_TITLE_ERROR,
+      });
+      return;
+    }
+    const copiedBoard = await copyBoard(
+      boardDataSource,
+      id!,
+      newBoardCopyTitle,
+      BOARD_ENTITIES.ENTITIES.BOARD,
+    );
+    if (copiedBoard) {
+      setBoard(copiedBoard);
+      const firstViewId = copiedBoard.order?.[0];
+      if (firstViewId) {
+        setActiveViewId(firstViewId);
+        setMountedViewIds([firstViewId]);
+      }
+    }
+    setPrivilege(
+      copiedBoard?.write_privilege
+        ? PRIVILEGE.BOARD.WRITABLE
+        : PRIVILEGE.BOARD.VIEWABLE,
+    );
+    setBoardCopyModalOpen(false);
+  };
+
   if (isError || isBoardNotFound) {
     return <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />;
   }
@@ -206,36 +227,7 @@ export function Board(props: PBoard) {
         title={newBoardCopyTitle}
         setTitle={setNewBoardCopyTitle}
         itemType={BOARD_ENTITIES.ENTITIES.BOARD}
-        confirmationAction={async () => {
-          if (!newBoardCopyTitle.trim()) {
-            PopUpMessage({
-              type: MESSAGE_TYPE.WARNING,
-              message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD)
-                .BOARD_COPY.NO_TITLE_ERROR,
-            });
-            return;
-          }
-          const copiedBoard = await copyBoard(
-            boardDataSource,
-            id!,
-            newBoardCopyTitle,
-            BOARD_ENTITIES.ENTITIES.BOARD,
-          );
-          if (copiedBoard) {
-            setBoard(copiedBoard);
-            const firstViewId = copiedBoard.order?.[0];
-            if (firstViewId) {
-              setActiveViewId(firstViewId);
-              setMountedViewIds([firstViewId]);
-            }
-          }
-          setPrivilege(
-            copiedBoard?.write_privilege
-              ? PRIVILEGE.BOARD.WRITABLE
-              : PRIVILEGE.BOARD.VIEWABLE,
-          );
-          setBoardCopyModalOpen(false);
-        }}
+        confirmationAction={onConfirmBoardCopy}
         onExited={() => {
           !newBoardCopyTitle.trim()
             ? setNewBoardCopyTitle(`${board?.title} - copy`)
@@ -251,30 +243,41 @@ export function Board(props: PBoard) {
           </>
         }
       />
-      <BoardUtilityBar
-        onOpenBoardCopyModal={() => setBoardCopyModalOpen(true)}
-        setNewBoardCopyTitle={setNewBoardCopyTitle}
-        onOpenAddZone={() => setOpenAddZoneModal(true)}
-        newBoardCopyTitle={newBoardCopyTitle}
-        activeViewId={activeViewId}
-        boardDataSource={boardDataSource}
-        onOpenDeleteViewModal={() => setDeleteViewConfirmModal(true)}
-        onOpenViewImportModal={() => setViewImportModalOpen(true)}
-        onClickView={onClickView}
-        onAddView={onAddView}
-        onReorderView={onReorderViews}
-      />
-      {mountedViewIds.map((viewId) => (
-        <View
-          key={viewId}
-          id={viewId}
+      {!editMode && board.config?.header?.visible && (
+        <Header title={board.title} image={board.config.header.image} />
+      )}
+      <div className="tol-board-content">
+        <BoardUtilityBar
+          onOpenBoardCopyModal={() => setBoardCopyModalOpen(true)}
+          onOpenBoardConfigDrawer={() => setBoardConfigDrawerOpen(true)}
+          setNewBoardCopyTitle={setNewBoardCopyTitle}
+          onOpenAddZone={() => setOpenAddZoneModal(true)}
+          newBoardCopyTitle={newBoardCopyTitle}
+          activeViewId={activeViewId}
           boardDataSource={boardDataSource}
-          actionsDataSource={actionsDataSource}
-          open={openAddZoneModal && viewId === activeViewId}
-          setOpen={setOpenAddZoneModal}
-          active={viewId === activeViewId}
+          onOpenDeleteViewModal={() => setDeleteViewConfirmModal(true)}
+          onOpenViewImportModal={() => setViewImportModalOpen(true)}
+          onClickView={onClickView}
+          onAddView={onAddView}
+          onReorderView={onReorderViews}
         />
-      ))}
+        <BoardConfigDrawer
+          open={boardConfigDrawerOpen}
+          setOpen={setBoardConfigDrawerOpen}
+          boardDataSource={boardDataSource}
+        />
+        {mountedViewIds.map((viewId) => (
+          <View
+            key={viewId}
+            id={viewId}
+            boardDataSource={boardDataSource}
+            actionsDataSource={actionsDataSource}
+            open={openAddZoneModal && viewId === activeViewId}
+            setOpen={setOpenAddZoneModal}
+            active={viewId === activeViewId}
+          />
+        ))}
+      </div>
       <ConfirmationModal
         open={deleteViewConfirmModal}
         setOpen={setDeleteViewConfirmModal}
