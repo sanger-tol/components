@@ -118,7 +118,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
       fieldMeta: nextFieldMeta ?? activeFieldMeta,
       sortByAttribute: sortByAttribute ?? undefined,
       sortByType: sortByType ?? undefined,
-      pageSize: nextPageSize ?? configuredPageSize,
+      pageSize: nextPageSize,
     };
     setPage(1);
     setPageSize(nextConfig.pageSize!);
@@ -184,10 +184,17 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         fieldMeta={activeFieldMeta}
         sortByAttribute={drawerSortByAttribute}
         sortByType={drawerSortByType}
-        pageSize={configuredPageSize}
+        pageSize={config.pageSize}
         onConfigSave={onSave}
       />
-      {showCounter && <RecordCounter totalSize={totalSize} loading={isLoading} />}
+      {showCounter && (
+        <RecordCounter
+          totalSize={totalSize}
+          page={page}
+          pageSize={pageSize}
+          loading={isLoading}
+        />
+      )}
       <RemoteComponentBase
         {...rest}
         id={id}

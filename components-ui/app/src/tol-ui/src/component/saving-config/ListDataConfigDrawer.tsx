@@ -53,7 +53,7 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     fieldMeta,
     sortByAttribute,
     sortByType,
-    pageSize = 50,
+    pageSize,
   } = props;
 
   const [draftFieldMeta, setDraftFieldMeta] = useState<IFieldMeta>(() => ({
@@ -65,7 +65,7 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
   const [draftAttributes, setDraftAttributes] = useState<string[]>(fieldMeta.order.active);
   const [draftSortByAttribute, setDraftSortByAttribute] = useState<string | undefined>(sortByAttribute);
   const [draftSortByType, setDraftSortByType] = useState<string | undefined>(sortByType);
-  const [draftPageSize, setDraftPageSize] = useState(pageSize);
+  const [draftPageSize, setDraftPageSize] = useState<number | undefined>(pageSize);
 
   const hasPendingChanges = (
     !deepEqual(draftAttributes, savedAttributesRef.current) ||

@@ -37,6 +37,7 @@
   left: auto;
   padding: 4px 8px;
   backdrop-filter: blur(3px);
+  border: 1px solid var(--tol-grey);
 }
 
 // Keep the counter inside the bordered viewport when rendering a ComponentList.

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { DataPoints, deepCopy } from "..";
-import type { IFieldMeta, TField, TCellRenderer, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecord, TsDataSource, TDataRecordList } from "..";
+import type { IFieldMeta, IRecordRange, TField, TCellRenderer, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecord, TsDataSource, TDataRecordList } from "..";
 
 /** Resolves the default data point renderer for an attribute's Python type. */
 export function addDefaultDataPointRenderer(type?: string): TCellRenderer {
@@ -104,12 +104,42 @@ export function joinClassNames(...classNames: (string | undefined | null | false
 }
 
 /**
- * Formats a total size as records for the record counter.
+ * Calculates the first and last record numbers shown on the current page.
+ *
+ * @param totalSize - The total number of records.
+ * @param page - The current page, starting at 1.
+ * @param pageSize - The number of records displayed per page.
+ * @returns The inclusive range of displayed records, or 0 to 0 when there are no records.
+ */
+export function getRecordRange(
+  totalSize: number,
+  page = 1,
+  pageSize?: number,
+): IRecordRange {
+  if (totalSize === 0) return { start: 0, end: 0 };
+
+  const start = pageSize === undefined ? 1 : (page - 1) * pageSize + 1;
+  const end = pageSize === undefined ? totalSize : Math.min(page * pageSize, totalSize);
+  return { start, end };
+}
+
+/**
+ * Formats a total size with localized number separators.
  *
  * @param totalSize - The total number of records.
  * @returns The formatted record count.
  */
 export function formatTotalSize(totalSize: number): string {
-  if (totalSize === 1) return "1 Record";
-  return totalSize.toLocaleString() + " Records";
+  return totalSize.toLocaleString();
+}
+
+/**
+ * Formats a record range using localized numbers and a compact separator.
+ *
+ * @param start - The first record number in the range.
+ * @param end - The last record number in the range.
+ * @returns The formatted range, e.g. "1–10".
+ */
+export function formatRecordRange(start: number, end: number): string {
+  return `${start.toLocaleString()}–${end.toLocaleString()}`;
 }
