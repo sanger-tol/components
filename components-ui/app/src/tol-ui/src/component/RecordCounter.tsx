@@ -27,6 +27,7 @@ export function RecordCounter(props: PRecordCounter) {
     const formattedStart = start.toLocaleString();
     const formattedEnd = end.toLocaleString();
     const formattedTotal = totalSize.toLocaleString();
+    const showRange = pageSize !== 1;
     const accessibleLabel = `Showing ${formattedStart} to ${formattedEnd} of ${formattedTotal} records`;
 
     return (
@@ -36,7 +37,8 @@ export function RecordCounter(props: PRecordCounter) {
         aria-label={accessibleLabel}
         title={accessibleLabel}
       >
-        {formatRecordRange(start, end)} of {formatTotalSize(totalSize)}
+        {showRange ? formatRecordRange(start, end) : page.toLocaleString()} of {" "}
+        {formatTotalSize(totalSize)}
       </div>
     );
   }
