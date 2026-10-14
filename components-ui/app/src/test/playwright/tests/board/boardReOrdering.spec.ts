@@ -96,7 +96,7 @@ test("Can re-order zones", async ({ page }) => {
   await expect(zoneTitles).toHaveText(["Zone 1", "Zone 2"]);
 
   await page.getByTestId("move-zone-down-button").first().click();
-  await page.getByText("Save Layouts").click();
+  await page.getByTestId("board-layout-mode-button").click();
 
   await expect(zoneTitles).toHaveText(["Zone 2", "Zone 1"]);
 });
