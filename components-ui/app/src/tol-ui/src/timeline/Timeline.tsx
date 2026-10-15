@@ -30,7 +30,7 @@ export function Timeline(props: PTimeline) {
 
     return (
       <div
-        className="tol-timeline-marker"
+        className={`tol-timeline-marker${field.icon ? " tol-timeline-marker-icon" : ""}`}
         style={markerStyle}
       >
         {field.icon && <Icon icon={field.icon} />}

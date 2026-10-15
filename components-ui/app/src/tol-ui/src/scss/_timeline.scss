@@ -5,30 +5,50 @@ SPDX-License-Identifier: MIT
 */
 
 .tol-timeline {
-  padding: var(--tol-spacing-sm);
+  padding: var(--tol-spacing-md);
 
   // Override default styles for the custom dot in the timeline items.
   .rs-timeline-item-custom-dot {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 10px;
-    min-height: 10px;
-  }
-
-  .tol-timeline-description {
-    margin-top: var(--tol-spacing-xs);
-    color: var(--tol-text-subtle);
+    position: relative;
+    width: 10px;
+    height: 10px;
+    padding: 0;
   }
 
   .tol-timeline-marker {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
     width: 10px;
     height: 10px;
     border-radius: 50%;
     background: var(--tol-timeline-color, var(--tol-grey));
     color: var(--tol-grey);
+
+    &.tol-timeline-marker-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 2.5rem;
+      height: 2.5rem;
+
+      // Adjust the position of the icon within the timeline marker.
+      .tol-icon {
+        margin-bottom: -0.2rem;
+      }
+
+      .svg-inline--fa {
+        width: 1.2rem;
+        height: 1.2rem;
+        border: 0;
+        padding: 0;
+        color: var(--tol-bg);
+      }
+    }
+  }
+
+  .tol-timeline-description {
+    margin-top: var(--tol-spacing-xs);
+    color: var(--tol-text-subtle);
   }
 }
