@@ -54,9 +54,9 @@ export function BoardDataList(props: PBoardDataList) {
       zone={zone}
       setZone={setZone}
       fields={fields}
-      pageSize={config.pageSize}
-      sortByAttribute={config.sortByAttribute}
-      sortByType={config.sortByType}
+      defaultPageSize={config.defaultPageSize}
+      defaultSortByAttribute={config.defaultSortByAttribute}
+      defaultSortByType={config.defaultSortByType}
       onConfigSave={onConfigSave}
       utilityBarConfig={props.utilityBarConfig}
     />

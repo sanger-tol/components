@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import type { IFieldMeta, ISortBy, HistogramGrouping } from "..";
+import type { IFieldMeta, IDefaultPageSize, IDefaultSortBy, HistogramGrouping } from "..";
 import {
   CHART_TYPES,
   COMPONENT_TYPES,
@@ -21,11 +21,9 @@ export type TDataListComponentType =
   (typeof DATA_LIST_COMPONENT_TYPES)[keyof typeof DATA_LIST_COMPONENT_TYPES];
 
 /** Save payload for list-style component configuration. */
-export interface IListDataConfigSave extends ISortBy {
+export interface IListDataConfigSave extends IDefaultSortBy, IDefaultPageSize {
   /** Field selection metadata for the list. */
   fieldMeta?: IFieldMeta;
-  /** Default number of records displayed per page. */
-  pageSize?: number;
 }
 
 /** Configuration for board charts. */

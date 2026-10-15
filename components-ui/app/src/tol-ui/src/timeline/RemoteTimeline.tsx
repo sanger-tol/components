@@ -12,7 +12,7 @@ export interface PRemoteTimeline extends PTimelineOptions, IRemoteComponentDataL
 
 /** Fetches one remote record and displays its selected fields as a timeline. */
 export function RemoteTimeline(props: PRemoteTimeline) {
-  const { pageSize = 1, fields } = props;
+  const { fields } = props;
 
   // TODO: Make the icons customisable
   const fieldsWithCheckIcons = fields && {
@@ -33,7 +33,7 @@ export function RemoteTimeline(props: PRemoteTimeline) {
   };
 
   return (
-    <RemoteComponentDataList {...props} fields={fieldsWithCheckIcons} pageSize={pageSize}>
+    <RemoteComponentDataList {...props} fields={fieldsWithCheckIcons} componentDefaultPageSize={1}>
       <Timeline {...props} fields={fieldsWithCheckIcons} />
     </RemoteComponentDataList>
   );

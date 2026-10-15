@@ -8,6 +8,7 @@ import { cloneElement, ReactElement, useMemo, useRef, useState } from "react";
 import {
   ComponentList,
   createSort,
+  DEFAULT_PAGE_SIZE,
   getComponentConfigLocalStorage,
   ListDataConfigDrawer,
   mergeUtilityBarConfigs,
@@ -28,6 +29,8 @@ export interface PRemoteComponentDataList extends IRemoteComponentDataList {
   children: ReactElement<IComponentData>;
   /** Whether to display the page size picker in the utility bar. Defaults to true. */
   pageSizePicker?: boolean;
+  /** The page size the wrapped component defaults to when none is saved or passed via `defaultPageSize`. */
+  componentDefaultPageSize?: number;
 }
 
 /**
@@ -42,12 +45,13 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     objectType,
     fields,
     customDataPointRenderers,
-    sortByAttribute,
-    sortByType,
+    defaultSortByAttribute,
+    defaultSortByType,
     zone,
     setZone,
     page: initialPage,
-    pageSize: initialPageSize,
+    defaultPageSize,
+    componentDefaultPageSize,
     onConfigSave,
     pageSizePicker,
     children,
@@ -64,19 +68,23 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
 
   // External configuration (e.g. a board) must never inherit standalone saved settings.
   const config: IListDataConfigSave = onConfigSave ? {} : savedConfig;
-  const defaultPageSize = initialPageSize ?? 50;
-  const configuredPageSize = config.pageSize ?? defaultPageSize;
 
   // Normalize the configured metadata from props/storage before passing it to the data hook.
   const activeFieldMeta = useMemo(
     () => normaliseFieldMeta(config.fieldMeta ?? fields),
     [config.fieldMeta, fields],
   );
+
+  // Only a saved or passed-in default; the drawer shows no page size unless one is set.
+  const configuredDefaultPageSize = config.defaultPageSize ?? defaultPageSize;
+  // The component and global defaults are only a fallback for the page size state.
+  const apiPageSize = configuredDefaultPageSize ?? componentDefaultPageSize ?? DEFAULT_PAGE_SIZE;
+
   // Use the first active field only for the API request when no explicit sort is configured.
-  const apiSortByAttribute = config.sortByAttribute ?? sortByAttribute ?? activeFieldMeta.order?.active?.[0];
-  const apiSortByType = config.sortByType ?? sortByType ?? "asc";
-  const drawerSortByAttribute = config.sortByAttribute ?? sortByAttribute;
-  const drawerSortByType = config.sortByType ?? sortByType;
+  const configuredDefaultSortByAttribute = config.defaultSortByAttribute ?? defaultSortByAttribute;
+  const configuredDefaultSortByType = config.defaultSortByType ?? defaultSortByType;
+  const apiSortByAttribute = configuredDefaultSortByAttribute ?? activeFieldMeta.order?.active?.[0];
+  const apiSortByType = configuredDefaultSortByType ?? "asc";
 
   const {
     // This is still IFieldMeta; the hook adds fetched descriptor defaults to the configured metadata.
@@ -98,7 +106,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     zone,
     setZone,
     page: initialPage,
-    pageSize: configuredPageSize,
+    pageSize: apiPageSize,
     customDataPointRenderers,
     sortBy: createSort(apiSortByAttribute, apiSortByType),
   });
@@ -107,22 +115,22 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
 
   const showPagination = totalSize !== undefined && totalSize > pageSize;
   const showCounter = totalSize !== undefined && totalSize > 1;
-  const showPageSizePicker = configuredPageSize !== 1 && pageSizePicker !== false;
+  const showPageSizePicker = apiPageSize !== 1 && pageSizePicker !== false;
 
   const onSave = ({
     fieldMeta: nextFieldMeta,
-    sortByAttribute,
-    sortByType,
-    pageSize: nextPageSize
+    defaultSortByAttribute: nextDefaultSortByAttribute,
+    defaultSortByType: nextDefaultSortByType,
+    defaultPageSize: nextDefaultPageSize,
   }: IListDataConfigSave) => {
     const nextConfig: IListDataConfigSave = {
       fieldMeta: nextFieldMeta ?? activeFieldMeta,
-      sortByAttribute: sortByAttribute ?? undefined,
-      sortByType: sortByType ?? undefined,
-      pageSize: nextPageSize === defaultPageSize ? undefined : nextPageSize,
+      defaultSortByAttribute: nextDefaultSortByAttribute ?? undefined,
+      defaultSortByType: nextDefaultSortByType ?? undefined,
+      defaultPageSize: nextDefaultPageSize,
     };
     setPage(1);
-    setPageSize(nextPageSize ?? defaultPageSize);
+    if (nextDefaultPageSize) setPageSize(nextDefaultPageSize);
     if (onConfigSave) {
       onConfigSave(nextConfig);
     } else {
@@ -183,9 +191,9 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         open={openConfig}
         setOpen={setOpenConfig}
         fieldMeta={fieldMeta}
-        sortByAttribute={drawerSortByAttribute}
-        sortByType={drawerSortByType}
-        pageSize={config.pageSize ?? initialPageSize}
+        defaultSortByAttribute={configuredDefaultSortByAttribute}
+        defaultSortByType={configuredDefaultSortByType}
+        defaultPageSize={configuredDefaultPageSize}
         onConfigSave={onSave}
       />
       {showCounter && (
