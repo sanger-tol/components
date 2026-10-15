@@ -61,8 +61,8 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     data: deepCopy(fieldMeta.data ?? {}),
     dataWithDefaults: deepCopy(fieldMeta.dataWithDefaults ?? {}),
   }));
-  const savedAttributesRef = useRef<string[]>(fieldMeta.order.active);
-  const [draftAttributes, setDraftAttributes] = useState<string[]>(fieldMeta.order.active);
+  const savedAttributesRef = useRef<string[]>(fieldMeta?.order?.active ?? []);
+  const [draftAttributes, setDraftAttributes] = useState<string[]>(fieldMeta?.order?.active ?? []);
   const [draftSortByAttribute, setDraftSortByAttribute] = useState<string | undefined>(sortByAttribute);
   const [draftSortByType, setDraftSortByType] = useState<string | undefined>(sortByType);
   const [draftPageSize, setDraftPageSize] = useState<number | undefined>(pageSize);
@@ -81,8 +81,8 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
       data: deepCopy(fieldMeta.data ?? {}),
       dataWithDefaults: deepCopy(fieldMeta.dataWithDefaults ?? {}),
     });
-    setDraftAttributes(fieldMeta.order.active);
-    savedAttributesRef.current = fieldMeta.order.active;
+    setDraftAttributes(fieldMeta?.order?.active ?? []);
+    savedAttributesRef.current =  fieldMeta?.order?.active ?? [];
     setDraftSortByAttribute(sortByAttribute);
     setDraftSortByType(sortByType);
     setDraftPageSize(pageSize);

@@ -182,7 +182,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         {...props}
         open={openConfig}
         setOpen={setOpenConfig}
-        fieldMeta={activeFieldMeta}
+        fieldMeta={fieldMeta}
         sortByAttribute={drawerSortByAttribute}
         sortByType={drawerSortByType}
         pageSize={config.pageSize ?? initialPageSize}

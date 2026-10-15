@@ -80,10 +80,7 @@ export function useComponentListData({
       ...queryKey,
     ],
     // Guarded by noFieldsSelected, so fields is guaranteed to be set whenever this actually runs.
-    fetchData: async () => ({
-      ...fields!,
-      dataWithDefaults: await buildFieldMetaDefaults(objectType, allAttributes, dataSource, fields?.dataWithDefaults),
-    }),
+    fetchData: async () => buildFieldMetaDefaults(objectType, allAttributes, dataSource, fields!),
     enabled: !noFieldsSelected,
   });
 
@@ -117,10 +114,10 @@ export function useComponentListData({
 
   const data: TDataRecordList = noFieldsSelected
     ? []
-    : buildDataRecords(dataObjects, dataSource, fieldMeta as IFieldMeta, customDataPointRenderers);
+    : buildDataRecords(dataObjects, dataSource, fieldMeta, customDataPointRenderers);
 
   return {
-    fieldMeta: (fieldMeta as IFieldMeta),
+    fieldMeta,
     data,
     noFieldsSelected,
     // Waits for all necessary data to be loaded: field metadata, total size, and the current page of data.
