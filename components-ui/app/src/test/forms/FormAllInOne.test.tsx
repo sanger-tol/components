@@ -4,10 +4,12 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type { ReactNode, MouseEventHandler } from "react";
 import { FormAllInOne } from "../../tol-ui/src/forms/FormAllInOne";
+import { MultipleFormInput } from "../../tol-ui/src/forms/MultipleFormInput";
+import type { PMultipleFormInput } from "../../tol-ui/src/forms/MultipleFormInput";
 import type {
   IFormConfig,
   IFormSearchConfig,
@@ -30,11 +32,15 @@ vi.mock("../../tol-ui/src", async () => {
     }) => <label>{label}<input name={name} value={value}
       onChange={(event) => onChange(event.target.value)} />
       {errorText && <span>{errorText}</span>}</label>,
-    Button: ({ text, onClick, disabled }: {
+    Button: ({ text, icon, onClick, disabled }: {
       text: ReactNode;
+      icon?: string;
       onClick: MouseEventHandler<HTMLButtonElement>;
       disabled?: boolean;
-    }) => <button type="button" onClick={onClick} disabled={disabled}>{text}</button>,
+    }) => <button type="button" onClick={onClick} disabled={disabled}>{text ?? icon}</button>,
+    MultipleFormInput: (props: PMultipleFormInput) => <MultipleFormInput {...props} />,
+    FormComponentWrapper: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+    createNewInput: vi.fn(),
     createInitialDataSnapshot: (config: IFormConfig, initialData?: object) =>
       Object.fromEntries(config.fields.map((field) => [
         field.name,
@@ -87,6 +93,41 @@ describe("FormAllInOne search mode", () => {
     render(<FormAllInOne formConfig={FORM_CONFIG} initialData={{ title: "Existing" }} />);
     expect(screen.getByLabelText("Title")).toHaveValue("Existing");
     expect(screen.queryByRole("button", { name: "Search" })).not.toBeInTheDocument();
+  });
+
+  test.each(["unsectioned", "sectioned", "misc"])("defers minus removal to the field callback for %s fields", mode => {
+    const onMinus = vi.fn();
+    const fields: IFormConfig["fields"] = [{
+      name: "title",
+      type: "text",
+      multiple: true,
+      onMinus,
+      section: mode === "sectioned" ? "details" : undefined,
+    }];
+    if (mode === "misc") {
+      fields.push({ name: "other", type: "text", section: "details" });
+    }
+    render(<FormAllInOne formConfig={{ fields }} initialData={{ title: { title1: "Existing" } }} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "minus" }));
+
+    expect(onMinus).toHaveBeenCalledWith("title1", "Existing", expect.any(Function));
+    expect(screen.getByDisplayValue("Existing")).toBeInTheDocument();
+
+    act(() => onMinus.mock.calls[0][2]());
+
+    expect(screen.queryByDisplayValue("Existing")).not.toBeInTheDocument();
+  });
+
+  test("removes a multiple row immediately without an onMinus callback", () => {
+    render(<FormAllInOne
+      formConfig={{ fields: [{ name: "title", type: "text", multiple: true }] }}
+      initialData={{ title: { title1: "Existing" } }}
+    />);
+
+    fireEvent.click(screen.getByRole("button", { name: "minus" }));
+
+    expect(screen.queryByDisplayValue("Existing")).not.toBeInTheDocument();
   });
 
   test("runs a configured action without submitting the form", () => {

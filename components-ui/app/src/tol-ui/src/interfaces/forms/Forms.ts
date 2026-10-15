@@ -119,6 +119,7 @@ export interface IFormComponent {
    * Whether multiple of a particular form field should be allowed. If true, the user can add multiple instances of this field.
    */
   multiple?: boolean;
+  onMinus?: (inputId: string, value: any, remove: () => void) => void;
   /**
    * Whether at least one instance of a particular form field is required.
    * If true, the user must provide at least one instance of this field before submitting the form.

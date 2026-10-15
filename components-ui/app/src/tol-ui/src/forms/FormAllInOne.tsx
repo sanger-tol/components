@@ -440,6 +440,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                           setFormData={setFormData}
                           setModifiedFields={setModifiedFields}
                           minOne={field.minOne}
+                          onMinus={field.onMinus}
                           onChange={handleInputChange}
                         />
                       ) : (
@@ -478,6 +479,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                           setFormData={setFormData}
                           setModifiedFields={setModifiedFields}
                           minOne={field.minOne}
+                          onMinus={field.onMinus}
                           onChange={handleInputChange}
                         />
                       ) : (
@@ -507,6 +509,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                   setFormData={setFormData}
                   setModifiedFields={setModifiedFields}
                   minOne={field.minOne}
+                  onMinus={field.onMinus}
                   onChange={handleInputChange}
                 />
               ) : (
