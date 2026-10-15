@@ -7,12 +7,18 @@ SPDX-License-Identifier: MIT
 .tol-timeline {
   padding: var(--tol-spacing-sm);
 
+  // Override default styles for the custom dot in the timeline items.
   .rs-timeline-item-custom-dot {
     display: flex;
     align-items: center;
     justify-content: center;
     min-width: 10px;
     min-height: 10px;
+  }
+
+  .tol-timeline-description {
+    margin-top: var(--tol-spacing-xs);
+    color: var(--tol-text-subtle);
   }
 
   .tol-timeline-marker {

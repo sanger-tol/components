@@ -32,7 +32,6 @@ export function Timeline(props: PTimeline) {
       <div
         className="tol-timeline-marker"
         style={markerStyle}
-        aria-hidden="true"
       >
         {field.icon && <Icon icon={field.icon} />}
       </div>
@@ -55,7 +54,7 @@ export function Timeline(props: PTimeline) {
               time={data[id]}
             >
               <strong>{field.rename ?? id}</strong>
-              {field.description && <div>{field.description}</div>}
+              {field.description && <div className="tol-timeline-description">{field.description}</div>}
             </RSTimeline.Item>
           );
         })}
