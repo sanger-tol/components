@@ -9,10 +9,17 @@ SPDX-License-Identifier: MIT
 
   // Override default styles for the custom dot in the timeline items.
   .rs-timeline-item-custom-dot {
+    display: grid;
+    place-items: center;
     position: relative;
     width: 10px;
     height: 10px;
     padding: 0;
+  }
+
+  // Adjust padding for timeline items when aligned to the left with time displayed.
+  &.rs-timeline-with-time.rs-timeline-align-left .rs-timeline-item-content {
+    padding-left: 3rem;
   }
 
   .tol-timeline-marker {
