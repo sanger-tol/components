@@ -67,7 +67,7 @@ TRANSLATOR_TEST_INPUTS.forEach(({ zoneObjectTypes, TableFields }) => {
       const filterString = "ABC";
       const firstRowCounter = page.getByTestId("record-counter").nth(1);
       const initialSampleRow = (await firstRowCounter.textContent())?.trim();
-      const firstFilterInput = page.getByTestId("Scientific Name-filter-input").first();
+      const firstFilterInput = page.getByTestId("Scientific name-filter-input").first();
       await firstFilterInput.fill(filterString);
 
       await expect
@@ -77,7 +77,7 @@ TRANSLATOR_TEST_INPUTS.forEach(({ zoneObjectTypes, TableFields }) => {
         })
         .not.toEqual(initialSampleRow);
 
-      const secondFilterInput = page.getByTestId("Scientific Name-filter-input").nth(1);
+      const secondFilterInput = page.getByTestId("Scientific name-filter-input").nth(1);
       await expect
         .poll(async () => await secondFilterInput.inputValue(), {
           timeout: 15000,
