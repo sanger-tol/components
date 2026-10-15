@@ -35,9 +35,9 @@ test("Add and configure table", async ({ page }) => {
     page,
     page.getByTestId("board-component-table"),
     {
-      defaultSort: "sts_sample_sts_priority",
+      defaultSort: "sample_priority",
       limitColumnVisibility: true,
-      activeColumns: ["sts_scientific_name","sts_sample_sts_priority"],
+      activeColumns: ["scientific_name","sample_priority"],
     }
   )
   await deleteComponent(page, page.getByTestId("board-component-table"), "table");
