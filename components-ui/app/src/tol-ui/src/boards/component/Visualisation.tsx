@@ -170,6 +170,11 @@ export function Visualisation(props: PVisualisation) {
     case COMPONENT_TYPES.OBJECT_DETAIL:
       Component = BoardDataList;
       componentSpecificProps = { type: DATA_LIST_COMPONENT_TYPES.OBJECT_DETAIL };
+      break;
+    case COMPONENT_TYPES.TIMELINE:
+      Component = BoardDataList;
+      componentSpecificProps = { type: DATA_LIST_COMPONENT_TYPES.TIMELINE };
+      break;
   }
 
   const Visualisation = (

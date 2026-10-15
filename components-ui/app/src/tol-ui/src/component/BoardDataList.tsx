@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { RemoteObjectDetail, PVisualisationComponent, DATA_LIST_COMPONENT_TYPES, optimiseFieldMetaForSave, updateComponentConfigAndUpsert, useBoard } from "..";
+import { RemoteObjectDetail, RemoteTimeline, PVisualisationComponent, DATA_LIST_COMPONENT_TYPES, optimiseFieldMetaForSave, updateComponentConfigAndUpsert, useBoard } from "..";
 import type { IListDataConfigSave, TDataListComponentType } from "..";
 
 
@@ -40,6 +40,10 @@ export function BoardDataList(props: PBoardDataList) {
   switch (type) {
     case DATA_LIST_COMPONENT_TYPES.OBJECT_DETAIL:
       Component = RemoteObjectDetail;
+      break;
+    case DATA_LIST_COMPONENT_TYPES.TIMELINE:
+      Component = RemoteTimeline;
+      break;
   }
 
   return (

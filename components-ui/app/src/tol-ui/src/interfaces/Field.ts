@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import type { TCellRenderer } from "./Cells";
-import type { IFieldTimeline } from "./Timeline";
 
 /** Core metadata shared by all fields. */
 export interface IFieldBasic {

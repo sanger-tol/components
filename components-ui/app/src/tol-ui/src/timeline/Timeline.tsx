@@ -54,7 +54,9 @@ export function Timeline(props: PTimeline) {
               time={data[id]}
             >
               <strong>{field.rename ?? id}</strong>
-              {field.description && <div className="tol-timeline-description">{field.description}</div>}
+              <div className="tol-timeline-description">
+                {field.description}
+              </div>
             </RSTimeline.Item>
           );
         })}

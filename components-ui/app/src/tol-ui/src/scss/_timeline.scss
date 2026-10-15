@@ -55,6 +55,7 @@ SPDX-License-Identifier: MIT
   }
 
   .tol-timeline-description {
+    min-height: 1rem;
     margin-top: var(--tol-spacing-xs);
     color: var(--tol-text-subtle);
   }
