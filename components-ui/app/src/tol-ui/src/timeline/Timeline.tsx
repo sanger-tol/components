@@ -7,48 +7,55 @@ SPDX-License-Identifier: MIT
 import type { CSSProperties } from "react";
 import { Timeline as RSTimeline } from "rsuite";
 import { ComponentBase, Icon } from "..";
-import type { ITimeline } from "..";
-import { getTimelineFields } from "./utils";
+import type { IComponentData, IFieldTimeline } from "..";
+
+
+/** Specific options for the `Timeline` component. */
+export interface PTimelineOptions {
+  /** Continue timeline after end node. */
+  endless?: boolean;
+}
+
+/** Props for the Timeline component. */
+export interface PTimeline extends PTimelineOptions, IComponentData {}
 
 /** Renders selected date and boolean fields as a vertical timeline. */
-export function Timeline(props: ITimeline) {
-  const {
-    fields, data = {}, endless = false,
-    hideUndefined = false, hideFuture = false, hidePast = false,
-    showDescription = true, ...rest
-  } = props;
-  const events = getTimelineFields({
-    id: rest.id, fields, data, hideUndefined, hideFuture, hidePast,
-  });
+export function Timeline(props: PTimeline) {
+  const { fields, data = {}, endless = false, ...rest } = props;
+
+  const TimelineMarker = (field: IFieldTimeline) => {
+    const markerStyle = field.color
+      ? { "--tol-timeline-color": field.color } as CSSProperties
+      : undefined;
+
+    return (
+      <div
+        className="tol-timeline-marker"
+        style={markerStyle}
+        aria-hidden="true"
+      >
+        {field.icon && <Icon icon={field.icon} />}
+      </div>
+    );
+  };
 
   return (
-    <ComponentBase {...rest}>
-      <RSTimeline endless={endless} className="tol-timeline">
-        {events.map(({ attribute, field, date, value }) => {
-          const markerStyle = field.color
-            ? { "--tol-timeline-color": field.color } as CSSProperties
-            : undefined;
-          const Marker = (
-            <span
-              className={`tol-timeline-marker${field.icon ? " tol-timeline-marker-icon" : ""}`}
-              style={markerStyle}
-              aria-hidden="true"
-            >
-              {field.icon && <Icon icon={field.icon} />}
-            </span>
-          );
+    <ComponentBase
+      {...rest}
+      className="with-overflow"
+    >
+      <RSTimeline className="tol-timeline" endless={endless}>
+        {fields?.order?.active?.map((id) => {
+          const field = fields?.dataWithDefaults?.[id] as IFieldTimeline;
 
           return (
             <RSTimeline.Item
-              key={attribute}
-              dot={Marker}
-              time={date ? (
-                <time dateTime={date.toISOString()}>{date.toLocaleDateString("en-GB")}</time>
-              ) : undefined}
+              key={id}
+              dot={TimelineMarker(field)}
+              time={data[id]}
             >
-              <strong>{field.rename ?? attribute}</strong>
-              {!date && <p>{value === undefined ? "Not defined" : value ? "True" : "False"}</p>}
-              {showDescription && field.description && <p>{field.description}</p>}
+              <strong>{field.rename ?? id}</strong>
+              {field.description && <div>{field.description}</div>}
             </RSTimeline.Item>
           );
         })}

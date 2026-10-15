@@ -7,6 +7,14 @@ SPDX-License-Identifier: MIT
 .tol-timeline {
   padding: var(--tol-spacing-sm);
 
+  .rs-timeline-item-custom-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 10px;
+    min-height: 10px;
+  }
+
   .tol-timeline-marker {
     display: inline-flex;
     align-items: center;
@@ -15,20 +23,6 @@ SPDX-License-Identifier: MIT
     height: 10px;
     border-radius: 50%;
     background: var(--tol-timeline-color, var(--tol-grey));
-    color: var(--tol-light);
-  }
-
-  .tol-timeline-marker-icon {
-    width: 30px;
-    height: 30px;
-    transform: translate(-10px, -10px);
-
-    .svg-inline--fa {
-      width: 14px;
-      height: 14px;
-      border: 0;
-      padding: 0;
-      color: inherit;
-    }
+    color: var(--tol-grey);
   }
 }
