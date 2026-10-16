@@ -35,7 +35,7 @@ const filterStatisticsComponent = async (page: Page) => {
     page,
     page.getByTestId("board-component-statistics"),
     "statistics",
-    "grit_project",
+    "project",
     "in_list",
     "ToL Rapid Curation"
   );
