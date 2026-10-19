@@ -157,7 +157,7 @@ export const TEXT_EDITOR_BUTTONS = ({
   editor,
   editorState,
 }: ITextEditorButtons): Record<Uppercase<TTextEditorButton>, PButton> => {
-  if (!editor) {
+  if (!editor || editor.isDestroyed || !editorState) {
     return {} as Record<Uppercase<TTextEditorButton>, PButton>;
   }
 

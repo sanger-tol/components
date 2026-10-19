@@ -64,6 +64,7 @@
     "@tiptap/extension-superscript": "3.27.1",
     "@tiptap/extension-subscript": "3.27.1",
     "@tiptap/extension-text-align": "3.27.1",
+    "@tiptap/extension-character-count": "3.27.1",
     "react-bootstrap": "2.10.10"
   },
   "devDependencies": {
