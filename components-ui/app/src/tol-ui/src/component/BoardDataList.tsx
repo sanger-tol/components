@@ -4,14 +4,14 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { RemoteObjectDetail, RemoteTimeline, PVisualisationComponent, DATA_LIST_COMPONENT_TYPES, optimiseFieldMetaForSave, updateComponentConfigAndUpsert, useBoard } from "..";
-import type { IListDataConfigSave, TDataListComponentType } from "..";
+import { RemoteObjectDetail, RemoteTimeline, PVisualisationComponent, COMPONENT_TYPES, optimiseFieldMetaForSave, updateComponentConfigAndUpsert, useBoard } from "..";
+import type { IListDataConfigSave } from "..";
 
 
 /** Props for the `BoardDataList` component. */
 export interface PBoardDataList extends PVisualisationComponent<IListDataConfigSave> {
   /** Which underlying component `BoardDataList` should render. */
-  type: TDataListComponentType;
+  type: typeof COMPONENT_TYPES.OBJECT_DETAIL | typeof COMPONENT_TYPES.TIMELINE;
 }
 
 /**
@@ -38,10 +38,10 @@ export function BoardDataList(props: PBoardDataList) {
   let Component: JSX.ElementType = RemoteObjectDetail;
 
   switch (type) {
-    case DATA_LIST_COMPONENT_TYPES.OBJECT_DETAIL:
+    case COMPONENT_TYPES.OBJECT_DETAIL:
       Component = RemoteObjectDetail;
       break;
-    case DATA_LIST_COMPONENT_TYPES.TIMELINE:
+    case COMPONENT_TYPES.TIMELINE:
       Component = RemoteTimeline;
       break;
   }

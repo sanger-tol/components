@@ -39,12 +39,6 @@ export const COMPONENT_TYPES = {
   TIMELINE: "timeline",
 } as const;
 
-/** Sub-types rendered by the generic BoardDataList component. */
-export const DATA_LIST_COMPONENT_TYPES = {
-  OBJECT_DETAIL: "objectDetail",
-  TIMELINE: "timeline",
-} as const;
-
 export const STATISTICS_TYPES = {
   COUNT: "count",
   MIN: "min",

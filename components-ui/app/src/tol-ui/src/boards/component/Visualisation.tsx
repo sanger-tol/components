@@ -11,7 +11,8 @@ import {
   BoardTable,
   BoardSunburst,
   BoardChart,
-  BoardDataList,
+  BoardObjectDetail,
+  BoardTimeline,
   IBoardTargetAndZone,
   BoardMarkdown,
   PUtilityBar,
@@ -19,7 +20,6 @@ import {
   upsertTitle,
   BOARD_ENTITIES,
   COMPONENT_TYPES,
-  DATA_LIST_COMPONENT_TYPES,
   PButton,
   TitleTooltip,
   mergeUtilityBarConfigs,
@@ -144,11 +144,8 @@ export function Visualisation(props: PVisualisation) {
   )
 
   let Component: JSX.ElementType = BoardTable;
-  // Extra props only some Component types need, e.g. BoardDataList's `type`.
-  let componentSpecificProps: Record<string, unknown> = {};
 
   switch (componentType) {
-    case "count":
     case COMPONENT_TYPES.STATISTICS:
       Component = BoardStatistics;
       break;
@@ -168,12 +165,10 @@ export function Visualisation(props: PVisualisation) {
       Component = BoardMap;
       break;
     case COMPONENT_TYPES.OBJECT_DETAIL:
-      Component = BoardDataList;
-      componentSpecificProps = { type: DATA_LIST_COMPONENT_TYPES.OBJECT_DETAIL };
+      Component = BoardObjectDetail;
       break;
     case COMPONENT_TYPES.TIMELINE:
-      Component = BoardDataList;
-      componentSpecificProps = { type: DATA_LIST_COMPONENT_TYPES.TIMELINE };
+      Component = BoardTimeline;
       break;
   }
 
@@ -182,7 +177,6 @@ export function Visualisation(props: PVisualisation) {
       {...props}
       config={config}
       setConfig={setConfig}
-      {...componentSpecificProps}
       utilityBarConfig={ubc}
     />
   );

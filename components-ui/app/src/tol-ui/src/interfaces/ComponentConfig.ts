@@ -8,7 +8,6 @@ import type { IFieldMeta, IDefaultPageSize, IDefaultSortBy, HistogramGrouping } 
 import {
   CHART_TYPES,
   COMPONENT_TYPES,
-  DATA_LIST_COMPONENT_TYPES,
   STATISTICS_TYPES,
 } from "../constants/boards.constants";
 
@@ -17,8 +16,6 @@ export type TStatisticsType =
   (typeof STATISTICS_TYPES)[keyof typeof STATISTICS_TYPES];
 export type TComponentType =
   (typeof COMPONENT_TYPES)[keyof typeof COMPONENT_TYPES];
-export type TDataListComponentType =
-  (typeof DATA_LIST_COMPONENT_TYPES)[keyof typeof DATA_LIST_COMPONENT_TYPES];
 
 /** Save payload for list-style component configuration. */
 export interface IListDataConfigSave extends IDefaultSortBy, IDefaultPageSize {

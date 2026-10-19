@@ -44,4 +44,3 @@ export * from "./TsDocParser";
 export * from "./User";
 export * from "./Video";
 export * from "./Widgets";
-export * from "./Widgets";
