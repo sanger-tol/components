@@ -46,6 +46,8 @@ export interface IRemoteStatus {
   warningMessage?: string;
   /** Message to display when no fields are selected for the component. */
   noFieldsSelected?: boolean;
+  /** Whether the component has no data to display once loaded. */
+  noData?: boolean;
 }
 
 /** State required for pagination controls. */

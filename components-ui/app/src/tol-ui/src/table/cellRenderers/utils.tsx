@@ -10,7 +10,10 @@ import {
   PARAM_ATTRIBUTE_OBJECT_KEY,
   PARAM_TAG_START,
   SPREAD_OPERATOR,
+  getAttributeNameByField,
+  getChildObjectsByName,
   getFieldByName,
+  IDataPoint,
   IFilter,
   TDataObjectOrNull,
 } from "../..";
@@ -165,4 +168,38 @@ export function getCellRendererPropValue(
   } else {
     elementProps[prop] = propValue;
   }
+}
+
+/**
+ * Gets the data points for a field, as `DataPoints` renders them: one entry per child object reached by
+ * the field path, with that child's attribute value. Values are read lazily on access.
+ *
+ * @param object - The data object to read from.
+ * @param field - Field name or dot-delimited relationship path (e.g., "sample.collection_date").
+ * @returns The data points in render order. A `value` may itself be a list.
+ * @example
+ * getDataPoints(sample, "child.date").flatMap(({ value }) => value) // every value, lists flattened
+ */
+export function getDataPoints(
+  object: TDataObjectOrNull,
+  field: string,
+): IDataPoint[] {
+  const attribute = getAttributeNameByField(field);
+  return (
+    getChildObjectsByName(object, field) ?? []
+  ).map((child) => ({
+    dataObject: child,
+    get value() { return getFieldByName(child, attribute); },
+  }));
+}
+
+/**
+ * Gets a summarised value for a field across all its data points, with list values merged into the same flat list.
+ *
+ * @param object - The data object to read from.
+ * @param field - Field name or dot-delimited relationship path (e.g., "sample.collection_date").
+ * @returns The values in render order.
+ */
+export function getDataPointsValue(object: TDataObjectOrNull, field: string): any[] {
+  return getDataPoints(object, field).flatMap(({ value }) => value);
 }

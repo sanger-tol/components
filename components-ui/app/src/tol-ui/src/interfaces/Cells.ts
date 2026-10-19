@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { ComponentType } from "react";
 import { CELL_RENDERER_PARAMS } from "..";
-import type { IFilter } from "..";
+import type { IFilter, TDataObjectOrNull } from "..";
 
 export type TCellRendererType =
   "boolean" |
@@ -36,6 +36,14 @@ export type TCellRenderer =
   | undefined;
 
 export type TCustomDataPointRenderers = Record<string, ComponentType<any>>;
+
+/** A data point for a field: a child object with its attribute value (which may be a list). */
+export interface IDataPoint {
+  /** The child object reached by the field path, or `null` if a relationship along the path is missing. */
+  dataObject: TDataObjectOrNull;
+  /** The child's attribute value. May be a list, which `DataPoint` renders as separate items. */
+  value: any;
+}
 
 export type TCellRendererParamType = (typeof CELL_RENDERER_PARAMS)[keyof typeof CELL_RENDERER_PARAMS];
 

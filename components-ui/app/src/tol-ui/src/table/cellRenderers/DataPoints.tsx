@@ -9,7 +9,7 @@ import {
   TDataObjectOrNull,
   TCustomDataPointRenderers,
   TsDataSource,
-  getChildObjectsByName,
+  getDataPoints,
   DataPoint,
   getAttributeNameByField,
   IFieldBasic
@@ -49,8 +49,8 @@ export function DataPoints(props: PDataPoints) {
   const [isMany, setIsMany] = useState(precomputedIsMany ?? false);
   const [loading, setLoading] = useState(precomputedIsMany === undefined);
 
-  // get the child objects based on the field
-  const childObjects = getChildObjectsByName(dataObject, field);
+  // get the data points (child objects and their values) based on the field
+  const dataPoints = getDataPoints(dataObject, field);
 
   // get the attribute part of the field
   const attribute = getAttributeNameByField(field);
@@ -82,11 +82,12 @@ export function DataPoints(props: PDataPoints) {
    */
   if (loading) return;
 
-  const collectDataPoints = childObjects?.map((obj, index) => (
+  const collectDataPoints = dataPoints.map(({ dataObject: currentDataObject, value }, index) => (
     <DataPoint
       {...props}
       key={`${field}-${index}`}
-      dataObject={obj}
+      dataObject={currentDataObject}
+      value={value}
       originDataObject={dataObject}
       originField={field}
       field={attribute}

@@ -8,13 +8,15 @@ import { useEffect, useState } from "react";
 import {
   CellDisplay,
   CellEditable,
-  getFieldByName,
   PDataPoints,
   TDataObjectOrNull,
 } from "../..";
 
 
+/** Props for a singular DataPoint. */
 export interface PDataPoint extends PDataPoints {
+  /** The raw attribute value of this data point, from `getDataPoints`. */
+  value: any;
   /** Whether the data point is being rendered within a tag component. Used for styling purposes. */
   isMany?: boolean,
   /** The parent DataObject, used for upsert calls when saving edits to the data point. */
@@ -30,15 +32,13 @@ export interface PDataPoint extends PDataPoints {
 export function DataPoint(props: PDataPoint) {
   const {
     field,
-    dataObject,
+    value: valueProp,
     meta,
     editable = true,
     isMany,
   } = props;
 
-  const attributeValue = getFieldByName(dataObject, field);
-
-  const [value, setValue] = useState(attributeValue);
+  const [value, setValue] = useState(valueProp);
   const [editMode, setEditMode] = useState(false);
 
   /** 
@@ -46,8 +46,8 @@ export function DataPoint(props: PDataPoint) {
    * but only if the component is not currently in edit mode.
    */
   useEffect(() => {
-    if (!editMode) setValue(attributeValue);
-  }, [attributeValue, editMode]);
+    if (!editMode) setValue(valueProp);
+  }, [valueProp, editMode]);
 
   // TODO FUTURE: Allow for string and date updates via permissions
   const canEdit = (

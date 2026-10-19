@@ -20,7 +20,7 @@ import {
   useBoard,
   useComponentListData,
 } from "..";
-import type { IComponentData, IListDataConfigSave, IRemoteComponentDataList, PButton } from "..";
+import type { IComponentData, IFieldMeta, IListDataConfigSave, IRemoteComponentDataList, PButton, TDataObjectListOrNull } from "..";
 
 
 /** Props for the `RemoteComponentDataList` wrapper component. */
@@ -31,6 +31,8 @@ export interface PRemoteComponentDataList extends IRemoteComponentDataList {
   pageSizePicker?: boolean;
   /** The page size the wrapped component defaults to when none is saved or passed via `defaultPageSize`. */
   componentDefaultPageSize?: number;
+  /** To adapt the fieldMeta for display purposes without affecting the underlying configuration. */
+  manipulateViewableFieldMeta?: (fieldMeta: IFieldMeta, dataObjects?: TDataObjectListOrNull) => IFieldMeta;
 }
 
 /**
@@ -41,14 +43,9 @@ export interface PRemoteComponentDataList extends IRemoteComponentDataList {
 export function RemoteComponentDataList(props: PRemoteComponentDataList) {
   const {
     id,
-    dataSource,
-    objectType,
     fields,
-    customDataPointRenderers,
     defaultSortByAttribute,
     defaultSortByType,
-    zone,
-    setZone,
     page: initialPage,
     defaultPageSize,
     componentDefaultPageSize,
@@ -89,6 +86,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
   const {
     // This is still IFieldMeta; the hook adds fetched descriptor defaults to the configured metadata.
     fieldMeta,
+    unmanipulatedFieldMeta,
     data,
     noFieldsSelected,
     isLoading,
@@ -99,15 +97,11 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     setPageSize,
     totalSize,
   } = useComponentListData({
+    ...rest,
     id,
-    objectType,
-    dataSource,
     fields: activeFieldMeta,
-    zone,
-    setZone,
     page: initialPage,
     pageSize: apiPageSize,
-    customDataPointRenderers,
     sortBy: createSort(apiSortByAttribute, apiSortByType),
   });
 
@@ -190,7 +184,8 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         {...props}
         open={openConfig}
         setOpen={setOpenConfig}
-        fieldMeta={fieldMeta}
+        // Use the raw save values for the config drawer, not the manipulated ones.
+        fieldMeta={unmanipulatedFieldMeta}
         defaultSortByAttribute={configuredDefaultSortByAttribute}
         defaultSortByType={configuredDefaultSortByType}
         defaultPageSize={configuredDefaultPageSize}
@@ -205,13 +200,14 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         />
       )}
       <RemoteComponentBase
-        {...rest}
         id={id}
         height={height}
         isLoading={isLoading}
         errorMessage={errorMessage}
         noFieldsSelected={noFieldsSelected}
+        noData={data.length === 0}
         utilityBarConfig={ubc}
+        {...rest}
       >
         {DataComponent}
       </RemoteComponentBase>
