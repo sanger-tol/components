@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactElement, cloneElement } from "react";
-import { Placeholder, IComponentBase, NotConfiguredPlaceholder, IRemoteComponentBase } from "..";
+import { Placeholder, IComponentBase, NotConfiguredPlaceholder, IRemoteComponentBase, NO_DATA_FOUND_MESSAGE } from "..";
 
 
 /** Props for the `RemoteComponentBase` wrapper component. */
@@ -18,8 +18,8 @@ export interface PRemoteComponentBase extends IRemoteComponentBase {
  * Enhances a top-level component (already wrapped in its own `ComponentBase`) with the behaviour
  * needed by components that fetch their own data remotely, without wrapping it in a second `ComponentBase`.
  *
- * Clones `children`, injecting a `contents` override showing a loading, error, warning, or
- * not-configured placeholder in place of the child's own body.
+ * Clones `children`, injecting a `contents` override showing a loading, error, warning,
+ * not-configured, or no-data placeholder in place of the child's own body.
  */
 export function RemoteComponentBase(props: PRemoteComponentBase) {
   const {
@@ -27,6 +27,7 @@ export function RemoteComponentBase(props: PRemoteComponentBase) {
     errorMessage,
     warningMessage,
     noFieldsSelected,
+    noData,
     height = "100%",
     utilityBarConfig,
     contents,
@@ -41,7 +42,9 @@ export function RemoteComponentBase(props: PRemoteComponentBase) {
         ? <Placeholder loader height={height} />
         : noFieldsSelected
           ? <NotConfiguredPlaceholder />
-          : contents;
+          : noData
+            ? <Placeholder warningMessage={NO_DATA_FOUND_MESSAGE} height={height} />
+            : contents;
 
   return cloneElement(children, {
     height,

@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import {
-  TolLoader,
   PopUpMessage,
   useFormData,
   useAuth,
@@ -17,6 +16,7 @@ import {
   URL_PATHS,
   FORM_MESSAGE_TEXT,
   MESSAGE_TYPE,
+  LoadingContent,
 } from "..";
 import type { TUserProfileFormDataOrNull } from "..";
 
@@ -88,7 +88,7 @@ export function RequireCompletedProfile(props: PRequireCompletedProfile) {
   ]);
 
   if (!isRedirectTarget && (isLoading || !hasCompletedProfile))
-    return <TolLoader content="Loading Content..." vertical size="md" />;
+    return <LoadingContent text="Checking profile..." />;;
 
   return <>{children}</>;
 }

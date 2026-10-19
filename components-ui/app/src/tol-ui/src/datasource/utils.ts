@@ -12,6 +12,7 @@ import {
 import type {
   TDataObjectOrNull,
   TDataObjectListOrNull,
+  IFieldMeta,
   TFieldMetaData,
   TsDataSource,
 } from "..";
@@ -53,22 +54,22 @@ export function getFieldByName(object: TDataObjectOrNull, field: string): any {
 
 /**
  * Fetches each field's `IAttributeDescriptor` via `dataSource.getAttributeDescriptor` and builds the
- * corresponding `TFieldMetaData` defaults, the same way `RemoteTable` enriches its columns via
+ * corresponding `IFieldMeta`, the same way `RemoteTable` enriches its columns via
  * `addFieldMetaDefaults` - generalised for any component that needs field metadata, not just tables.
  *
  * @param objectType - The object type the fields belong to.
  * @param attributes - The attribute names to fetch descriptors for.
  * @param dataSource - Data source used to fetch each field's attribute descriptor.
- * @param existingDataWithDefaults - Already-configured field metadata; takes precedence over the fetched defaults.
- * @returns `TFieldMetaData` with the fetched defaults merged under any existing configuration.
+ * @param fieldMeta - Existing field metadata, including persisted `data` and any `dataWithDefaults`.
+ * @returns The input `IFieldMeta` with descriptor defaults added to `dataWithDefaults`, then overridden by existing metadata.
  */
 export async function buildFieldMetaDefaults(
   objectType: string,
   attributes: string[],
   dataSource: TsDataSource,
-  existingDataWithDefaults?: TFieldMetaData,
-): Promise<TFieldMetaData> {
-  const dataWithDefaults: TFieldMetaData = { ...existingDataWithDefaults };
+  fieldMeta: IFieldMeta,
+): Promise<IFieldMeta> {
+  const dataWithDefaults: TFieldMetaData = { ...fieldMeta.dataWithDefaults };
   await Promise.all(
     attributes.map(async (field) => {
       const descriptor = await dataSource.getAttributeDescriptor({ objectType, field });
@@ -79,12 +80,17 @@ export async function buildFieldMetaDefaults(
         source: descriptor?.source,
         actsAs: descriptor?.acts_as,
         cellRenderer: addDefaultDataPointRenderer(descriptor?.python_type),
-        // caller-provided config for this field overrides the fetched defaults
-        ...existingDataWithDefaults?.[field],
+        // Existing defaults and persisted field config override the fetched defaults.
+        ...fieldMeta.dataWithDefaults?.[field],
+        ...fieldMeta.data?.[field],
       };
     }),
   );
-  return dataWithDefaults;
+  return {
+    ...fieldMeta,
+    data: fieldMeta.data ?? {},
+    dataWithDefaults,
+  };
 }
 
 /**

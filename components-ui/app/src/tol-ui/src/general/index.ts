@@ -27,6 +27,7 @@ export * from "./Placeholder";
 export * from "./Plate";
 export * from "./RemoteBreadcrumbNav";
 export * from "./RemoteObjectDetail";
+export * from "./BoardObjectDetail";
 export * from "./RemoteStatistics";
 export * from "./RemoteGet";
 export * from "./SourceTag";

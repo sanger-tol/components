@@ -18,6 +18,7 @@ SPDX-License-Identifier: MIT
 - Add config to boards, views, zones
 - Add options to boards, including custom headers
 - Fixed bug: action modal causing too many renders (screen goes blank)
+- Timelines (original, remote, board)
 
 ## tol-ui `5.7.2`
 

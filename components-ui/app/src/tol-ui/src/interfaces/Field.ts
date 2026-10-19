@@ -42,8 +42,15 @@ export interface IFieldCard extends IFieldBasic {
   position: "left" | "right";
 }
 
+export interface IFieldTimeline extends IFieldBasic {
+  /** Grey if undefined, otherwise the supplied colour. */
+  color?: string;
+  /** Small dot if undefined, otherwise a larger circle with this FontAwesome icon. */
+  icon?: string;
+}
+
 /** A field's metadata. */
-export type TField = IFieldBasic | IFieldTable | IFieldCard;
+export type TField = IFieldBasic | IFieldTable | IFieldCard | IFieldTimeline;
 
 /** Mapping of field identifiers to their metadata. */
 export type TFieldMetaData = Record<string, TField>;
