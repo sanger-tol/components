@@ -13,7 +13,7 @@ import {
   getAttributeNameByField,
   getChildObjectsByName,
   getFieldByName,
-  IDataPoint,
+  IDataPoints,
   IFilter,
   TDataObjectOrNull,
 } from "../..";
@@ -171,35 +171,24 @@ export function getCellRendererPropValue(
 }
 
 /**
- * Gets the data points for a field, as `DataPoints` renders them: one entry per child object reached by
- * the field path, with that child's attribute value. Values are read lazily on access.
+ * Gets the data points for a field, as `DataPoints` renders them. Values are read lazily on access.
  *
  * @param object - The data object to read from.
  * @param field - Field name or dot-delimited relationship path (e.g., "sample.collection_date").
- * @returns The data points in render order. A `value` may itself be a list.
+ * @returns The data points, and `summarisedValue`, a flat list of every data point's value.
  * @example
- * getDataPoints(sample, "child.date").flatMap(({ value }) => value) // every value, lists flattened
+ * getDataPoints(sample, "child.date").dataPoints       // [{ dataObject, value: "2024-01-02" }, { dataObject, value: ["2024-03-04"] }]
+ * getDataPoints(sample, "child.date").summarisedValue  // ["2024-01-02", "2024-03-04"]
  */
-export function getDataPoints(
-  object: TDataObjectOrNull,
-  field: string,
-): IDataPoint[] {
+export function getDataPoints(object: TDataObjectOrNull, field: string): IDataPoints {
   const attribute = getAttributeNameByField(field);
-  return (
-    getChildObjectsByName(object, field) ?? []
-  ).map((child) => ({
+  const dataPoints = (getChildObjectsByName(object, field) ?? []).map((child) => ({
     dataObject: child,
     get value() { return getFieldByName(child, attribute); },
   }));
-}
 
-/**
- * Gets a summarised value for a field across all its data points, with list values merged into the same flat list.
- *
- * @param object - The data object to read from.
- * @param field - Field name or dot-delimited relationship path (e.g., "sample.collection_date").
- * @returns The values in render order.
- */
-export function getDataPointsValue(object: TDataObjectOrNull, field: string): any[] {
-  return getDataPoints(object, field).flatMap(({ value }) => value);
+  return {
+    dataPoints,
+    get summarisedValue() { return dataPoints.flatMap(({ value }) => value); },
+  };
 }

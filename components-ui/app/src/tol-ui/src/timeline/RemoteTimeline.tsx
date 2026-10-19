@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useCallback } from "react";
-import { getDataPointsValue, RemoteComponentDataList, Timeline } from "..";
+import { getDataPoints, RemoteComponentDataList, Timeline } from "..";
 import type { IFieldMeta, IRemoteComponentDataList, PTimelineOptions, TDataObjectListOrNull } from "..";
 
 /** Props for the remote Timeline component. */
@@ -33,6 +33,19 @@ export function RemoteTimeline(props: PRemoteTimeline) {
   }), []);
 
   // TODO: Remove for 'proper' implementation in config drawer
+  const removeEmptyFields = useCallback((fields: IFieldMeta, dataObjects?: TDataObjectListOrNull): IFieldMeta => {
+    const dataObject = dataObjects?.[0];
+    if (!dataObject) return fields;
+
+    const active = (fields.order?.active ?? []).filter((field) =>
+      getDataPoints(dataObject, field).summarisedValue
+        .some((value) => value !== null && value !== undefined && value !== ""),
+    );
+
+    return { ...fields, order: { ...fields.order, active } };
+  }, []);
+
+  // TODO: Remove for 'proper' implementation in config drawer
   const sortFieldsByDate = useCallback((fields: IFieldMeta, dataObjects?: TDataObjectListOrNull): IFieldMeta => {
     const dataObject = dataObjects?.[0];
     if (!dataObject) return fields;
@@ -41,17 +54,12 @@ export function RemoteTimeline(props: PRemoteTimeline) {
     const remaining: string[] = [];
 
     (fields.order?.active ?? []).forEach((field) => {
-      const values = getDataPointsValue(dataObject, field)
-        .filter((value) => value !== null && value !== undefined && value !== "");
-
-      if (values.length === 0) return;
-
       if (fields.dataWithDefaults?.[field]?.type !== "datetime") {
         remaining.push(field);
         return;
       }
 
-      const [first] = values
+      const [first] = getDataPoints(dataObject, field).summarisedValue
         .filter((value) => typeof value === "string")
         .map((value) => new Date(value))
         .filter((date) => !Number.isNaN(date.getTime()))
@@ -73,10 +81,10 @@ export function RemoteTimeline(props: PRemoteTimeline) {
   const manipulateViewableFieldMeta = useCallback(
     (fields: IFieldMeta, dataObjects?: TDataObjectListOrNull) =>
       sortFieldsByDate(
-        addCheckIcons(fields),
+        removeEmptyFields(addCheckIcons(fields), dataObjects),
         dataObjects
       ),
-    [addCheckIcons, sortFieldsByDate],
+    [addCheckIcons, removeEmptyFields, sortFieldsByDate],
   );
 
   return (

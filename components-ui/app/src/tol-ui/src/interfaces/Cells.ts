@@ -41,8 +41,16 @@ export type TCustomDataPointRenderers = Record<string, ComponentType<any>>;
 export interface IDataPoint {
   /** The child object reached by the field path, or `null` if a relationship along the path is missing. */
   dataObject: TDataObjectOrNull;
-  /** The child's attribute value. May be a list, which `DataPoint` renders as separate items. */
+  /** The child's attribute value. May be a list, which `DataPoint` can render as separate items. */
   value: any;
+}
+
+/** The data points for a field, with all of their values merged into one flat list. */
+export interface IDataPoints {
+  /** One entry per child object reached by the field path, in render order. */
+  dataPoints: IDataPoint[];
+  /** Every data point's value, with list values merged into the same flat list. */
+  summarisedValue: any[];
 }
 
 export type TCellRendererParamType = (typeof CELL_RENDERER_PARAMS)[keyof typeof CELL_RENDERER_PARAMS];

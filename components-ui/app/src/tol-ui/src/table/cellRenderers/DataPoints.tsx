@@ -50,7 +50,7 @@ export function DataPoints(props: PDataPoints) {
   const [loading, setLoading] = useState(precomputedIsMany === undefined);
 
   // get the data points (child objects and their values) based on the field
-  const dataPoints = getDataPoints(dataObject, field);
+  const { dataPoints } = getDataPoints(dataObject, field);
 
   // get the attribute part of the field
   const attribute = getAttributeNameByField(field);
