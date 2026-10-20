@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `6.0.1`
+
+20-10-26
+
+- Changing TOL_DATA to use QUASAR first if available
+
 ## tol-ui `6.0.0`
 
 14-10-26
