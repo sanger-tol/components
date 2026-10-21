@@ -11,7 +11,9 @@ SPDX-License-Identifier: MIT
 21-10-26
 
 - Adding onMinus function to run when removing a 'multiple' form input
+- Adding a rowButton that can live alongside the minus button form a form input
 - Allowing deepestEqual to account for Date types
+- Exporting IUpsertData interface
 
 ## tol-ui `6.0.1`
 
