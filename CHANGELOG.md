@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `6.1.0`
+
+21-10-26
+
+- Adding onMinus function to run when removing a 'multiple' form input
+- Allowing deepestEqual to account for Date types
+
 ## tol-ui `6.0.1`
 
 20-10-26
