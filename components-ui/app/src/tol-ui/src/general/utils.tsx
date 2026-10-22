@@ -484,7 +484,7 @@ export const isValidDate = (date: string) => {
  * Performs a deep equality check between two values.
  *
  * Recursively compares objects and arrays by value rather than by reference.
- * Handles `null`, primitives, arrays, and plain objects.
+ * Handles `null`, primitives, dates, arrays, and plain objects.
  *
  * @param a - The first value to compare.
  * @param b - The second value to compare.
@@ -494,6 +494,9 @@ export function deepestEqual(a: any, b: any): boolean {
   if (a === b) return true;
   if (a == null || b == null) return a === b;
   if (typeof a !== "object" || typeof b !== "object") return false;
+  if (a instanceof Date || b instanceof Date) {
+    return a instanceof Date && b instanceof Date && a.getTime() === b.getTime();
+  }
   if (Array.isArray(a) !== Array.isArray(b)) return false;
   if (Array.isArray(a)) {
     if (a.length !== b.length) return false;

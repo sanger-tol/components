@@ -15,6 +15,7 @@ export interface PMultipleFormInput {
   setModifiedFields: (data: object) => void;
   renderField: (field: any) => JSX.Element | null;
   onChange: (name: string, value: any) => void;
+  onMinus?: TFormField["onMinus"];
   minOne?: boolean;
 }
 
@@ -26,6 +27,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
     setModifiedFields,
     renderField,
     onChange,
+    onMinus,
     minOne,
   } = props;
   const fieldData = formData[field.name] || {};
@@ -92,11 +94,21 @@ export function MultipleFormInput(props: PMultipleFormInput) {
               label: undefined,
             })}
           </div>
+          {field.rowButton && (
+            <Button {...field.rowButton(input, fieldData[input])} />
+          )}
           {(!minOne || Object.keys(fieldData).length > 1) && (
             <div style={{ alignSelf: "center" }}>
               <Button
                 {...minusButton}
-                onClick={() => handleDeleteInput(input, true)}
+                onClick={() => {
+                  const remove = () => handleDeleteInput(input, true);
+                  if (onMinus) {
+                    onMinus(input, fieldData[input], remove);
+                  } else {
+                    remove();
+                  }
+                }}
               />
             </div>
           )}
