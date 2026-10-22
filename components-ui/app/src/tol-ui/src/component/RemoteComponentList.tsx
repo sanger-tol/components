@@ -8,6 +8,7 @@ import { cloneElement, ReactElement, useMemo, useRef, useState } from "react";
 import {
   ComponentList,
   createSort,
+  DEFAULT_PAGE_SIZE,
   getComponentConfigLocalStorage,
   ListDataConfigDrawer,
   mergeUtilityBarConfigs,
@@ -19,7 +20,7 @@ import {
   useBoard,
   useComponentListData,
 } from "..";
-import type { IComponentData, IListDataConfigSave, IRemoteComponentDataList, PButton } from "..";
+import type { IComponentData, IFieldMeta, IListDataConfigSave, IRemoteComponentDataList, PButton, TDataObjectListOrNull } from "..";
 
 
 /** Props for the `RemoteComponentDataList` wrapper component. */
@@ -28,6 +29,10 @@ export interface PRemoteComponentDataList extends IRemoteComponentDataList {
   children: ReactElement<IComponentData>;
   /** Whether to display the page size picker in the utility bar. Defaults to true. */
   pageSizePicker?: boolean;
+  /** The page size the wrapped component defaults to when none is saved or passed via `defaultPageSize`. */
+  componentDefaultPageSize?: number;
+  /** To adapt the fieldMeta for display purposes without affecting the underlying configuration. */
+  manipulateViewableFieldMeta?: (fieldMeta: IFieldMeta, dataObjects?: TDataObjectListOrNull) => IFieldMeta;
 }
 
 /**
@@ -38,16 +43,12 @@ export interface PRemoteComponentDataList extends IRemoteComponentDataList {
 export function RemoteComponentDataList(props: PRemoteComponentDataList) {
   const {
     id,
-    dataSource,
-    objectType,
     fields,
-    customDataPointRenderers,
-    sortByAttribute,
-    sortByType,
-    zone,
-    setZone,
+    defaultSortByAttribute,
+    defaultSortByType,
     page: initialPage,
-    pageSize: initialPageSize,
+    defaultPageSize,
+    componentDefaultPageSize,
     onConfigSave,
     pageSizePicker,
     children,
@@ -64,22 +65,28 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
 
   // External configuration (e.g. a board) must never inherit standalone saved settings.
   const config: IListDataConfigSave = onConfigSave ? {} : savedConfig;
-  const configuredPageSize = config.pageSize ?? initialPageSize ?? 50;
 
   // Normalize the configured metadata from props/storage before passing it to the data hook.
   const activeFieldMeta = useMemo(
     () => normaliseFieldMeta(config.fieldMeta ?? fields),
     [config.fieldMeta, fields],
   );
+
+  // Only a saved or passed-in default; the drawer shows no page size unless one is set.
+  const configuredDefaultPageSize = config.defaultPageSize ?? defaultPageSize;
+  // The component and global defaults are only a fallback for the page size state.
+  const apiPageSize = configuredDefaultPageSize ?? componentDefaultPageSize ?? DEFAULT_PAGE_SIZE;
+
   // Use the first active field only for the API request when no explicit sort is configured.
-  const apiSortByAttribute = config.sortByAttribute ?? sortByAttribute ?? activeFieldMeta.order?.active?.[0];
-  const apiSortByType = config.sortByType ?? sortByType ?? "asc";
-  const drawerSortByAttribute = config.sortByAttribute ?? sortByAttribute;
-  const drawerSortByType = config.sortByType ?? sortByType;
+  const configuredDefaultSortByAttribute = config.defaultSortByAttribute ?? defaultSortByAttribute;
+  const configuredDefaultSortByType = config.defaultSortByType ?? defaultSortByType;
+  const apiSortByAttribute = configuredDefaultSortByAttribute ?? activeFieldMeta.order?.active?.[0];
+  const apiSortByType = configuredDefaultSortByType ?? "asc";
 
   const {
     // This is still IFieldMeta; the hook adds fetched descriptor defaults to the configured metadata.
     fieldMeta,
+    unmanipulatedFieldMeta,
     data,
     noFieldsSelected,
     isLoading,
@@ -90,15 +97,11 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     setPageSize,
     totalSize,
   } = useComponentListData({
+    ...rest,
     id,
-    objectType,
-    dataSource,
     fields: activeFieldMeta,
-    zone,
-    setZone,
     page: initialPage,
-    pageSize: configuredPageSize,
-    customDataPointRenderers,
+    pageSize: apiPageSize,
     sortBy: createSort(apiSortByAttribute, apiSortByType),
   });
 
@@ -106,22 +109,22 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
 
   const showPagination = totalSize !== undefined && totalSize > pageSize;
   const showCounter = totalSize !== undefined && totalSize > 1;
-  const showPageSizePicker = configuredPageSize !== 1 && pageSizePicker !== false;
+  const showPageSizePicker = apiPageSize !== 1 && pageSizePicker !== false;
 
   const onSave = ({
     fieldMeta: nextFieldMeta,
-    sortByAttribute,
-    sortByType,
-    pageSize: nextPageSize
+    defaultSortByAttribute: nextDefaultSortByAttribute,
+    defaultSortByType: nextDefaultSortByType,
+    defaultPageSize: nextDefaultPageSize,
   }: IListDataConfigSave) => {
     const nextConfig: IListDataConfigSave = {
       fieldMeta: nextFieldMeta ?? activeFieldMeta,
-      sortByAttribute: sortByAttribute ?? undefined,
-      sortByType: sortByType ?? undefined,
-      pageSize: nextPageSize ?? configuredPageSize,
+      defaultSortByAttribute: nextDefaultSortByAttribute ?? undefined,
+      defaultSortByType: nextDefaultSortByType ?? undefined,
+      defaultPageSize: nextDefaultPageSize,
     };
     setPage(1);
-    setPageSize(nextConfig.pageSize!);
+    if (nextDefaultPageSize) setPageSize(nextDefaultPageSize);
     if (onConfigSave) {
       onConfigSave(nextConfig);
     } else {
@@ -181,21 +184,30 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         {...props}
         open={openConfig}
         setOpen={setOpenConfig}
-        fieldMeta={activeFieldMeta}
-        sortByAttribute={drawerSortByAttribute}
-        sortByType={drawerSortByType}
-        pageSize={configuredPageSize}
+        // Use the raw save values for the config drawer, not the manipulated ones.
+        fieldMeta={unmanipulatedFieldMeta}
+        defaultSortByAttribute={configuredDefaultSortByAttribute}
+        defaultSortByType={configuredDefaultSortByType}
+        defaultPageSize={configuredDefaultPageSize}
         onConfigSave={onSave}
       />
-      {showCounter && <RecordCounter totalSize={totalSize} loading={isLoading} />}
+      {showCounter && (
+        <RecordCounter
+          totalSize={totalSize}
+          page={page}
+          pageSize={pageSize}
+          loading={isLoading}
+        />
+      )}
       <RemoteComponentBase
-        {...rest}
         id={id}
         height={height}
         isLoading={isLoading}
         errorMessage={errorMessage}
         noFieldsSelected={noFieldsSelected}
+        noData={data.length === 0}
         utilityBarConfig={ubc}
+        {...rest}
       >
         {DataComponent}
       </RemoteComponentBase>

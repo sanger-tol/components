@@ -12,10 +12,11 @@ export interface PClickOverlay {
   children: JSX.Element;
   placement?: string;
   delay?: number;
+  className?: string;
 }
 
 export function ClickOverlay(props: PClickOverlay) {
-  let { contents, children, placement = "auto", delay } = props;
+  const { contents, children, placement = "auto", delay, className } = props;
   const overlayRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -36,7 +37,7 @@ export function ClickOverlay(props: PClickOverlay) {
   }, []);
 
   const RenderTooltip = (
-    <Popover>
+    <Popover className={className}>
       {contents}
     </Popover>
   );

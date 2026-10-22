@@ -6,6 +6,34 @@ SPDX-License-Identifier: MIT
 
 export const componentOptions = [
   {
+    type: "objectDetail",
+    text: "Card",
+    icon: "rectangle-list",
+    disabled: false,
+    defaultSize: "lg",
+  },
+  {
+    type: "chart",
+    text: "Chart",
+    icon: "chart-column",
+    disabled: false,
+    defaultSize: "lg",
+  },
+  {
+    type: "filterBlock",
+    text: "Filter Block",
+    icon: "filter",
+    disabled: false,
+    defaultSize: "lg"
+  },
+  {
+    type: "map",
+    text: "Map",
+    icon: "location-dot",
+    disabled: false,
+    defaultSize: "lg",
+  },
+  {
     type: "statistics",
     text: "Statistics",
     icon: "hashtag",
@@ -27,13 +55,6 @@ export const componentOptions = [
     defaultSize: "lg",
   },
   {
-    type: "chart",
-    text: "Chart",
-    icon: "chart-column",
-    disabled: false,
-    defaultSize: "lg",
-  },
-  {
     type: "text",
     text: "Text",
     icon: "font",
@@ -41,23 +62,9 @@ export const componentOptions = [
     defaultSize: "md",
   },
   {
-    type: "filterBlock",
-    text: "Filter Block",
-    icon: "filter",
-    disabled: false,
-    defaultSize: "lg"
-  },
-  {
-    type: "map",
-    text: "Map",
-    icon: "location-dot",
-    disabled: false,
-    defaultSize: "lg",
-  },
-  {
-    type: "objectDetail",
-    text: "Card",
-    icon: "rectangle-list",
+    type: "timeline",
+    text: "Timeline",
+    icon: "timeline",
     disabled: false,
     defaultSize: "lg",
   },

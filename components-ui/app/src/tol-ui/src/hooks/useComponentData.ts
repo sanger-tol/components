@@ -15,7 +15,7 @@ import type { IZone, TFilterOrUndefined } from "..";
 
 
 /** Parameters for the `useComponentData` hook. */
-export interface IUseComponentData<T> {
+export interface IUseComponentData<T = unknown> {
   /** Unique identifier for the component; used to derive its filter and as part of the query key. */
   id: string;
   /** Fetches and returns the component's data for the given compounded filter. */

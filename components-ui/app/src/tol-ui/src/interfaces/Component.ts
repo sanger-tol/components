@@ -46,6 +46,8 @@ export interface IRemoteStatus {
   warningMessage?: string;
   /** Message to display when no fields are selected for the component. */
   noFieldsSelected?: boolean;
+  /** Whether the component has no data to display once loaded. */
+  noData?: boolean;
 }
 
 /** State required for pagination controls. */
@@ -62,12 +64,26 @@ export interface IPagination {
   totalSize?: number;
 }
 
-/** Sort configuration for list components. */
-export interface ISortBy {
-  /** Attribute used for sorting. */
-  sortByAttribute?: string;
-  /** Sort direction. */
-  sortByType?: string;
+/** Inclusive first and last record numbers displayed on a page. */
+export interface IRecordRange {
+  /** First record number in the range. */
+  start: number;
+  /** Last record number in the range. */
+  end: number;
+}
+
+/** Default sort configuration for list components. */
+export interface IDefaultSortBy {
+  /** Default attribute used for sorting. */
+  defaultSortByAttribute?: string;
+  /** Default sort direction. */
+  defaultSortByType?: string;
+}
+
+/** Default page size configuration for list components. */
+export interface IDefaultPageSize {
+  /** Default number of rows displayed per page. */
+  defaultPageSize?: number;
 }
 
 /** Represents a component with associated fields. */
@@ -95,7 +111,12 @@ export interface IRemoteComponentData extends IRemoteComponentBase, IComponentFi
 }
 
 /** Interface for a remote component with list capabilities. */
-export interface IRemoteComponentDataList extends IRemoteComponentData, IRemoteTargetAndZone, IPagination, ISortBy {
+export interface IRemoteComponentDataList extends
+  IRemoteComponentData,
+  IRemoteTargetAndZone,
+  IPagination,
+  IDefaultSortBy,
+  IDefaultPageSize {
   /** Persist configuration externally instead of reading or writing standalone local storage. */
   onConfigSave?: (config: IListDataConfigSave) => void;
 }

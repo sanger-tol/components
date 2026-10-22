@@ -4,13 +4,13 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { API_METHODS, API_OPERATIONS, buildDataRecords, buildFieldMetaDefaults, useComponentData, useQueryData } from "..";
 import type { IFieldMeta, IUseComponentData, TCustomDataPointRenderers, TDataObjectListOrNull, TDataRecordList, TsDataSource } from "..";
 
 
 /** Parameters for the `useComponentListData` hook. */
-export interface IUseComponentListData extends Omit<IUseComponentData<IFieldMeta>, "fetchData"> {
+export interface IUseComponentListData extends Omit<IUseComponentData, "fetchData"> {
   /** The object type the fields belong to. */
   objectType: string;
   /** Data source used to fetch each field's attribute descriptor and the page of data. */
@@ -25,19 +25,21 @@ export interface IUseComponentListData extends Omit<IUseComponentData<IFieldMeta
   sortBy?: string;
   /** Custom data point renderers to use in addition to the pre-defined ones when building the returned `data`. */
   customDataPointRenderers?: TCustomDataPointRenderers;
+  /** To adapt the fieldMeta for display purposes without affecting the underlying configuration. */
+  manipulateViewableFieldMeta?: (fieldMeta: IFieldMeta, dataObjects?: TDataObjectListOrNull) => IFieldMeta;
 }
 
 /**
- * Builds `IFieldMeta` for an arbitrary set of fields by fetching each field's `IAttributeDescriptor`
- * via `dataSource.getAttributeDescriptor`, the same way `RemoteTable` enriches its columns via
- * `addFieldMetaDefaults` - generalised so any component that needs field metadata can use it, not just tables.
- * Once the fields are resolved, fetches the actual page of data via `dataSource.getListPage`.
+ * Fetches a page of list data for a set of fields, along with the field meta needed to render it.
  *
- * Extends `IUseComponentData`, so it supports everything `useComponentData` does (zone/filter syncing,
- * `forceUpdate`, etc.) for the fields; the data page reuses that same resolved `filter`.
+ * - Field meta is built from each field's `IAttributeDescriptor` via `dataSource.getAttributeDescriptor`,
+ *   then the page of data is fetched via `dataSource.getListPage` using the same resolved `filter`.
+ * - Extends `IUseComponentData`, so zone/filter syncing, `forceUpdate`, etc. work as in `useComponentData`.
+ * - Manages its own `page`/`pageSize` state and fetches the total row count.
  *
- * Also manages its own `page`/`pageSize` state (seeded from the given initial values) and fetches the
- * matching total row count, so the result can be spread straight into `RemoteComponentBase` for pagination.
+ * `manipulateViewableFieldMeta` adjusts what is displayed. Its result is returned as `fieldMeta`; the original is
+ * returned as `unmanipulatedFieldMeta`. Use the unmanipulated field meta for config (e.g. a config drawer)
+ * so display-only changes are never saved.
  */
 export function useComponentListData({
   id,
@@ -48,6 +50,7 @@ export function useComponentListData({
   pageSize: initialPageSize = 50,
   sortBy,
   customDataPointRenderers,
+  manipulateViewableFieldMeta,
   queryKey = [],
   ...rest
 }: IUseComponentListData) {
@@ -67,7 +70,7 @@ export function useComponentListData({
 
   const {
     filter,
-    data: fieldMeta,
+    data: fetchedFieldMeta,
     isLoading: isLoadingFields,
     errorMessage: fieldsErrorMessage,
   } = useComponentData<IFieldMeta>({
@@ -80,10 +83,7 @@ export function useComponentListData({
       ...queryKey,
     ],
     // Guarded by noFieldsSelected, so fields is guaranteed to be set whenever this actually runs.
-    fetchData: async () => ({
-      ...fields!,
-      dataWithDefaults: await buildFieldMetaDefaults(objectType, allAttributes, dataSource, fields?.dataWithDefaults),
-    }),
+    fetchData: async () => buildFieldMetaDefaults(objectType, allAttributes, dataSource, fields!),
     enabled: !noFieldsSelected,
   });
 
@@ -115,12 +115,22 @@ export function useComponentListData({
     },
   );
 
+  const fieldMeta = useMemo(
+    () => (
+      fetchedFieldMeta && manipulateViewableFieldMeta
+        ? manipulateViewableFieldMeta(fetchedFieldMeta, dataObjects)
+        : fetchedFieldMeta
+    ),
+    [fetchedFieldMeta, manipulateViewableFieldMeta, dataObjects],
+  );
+
   const data: TDataRecordList = noFieldsSelected
     ? []
-    : buildDataRecords(dataObjects, dataSource, fieldMeta as IFieldMeta, customDataPointRenderers);
+    : buildDataRecords(dataObjects, dataSource, fieldMeta, customDataPointRenderers);
 
   return {
-    fieldMeta: (fieldMeta as IFieldMeta),
+    fieldMeta,
+    unmanipulatedFieldMeta: fetchedFieldMeta,
     data,
     noFieldsSelected,
     // Waits for all necessary data to be loaded: field metadata, total size, and the current page of data.

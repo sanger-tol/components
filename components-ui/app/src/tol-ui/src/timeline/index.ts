@@ -4,5 +4,6 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export * from "./RemoteTimeline";
 export * from "./Timeline";
+export * from "./RemoteTimeline";
+export * from "./BoardTimeline";

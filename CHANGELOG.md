@@ -6,15 +6,25 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `5.8.0`
+## tol-ui `6.0.1`
 
-08-10-26
+20-10-26
+
+- Changing TOL_DATA to use QUASAR first if available
+
+## tol-ui `6.0.0`
+
+14-10-26
 
 - Generic list config drawer for list components
   - Datapoint renderers
   - Default page size
   - Default sort by
 - Add scrollable list layer to generic paginated components
+- Add config to boards, views, zones
+- Add options to boards, including custom headers
+- Fixed bug: action modal causing too many renders (screen goes blank)
+- Timelines (original, remote, board)
 
 ## tol-ui `5.7.2`
 

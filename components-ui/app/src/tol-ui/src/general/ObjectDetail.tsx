@@ -8,12 +8,13 @@ import { ComponentBase, getField } from "..";
 import type { IComponentData } from "..";
 
 
-/** Props for the `ObjectDetail` component. */
+/** Specific options for the `ObjectDetail` component. */
 export interface PObjectDetailOptions {
   /** Whether to display field keys alongside their values. Defaults to true. */
   showKeys?: boolean;
 }
 
+/** Props for the `ObjectDetail` component including base component data. */
 export interface PObjectDetail extends PObjectDetailOptions, IComponentData {}
 
 export function ObjectDetail(props: PObjectDetail) {

@@ -21,19 +21,11 @@ import type { IFieldMeta, IListDataConfigSave } from "../..";
 
 
 /** Props for the `ListDataConfigDrawer` component. */
-export interface PListDataConfigDrawer extends IRemoteTarget {
+export interface PListDataConfigDrawer extends IRemoteTarget, IListDataConfigSave {
   /** Whether the drawer is open. */
   open: boolean;
   /** Setter for toggling drawer open state. */
   setOpen: (open: boolean) => void;
-  /** Current field metadata for the component. */
-  fieldMeta: IFieldMeta;
-  /** Default sort attribute. */
-  sortByAttribute?: string;
-  /** Sort direction. */
-  sortByType?: string;
-  /** Default number of records displayed per page. */
-  pageSize?: number;
   /** Callback used to persist the updated field selection. */
   onConfigSave: (config: IListDataConfigSave) => void;
 }
@@ -51,42 +43,42 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     setOpen,
     onConfigSave,
     fieldMeta,
-    sortByAttribute,
-    sortByType,
-    pageSize = 50,
+    defaultSortByAttribute,
+    defaultSortByType,
+    defaultPageSize,
   } = props;
 
   const [draftFieldMeta, setDraftFieldMeta] = useState<IFieldMeta>(() => ({
     ...deepCopy(fieldMeta),
-    data: deepCopy(fieldMeta.data ?? {}),
-    dataWithDefaults: deepCopy(fieldMeta.dataWithDefaults ?? {}),
+    data: deepCopy(fieldMeta?.data ?? {}),
+    dataWithDefaults: deepCopy(fieldMeta?.dataWithDefaults ?? {}),
   }));
-  const savedAttributesRef = useRef<string[]>(fieldMeta.order.active);
-  const [draftAttributes, setDraftAttributes] = useState<string[]>(fieldMeta.order.active);
-  const [draftSortByAttribute, setDraftSortByAttribute] = useState<string | undefined>(sortByAttribute);
-  const [draftSortByType, setDraftSortByType] = useState<string | undefined>(sortByType);
-  const [draftPageSize, setDraftPageSize] = useState(pageSize);
+  const savedAttributesRef = useRef<string[]>(fieldMeta?.order?.active ?? []);
+  const [draftAttributes, setDraftAttributes] = useState<string[]>(fieldMeta?.order?.active ?? []);
+  const [draftSortByAttribute, setDraftSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
+  const [draftSortByType, setDraftSortByType] = useState<string | undefined>(defaultSortByType);
+  const [draftPageSize, setDraftPageSize] = useState<number | undefined>(defaultPageSize);
 
   const hasPendingChanges = (
     !deepEqual(draftAttributes, savedAttributesRef.current) ||
     !deepEqual(draftFieldMeta, fieldMeta) ||
-    sortByAttribute !== draftSortByAttribute ||
-    sortByType !== draftSortByType ||
-    pageSize !== draftPageSize
+    defaultSortByAttribute !== draftSortByAttribute ||
+    defaultSortByType !== draftSortByType ||
+    defaultPageSize !== draftPageSize
   );
 
   useEffect(() => {
     setDraftFieldMeta({
       ...deepCopy(fieldMeta),
-      data: deepCopy(fieldMeta.data ?? {}),
-      dataWithDefaults: deepCopy(fieldMeta.dataWithDefaults ?? {}),
+      data: deepCopy(fieldMeta?.data ?? {}),
+      dataWithDefaults: deepCopy(fieldMeta?.dataWithDefaults ?? {}),
     });
-    setDraftAttributes(fieldMeta.order.active);
-    savedAttributesRef.current = fieldMeta.order.active;
-    setDraftSortByAttribute(sortByAttribute);
-    setDraftSortByType(sortByType);
-    setDraftPageSize(pageSize);
-  }, [open, sortByAttribute, sortByType, fieldMeta, pageSize]);
+    setDraftAttributes(fieldMeta?.order?.active ?? []);
+    savedAttributesRef.current =  fieldMeta?.order?.active ?? [];
+    setDraftSortByAttribute(defaultSortByAttribute);
+    setDraftSortByType(defaultSortByType);
+    setDraftPageSize(defaultPageSize);
+  }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta, defaultPageSize]);
 
   const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
     <CellRendererConfigurer
@@ -106,9 +98,9 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
           ...draftFieldMeta,
           order: { ...draftFieldMeta.order, active: draftAttributes },
         },
-        sortByAttribute: draftSortByAttribute,
-        sortByType: draftSortByType,
-        pageSize: draftPageSize,
+        defaultSortByAttribute: draftSortByAttribute,
+        defaultSortByType: draftSortByType,
+        defaultPageSize: draftPageSize,
       });
     }
   };

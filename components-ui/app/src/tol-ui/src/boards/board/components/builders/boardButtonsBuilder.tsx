@@ -9,6 +9,7 @@ import {
   BOARD_MESSAGE_TEXT,
   copyToClipboard,
   PRIVILEGE,
+  USER_ROLES,
   BOARD_BUTTONS,
   BUTTONS,
 } from "../../../..";
@@ -16,70 +17,60 @@ import type { PButton, PDropdownButton, TBoardPrivilegeOrUndefined } from "../..
 
 
 export interface IBoardButtonsBuilder {
-  /**
-   * ID of the currently active view.
-   */
+  /** ID of the currently active view. */
   activeViewId: string | null;
-  /**
-   * User privilege for the board.
-   */
+  /** User privilege for the board. */
   privilege: TBoardPrivilegeOrUndefined;
-  /**
-   * Whether the board is in edit mode.
-   */
+  /** Whether the board is in edit mode. */
   editMode: boolean;
-  /**
-   * Callback for when the edit mode button is clicked.
-   */
+  /** Callback for entering or exiting edit mode. */
   onEditModeClick: () => void;
-  /**
-   * Whether the board is in layout mode.
-   */
+  /** Whether the board is in layout mode. */
   layoutMode: boolean;
-  /**
-   * Callback for when the layout mode button is clicked.
-   */
+  /** Callback for layout mode button clicks. */
   onLayoutModeClick: () => void;
-  /**
-   * True if a table is loading.
-   */
+  /** Whether a table is loading. */
   tableLoading: boolean;
-  /**
-   * Current board title.
-   */
+  /** Current board title. */
   boardTitle: string;
-  /**
-   * Title for the new board copy.
-   */
+  /** Title for the new board copy. */
   newBoardCopyTitle: string;
-  /**
-   * Set new board copy title.
-   */
+  /** Sets the new board copy title. */
   setNewBoardCopyTitle: (value: string) => void;
-  /**
-   * Open the board copy modal.
-   */
+  /** Opens the board copy modal. */
   onOpenBoardCopyModal: () => void;
+  /** Opens the board configuration drawer. */
+  onOpenBoardConfigDrawer: () => void;
+  /** Whether copying the board is enabled. */
+  allowBoardCopy: boolean;
+  /** Whether the share button is hidden. */
+  hideShareButton: boolean;
+  /** Roles assigned to the current user. */
+  roles: string[];
 }
 
-/**
- * Returns the array of action buttons for a board.
- */
+/** Builds the action buttons for a board. */
 export function boardButtonsBuilder({
   activeViewId,
   privilege,
-  editMode, onEditModeClick,
+  editMode,
+  onEditModeClick,
   layoutMode, onLayoutModeClick,
   tableLoading,
   boardTitle,
   newBoardCopyTitle, setNewBoardCopyTitle,
   onOpenBoardCopyModal,
+  onOpenBoardConfigDrawer,
+  allowBoardCopy,
+  hideShareButton,
+  roles,
 }: IBoardButtonsBuilder) {
   const editOrExitButton: PButton = {
     ...(editMode ? BOARD_BUTTONS.EDIT_MODE_EXIT : BOARD_BUTTONS.EDIT_MODE_ENTER),
-    visible: (privilege === PRIVILEGE.BOARD.WRITABLE && !layoutMode) || false,
+    visible: privilege === PRIVILEGE.BOARD.WRITABLE && !layoutMode,
     disabled: editMode && tableLoading,
     onClick: onEditModeClick,
+    className: editMode ? undefined : "tol-edit-mode-button",
     testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
     tooltip:
       editMode && tableLoading
@@ -97,12 +88,19 @@ export function boardButtonsBuilder({
 
   const shareButton: PButton = {
     ...BOARD_BUTTONS.SHARE_BOARD,
+    visible: !hideShareButton,
     onClick: () => {
       copyToClipboard(
         window.location.href,
         BOARD_MESSAGE_TEXT(BOARD_ENTITIES.ENTITIES.BOARD).CLIPBOARD_COPY.URL_COPY,
       );
     },
+  };
+
+  const boardConfigButton: PButton = {
+    ...BOARD_BUTTONS.BOARD_CONFIG,
+    onClick: onOpenBoardConfigDrawer,
+    visible: editMode && roles.includes(USER_ROLES.WARDEN),
   };
 
   const copyBoardButton: PButton = {
@@ -126,15 +124,13 @@ export function boardButtonsBuilder({
   };
 
   const copyButton: PDropdownButton = {
-    toggle: BUTTONS.COPY,
+    toggle: { ...BUTTONS.COPY, visible: allowBoardCopy || editMode },
     buttons: [copyBoardButton, copyViewIdButton],
     testid: "board-copy-dropdown",
   };
 
-  return [
+  return {
     editOrExitButton,
-    layoutOrExitButton,
-    copyButton,
-    shareButton,
-  ];
+    buttons: [layoutOrExitButton, boardConfigButton, copyButton, shareButton],
+  };
 }

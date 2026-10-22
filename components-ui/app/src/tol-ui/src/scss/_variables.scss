@@ -12,11 +12,13 @@ $tol-dark: black !default;
 $tol-bg-LIGHT-MODE: white !default;
 $tol-bg-dark-LIGHT-MODE: darken($tol-bg-LIGHT-MODE, 8%) !default;
 $tol-text-LIGHT-MODE: #212529 !default;
+$tol-text-subtle-LIGHT-MODE: lighten($tol-text-LIGHT-MODE, 30%) !default;
 $tol-emphasis-LIGHT-MODE: $tol-dark !default;
 
 $tol-bg-DARK-MODE: #212529 !default;
 $tol-bg-dark-DARK-MODE: darken($tol-bg-DARK-MODE, 8%) !default;
 $tol-text-DARK-MODE: #dee1e5 !default;
+$tol-text-subtle-DARK-MODE: darken($tol-text-DARK-MODE, 30%) !default;
 $tol-emphasis-DARK-MODE: $tol-light !default;
 
 $tol-grey-LIGHT-MODE: #c2c8cd !default;
@@ -87,6 +89,7 @@ $tol-brand-wechat-dark: #7fe7b4 !default;
   --tol-bg: #{$tol-bg-LIGHT-MODE};
   --tol-bg-dark: #{$tol-bg-dark-LIGHT-MODE};
   --tol-text: #{$tol-text-LIGHT-MODE};
+  --tol-text-subtle: #{$tol-text-subtle-LIGHT-MODE};
   --tol-emphasis: #{$tol-emphasis-LIGHT-MODE};
 
   --tol-grey: #{$tol-grey-LIGHT-MODE};
@@ -148,6 +151,7 @@ $tol-brand-wechat-dark: #7fe7b4 !default;
     --tol-bg: #{$tol-bg-DARK-MODE};
     --tol-bg-dark: #{$tol-bg-dark-DARK-MODE};
     --tol-text: #{$tol-text-DARK-MODE};
+    --tol-text-subtle: #{$tol-text-subtle-DARK-MODE};
     --tol-emphasis: #{$tol-emphasis-DARK-MODE};
 
     --tol-grey: #{$tol-grey-DARK-MODE};

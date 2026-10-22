@@ -36,6 +36,7 @@ import {
   PARAM_TAG_START,
   PARAM_TAG_END,
   ORIGIN_OPERATOR,
+  optimiseFieldMetaForSave
 } from "..";
 import type {
   TsDataSource,
@@ -244,12 +245,6 @@ export function getTableRowClassName(
   }
 
   return "";
-}
-
-export function optimiseFieldMetaForSave(fieldMeta?: IFieldMeta) {
-  const fm = deepCopy(fieldMeta);
-  delete fm.dataWithDefaults;
-  return fm;
 }
 
 function getTableConfigKey(id: string) {

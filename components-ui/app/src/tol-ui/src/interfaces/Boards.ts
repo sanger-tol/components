@@ -5,23 +5,26 @@ SPDX-License-Identifier: MIT
 */
 
 import { TsDataSource, BOARD_ENTITIES } from "..";
-import type { IFieldMeta, PUtilityBar, IFilter, TComponentType, TTranslations } from "..";
+import type { PUtilityBar, IFilter, TComponentType, TTranslations } from "..";
+import type { IBoardConfig, IComponentConfig } from "./BoardConfig";
 
 /** Core metadata shared by all board entities. */
-export interface TBoardEntityCore extends IBoardFilter {
+export interface TBoardEntityCore<TConfig = unknown> extends IBoardFilter {
   /** Unique identifier for a board entity. */
   id: string;
   /** Type of the board entity, for example "component". */
   type?: TBoardEntityType;
   /** Display title for the board entity. */
   title?: string;
+  /** Optional configuration for the board entity. */
+  config?: TConfig;
 }
 
 /** Mapping of child entity identifiers to child entities. */
 export type TBoardChildren<TChild> = Record<string, TChild>;
 
 /** Parent entity data for nested board structures. */
-export interface IBoardParentEntity<TChild> extends TBoardEntityCore {
+export interface IBoardParentEntity<TChild, TConfig = unknown> extends TBoardEntityCore<TConfig> {
   /** Child entities belonging to this board entity. */
   children: TBoardChildren<TChild>;
   /** Display order of the child entities. */
@@ -46,14 +49,8 @@ export interface IBoardFilterHierarchy extends IBoardFilter {
   filterPassThrough?: boolean;
 }
 
-/** Configuration metadata for a component. */
-export interface IComponentConfig {
-  /** Field metadata used to configure the component UI. */
-  fieldMeta: Partial<IFieldMeta>;
-}
-
 /** A board component rendered in a zone. */
-export interface IComponent extends TBoardEntityCore, IBoardFilterHierarchy {
+export interface IComponent extends TBoardEntityCore<IComponentConfig>, IBoardFilterHierarchy {
   /** Optional filter applied on top of the component's base filter. */
   subFilter?: IFilter;
   /** Concrete component type. */
@@ -62,8 +59,6 @@ export interface IComponent extends TBoardEntityCore, IBoardFilterHierarchy {
   widget_type?: string;
   /** Data source instance used by the component when not supplied via a zone. */
   dataspace?: TsDataSource;
-  /** Optional configuration for the component. */
-  config?: Partial<IComponentConfig>;
   /** Config diff payload used to update a component's configuration. */
   config_diff?: { id: string; config: Partial<IComponentConfig> };
   /** Identifier for the underlying data source instance. */
@@ -90,7 +85,7 @@ export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilterHiera
 export interface IView extends IBoardParentEntity<IZone> {}
 
 /** Top-level board definition. */
-export interface IBoard extends IBoardParentEntity<IView> {
+export interface IBoard extends IBoardParentEntity<IView, IBoardConfig> {
   /** Email address of the board owner. */
   owner_email?: string;
   /** Whether the current user has write access to the board. */

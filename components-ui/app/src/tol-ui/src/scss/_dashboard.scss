@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-#tol-smart-app-background:has(.tol-board) > .tol-board-backing-fade {
+// Add the fixed navbar backing for boards using either a sticky utility bar or a masthead header.
+#tol-smart-app-background:has(.tol-board-bar, .masthead) > .tol-board-backing-fade {
   position: fixed;
   top: 0;
   left: 0;
@@ -13,6 +14,9 @@
   background: color-mix(in srgb, var(--tol-bg-dark) 70%, transparent);
   z-index: 12;
   backdrop-filter: blur(8px);
+  opacity: var(--tol-board-backing-visible, 0);
+  pointer-events: none;
+  transition: opacity 160ms ease;
 }
 
 .tol-board {
@@ -45,9 +49,15 @@
   .tol-edit-mode-button {
     position: fixed;
     bottom: 20px;
-    left: 20px;
+    right: 20px;
     z-index: 1000;
   }
+}
+
+.tol-view-mode-board-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tol-boards-widget {
@@ -174,6 +184,7 @@
 
     .tol-board-bar-profile-bubble {
       margin-left: auto;
+      flex: 0 0 auto;
       color: var(--tol-emphasis);
       cursor: default;
       font-weight: bolder;
@@ -182,6 +193,7 @@
 
     .tol-board-bar-inner-container {
       flex: 1;
+      min-width: 0;
     }
   }
 
@@ -194,6 +206,13 @@
       margin-top: 6px;
     }
   }
+}
+
+// Keep the board content spacing consistent whether or not the utility bar has view tabs.
+.masthead-offset + .tol-board-content {
+  // Adjust spacing for board content when a board has a utility bar
+  display: flow-root;
+  margin-top: -6px !important;
 }
 
 .tol-zone-bar {

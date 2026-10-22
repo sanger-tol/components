@@ -158,7 +158,7 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
     if (!visible) return null;
 
     return (
-      <div className={`${getButtonWrapperClass(position)}${wrapperClassName ? " " + wrapperClassName : ""}`}>
+      <div className={[getButtonWrapperClass(position), wrapperClassName].filter(Boolean).join(" ")}>
         {contents ? (
           <HoverOverlay
             contents={contents}

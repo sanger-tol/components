@@ -44,6 +44,7 @@ export function ActionModal(props: Props) {
     >
       <h5 style={{ paddingBottom: 20 }}>Actions run on '{objectType}'</h5>
       <RemoteTable
+        pageSize={10}
         basic
         noConfigModal
         noDownload

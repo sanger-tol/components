@@ -80,12 +80,9 @@ export function CellRendererModal(props: PCellRendererModal) {
   useEffect(() => {
     if (open) {
       // Fetch any pre-existing cell renderer on this table column
-      setRenderer(deepCopy(
-        fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer
-      ));
-      setPreviousRenderer(deepCopy(
-        fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer
-      ));
+      const existingRenderer = fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer;
+      setRenderer(deepCopy(existingRenderer));
+      setPreviousRenderer(deepCopy(existingRenderer));
     }
 
     // Reset state
