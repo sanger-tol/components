@@ -122,7 +122,7 @@ kbd {
   background-color: var(--tol-grey-translucent);
   color: var(--tol-text);
   font-size: 11px;
-  margin: 0 5px;
+  margin: 0 var(--tol-spacing-xs);
 }
 
 .tiptap.tol-text-editor__content {
