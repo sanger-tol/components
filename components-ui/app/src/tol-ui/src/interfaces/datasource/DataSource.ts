@@ -34,7 +34,7 @@ export interface IUpsert {
   params?: Record<string, any>;
 }
 
-interface IUpsertData {
+export interface IUpsertData {
   type: string;
   id?: any;
   attributes?: object;

@@ -18,9 +18,24 @@ import {
   getFlattenedMetaData,
   getAttributeDetail,
   normaliseNumber,
-  getJsonEditorTheme
+  getJsonEditorTheme,
+  deepestEqual,
 } from "../../tol-ui/src";
 
+
+test("deepestEqual compares dates by timestamp", () => {
+  const initialDate = new Date("2026-10-21T10:00:00.000Z");
+  const sameDate = new Date("2026-10-21T10:00:00.000Z");
+  const changedDate = new Date("2026-10-21T11:00:00.000Z");
+
+  expect(deepestEqual(initialDate, sameDate)).toBe(true);
+  expect(deepestEqual(initialDate, changedDate)).toBe(false);
+  expect(deepestEqual(initialDate, {})).toBe(false);
+  expect(deepestEqual({}, initialDate)).toBe(false);
+  expect(deepestEqual({ created_at: initialDate }, { created_at: changedDate })).toBe(false);
+  expect(deepestEqual([initialDate], [sameDate])).toBe(true);
+  expect(deepestEqual([initialDate], [changedDate])).toBe(false);
+});
 
 test("isPropDefined function", () => {
   expect(isPropDefined(undefined)).toBe(false);
