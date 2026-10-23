@@ -8,11 +8,11 @@ import { Button, Icon, AUTOSAVE_STATE_ICONS } from "..";
 import type { TAutosaveStatus } from "..";
 
 export interface PAutosaveStatus {
-  /** The status of the current save cycle */
+  /** Current save state: idle, pending, saving, saved, or error. */
   status: TAutosaveStatus;
-  /** The last successful save date */
+  /** Last successful save time, or null before the first successful save. */
   lastSavedAt: Date | null;
-  /** Function to run if saving fails */
+  /** Called when the user selects Retry; only shown in the error state. */
   onRetry: () => void;
 }
 

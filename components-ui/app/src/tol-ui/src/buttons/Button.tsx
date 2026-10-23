@@ -30,7 +30,8 @@ export interface PButton {
   limit?: number;
   timeout?: number;
   testid?: string;
-  keyboardShortcut?: string
+  /** Shortcut keys displayed in order, separated by '+' */
+  keyboardShortcut?: string[];
   as?: React.ElementType;
 }
 
@@ -116,9 +117,14 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
         {text}
       </span>
     );
-    const ShortcutElement = keyboardShortcut && (
+    const ShortcutElement = !!keyboardShortcut?.length && (
       <div>
-        <kbd>{keyboardShortcut}</kbd>
+        {keyboardShortcut.map((key, index) => (
+          <React.Fragment key={`${key}-${index}`}>
+            {index > 0 && "+"}
+            <kbd>{key}</kbd>
+          </React.Fragment>
+        ))}
       </div>
     );
 

@@ -6,21 +6,11 @@ SPDX-License-Identifier: MIT
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AUTOSAVE_DELAY_MS } from "..";
-import type { TAutosaveStatus } from "..";
-
-/** Autosave options for the autosave hook */
-export interface IUseAutosaveOptions<T> {
-  /** Value of the item being saved */
-  value: T;
-  /** The save function to call */
-  save: (value: T) => Promise<void>;
-  /** Whether autosave is enabled */
-  enabled?: boolean;
-  /** Time in ms between saves */
-  delayMs?: number;
-  /** Comparison between current and saved values */
-  isEqual?: (a: T, b: T) => boolean;
-}
+import type {
+  IUseAutosaveOptions,
+  IUseAutosaveResult,
+  TAutosaveStatus,
+} from "..";
 
 /**
  * Debounces saving a changing value and tracks its save status.
@@ -36,8 +26,8 @@ export interface IUseAutosaveOptions<T> {
  * Does not prevent manual saves or cancel an in-flight request.
  * @param options.delayMs - Debounce delay in milliseconds.
  * Defaults to `AUTOSAVE_DELAY_MS`.
- * @param options.isEqual - Compares current and saved values.
- * Defaults to `Object.is`, which compares objects by reference.
+ * @param options.hasPendingChanges - Returns true when current and saved values differ.
+ * Defaults to negating `Object.is`, which compares objects by reference.
  * @returns The save status, last successful save time, dirty flag, and controls:
  * - `flush`: Cancels the debounce timer, waits for any active save, and saves
  *   the latest value if dirty. Rejects if that save fails.
@@ -49,13 +39,18 @@ export interface IUseAutosaveOptions<T> {
  * Registers a browser unload warning while dirty or saving. Pending debounce
  * timers are cleared on cleanup; unmounting does not flush unsaved changes.
  */
-export function useAutosave<T>({
-  value,
-  save,
-  enabled,
-  delayMs = AUTOSAVE_DELAY_MS,
-  isEqual,
-}: IUseAutosaveOptions<T>) {
+export function useAutosave<T>(
+  options: IUseAutosaveOptions<T>,
+): IUseAutosaveResult<T> {
+  const {
+    value,
+    save,
+    enabled,
+    delayMs = AUTOSAVE_DELAY_MS,
+    hasPendingChanges = (currentValue: T, savedValue: T) =>
+      !Object.is(currentValue, savedValue),
+  } = options;
+
   const [status, setStatus] = useState<TAutosaveStatus>("idle");
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
 
@@ -64,13 +59,13 @@ export function useAutosave<T>({
   const inFlightRef = useRef<Promise<void> | null>(null);
   const timerRef = useRef<number | undefined>(undefined);
   const saveRef = useRef(save);
-  const isEqualRef = useRef(isEqual ?? Object.is);
+  const hasPendingChangesRef = useRef(hasPendingChanges);
 
   saveRef.current = save;
-  isEqualRef.current = isEqual ?? Object.is;
+  hasPendingChangesRef.current = hasPendingChanges;
   latestValueRef.current = value;
 
-  const isDirty = !isEqualRef.current(value, savedValueRef.current);
+  const isDirty = hasPendingChangesRef.current(value, savedValueRef.current);
 
   const flush = useCallback(async (): Promise<void> => {
     clearTimeout(timerRef.current);
@@ -80,7 +75,7 @@ export function useAutosave<T>({
     }
 
     const snapshot = latestValueRef.current;
-    if (isEqualRef.current(snapshot, savedValueRef.current)) return;
+    if (!hasPendingChangesRef.current(snapshot, savedValueRef.current)) return;
 
     setStatus("saving");
     const request = saveRef
@@ -89,9 +84,9 @@ export function useAutosave<T>({
         savedValueRef.current = snapshot;
         setLastSavedAt(new Date());
         setStatus(
-          isEqualRef.current(latestValueRef.current, snapshot)
-            ? "saved"
-            : "pending",
+          hasPendingChangesRef.current(latestValueRef.current, snapshot)
+            ? "pending"
+            : "saved",
         );
       })
       .catch((error) => {
