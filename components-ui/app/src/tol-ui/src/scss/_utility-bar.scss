@@ -67,7 +67,6 @@
 
 .tol-component-contents {
   height: 100%;
-  border-radius: 0 var(--tol-border-radius);
 
   &.with-offset {
     height: calc(100% - var(--tol-utility-bar-offset));

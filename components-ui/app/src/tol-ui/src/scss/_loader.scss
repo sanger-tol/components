@@ -23,7 +23,7 @@
 
 .tol-fixed-full-page {
   --tol-load-fade: 300ms;
-
+  z-index: 2;
   position: fixed;
   top: 0;
   left: 0;
@@ -80,6 +80,11 @@
     .navbar-brand {
       color: var(--tol-primary);
     }
+  }
+
+  // After overlay-nav so it also overrides that variant's background
+  &.hide-background {
+    background-color: transparent;
   }
 }
 

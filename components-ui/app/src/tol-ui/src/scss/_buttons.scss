@@ -18,6 +18,7 @@ input[type="submit"] {
 // These colours correlate to the tol-colours (bs-colours) set in the variables.scss
 $types: (
   "primary": --tol-primary,
+  "info": --tol-info,
   "success": --tol-success,
   "error": --tol-danger,
   "edit": --tol-royal,

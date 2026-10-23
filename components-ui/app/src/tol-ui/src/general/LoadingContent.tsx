@@ -4,25 +4,19 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Loader, TNavBrand } from "..";
+import { Loader, TNavBrand, joinClassNames } from "..";
 
 export interface PLoadingContent {
-  /**
-   * The text to display below the loader.
-   */
+  /** The text to display below the loader. */
   text?: string;
-  /**
-   * The brand to display in the loading screen. Either a logo or text using the primary color.
-   */
+  /** The brand to display in the loading screen. Either a logo or text using the primary color. */
   brand?: TNavBrand;
-  /**
-   * Additional class name(s) to apply to the loading content container.
-   */
+  /** Additional class name(s) to apply to the loading content container. */
   className?: string;
-  /**
-   * Whether the loading content should overlay the nav and footer.
-   */
+  /** Whether the loading content should overlay the nav and footer. */
   overlayNav?: boolean;
+  /** Whether to hide the background of the loading content. */
+  hideBackground?: boolean;
 };
 
 /**
@@ -30,13 +24,22 @@ export interface PLoadingContent {
  * Can be used to indicate loading states across the app, such as when fetching board data or applying filters.
  */
 export function LoadingContent(props: PLoadingContent) {
-  const { text = "Loading...", brand, className, overlayNav = false } = props;
+  const {
+    text = "Loading...",
+    brand,
+    className,
+    overlayNav = false,
+    hideBackground = false,
+  } = props;
 
   return (
     <div
-      className={
-        `tol-fixed-full-page ${className ?? ""} ${overlayNav ? "overlay-nav" : ""}`.trim()
-      }
+      className={joinClassNames(
+        "tol-fixed-full-page",
+        className,
+        overlayNav && "overlay-nav",
+        hideBackground && "hide-background",
+      )}
     >
       <div className="fixed-centered-brand navbar-brand">{brand}</div>
       <div className="fixed-centered-loader"><Loader /></div>
