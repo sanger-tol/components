@@ -18,7 +18,7 @@ export interface IUseAutosaveOptions<T> {
   enabled?: boolean;
   /** Time in ms between saves */
   delayMs?: number;
-  /** Whether the values being passed in are equal */
+  /** Comparison between current and saved values */
   isEqual?: (a: T, b: T) => boolean;
 }
 
