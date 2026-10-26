@@ -7,7 +7,7 @@
 .form-wrapper {
   .rs-form-group {
     margin-top: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   .tol-form-wrapper-unique-sections-container {
@@ -92,10 +92,18 @@
 }
 
 .tol-multiple-form-input-row {
-  margin-top: 10px;
   display: flex;
   align-items: center;
   gap: 8px;
+
+  // Rows are spaced apart by `& + &` so the first row doesn't add a gap below the label
+  & + & {
+    margin-top: 10px;
+  }
+
+  .rs-form-group {
+    margin: 0 !important;
+  }
 }
 
 .tol-multiple-select-error-message .rs-form-error-message {

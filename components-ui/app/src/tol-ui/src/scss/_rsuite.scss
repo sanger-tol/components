@@ -47,6 +47,9 @@
   --rs-btn-link-hover-text: var(--tol-primary-hover);
   --rs-btn-link-active-text: var(--tol-primary-hover);
 
+  // Popover background for form error messages
+  --rs-form-errormessage-bg: var(--tol-bg-dark);
+
   .rs-input,
   .rs-input-group,
   .rs-picker-toggle,
@@ -330,7 +333,7 @@
 }
 
 .rs-form-control-label {
-  margin-bottom: 6px !important;
+  margin-bottom: 0.2rem !important;
   font-size: 14px !important;
   font-weight: 600 !important;
 }
