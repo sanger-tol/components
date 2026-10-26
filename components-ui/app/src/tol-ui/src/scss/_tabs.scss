@@ -11,6 +11,7 @@
 
   .rs-nav-pills {
     @extend .tol-widget;
+    border: var(--tol-border-grey) !important;
     padding: 4px !important;
     margin: 0 !important;
 

@@ -46,7 +46,7 @@
     }
 
     .rs-pagination-btn.rs-pagination-btn-active {
-      border: 1px solid var(--tol-grey);
+      border: var(--tol-border-grey);
     }
 
     .rs-pagination-btn.rs-pagination-btn-active:hover,
@@ -84,7 +84,7 @@
 
       .rs-table {
         border-radius: var(--tol-border-radius);
-        border: 1px solid var(--tol-grey);
+        border: var(--tol-border-grey);
         box-shadow: var(--tol-shadow-subtle);
 
         position: absolute;

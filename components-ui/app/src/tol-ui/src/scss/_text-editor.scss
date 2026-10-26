@@ -9,7 +9,7 @@
   flex-direction: column;
   height: 250px;
   overflow: hidden;
-  border: 1px solid var(--tol-grey);
+  border: var(--tol-border-grey);
   border-radius: 6px;
   background-color: var(--tol-bg);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -25,7 +25,7 @@
     flex-wrap: wrap;
     gap: 0.2rem;
     padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--tol-grey);
+    border-bottom: var(--tol-border-grey);
 
     .rs-btn {
       box-shadow: none;
@@ -79,7 +79,7 @@
 
   &__footer {
     padding: 0.4rem 0.75rem;
-    border-top: 1px solid var(--tol-grey);
+    border-top: var(--tol-border-grey);
     font-size: 12px;
     text-align: right;
     color: var(--tol-text);
@@ -87,7 +87,7 @@
 
     kbd {
       padding: 0.1rem 0.35rem;
-      border: 1px solid var(--tol-grey);
+      border: var(--tol-border-grey);
       border-radius: 3px;
       background-color: var(--tol-grey-translucent);
       color: var(--tol-text);
