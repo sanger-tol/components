@@ -109,3 +109,8 @@
 .tol-profile-form {
   padding: 1rem;
 }
+
+// Error message styling
+.rs-form-error-message {
+  border-radius: var(--tol-border-radius);
+}
