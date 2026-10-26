@@ -9,10 +9,20 @@ import { vitest } from "vitest";
 
 export const createSQLiteDatabaseMock = (values: Record<string, unknown>[] = []) => {
   const query = vitest.fn().mockResolvedValue({ values });
-  const database = { query } as unknown as SQLiteDBConnection;
+  const run = vitest.fn().mockResolvedValue({ changes: { changes: 1 } });
+  const beginTransaction = vitest.fn().mockResolvedValue(undefined);
+  const commitTransaction = vitest.fn().mockResolvedValue(undefined);
+  const rollbackTransaction = vitest.fn().mockResolvedValue(undefined);
+  const database = {
+    query, run, beginTransaction, commitTransaction, rollbackTransaction,
+  } as unknown as SQLiteDBConnection;
 
   return {
     database: Promise.resolve(database),
     query,
+    run,
+    beginTransaction,
+    commitTransaction,
+    rollbackTransaction,
   };
 };

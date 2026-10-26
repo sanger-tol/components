@@ -204,6 +204,95 @@ describe("Testing filters", () => {
   });
 });
 
+describe("Testing upsert function", () => {
+  test("Binds values, updates on ID conflicts, and returns stored rows", async () => {
+    const mock = createSQLiteDatabaseMock([{ id: "one", name: "O'Brien", synonyms: '["first"]' }]);
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    const result = await dataSource.upsert({
+      objectType: "species",
+      payload: [{ type: "species", id: "one", attributes: { name: "O'Brien", synonyms: ["first"] } }],
+    });
+
+    expect(mock.beginTransaction).toHaveBeenCalledOnce();
+    expect(mock.run).toHaveBeenCalledWith(
+      'INSERT INTO "species" ("id", "name", "synonyms") VALUES (?, ?, ?) ON CONFLICT("id") DO UPDATE SET "name" = excluded."name", "synonyms" = excluded."synonyms";',
+      ["one", "O'Brien", '["first"]'],
+      false,
+    );
+    expect(mock.query).toHaveBeenCalledWith('SELECT * FROM "species" WHERE "id" = ?', ["one"]);
+    expect(result).toEqual([{ objectType: "species", id: "one", name: "O'Brien", synonyms: ["first"] }]);
+    expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  test("Serializes dates and booleans, preserves null, and omits undefined attributes", async () => {
+    const mock = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+    const date = new Date("2026-10-26T12:00:00Z");
+
+    await dataSource.upsert({
+      objectType: "record",
+      payload: [{ type: "record", id: "one", attributes: { created_at: date, active: true, notes: null, name: undefined, id: "ignored" } }],
+    });
+
+    expect(mock.run).toHaveBeenCalledWith(
+      expect.not.stringContaining('"name"'),
+      ["one", date.toISOString(), 1, null],
+      false,
+    );
+  });
+
+  test("Handles an ID-only payload without replacing existing rows", async () => {
+    const mock = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await dataSource.upsert({ objectType: "sample", payload: [{ type: "sample", id: "one" }] });
+
+    expect(mock.run).toHaveBeenCalledWith(
+      'INSERT INTO "sample" ("id") VALUES (?) ON CONFLICT("id") DO NOTHING;',
+      ["one"],
+      false,
+    );
+  });
+
+  test("Skips empty payloads", async () => {
+    const mock = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(dataSource.upsert({ objectType: "sample", payload: [] })).resolves.toEqual([]);
+    expect(mock.beginTransaction).not.toHaveBeenCalled();
+  });
+
+  test("Rolls back the batch and rethrows when a later write fails", async () => {
+    const mock = createSQLiteDatabaseMock();
+    const error = new Error("Constraint failed");
+    mock.run.mockResolvedValueOnce({}).mockRejectedValueOnce(error);
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(dataSource.upsert({
+      objectType: "sample",
+      payload: [{ type: "sample", id: "one" }, { type: "sample", id: "two" }],
+    })).rejects.toThrow(error);
+    expect(mock.rollbackTransaction).toHaveBeenCalledOnce();
+    expect(mock.commitTransaction).not.toHaveBeenCalled();
+  });
+
+  test.each([
+    { objectType: "sample; DROP TABLE sample", item: { type: "sample", id: "one" }, message: "Invalid SQL identifier" },
+    { objectType: "sample", item: { type: "sample", id: "one", attributes: { "bad-column": "value" } }, message: "Invalid SQL identifier" },
+    { objectType: "sample", item: { type: "sample" }, message: "requires an ID" },
+    { objectType: "sample", item: { type: "sample", id: "one", relationships: { species: {} } }, message: "foreign-key attributes" },
+  ])("Rejects unsupported or unsafe input: $message", async ({ objectType, item, message }) => {
+    const mock = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(dataSource.upsert({ objectType, payload: [item] })).rejects.toThrow(message);
+    expect(mock.run).not.toHaveBeenCalled();
+    expect(mock.commitTransaction).not.toHaveBeenCalled();
+  });
+});
+
 describe("Testing metadata functions", () => {
   test("Returns no attribute descriptor", async () => {
     const { database } = createSQLiteDatabaseMock();

@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `6.2.0`
+
+26-10-26
+
+- Adding upsert capabilities to SQLiteDataSource
+
 ## tol-ui `6.1.0`
 
 21-10-26

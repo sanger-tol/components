@@ -10,6 +10,7 @@ import {
 import type {
   ListGetter,
   PageGetter,
+  Upserter,
   TDataObjectOrNull,
   IDataObject,
   IAttributeDescriptor,
@@ -23,10 +24,11 @@ import type {
   TFilterOperatorType,
   IGetAttributeDescriptor,
   IParsedSQLFilter,
+  IUpsert,
   TDataObjectListOrNull
 } from "..";
 
-export class SQLiteDataSource implements ListGetter, PageGetter {
+export class SQLiteDataSource implements ListGetter, PageGetter, Upserter {
   private database: Promise<SQLiteDBConnection>;
 
   constructor({ database }: ISQLiteDataSource) {
@@ -239,23 +241,93 @@ export class SQLiteDataSource implements ListGetter, PageGetter {
   }
 
   /**
-     * Determines whether a dot-delimited relationship path resolves to a `many` relationship.
-     *
-     * @param objectType - Root object type to start traversal from.
-     * @param field - Dot-delimited relationship path (for example: `"samples.accession.id"`).
-     * @returns always returns `false` until full implementation is done.
-     */
-    public async isManyDataPointsByName(
-      _objectType: string,
-      field: string
-    ): Promise<boolean> {
-      // I really do not like this approach but it is a quick way around a bigger problem.
-      // Ideally we would have some kind of local attribute metadata, similar to the SQLite
-      // schema.
-      if (field == "goat_synonym") {
-        return true;
-      }
-      return false;
+   * Determines whether a dot-delimited relationship path resolves to a `many` relationship.
+   *
+   * @param objectType - Root object type to start traversal from.
+   * @param field - Dot-delimited relationship path (for example: `"samples.accession.id"`).
+   * @returns always returns `false` until full implementation is done.
+   */
+  public async isManyDataPointsByName(
+    _objectType: string,
+    field: string
+  ): Promise<boolean> {
+    // I really do not like this approach but it is a quick way around a bigger problem.
+    // Ideally we would have some kind of local attribute metadata, similar to the SQLite
+    // schema.
+    if (field == "goat_synonym") {
+      return true;
     }
+    return false;
+  }
+
+  public quoteIdentifier = (identifier: string): string => {
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(identifier)) {
+      throw new Error(`Invalid SQL identifier: ${identifier}`);
+    }
+    return `"${identifier}"`;
+  };
+
+  /**
+   * Inserts or updates rows by ID in one transaction and returns the stored rows.
+   * IDs must be supplied; relationships must be passed as foreign-key attributes.
+   * API-specific params are not used by SQLite.
+   * @param payload - Array of objects to be upserted.
+   * @param objectType - The type of object being upserted.
+   * @returns The stored rows after the upsert operation.
+   */
+  public async upsert({
+    payload,
+    objectType,
+  }: IUpsert): Promise<TDataObjectListOrNull> {
+    if (payload.length === 0) return [];
+
+    const table = this.quoteIdentifier(objectType);
+    const db = await this.database;
+    const results: IDataObject[] = [];
+
+    await db.beginTransaction();
+    try {
+      for (const item of payload) {
+        if (item.id == null || item.id === '') {
+          throw new Error('SQLite upsert requires an ID for every row');
+        }
+        if (item.relationships && Object.keys(item.relationships).length > 0) {
+          throw new Error('SQLite upsert requires foreign-key attributes instead of relationships');
+        }
+
+        const attributes = Object.entries(item.attributes ?? {})
+          .filter(([column, value]) => column !== 'id' && value !== undefined);
+        const columns = ['id', ...attributes.map(([column]) => column)]
+          .map(this.quoteIdentifier);
+        const values = [item.id, ...attributes.map(([, value]) => {
+          if (value instanceof Date) return value.toISOString();
+          if (value !== null && typeof value === 'object') return JSON.stringify(value);
+          if (typeof value === 'boolean') return Number(value);
+          return value;
+        })];
+        const updates = columns.slice(1)
+          .map(column => `${column} = excluded.${column}`);
+        const conflict = updates.length > 0
+          ? `DO UPDATE SET ${updates.join(', ')}`
+          : 'DO NOTHING';
+
+        await db.run(
+          `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')}) ON CONFLICT("id") ${conflict};`,
+          values,
+          false,
+        );
+        const rows = await db.query(`SELECT * FROM ${table} WHERE "id" = ?`, [item.id]);
+        results.push(...this.parseQueryToDataObject(objectType, {
+          ...rows,
+          values: rows.values ?? [],
+        }));
+      }
+      await db.commitTransaction();
+      return results;
+    } catch (error) {
+      await db.rollbackTransaction();
+      throw error;
+    }
+  }
 
 }
