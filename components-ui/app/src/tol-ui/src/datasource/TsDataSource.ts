@@ -47,13 +47,14 @@ import type {
   TDataObjectListOrNull,
   TDataObjectOrNull,
   TRelationshipValues,
+  CustomOperator,
 } from "..";
 
 
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
-export class TsDataSource implements ListGetter, PageGetter, Upserter {
+export class TsDataSource implements ListGetter, PageGetter, Upserter, CustomOperator {
   private readonly detailGetter = new DetailGetter((args) => this.getOne(args));
   private client: TClient;
   private url: string | undefined;

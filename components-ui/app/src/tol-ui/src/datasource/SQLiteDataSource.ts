@@ -13,9 +13,11 @@ import type {
   ListGetter,
   PageGetter,
   Upserter,
+  CustomOperator,
   TDataObjectOrNull,
   IDataObject,
   IAttributeDescriptor,
+  ICustom,
   IGetList,
   IGetListPage,
   ISQLiteDataSource,
@@ -30,7 +32,7 @@ import type {
   TDataObjectListOrNull
 } from "..";
 
-export class SQLiteDataSource implements ListGetter, PageGetter, Upserter {
+export class SQLiteDataSource implements ListGetter, PageGetter, Upserter, CustomOperator {
   private database: Promise<SQLiteDBConnection>;
 
   constructor({ database }: ISQLiteDataSource) {
@@ -335,6 +337,42 @@ export class SQLiteDataSource implements ListGetter, PageGetter, Upserter {
       await CapacitorSQLite.saveToStore({ database: db.getConnectionDBName() });
     }
     return results;
+  }
+
+  public async custom({
+    method,
+    resource,
+    body,
+    params,
+    options,
+  }: ICustom): Promise<any> {
+    if (resource.includes(':count')) {
+      const objectType = resource.replace(':count', '');
+      return this.handleCount(objectType, body?.filter ?? {});
+    }
+  }
+
+  private async handleCount(
+    objectType: string,
+    filter: any
+  ): Promise<{data: { data: any[]; meta: { total: number } }}> {
+    const db = await this.database;
+    const { clause: filterClause, values: filterValues } = this.parseDataObjectFilter(filter);
+
+    try {
+      const rows = await db.query(
+        `SELECT COUNT(*) as count FROM ${objectType} ${filterClause}`,
+        filterValues
+      );
+      return {data: {
+        data: [],
+        meta: {
+          total: rows.values?.[0]?.count ?? 0
+        }
+      }}
+    } catch (error) {
+      throw error;
+    }
   }
 
 }
