@@ -4,7 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Capacitor } from '@capacitor/core';
 import {
+  CapacitorSQLite,
   SQLiteDBConnection,
 } from '@capacitor-community/sqlite';
 import type {
@@ -323,11 +325,16 @@ export class SQLiteDataSource implements ListGetter, PageGetter, Upserter {
         }));
       }
       await db.commitTransaction();
-      return results;
     } catch (error) {
       await db.rollbackTransaction();
       throw error;
     }
+
+    // This is just to check if you are developing on the browser
+    if (Capacitor.getPlatform() === 'web') {
+      await CapacitorSQLite.saveToStore({ database: db.getConnectionDBName() });
+    }
+    return results;
   }
 
 }

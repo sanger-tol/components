@@ -13,8 +13,9 @@ export const createSQLiteDatabaseMock = (values: Record<string, unknown>[] = [])
   const beginTransaction = vitest.fn().mockResolvedValue(undefined);
   const commitTransaction = vitest.fn().mockResolvedValue(undefined);
   const rollbackTransaction = vitest.fn().mockResolvedValue(undefined);
+  const getConnectionDBName = vitest.fn().mockReturnValue("offline");
   const database = {
-    query, run, beginTransaction, commitTransaction, rollbackTransaction,
+    query, run, beginTransaction, commitTransaction, rollbackTransaction, getConnectionDBName,
   } as unknown as SQLiteDBConnection;
 
   return {
@@ -24,5 +25,6 @@ export const createSQLiteDatabaseMock = (values: Record<string, unknown>[] = [])
     beginTransaction,
     commitTransaction,
     rollbackTransaction,
+    getConnectionDBName,
   };
 };

@@ -5,7 +5,20 @@ SPDX-License-Identifier: MIT
 */
 
 import "@testing-library/jest-dom";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
+const capacitorMocks = vi.hoisted(() => ({
+  getPlatform: vi.fn(() => "ios"),
+  saveToStore: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock("@capacitor/core", () => ({
+  Capacitor: { getPlatform: capacitorMocks.getPlatform },
+}));
+
+vi.mock("@capacitor-community/sqlite", () => ({
+  CapacitorSQLite: { saveToStore: capacitorMocks.saveToStore },
+}));
 
 import { SQLiteDataSource } from "../../tol-ui/src";
 import { createSQLiteDatabaseMock } from "../factory";
@@ -205,6 +218,42 @@ describe("Testing filters", () => {
 });
 
 describe("Testing upsert function", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    capacitorMocks.getPlatform.mockReturnValue("ios");
+  });
+
+  test("Persists web writes after committing the transaction", async () => {
+    capacitorMocks.getPlatform.mockReturnValue("web");
+    const mock = createSQLiteDatabaseMock();
+    mock.commitTransaction.mockImplementation(async () => {
+      expect(capacitorMocks.saveToStore).not.toHaveBeenCalled();
+    });
+    capacitorMocks.saveToStore.mockImplementationOnce(async () => {
+      expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    });
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await dataSource.upsert({ objectType: "sample", payload: [{ type: "sample", id: "one" }] });
+
+    expect(capacitorMocks.saveToStore).toHaveBeenCalledWith({ database: "offline" });
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  test("Does not roll back an already committed transaction if web persistence fails", async () => {
+    capacitorMocks.getPlatform.mockReturnValue("web");
+    capacitorMocks.saveToStore.mockRejectedValueOnce(new Error("Storage failed"));
+    const mock = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(dataSource.upsert({
+      objectType: "sample", payload: [{ type: "sample", id: "one" }],
+    })).rejects.toThrow("Storage failed");
+
+    expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
   test("Binds values, updates on ID conflicts, and returns stored rows", async () => {
     const mock = createSQLiteDatabaseMock([{ id: "one", name: "O'Brien", synonyms: '["first"]' }]);
     const dataSource = new SQLiteDataSource({ database: mock.database });
@@ -224,6 +273,7 @@ describe("Testing upsert function", () => {
     expect(result).toEqual([{ objectType: "species", id: "one", name: "O'Brien", synonyms: ["first"] }]);
     expect(mock.commitTransaction).toHaveBeenCalledOnce();
     expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+    expect(capacitorMocks.saveToStore).not.toHaveBeenCalled();
   });
 
   test("Serializes dates and booleans, preserves null, and omits undefined attributes", async () => {
