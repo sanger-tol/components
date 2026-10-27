@@ -15,6 +15,7 @@ import {
   hasExpandableRows,
   ROW_TOOLS_COLUMN_MAX_WIDTH,
   ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH,
+  TSelectedRow,
 } from "..";
 
 export interface PRowToolsColumn extends PTable {
@@ -22,7 +23,7 @@ export interface PRowToolsColumn extends PTable {
   checked: boolean;
   indeterminate: boolean;
   bulkSelect: boolean;
-  selectedRows: string[];
+  selectedRows: TSelectedRow[];
   cellHeights: TCellHeights;
   heightExpandedRows: Record<string, boolean>;
   allRowsExpanded: boolean;
