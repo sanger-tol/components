@@ -48,7 +48,6 @@ export function AutoDocPage(props: PAutoDocPage) {
             <tr>
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: 'var(--tol-border-grey)' }}>Name</th>
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: 'var(--tol-border-grey)' }}>Type</th>
-              {/* <th style={{ padding: '12px', textAlign: 'left', borderBottom: 'var(--tol-border-grey)' }}>Default</th> */}
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: 'var(--tol-border-grey)' }}>Description</th>
             </tr>
           </thead>
