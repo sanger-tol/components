@@ -48,6 +48,7 @@ import {
   useBoard,
   IConfigDifferences,
   MESSAGE_TYPE,
+  TSelectedRow,
 } from "..";
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeightDeprecated {
@@ -187,13 +188,13 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeightDeprecated {
    */
   actions?: (string | IDropdownButtonConfig)[];
   /**
-   * Controlled list of currently selected row identifiers
+   * Controlled list of currently selected rows, each keyed by its row id
    */
-  selectedRows?: string[];
+  selectedRows?: TSelectedRow[];
   /**
-   * Controlled setter for selected row identifiers; if omitted, selection is internal
+   * Controlled setter for selected rows; if omitted, selection is internal
    */
-  setSelectedRows?: (selectedRows: string[]) => void;
+  setSelectedRows?: (selectedRows: TSelectedRow[]) => void;
   /**
    * Controls visibility of the reset-to-default button. When true (or omitted), the
    * button is shown; when false, it is hidden. Pass false when there are no stored
@@ -310,7 +311,7 @@ export function RemoteTable(props: PRemoteTable) {
   const [error, setError] = useState<string>("");
 
   // row selection
-  const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
+  const [selectedRows, setSelectedRows] = useStateFallback<TSelectedRow[]>(
     controlledSelectedRows,
     setControlledSelectedRows,
     [],
@@ -621,7 +622,7 @@ export function RemoteTable(props: PRemoteTable) {
         showIdExportModal={idExportModalOpen}
         setShowIdExportModal={setIdExportModalOpen}
         setLoading={setLoading}
-        idsForExport={selectedRows}
+        idsForExport={selectedRows as unknown as string[]}
         setIdsForExport={setSelectedRows}
         setIdsWithReqNotMet={setIdsWithReqNotMet}
         idsWithReqNotMet={idsWithReqNotMet}

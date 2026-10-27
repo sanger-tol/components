@@ -41,12 +41,16 @@
     display: flex;
     align-items: center;
 
+    span, button:not(:active) {
+      color: var(--tol-text-subtle) !important;
+    }
+
     .rs-pagination-btn {
       border: 1px solid var(--tol-bg);
     }
 
     .rs-pagination-btn.rs-pagination-btn-active {
-      border: 1px solid var(--tol-grey);
+      border: var(--tol-border-grey);
     }
 
     .rs-pagination-btn.rs-pagination-btn-active:hover,
@@ -84,7 +88,7 @@
 
       .rs-table {
         border-radius: var(--tol-border-radius);
-        border: 1px solid var(--tol-grey);
+        border: var(--tol-border-grey);
         box-shadow: var(--tol-shadow-subtle);
 
         position: absolute;
@@ -225,6 +229,7 @@
     }
 
     .tol-table-row-selection {
+
       .rs-checkbox-checker,
       .rs-checkbox-control,
       input {
@@ -282,7 +287,7 @@
     p {
       margin-bottom: 0 !important;
     }
-  }  
+  }
 
   .tol-danger-colour {
     margin-top: 8px;
@@ -318,7 +323,7 @@
 }
 
 .tol-none-value {
-  color: var(--tol-grey);
+  color: var(--tol-text-subtle);
   font-weight: 400;
   cursor: default;
 }

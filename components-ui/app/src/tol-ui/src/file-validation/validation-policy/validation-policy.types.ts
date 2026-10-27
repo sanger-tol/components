@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Dispatch, SetStateAction } from "react";
-import type { IAllValidationData, TMessageType, TsDataSource } from "../..";
+import type { IAllValidationData, TMessageType, TsDataSource, TSelectedRow } from "../..";
 
 // Types related to file validation policies, actions, and their contexts.
 export type TFileValidationActionId =
@@ -104,7 +104,7 @@ export type TValidationActionContext = {
   setReportOpen?: (open: boolean) => void;
   setSubmissionMutateModalOpen?: (open: boolean) => void;
   setForceTableUpdate?: Dispatch<SetStateAction<boolean>>;
-  setSelectedRows?: Dispatch<SetStateAction<string[]>>;
+  setSelectedRows?: Dispatch<SetStateAction<TSelectedRow[]>>;
 };
 
 export type TValidationUserContext = {

@@ -9,7 +9,7 @@
   flex-direction: column;
   height: 250px;
   overflow: hidden;
-  border: 1px solid var(--tol-grey);
+  border: var(--tol-border-grey);
   border-radius: 6px;
   background-color: var(--tol-bg);
   transition:
@@ -27,7 +27,7 @@
     flex-wrap: wrap;
     gap: 0.2rem;
     padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--tol-grey);
+    border-bottom: var(--tol-border-grey);
 
     .rs-btn {
       box-shadow: none;
@@ -81,7 +81,7 @@
 
   &__footer {
     padding: 0.4rem 0.75rem;
-    border-top: 1px solid var(--tol-grey);
+    border-top: var(--tol-border-grey);
     font-size: 12px;
     text-align: right;
     color: var(--tol-text);
@@ -140,15 +140,19 @@
     &.idle {
       color: var(--tol-text) !important;
     }
+
     &.pending {
       color: var(--tol-primary) !important;
     }
+
     &.saving {
       color: var(--tol-primary) !important;
     }
+
     &.saved {
       color: var(--tol-success) !important;
     }
+
     &.error {
       color: var(--tol-danger) !important;
     }

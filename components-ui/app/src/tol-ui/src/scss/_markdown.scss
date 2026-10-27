@@ -9,6 +9,10 @@
   --color-accent-fg: var(--tol-primary);
 }
 
+.w-md-editor-toolbar {
+  border-radius: var(--tol-border-radius) var(--tol-border-radius) 0 0;
+}
+
 .w-md-editor,
 .wmde-markdown {
   --color-canvas-default: var(--tol-bg);
@@ -16,10 +20,10 @@
 
 .tol-markdown {
   overflow: auto;
+}
 
-  .tol-markdown-viewer {
-    border-radius: var(--tol-border-radius);
-  }
+.tol-markdown-viewer {
+  border-radius: var(--tol-border-radius);
 }
 
 // code blocks
@@ -27,10 +31,6 @@ pre:has(code) {
   background-color: var(--tol-grey-translucent) !important;
   border: var(--tol-border-grey-subtle) !important;
   border-radius: var(--tol-border-radius) !important;
-}
-
-.tol-form-markdown {
-  margin-bottom: 10px !important;
 }
 
 .tol-form-markdown-help-text {

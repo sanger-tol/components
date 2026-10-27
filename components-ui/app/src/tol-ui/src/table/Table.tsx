@@ -37,6 +37,7 @@ import {
   TFilterOrUndefined,
   IRemoteComponentDataList,
   IFieldTable,
+  TSelectedRow,
 } from "..";
 
 
@@ -65,8 +66,8 @@ export interface PTable extends IRemoteComponentDataList {
   actions?: IDropdownButtonConfig[];
   actionChoices?: string[];
   actionsFooter?: IDropdownButtonConfig;
-  selectedRows?: string[];
-  setSelectedRows?: (selectedRows: string[]) => void;
+  selectedRows?: TSelectedRow[];
+  setSelectedRows?: (selectedRows: TSelectedRow[]) => void;
   copySeparator?: string;
   fieldDropdownChoices?: TFieldDropdownChoices;
   onConfigSave: (config: ITableConfigSave) => void;
@@ -123,7 +124,7 @@ export function Table(props: PTable) {
   const [downloadOpen, setDownloadOpen] = useState<boolean>(false);
   const [cellHeights, setCellHeights] = useState<TCellHeights>({});
   const [heightExpandedRows, setHeightExpandedRows] = useState<Record<string, boolean>>({});
-  const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
+  const [selectedRows, setSelectedRows] = useStateFallback<TSelectedRow[]>(
     props.selectedRows,
     props.setSelectedRows,
     [],

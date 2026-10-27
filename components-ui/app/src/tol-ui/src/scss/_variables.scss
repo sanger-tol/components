@@ -12,7 +12,7 @@ $tol-dark: black !default;
 $tol-bg-LIGHT-MODE: white !default;
 $tol-bg-dark-LIGHT-MODE: darken($tol-bg-LIGHT-MODE, 8%) !default;
 $tol-text-LIGHT-MODE: #212529 !default;
-$tol-text-subtle-LIGHT-MODE: lighten($tol-text-LIGHT-MODE, 30%) !default;
+$tol-text-subtle-LIGHT-MODE: lighten($tol-text-LIGHT-MODE, 50%) !default;
 $tol-emphasis-LIGHT-MODE: $tol-dark !default;
 
 $tol-bg-DARK-MODE: #212529 !default;

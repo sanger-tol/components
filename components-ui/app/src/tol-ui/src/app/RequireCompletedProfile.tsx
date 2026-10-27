@@ -88,7 +88,7 @@ export function RequireCompletedProfile(props: PRequireCompletedProfile) {
   ]);
 
   if (!isRedirectTarget && (isLoading || !hasCompletedProfile))
-    return <LoadingContent text="Checking profile..." />;;
+    return <LoadingContent text="Checking profile..." />;
 
   return <>{children}</>;
 }

@@ -93,6 +93,12 @@ export const BUTTONS: Record<string, PButton> = {
     tooltip: "Share",
     position: "right",
   },
+  VIEW: {
+    text: "View",
+    type: "info",
+    tooltip: "View",
+    position: "right",
+  },
   NEXT: {
     outline: true,
     type: "primary",

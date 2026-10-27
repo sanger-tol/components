@@ -46,10 +46,9 @@ export function AutoDocPage(props: PAutoDocPage) {
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
           <thead>
             <tr>
-              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--tol-grey)' }}>Name</th>
-              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--tol-grey)' }}>Type</th>
-              {/* <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--tol-grey)' }}>Default</th> */}
-              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--tol-grey)' }}>Description</th>
+              <th style={{ padding: '12px', textAlign: 'left', borderBottom: 'var(--tol-border-grey)' }}>Name</th>
+              <th style={{ padding: '12px', textAlign: 'left', borderBottom: 'var(--tol-border-grey)' }}>Type</th>
+              <th style={{ padding: '12px', textAlign: 'left', borderBottom: 'var(--tol-border-grey)' }}>Description</th>
             </tr>
           </thead>
           <tbody>

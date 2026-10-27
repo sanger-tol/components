@@ -29,7 +29,7 @@ import {
   Widgets,
 } from "..";
 
-import type { TFileValidationPolicyModule } from "..";
+import type { TFileValidationPolicyModule, TSelectedRow } from "..";
 
 export interface PFileValidationHome {
   /**
@@ -90,9 +90,7 @@ export function FileValidationHome(props: PFileValidationHome) {
   const { actions, policies } = policyModule;
 
   // Capture Row IDs on selection to be used with modals
-  const [selectedRows, setSelectedRows] = useState<string[] | { id: string }[]>(
-    [],
-  );
+  const [selectedRows, setSelectedRows] = useState<TSelectedRow[]>([]);
 
   // Capture validation to be used with modals, if the action isn't coming from tables
   const [validationData, setValidationData] =
@@ -214,7 +212,7 @@ export function FileValidationHome(props: PFileValidationHome) {
       defaultSortByType="desc"
       rowSelection
       forceUpdate={forceTableUpdate}
-      selectedRows={selectedRows as string[]}
+      selectedRows={selectedRows}
       setSelectedRows={setSelectedRows}
       noActionsFooter
       cellRenderers={{
