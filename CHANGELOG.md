@@ -14,6 +14,12 @@ SPDX-License-Identifier: MIT
 - Added a `useAutosave` hook
 - Added an `AutosaveStatus` component
 - Added the ability to retrieve the word count from the tiptap text editor
+- BGA bugs/issues after 30/09 Council Meeting
+  - Corrected form issues
+  - Various CSS issues
+  - New CSS variables
+  - 'Edit Board' button is clearer
+  - Subtle text values are clearer on tables and 'none' values
 
 ## tol-ui `6.1.0`
 
