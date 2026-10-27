@@ -51,6 +51,26 @@
     bottom: 20px;
     right: 20px;
     z-index: 1000;
+    background-color: var(--tol-warning) !important;
+    border-color: var(--tol-warning) !important;
+    color: var(--tol-dark);
+    box-shadow: 0 0 1.25rem 0.125rem color-mix(in srgb, var(--tol-warning) 30%, transparent);
+    opacity: 0.3;
+    transition: opacity 0.2s ease;
+    // Starts at full opacity for 3s, then fades to the resting opacity
+    animation: tol-edit-button-fade 3.5s ease;
+
+    &:hover {
+      // Repeated as the button class's hover rule would otherwise change the colours
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes tol-edit-button-fade {
+  0%,
+  85% {
+    opacity: 1;
   }
 }
 

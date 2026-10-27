@@ -51,7 +51,6 @@ $sizes: (
       border-style: solid !important;
       border-width: 1px;
       background-color: var(#{$color}-translucent) !important;
-      backdrop-filter: blur(8px);
       color: var($color);
       box-shadow: var(--tol-shadow-subtle);
 
