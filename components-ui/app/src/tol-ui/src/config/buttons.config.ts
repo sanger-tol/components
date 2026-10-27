@@ -93,6 +93,12 @@ export const BUTTONS: Record<string, PButton> = {
     tooltip: "Share",
     position: "right",
   },
+  VIEW: {
+    text: "View",
+    type: "info",
+    tooltip: "View",
+    position: "right",
+  },
   NEXT: {
     outline: true,
     type: "primary",
@@ -157,7 +163,7 @@ export const TEXT_EDITOR_BUTTONS = ({
   editor,
   editorState,
 }: ITextEditorButtons): Record<Uppercase<TTextEditorButton>, PButton> => {
-  if (!editor) {
+  if (!editor || editor.isDestroyed || !editorState) {
     return {} as Record<Uppercase<TTextEditorButton>, PButton>;
   }
 

@@ -28,3 +28,4 @@ import type {} from "@tiptap/extension-superscript";
 import type {} from "@tiptap/extension-subscript";
 import type {} from "@tiptap/extensions";
 import type {} from "@tiptap/extension-text-align";
+import type {} from "@tiptap/extension-character-count";

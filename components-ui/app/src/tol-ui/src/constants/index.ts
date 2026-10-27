@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./auth.constants";
+export * from "./autosave.constants";
 export * from "./api.constants";
 export * from "./board-components.constants";
 export * from "./boards.constants";

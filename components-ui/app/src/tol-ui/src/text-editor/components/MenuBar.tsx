@@ -56,7 +56,7 @@ export function MenuBar(props: PMenuBar) {
   }
 
   // Get the toolbar buttons based on the current editor state
-  const { UNDO, REDO, ...toolbarButtons } = TEXT_EDITOR_BUTTONS(
+  const { ...toolbarButtons } = TEXT_EDITOR_BUTTONS(
     { editor, editorState } as ITextEditorButtons,
   );
 
@@ -98,8 +98,6 @@ export function MenuBar(props: PMenuBar) {
             />
           );
         })}
-        <Button {...UNDO} />
-        <Button {...REDO} />
       </div>
     </div>
   );

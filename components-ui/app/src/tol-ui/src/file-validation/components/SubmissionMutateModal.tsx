@@ -24,6 +24,7 @@ import type {
   IValidationSubmissionMutation,
   TValidationSubmissionMutations,
   IAllValidationData,
+  TSelectedRow,
 } from "../..";
 
 export interface PSubmissionMutateModal {
@@ -46,7 +47,7 @@ export interface PSubmissionMutateModal {
   /**
    * Optional callback to clear the selected rows after performing a status update
    */
-  setSelectedRows?: Dispatch<SetStateAction<string[]>>;
+  setSelectedRows?: Dispatch<SetStateAction<TSelectedRow[]>>;
   /**
    * Optional callback to manually refetch results when useQuery is disabled on validation completion
    */

@@ -47,6 +47,9 @@
   --rs-btn-link-hover-text: var(--tol-primary-hover);
   --rs-btn-link-active-text: var(--tol-primary-hover);
 
+  // Popover background for form error messages
+  --rs-form-errormessage-bg: var(--tol-bg-dark);
+
   .rs-input,
   .rs-input-group,
   .rs-picker-toggle,
@@ -104,7 +107,7 @@
   // dropdown
   .rs-picker-menu,
   .rs-dropdown-menu {
-    border: 1px solid var(--tol-grey);
+    border: var(--tol-border-grey);
     background: var(--tol-bg) !important;
     border-radius: var(--tol-border-radius);
   }
@@ -114,7 +117,7 @@
   }
 
   .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-input {
-    border: 1px solid var(--tol-grey) !important;
+    border: var(--tol-border-grey) !important;
   }
 
   .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-input:hover {
@@ -150,15 +153,15 @@
 
   // datetime picker inner borders
   .rs-picker-daterange-header {
-    border-bottom: 1px solid var(--tol-grey);
+    border-bottom: var(--tol-border-grey);
   }
 
   .rs-picker-daterange-menu .rs-calendar:first-child {
-    border-right: 1px solid var(--tol-grey);
+    border-right: var(--tol-border-grey);
   }
 
   .rs-picker-toolbar {
-    border-top: 1px solid var(--tol-grey);
+    border-top: var(--tol-border-grey);
   }
 
   // calendar date cell rounding
@@ -330,7 +333,7 @@
 }
 
 .rs-form-control-label {
-  margin-bottom: 6px !important;
+  margin-bottom: 0.2rem !important;
   font-size: 14px !important;
   font-weight: 600 !important;
 }
@@ -459,7 +462,7 @@
 // inline edit
 .rs-inline-edit-controls .rs-btn {
   background-color: var(--tol-bg) !important;
-  border: 1px solid var(--tol-grey) !important;
+  border: var(--tol-border-grey) !important;
   height: 30px !important;
   width: 30px !important;
 

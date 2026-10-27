@@ -15,7 +15,7 @@ export function Markdown(props: PMarkdown) {
   const { contents } = props;
 
   return (
-    <div className="tol-markdown-viewer">
+    <div className="tol-component-contents with-overflow">
       {/* @ts-ignore */}
       <ReactMarkdown>
         {contents}

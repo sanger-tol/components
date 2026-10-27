@@ -17,6 +17,9 @@ export type ITableRecord = Record<string, any>;
 
 export type ITableData = ITableRecord[];
 
+/** A selected table row: its record, keyed by the row id. */
+export type TSelectedRow = Record<string, ITableRecord>;
+
 export interface ITableDrawerSave {
   fieldMeta?: IFieldMeta;
   actions?: string[];

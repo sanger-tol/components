@@ -18,6 +18,7 @@ input[type="submit"] {
 // These colours correlate to the tol-colours (bs-colours) set in the variables.scss
 $types: (
   "primary": --tol-primary,
+  "info": --tol-info,
   "success": --tol-success,
   "error": --tol-danger,
   "edit": --tol-royal,
@@ -50,7 +51,6 @@ $sizes: (
       border-style: solid !important;
       border-width: 1px;
       background-color: var(#{$color}-translucent) !important;
-      backdrop-filter: blur(8px);
       color: var($color);
       box-shadow: var(--tol-shadow-subtle);
 

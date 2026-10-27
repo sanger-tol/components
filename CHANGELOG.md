@@ -6,11 +6,26 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
-## tol-ui `6.2.0`
+## tol-ui `6.3.0`
 
 26-10-26
 
 - Adding upsert capabilities to SQLiteDataSource
+
+## tol-ui `6.2.0`
+
+23-10-26
+
+- Added the ability to show a keyboard binding on a button
+- Added a `useAutosave` hook
+- Added an `AutosaveStatus` component
+- Added the ability to retrieve the word count from the tiptap text editor
+- BGA bugs/issues after 30/09 Council Meeting
+  - Corrected form issues
+  - Various CSS issues
+  - New CSS variables
+  - 'Edit Board' button is clearer
+  - Subtle text values are clearer on tables and 'none' values
 
 ## tol-ui `6.1.0`
 
