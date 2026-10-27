@@ -4,6 +4,16 @@
  * SPDX-License-Identifier: MIT
  */
 
+kbd {
+  padding: 0.1rem 0.35rem;
+  border: var(--tol-border-grey);
+  border-radius: 3px;
+  background-color: var(--tol-grey-translucent);
+  color: var(--tol-text);
+  font-size: 11px;
+  margin: 0 var(--tol-spacing-xs);
+}
+
 .tol-icon-link-texts-viewer {
   display: flex;
   flex-direction: column;
