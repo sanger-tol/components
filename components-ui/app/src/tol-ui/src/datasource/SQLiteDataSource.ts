@@ -14,12 +14,14 @@ import type {
   PageGetter,
   Upserter,
   CustomOperator,
+  Deleter,
   TDataObjectOrNull,
   IDataObject,
   IAttributeDescriptor,
   ICustom,
   IGetList,
   IGetListPage,
+  IGetOne,
   ISQLiteDataSource,
   IQueryResult,
   IFilter,
@@ -32,7 +34,12 @@ import type {
   TDataObjectListOrNull
 } from "..";
 
-export class SQLiteDataSource implements ListGetter, PageGetter, Upserter, CustomOperator {
+export class SQLiteDataSource implements
+  ListGetter,
+  PageGetter,
+  Upserter,
+  CustomOperator,
+  Deleter {
   private database: Promise<SQLiteDBConnection>;
 
   constructor({ database }: ISQLiteDataSource) {
@@ -355,7 +362,7 @@ export class SQLiteDataSource implements ListGetter, PageGetter, Upserter, Custo
   private async handleCount(
     objectType: string,
     filter: any
-  ): Promise<{data: { data: any[]; meta: { total: number } }}> {
+  ): Promise<{ data: { data: any[]; meta: { total: number } } }> {
     const db = await this.database;
     const { clause: filterClause, values: filterValues } = this.parseDataObjectFilter(filter);
 
@@ -364,13 +371,26 @@ export class SQLiteDataSource implements ListGetter, PageGetter, Upserter, Custo
         `SELECT COUNT(*) as count FROM ${objectType} ${filterClause}`,
         filterValues
       );
-      return {data: {
-        data: [],
-        meta: {
-          total: rows.values?.[0]?.count ?? 0
+      return {
+        data: {
+          data: [],
+          meta: {
+            total: rows.values?.[0]?.count ?? 0
+          }
         }
-      }}
+      }
     } catch (error) {
+      throw error;
+    }
+  }
+
+  public async deleteByID({ resource, id }: IGetOne): Promise<void> {
+    const db = await this.database;
+    try {
+      await db.run(`DELETE FROM ${resource} WHERE "id" = ?`, [id], false);
+      await db.commitTransaction();
+    } catch (error) {
+      await db.rollbackTransaction();
       throw error;
     }
   }

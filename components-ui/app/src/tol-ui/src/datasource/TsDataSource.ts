@@ -15,6 +15,7 @@ import {
   isAttributeField,
   splitRelationshipsForField,
   DetailGetter,
+  Deleter,
 } from "..";
 import type {
   ListGetter,
@@ -54,7 +55,7 @@ import type {
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
-export class TsDataSource implements ListGetter, PageGetter, Upserter, CustomOperator {
+export class TsDataSource implements ListGetter, PageGetter, Upserter, CustomOperator, Deleter {
   private readonly detailGetter = new DetailGetter((args) => this.getOne(args));
   private client: TClient;
   private url: string | undefined;
