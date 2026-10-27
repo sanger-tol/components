@@ -30,6 +30,8 @@ export interface PButton {
   limit?: number;
   timeout?: number;
   testid?: string;
+  /** Shortcut keys displayed in order, separated by '+' */
+  keyboardShortcut?: string[];
   as?: React.ElementType;
 }
 
@@ -57,6 +59,7 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
       as: Component = "button",
       limit = 0,
       timeout = 0,
+      keyboardShortcut
     } = props;
 
     const [buttonClicked, setButtonClicked] = useState<number>(0);
@@ -114,6 +117,16 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
         {text}
       </span>
     );
+    const ShortcutElement = !!keyboardShortcut?.length && (
+      <div>
+        {keyboardShortcut.map((key, index) => (
+          <React.Fragment key={`${key}-${index}`}>
+            {index > 0 && "+"}
+            <kbd>{key}</kbd>
+          </React.Fragment>
+        ))}
+      </div>
+    );
 
     const ButtonContent = (
       <RsButton
@@ -132,7 +145,19 @@ export const Button = React.forwardRef<HTMLButtonElement, PButton>(
             <TolLoader size="sm" />
           </span>
         )}
-        {isIconOnRight ? <>{TextElement}{IconElement}</> : <>{IconElement}{TextElement}</>}
+        {isIconOnRight ? (
+          <>
+            {TextElement}
+            {IconElement}
+            {ShortcutElement}
+          </>
+        ) : (
+          <>
+            {IconElement}
+            {TextElement}
+            {ShortcutElement}
+          </>
+        )}
       </RsButton>
     );
 

@@ -19,7 +19,8 @@
     "web-vitals": "^0.2.4",
     "react-markdown": "10.1.0",
     "xlsx": "0.18.5",
-    "@fortawesome/free-brands-svg-icons": "6.7.2"
+    "@fortawesome/free-brands-svg-icons": "6.7.2",
+    "@tiptap/extension-character-count": "3.27.1"
   },
   "devDependencies": {
     "vite": "5.4.21",

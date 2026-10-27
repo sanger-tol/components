@@ -5,12 +5,18 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useMemo, useRef } from "react";
-import { useEditor, EditorContent, EditorContext } from "@tiptap/react";
+import {
+  useEditor,
+  EditorContent,
+  EditorContext,
+  useEditorState,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Superscript from "@tiptap/extension-superscript";
 import Subscript from "@tiptap/extension-subscript";
 import TextAlign from "@tiptap/extension-text-align";
+import CharacterCount from "@tiptap/extension-character-count";
 import { DEFAULT_TEXT_EDITOR_BUTTONS, MenuBar } from "..";
 import type { TTextEditorButtons, TTextEditorCustomButton } from "..";
 
@@ -73,6 +79,8 @@ export interface PTextEditor {
    * An optional string or number to specify the height of the text editor.
    */
   height?: string | number;
+  /** An optional placeholder to render before a user starts typing. */
+  placeholder?: React.ReactNode;
 }
 
 /**
@@ -97,6 +105,7 @@ export function TextEditor(props: PTextEditor) {
     editable = true,
     onEditorChange,
     height,
+    placeholder,
   } = props;
 
   // Memoize the extensions array to avoid unnecessary editor rebuilds.
@@ -107,6 +116,7 @@ export function TextEditor(props: PTextEditor) {
       Highlight,
       Superscript,
       Subscript,
+      CharacterCount,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       ...(customExtensions || []),
     ],
@@ -135,6 +145,11 @@ export function TextEditor(props: PTextEditor) {
     },
     [extensions],
   );
+
+  const showPlaceholder = useEditorState({
+    editor,
+    selector: ({ editor }) => !!editor && !editor.isDestroyed && editor.isEmpty,
+  });
 
   // Apply editable changes in place instead of rebuilding the editor
   useEffect(() => {
@@ -167,7 +182,15 @@ export function TextEditor(props: PTextEditor) {
           buttons={menuButtons}
           customButtons={customButtons}
         />
-        <EditorContent editor={editor} className="tol-text-editor__body" />
+
+        <div className="tol-text-editor__content-wrapper">
+          <EditorContent editor={editor} className="tol-text-editor__body" />
+
+          {showPlaceholder && placeholder && (
+            <div className="tol-text-editor__placeholder">{placeholder}</div>
+          )}
+        </div>
+
         {keyboardShortcutElement && (
           <div className="tol-text-editor__footer">
             {keyboardShortcutElement}

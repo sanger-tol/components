@@ -24,7 +24,7 @@ export function menuBarStateSelector(
   const editor: Editor = ctx.editor;
 
   // If the editor is not initialized, return a default state with all keys set to false
-  if (!editor) {
+  if (!editor || editor.isDestroyed) {
     return Object.fromEntries(
       TEXT_EDITOR_STATE_KEYS.map((key) => [key, false]),
     ) as TMenuBarState;
