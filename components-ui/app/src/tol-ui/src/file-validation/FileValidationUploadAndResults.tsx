@@ -42,6 +42,7 @@ import type {
   IValidationConfig,
   IAllValidationData,
   TFileValidationStatusPolicy,
+  TSelectedRow,
 } from "..";
 
 export interface PFileValidationUploadAndResults {
@@ -52,7 +53,7 @@ export interface PFileValidationUploadAndResults {
   setCurrentActionId: Dispatch<SetStateAction<string>>;
   setForceTableUpdate?: Dispatch<SetStateAction<boolean>>;
   setValidationData: Dispatch<SetStateAction<IAllValidationData | null>>;
-  setSelectedRows?: Dispatch<SetStateAction<string[]>>;
+  setSelectedRows?: Dispatch<SetStateAction<TSelectedRow[]>>;
   objectType?: string;
   fileType?: string;
   pageTitle?: string;
