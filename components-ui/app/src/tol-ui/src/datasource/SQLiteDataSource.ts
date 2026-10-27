@@ -347,11 +347,8 @@ export class SQLiteDataSource implements
   }
 
   public async custom({
-    method,
     resource,
     body,
-    params,
-    options,
   }: ICustom): Promise<any> {
     if (resource.includes(':count')) {
       const objectType = resource.replace(':count', '');
@@ -384,10 +381,10 @@ export class SQLiteDataSource implements
     }
   }
 
-  public async deleteByID({ resource, id }: IGetOne): Promise<void> {
+  public async deleteByID({ objectType, id }: IGetOne): Promise<void> {
     const db = await this.database;
     try {
-      await db.run(`DELETE FROM ${resource} WHERE "id" = ?`, [id], false);
+      await db.run(`DELETE FROM ${objectType} WHERE "id" = ?`, [id], false);
       await db.commitTransaction();
     } catch (error) {
       await db.rollbackTransaction();
