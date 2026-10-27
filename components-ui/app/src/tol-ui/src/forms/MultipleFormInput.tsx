@@ -53,6 +53,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
     type: "success",
     icon: "plus",
     position: "right",
+    testid: "multiple-input-add-button"
   };
 
   const minusButton: PButton = {
