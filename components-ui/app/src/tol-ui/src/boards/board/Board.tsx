@@ -71,7 +71,7 @@ export function Board(props: PBoard) {
   const { boardId: paramBoardId } = useParams<any>();
   const id = props.boardId ?? paramBoardId;
 
-  // objectType and filter are read from query params (e.g. ?objectType=species&filter=...)
+  // objectType and filter are read from query params (e.g. ?object_type=species&filter=...)
   const queryParams = new URLSearchParams(location.search);
   const objectType = props.object_type ?? queryParams.get("object_type") ?? undefined;
   const filter = props.filter ?? JSON.parse(queryParams.get("filter") ?? "null") ?? undefined;

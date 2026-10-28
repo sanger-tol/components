@@ -30,6 +30,7 @@ If a dropdown is inaccessible, the whole dropdown is removed.
 - Routes are only registered for leaf pages that have `path.route` (explicit or generated).
 - Dropdown child routes are generated from the _child key_ (the key in `pages.data`), e.g. `"Public Dropdown Public Page"` → `"/public-dropdown-public-page"`.
 - Query parameter values support route parameter placeholders using the `${parameterName}` syntax. Placeholders are resolved from matching route parameters before a board is rendered, including inside nested objects and arrays. Unresolved placeholders are left unchanged.
+- Placeholders prefixed with `localStorage:` are read from localStorage instead of the route, using a dot path whose first segment is the storage key, e.g. `${localStorage:user.id}` resolves to the `id` of the stored `user`. Missing values resolve to an empty string and route param converters are not applied.
 
 ### Example
 

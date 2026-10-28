@@ -31,6 +31,8 @@ import {
   PARAM_ATTRIBUTE,
   TParamConverters,
   PARAM_CONVERTERS,
+  PARAM_LOCAL_STORAGE_PREFIX,
+  getValueFromLocalStoragePath,
 } from "..";
 
 
@@ -210,8 +212,23 @@ export function applyParamConverters(
 }
 
 /**
+ * Resolves a `localStorage:` placeholder name (e.g. `localStorage:user.id`) to a string that is
+ * safe to embed inside a serialised JSON string.
+ *
+ * @param parameterName - Placeholder name including the `localStorage:` prefix.
+ * @returns The stored value as an escaped string, or an empty string when missing.
+ */
+export function resolveLocalStoragePlaceholder(parameterName: string): string {
+  const stored = getValueFromLocalStoragePath(
+    parameterName.slice(PARAM_LOCAL_STORAGE_PREFIX.length),
+  );
+  return JSON.stringify(String(stored ?? "")).slice(1, -1);
+}
+
+/**
  * Resolves `${parameterName}` placeholders in query parameter values using the
- * current route parameter map.
+ * current route parameter map. Placeholders prefixed with `localStorage:` (e.g.
+ * `${localStorage:user.id}`) are read from localStorage instead, without converters.
  *
  * @param queryParams - Query parameters whose values may include template placeholders.
  * @param routeParams - Route parameter values keyed by placeholder name.
@@ -230,6 +247,9 @@ export function resolveTemplateValues(
   const serializedQueryParams = JSON.stringify(queryParams).replace(
     templateAttribute,
     (_placeholder, parameterName: string) => {
+      if (parameterName.startsWith(PARAM_LOCAL_STORAGE_PREFIX)) {
+        return resolveLocalStoragePlaceholder(parameterName);
+      }
       const value = String(routeParams[parameterName] ?? "");
       return applyParamConverters(value, paramConverters);
     },
