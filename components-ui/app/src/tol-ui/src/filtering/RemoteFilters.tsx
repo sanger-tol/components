@@ -14,6 +14,7 @@ import {
   Col,
   AttributeTitle,
   FILTER_INPUT_DELAY,
+  ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX,
 } from "..";
 
 export interface PRemoteFilters extends IRemoteTargetAndZone {
@@ -85,8 +86,12 @@ export function RemoteFilters(props: PRemoteFilters) {
       {utilityBarConfig && <UtilityBar {...utilityBarConfig} />}
       <Row>
         {attributes.map((attribute) => {
+          // Provenance fields (e.g. sample_count[sts]) have no meta of their own, so use the base attribute's
+          const baseAttribute =
+            attribute.match(ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX)?.[1] ??
+            attribute;
           const attributeMeta =
-            entityMeta?.flatAttributes?.[objectType]?.[attribute];
+            entityMeta?.flatAttributes?.[objectType]?.[baseAttribute];
           const type =
             attributeMeta?.cardinality < 50 &&
               attributeMeta?.python_type === "str"
