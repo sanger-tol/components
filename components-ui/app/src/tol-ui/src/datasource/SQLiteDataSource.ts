@@ -9,6 +9,7 @@ import {
   CapacitorSQLite,
   SQLiteDBConnection,
 } from '@capacitor-community/sqlite';
+import { DetailGetter } from "..";
 import type {
   ListGetter,
   PageGetter,
@@ -22,6 +23,7 @@ import type {
   IGetList,
   IGetListPage,
   IGetOne,
+  IGetByIds,
   ISQLiteDataSource,
   IQueryResult,
   IFilter,
@@ -40,6 +42,7 @@ export class SQLiteDataSource implements
   Upserter,
   CustomOperator,
   Deleter {
+  private readonly detailGetter = new DetailGetter((args) => this.getOne(args));
   private database: Promise<SQLiteDBConnection>;
 
   constructor({ database }: ISQLiteDataSource) {
@@ -390,6 +393,27 @@ export class SQLiteDataSource implements
       await db.rollbackTransaction();
       throw error;
     }
+  }
+
+  /** Returns a single stored object, or null when the ID is not found. */
+  public async getOne({
+    objectType,
+    id,
+    requestedFields,
+  }: IGetOne): Promise<TDataObjectOrNull> {
+    const table = this.quoteIdentifier(objectType);
+    const fields = requestedFields?.map(this.quoteIdentifier).join(',') || '*';
+    const db = await this.database;
+    const rows = await db.query(`SELECT ${fields} FROM ${table} WHERE "id" = ?`, [id]);
+    return this.parseQueryToDataObject(objectType, {
+      ...rows,
+      values: rows.values ?? [],
+    })[0] ?? null;
+  }
+
+  /** Preserves ID order and duplicates, with null entries for missing objects. */
+  public getByIds(args: IGetByIds): Promise<TDataObjectOrNull[]> {
+    return this.detailGetter.getByIds(args);
   }
 
 }

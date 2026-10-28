@@ -23,6 +23,130 @@ vi.mock("@capacitor-community/sqlite", () => ({
 import { SQLiteDataSource } from "../../tol-ui/src";
 import { createSQLiteDatabaseMock } from "../factory";
 
+describe("Testing getOne function", () => {
+  test("Binds the ID and parses the stored object", async () => {
+    const id = "species'1";
+    const { database, query } = createSQLiteDatabaseMock([
+      { id, name: "Test species", synonyms: '["first","second"]' },
+    ]);
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(dataSource.getOne({ objectType: "species", id })).resolves.toEqual({
+      objectType: "species",
+      id,
+      name: "Test species",
+      synonyms: ["first", "second"],
+    });
+    expect(query).toHaveBeenCalledWith(
+      'SELECT * FROM "species" WHERE "id" = ?',
+      [id],
+    );
+  });
+
+  test("Requests only the selected fields", async () => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database });
+
+    await dataSource.getOne({
+      objectType: "species",
+      id: "one",
+      requestedFields: ["id", "name"],
+    });
+
+    expect(query).toHaveBeenCalledWith(
+      'SELECT "id","name" FROM "species" WHERE "id" = ?',
+      ["one"],
+    );
+  });
+
+  test.each([{ values: [] }, {}])("Returns null for no rows: %j", async (rows) => {
+    const { database, query } = createSQLiteDatabaseMock();
+    query.mockResolvedValueOnce(rows);
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(
+      dataSource.getOne({ objectType: "species", id: "missing" }),
+    ).resolves.toBeNull();
+  });
+
+  test.each([
+    { objectType: "species; DROP TABLE species", id: "one" },
+    { objectType: "species", id: "one", requestedFields: ["name; DROP TABLE species"] },
+  ])("Rejects invalid identifiers before querying: %j", async (args) => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(dataSource.getOne(args)).rejects.toThrow("Invalid SQL identifier");
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  test("Propagates query errors", async () => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const error = new Error("Query failed");
+    query.mockRejectedValueOnce(error);
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(
+      dataSource.getOne({ objectType: "species", id: "one" }),
+    ).rejects.toBe(error);
+  });
+});
+
+describe("Testing getByIds function", () => {
+  test("Preserves order, missing entries, and duplicate IDs", async () => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const first = { id: "first", name: "First" };
+    const second = { id: "second", name: "Second" };
+    query
+      .mockImplementationOnce(() => new Promise(resolve => {
+        setTimeout(() => resolve({ values: [second] }), 10);
+      }))
+      .mockResolvedValueOnce({ values: [] })
+      .mockResolvedValueOnce({ values: [first] })
+      .mockResolvedValueOnce({ values: [second] });
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(dataSource.getByIds({
+      objectType: "species",
+      ids: ["second", "missing", "first", "second"],
+    })).resolves.toEqual([
+      { objectType: "species", ...second },
+      null,
+      { objectType: "species", ...first },
+      { objectType: "species", ...second },
+    ]);
+    expect(query).toHaveBeenCalledTimes(4);
+    ["second", "missing", "first", "second"].forEach((id, index) => {
+      expect(query).toHaveBeenNthCalledWith(
+        index + 1,
+        'SELECT * FROM "species" WHERE "id" = ?',
+        [id],
+      );
+    });
+  });
+
+  test("Returns an empty list without querying for no IDs", async () => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(
+      dataSource.getByIds({ objectType: "species", ids: [] }),
+    ).resolves.toEqual([]);
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  test("Propagates a failed lookup", async () => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const error = new Error("Query failed");
+    query.mockRejectedValueOnce(error);
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(
+      dataSource.getByIds({ objectType: "species", ids: ["one"] }),
+    ).rejects.toBe(error);
+  });
+});
+
 describe("Testing getList function", () => {
   test("Returns data objects from SQLite rows", async () => {
     const { database, query } = createSQLiteDatabaseMock([
@@ -365,4 +489,3 @@ describe("Testing metadata functions", () => {
     ).resolves.toBe(false);
   });
 });
-
