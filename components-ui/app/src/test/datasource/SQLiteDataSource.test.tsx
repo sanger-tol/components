@@ -467,6 +467,94 @@ describe("Testing upsert function", () => {
   });
 });
 
+describe("Testing deleteByID function", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    capacitorMocks.getPlatform.mockReturnValue("ios");
+  });
+
+  test("Begins a transaction before deleting and commits afterwards", async () => {
+    const mock = createSQLiteDatabaseMock();
+    mock.run.mockImplementationOnce(async () => {
+      expect(mock.beginTransaction).toHaveBeenCalledOnce();
+      expect(mock.commitTransaction).not.toHaveBeenCalled();
+    });
+    mock.commitTransaction.mockImplementationOnce(async () => {
+      expect(mock.run).toHaveBeenCalledOnce();
+    });
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await dataSource.deleteByID({ objectType: "record", id: "one" });
+
+    expect(mock.run).toHaveBeenCalledWith(
+      'DELETE FROM record WHERE "id" = ?', ["one"], false,
+    );
+    expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+    expect(capacitorMocks.saveToStore).not.toHaveBeenCalled();
+  });
+
+  test.each(["run", "commitTransaction"] as const)(
+    "Rolls back and propagates the original error when %s fails",
+    async (operation) => {
+      const mock = createSQLiteDatabaseMock();
+      const error = new Error("Delete failed");
+      mock[operation].mockRejectedValueOnce(error);
+      const dataSource = new SQLiteDataSource({ database: mock.database });
+
+      await expect(
+        dataSource.deleteByID({ objectType: "record", id: "one" }),
+      ).rejects.toBe(error);
+      expect(mock.rollbackTransaction).toHaveBeenCalledOnce();
+      expect(capacitorMocks.saveToStore).not.toHaveBeenCalled();
+    },
+  );
+
+  test("Does not roll back if starting the transaction fails", async () => {
+    const mock = createSQLiteDatabaseMock();
+    const error = new Error("Begin failed");
+    mock.beginTransaction.mockRejectedValueOnce(error);
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(
+      dataSource.deleteByID({ objectType: "record", id: "one" }),
+    ).rejects.toBe(error);
+    expect(mock.run).not.toHaveBeenCalled();
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  test("Persists web deletions only after committing", async () => {
+    capacitorMocks.getPlatform.mockReturnValue("web");
+    const mock = createSQLiteDatabaseMock();
+    mock.commitTransaction.mockImplementationOnce(async () => {
+      expect(capacitorMocks.saveToStore).not.toHaveBeenCalled();
+    });
+    capacitorMocks.saveToStore.mockImplementationOnce(async () => {
+      expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    });
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await dataSource.deleteByID({ objectType: "record", id: "one" });
+
+    expect(capacitorMocks.saveToStore).toHaveBeenCalledWith({ database: "offline" });
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  test("Does not roll back a committed deletion if web persistence fails", async () => {
+    capacitorMocks.getPlatform.mockReturnValue("web");
+    const mock = createSQLiteDatabaseMock();
+    const error = new Error("Storage failed");
+    capacitorMocks.saveToStore.mockRejectedValueOnce(error);
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(
+      dataSource.deleteByID({ objectType: "record", id: "one" }),
+    ).rejects.toBe(error);
+    expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+});
+
 describe("Testing metadata functions", () => {
   test("Returns no attribute descriptor", async () => {
     const { database } = createSQLiteDatabaseMock();

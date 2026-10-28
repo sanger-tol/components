@@ -384,14 +384,20 @@ export class SQLiteDataSource implements
     }
   }
 
+  /** Deletes a row transactionally and persists committed changes on the web. */
   public async deleteByID({ objectType, id }: IGetOne): Promise<void> {
     const db = await this.database;
+    await db.beginTransaction();
     try {
       await db.run(`DELETE FROM ${objectType} WHERE "id" = ?`, [id], false);
       await db.commitTransaction();
     } catch (error) {
       await db.rollbackTransaction();
       throw error;
+    }
+
+    if (Capacitor.getPlatform() === 'web') {
+      await CapacitorSQLite.saveToStore({ database: db.getConnectionDBName() });
     }
   }
 
