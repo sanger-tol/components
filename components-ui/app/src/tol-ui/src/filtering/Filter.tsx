@@ -20,7 +20,8 @@ export type IFilterInputType =
   | "float"
   | "datetime"
   | "bool"
-  | "multi";
+  | "multi"
+  | "dict";
 
 export interface IFilterInput extends IRemoteTargetAndZone {
   attribute: string;
@@ -33,6 +34,7 @@ export interface IFilterInput extends IRemoteTargetAndZone {
 export function Filter(props: IFilterInput) {
   switch (props.type) {
     case "str":
+    case "dict":
       return <FilterTextInput {...props} />;
     case "int":
     case "double":
