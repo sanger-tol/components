@@ -296,7 +296,6 @@ export function SmartApp(props: PSmartApp) {
             }}
           >
             <Router>
-              <div className="tol-board-backing-fade" />
               <Navigation {...navProps} />
               <div className="tol-smart-app">
                 <div className="tol-smart-app-content">

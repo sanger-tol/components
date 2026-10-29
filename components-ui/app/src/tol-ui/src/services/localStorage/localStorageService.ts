@@ -49,3 +49,22 @@ export function setReturnUrlFromLocalStorage (url: string) {
 export function getReturnUrlFromLocalStorage() {
   return localStorage.getItem("returnUrl") || "/";
 };
+
+/**
+ * Reads a value from localStorage using a dot path, where the first segment is the storage key
+ * and any remaining segments traverse the JSON-parsed value (e.g. `user.id`).
+ *
+ * @param path - Dot path to the value, such as `user.id`.
+ * @returns The value at the path, or `undefined` if it is missing or cannot be parsed.
+ */
+export function getValueFromLocalStoragePath(path: string): unknown {
+  const [key, ...segments] = path.split(".");
+  const raw = localStorage.getItem(key);
+  if (raw === null) return undefined;
+  if (segments.length === 0) return raw;
+  try {
+    return segments.reduce<any>((value, segment) => value?.[segment], JSON.parse(raw));
+  } catch {
+    return undefined;
+  }
+}

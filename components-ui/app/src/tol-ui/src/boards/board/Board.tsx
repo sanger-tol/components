@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Redirect, useLocation, useParams } from "react-router-dom";
+import { Redirect, useHistory, useLocation, useParams } from "react-router-dom";
 import {
   BOARD_ENTITIES,
   getCssVarValue,
@@ -51,8 +51,9 @@ export interface PBoard extends IBoardFilter {
 export function Board(props: PBoard) {
   const { boardDataSource, actionsDataSource } = props;
 
-  const { board, setBoard, editMode, setPrivilege } = useBoard();
-  const location = useLocation();
+  const { board, setBoard, editMode, setEditMode, setPrivilege } = useBoard();
+  const location = useLocation<{ enterEditMode?: boolean } | undefined>();
+  const history = useHistory();
 
   const [activeViewId, setActiveViewId] = useState<string | null>(null);
   const [mountedViewIds, setMountedViewIds] = useState<string[]>([]);
@@ -70,7 +71,7 @@ export function Board(props: PBoard) {
   const { boardId: paramBoardId } = useParams<any>();
   const id = props.boardId ?? paramBoardId;
 
-  // objectType and filter are read from query params (e.g. ?objectType=species&filter=...)
+  // objectType and filter are read from query params (e.g. ?object_type=species&filter=...)
   const queryParams = new URLSearchParams(location.search);
   const objectType = props.object_type ?? queryParams.get("object_type") ?? undefined;
   const filter = props.filter ?? JSON.parse(queryParams.get("filter") ?? "null") ?? undefined;
@@ -112,6 +113,11 @@ export function Board(props: PBoard) {
         ? PRIVILEGE.BOARD.WRITABLE
         : PRIVILEGE.BOARD.VIEWABLE,
     );
+    if (location.state?.enterEditMode) {
+      if (boardData.write_privilege) setEditMode(true);
+      // Clear the flag so a reload doesn't re-enter edit mode
+      history.replace({ ...location, state: undefined });
+    }
     const viewFromUrl = new URLSearchParams(location.search).get("view");
     setActiveViewId(
       viewFromUrl && boardData.order?.includes(viewFromUrl)

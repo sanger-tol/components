@@ -34,7 +34,9 @@ export function MyBoardsHeader(props: PBoard) {
       .then((res) => {
         const { id } = res.data;
         setTimeout(() => {
-          history.push(`/${BOARD_ENTITIES.ENTITIES.BOARD}/${id}`);
+          history.push(`/${BOARD_ENTITIES.ENTITIES.BOARD}/${id}`, {
+            enterEditMode: true,
+          });
         }, 500);
       })
       .catch(() => {

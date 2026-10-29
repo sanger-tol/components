@@ -10,6 +10,12 @@ SPDX-License-Identifier: MIT
 
 29-10-26
 
+- Allow filtering on dict fields in UI TOLP-10320
+- Fixed bug: Null values causing UI errors TOLP-10352
+- Fixed bug: Cannot filter on provenance fields in a filter config drawer TOLP-10367
+- Automatic edit mode on board creation
+- Removed navbar fade as too many scenarios to consider - use drop shadow on scroll instead
+- Ability to get values from localStorage via queryParams in nav config
 - Adding upsert capabilities to SQLiteDataSource
 - Adding new getCount method for both TSDataSource and SQLiteDataSource
 - Adding tests for both new features

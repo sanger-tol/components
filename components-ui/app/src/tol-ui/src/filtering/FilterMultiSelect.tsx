@@ -97,7 +97,12 @@ export function FilterMultiSelect(props: IFilterInput) {
         })
         .then((res: any) => {
           const statsValues = res.data.meta.stats;
-          setData(statsValues.map((item: any) => item.key[attribute]));
+          // Missing values (e.g. no related object on a hop) come back as null and break the select
+          setData(
+            statsValues
+              .map((item: any) => item.key[attribute])
+              .filter((value: any) => value !== null && value !== undefined),
+          );
           updateDropdownText("No results found");
         })
         .catch((error: any) => {
