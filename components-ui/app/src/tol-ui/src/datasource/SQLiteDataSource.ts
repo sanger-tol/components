@@ -10,7 +10,8 @@ import {
 import {
   DetailGetter,
   quoteIdentifier,
-  saveToStoreIfWeb
+  saveToStoreIfWeb,
+  API_OPERATIONS
 } from "..";
 import type {
   ListGetter,
@@ -38,7 +39,7 @@ import type {
   IParsedSQLFilter,
   IUpsert,
   TDataObjectListOrNull,
-  TCounterResultOrNull,
+  TCountOrNull,
 } from "..";
 
 export class SQLiteDataSource implements
@@ -350,8 +351,8 @@ export class SQLiteDataSource implements
     resource,
     body,
   }: ICustom): Promise<any> {
-    if (resource.includes(':count')) {
-      const objectType = resource.replace(':count', '');
+    if (resource.includes(API_OPERATIONS.COUNT)) {
+      const objectType = resource.replace(API_OPERATIONS.COUNT, '');
       return this.getCount({ objectType, filter: body?.filter ?? {} });
     }
   }
@@ -359,7 +360,7 @@ export class SQLiteDataSource implements
   public async getCount({
     objectType,
     filter
-  }: ICounter): Promise<TCounterResultOrNull> {
+  }: ICounter): Promise<TCountOrNull> {
     const db = await this.database;
     const { clause: filterClause, values: filterValues } = this.parseDataObjectFilter(filter);
 

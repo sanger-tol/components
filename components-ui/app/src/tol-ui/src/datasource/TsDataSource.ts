@@ -23,7 +23,7 @@ import type {
   Upserter,
   Counter,
   ICounter,
-  TCounterResultOrNull,
+  TCountOrNull,
   IAttributeDescriptor,
   TAttributes,
   TClient,
@@ -617,7 +617,7 @@ export class TsDataSource implements
   public async getCount({
     objectType,
     filter
-  }: ICounter): Promise<TCounterResultOrNull> {
+  }: ICounter): Promise<TCountOrNull> {
     const response = await this.custom({
       method: API_METHODS.POST,
       resource: this.generateEndpoint(objectType, API_OPERATIONS.COUNT),

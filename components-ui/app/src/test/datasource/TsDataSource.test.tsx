@@ -605,7 +605,10 @@ describe("Testing getCount function", () => {
     expect(postSpy).toHaveBeenCalledWith(
       "/species:count",
       { filter },
-      { baseURL: "/test-data-path" },
+      {
+        baseURL: "/test-data-path",
+        params: {},
+       },
     );
   });
 });

@@ -116,4 +116,5 @@ export type TDataObjectListOrNull = TDataObjectOrNull[] | null;
 export type TCursorSearchAfterOrNull = string[] | null;
 export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null
 
-export type TCounterResultOrNull = number | null;
+export type TCount = number;
+export type TCountOrNull = TCount | null;
