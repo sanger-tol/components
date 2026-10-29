@@ -368,14 +368,7 @@ export class SQLiteDataSource implements
         `SELECT COUNT(*) as count FROM ${objectType} ${filterClause}`,
         filterValues
       );
-      return {
-        data: {
-          data: [],
-          meta: {
-            total: rows.values?.[0]?.count ?? 0
-          }
-        }
-      }
+      return rows.values?.[0]?.count ?? 0;
     } catch (error) {
       throw error;
     }

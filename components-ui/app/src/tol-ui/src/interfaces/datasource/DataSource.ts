@@ -46,8 +46,13 @@ export interface IGetByIds {
   ids: string[];
 }
 
+/**
+ * Interface for counter requests
+ */
 export interface ICounter {
+  /** The type of object to count */
   objectType: string;
+  /** The filter to apply when counting objects */
   filter?: IFilter;
 }
 
@@ -111,4 +116,4 @@ export type TDataObjectListOrNull = TDataObjectOrNull[] | null;
 export type TCursorSearchAfterOrNull = string[] | null;
 export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null
 
-export type TCounterResultOrNull = { data: { data: any[]; meta: { total: number } } } | null;
+export type TCounterResultOrNull = number | null;

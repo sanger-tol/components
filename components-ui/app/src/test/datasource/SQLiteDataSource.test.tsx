@@ -200,9 +200,7 @@ describe("Testing getCount function", () => {
     const dataSource = new SQLiteDataSource({ database });
     const filter = { and_: { name: { eq: { value: "Test species" } } } };
 
-    await expect(dataSource.getCount({ objectType: "species", filter })).resolves.toEqual({
-      data: { data: [], meta: { total: 3 } },
-    });
+    await expect(dataSource.getCount({ objectType: "species", filter })).resolves.toEqual(3);
     expect(query).toHaveBeenCalledWith(
       "SELECT COUNT(*) as count FROM species WHERE name = ?",
       ["Test species"],
@@ -213,9 +211,7 @@ describe("Testing getCount function", () => {
     const { database } = createSQLiteDatabaseMock();
     const dataSource = new SQLiteDataSource({ database });
 
-    await expect(dataSource.getCount({ objectType: "species" })).resolves.toEqual({
-      data: { data: [], meta: { total: 0 } },
-    });
+    await expect(dataSource.getCount({ objectType: "species" })).resolves.toEqual(0);
   });
 });
 

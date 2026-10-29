@@ -593,16 +593,15 @@ describe("Testing getOne function", () => {
 
 describe("Testing getCount function", () => {
   test("Requests the count for the object type and returns the response", async () => {
-    const response = { data: { data: [], meta: { total: 3 } } };
     const mockClientInstance = mockClient();
-    const postSpy = vitest.spyOn(mockClientInstance, "post").mockResolvedValue(response);
+    const postSpy = vitest.spyOn(mockClientInstance, "post").mockResolvedValue({ data: { data: [], meta: { total: 3 } } });
     const dataSource = new TsDataSource({
       apiDataPath: "/test-data-path",
       client: () => mockClientInstance,
     });
     const filter = { and_: { name: { eq: { value: "Test species" } } } };
 
-    await expect(dataSource.getCount({ objectType: "species", filter })).resolves.toBe(response);
+    await expect(dataSource.getCount({ objectType: "species", filter })).resolves.toBe(3);
     expect(postSpy).toHaveBeenCalledWith(
       "/species:count",
       { filter },

@@ -244,6 +244,11 @@ export const quoteIdentifier = (identifier: string): string => {
   return `"${identifier}"`;
 };
 
+/**
+ * Saves the database to the store if running on the web platform.
+ * 
+ * @param db - The database instance to save.
+ */
 export const saveToStoreIfWeb = async (db: any) => {
   if (Capacitor.getPlatform() === 'web') {
     await CapacitorSQLite.saveToStore({ database: db.getConnectionDBName() });

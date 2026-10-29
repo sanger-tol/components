@@ -287,18 +287,6 @@ export class TsDataSource implements
     }
   }
 
-  public async getCount({
-      objectType,
-      filter
-    }: ICounter): Promise<TCounterResultOrNull> {
-    const client = this.client();
-    const config = {
-      baseURL: this.baseURL ?? "",
-    };
-    const response = await client.post(`/${objectType}:count`, { filter }, config);
-    return response;
-  }
-
   private getSavedConfig(key: string): { data: object; expiry: Date } | null {
     const savedConfig = JSON.parse(localStorage.getItem(key) || "null");
     if (savedConfig === null) return null;
@@ -624,6 +612,18 @@ export class TsDataSource implements
         if (error?.response?.status === 404) return null;
         throw error;
       });
+  }
+
+  public async getCount({
+    objectType,
+    filter
+  }: ICounter): Promise<TCounterResultOrNull> {
+    const response = await this.custom({
+      method: API_METHODS.POST,
+      resource: this.generateEndpoint(objectType, API_OPERATIONS.COUNT),
+      body: { filter },
+    });
+    return response?.data?.meta?.total ?? null;
   }
 
   private async getAttributeDescriptorValue(
