@@ -12,10 +12,11 @@ export interface PConfirmationModal {
   setOpen: any;
   onConfirmClick?: any;
   itemType?: string;
+  testid?: string;
 }
 
 export function ConfirmationModal(props: PConfirmationModal) {
-  const { open, setOpen, onConfirmClick, itemType } = props;
+  const { open, setOpen, onConfirmClick, itemType, testid } = props;
 
   return (
     <Modal
@@ -24,6 +25,7 @@ export function ConfirmationModal(props: PConfirmationModal) {
       setOpen={setOpen}
       size="xs"
       closeButton={false}
+      testid={testid}
     >
       <h5>Confirm Deletion</h5>
       <p>

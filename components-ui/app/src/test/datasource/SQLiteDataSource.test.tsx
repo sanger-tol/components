@@ -5,10 +5,147 @@ SPDX-License-Identifier: MIT
 */
 
 import "@testing-library/jest-dom";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
+const capacitorMocks = vi.hoisted(() => ({
+  getPlatform: vi.fn(() => "ios"),
+  saveToStore: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock("@capacitor/core", () => ({
+  Capacitor: { getPlatform: capacitorMocks.getPlatform },
+}));
+
+vi.mock("@capacitor-community/sqlite", () => ({
+  CapacitorSQLite: { saveToStore: capacitorMocks.saveToStore },
+}));
 
 import { SQLiteDataSource } from "../../tol-ui/src";
 import { createSQLiteDatabaseMock } from "../factory";
+
+describe("Testing getOne function", () => {
+  test("Binds the ID and parses the stored object", async () => {
+    const id = "species'1";
+    const { database, query } = createSQLiteDatabaseMock([
+      { id, name: "Test species", synonyms: '["first","second"]' },
+    ]);
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(dataSource.getOne({ objectType: "species", id })).resolves.toEqual({
+      objectType: "species",
+      id,
+      name: "Test species",
+      synonyms: ["first", "second"],
+    });
+    expect(query).toHaveBeenCalledWith(
+      'SELECT * FROM "species" WHERE "id" = ?',
+      [id],
+    );
+  });
+
+  test("Requests only the selected fields", async () => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database });
+
+    await dataSource.getOne({
+      objectType: "species",
+      id: "one",
+      requestedFields: ["id", "name"],
+    });
+
+    expect(query).toHaveBeenCalledWith(
+      'SELECT "id","name" FROM "species" WHERE "id" = ?',
+      ["one"],
+    );
+  });
+
+  test.each([{ values: [] }, {}])("Returns null for no rows: %j", async (rows) => {
+    const { database, query } = createSQLiteDatabaseMock();
+    query.mockResolvedValueOnce(rows);
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(
+      dataSource.getOne({ objectType: "species", id: "missing" }),
+    ).resolves.toBeNull();
+  });
+
+  test.each([
+    { objectType: "species; DROP TABLE species", id: "one" },
+    { objectType: "species", id: "one", requestedFields: ["name; DROP TABLE species"] },
+  ])("Rejects invalid identifiers before querying: %j", async (args) => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(dataSource.getOne(args)).rejects.toThrow("Invalid SQL identifier");
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  test("Propagates query errors", async () => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const error = new Error("Query failed");
+    query.mockRejectedValueOnce(error);
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(
+      dataSource.getOne({ objectType: "species", id: "one" }),
+    ).rejects.toBe(error);
+  });
+});
+
+describe("Testing getByIds function", () => {
+  test("Preserves order, missing entries, and duplicate IDs", async () => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const first = { id: "first", name: "First" };
+    const second = { id: "second", name: "Second" };
+    query
+      .mockImplementationOnce(() => new Promise(resolve => {
+        setTimeout(() => resolve({ values: [second] }), 10);
+      }))
+      .mockResolvedValueOnce({ values: [] })
+      .mockResolvedValueOnce({ values: [first] })
+      .mockResolvedValueOnce({ values: [second] });
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(dataSource.getByIds({
+      objectType: "species",
+      ids: ["second", "missing", "first", "second"],
+    })).resolves.toEqual([
+      { objectType: "species", ...second },
+      null,
+      { objectType: "species", ...first },
+      { objectType: "species", ...second },
+    ]);
+    expect(query).toHaveBeenCalledTimes(4);
+    ["second", "missing", "first", "second"].forEach((id, index) => {
+      expect(query).toHaveBeenNthCalledWith(
+        index + 1,
+        'SELECT * FROM "species" WHERE "id" = ?',
+        [id],
+      );
+    });
+  });
+
+  test("Returns an empty list without querying for no IDs", async () => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(
+      dataSource.getByIds({ objectType: "species", ids: [] }),
+    ).resolves.toEqual([]);
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  test("Propagates a failed lookup", async () => {
+    const { database, query } = createSQLiteDatabaseMock();
+    const error = new Error("Query failed");
+    query.mockRejectedValueOnce(error);
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(
+      dataSource.getByIds({ objectType: "species", ids: ["one"] }),
+    ).rejects.toBe(error);
+  });
+});
 
 describe("Testing getList function", () => {
   test("Returns data objects from SQLite rows", async () => {
@@ -54,6 +191,27 @@ describe("Testing getList function", () => {
     const dataSource = new SQLiteDataSource({ database });
 
     await expect(dataSource.getList({ objectType: "species" })).resolves.toEqual([]);
+  });
+});
+
+describe("Testing getCount function", () => {
+  test("Returns the number of matching rows", async () => {
+    const { database, query } = createSQLiteDatabaseMock([{ count: 3 }]);
+    const dataSource = new SQLiteDataSource({ database });
+    const filter = { and_: { name: { eq: { value: "Test species" } } } };
+
+    await expect(dataSource.getCount({ objectType: "species", filter })).resolves.toEqual(3);
+    expect(query).toHaveBeenCalledWith(
+      "SELECT COUNT(*) as count FROM species WHERE name = ?",
+      ["Test species"],
+    );
+  });
+
+  test("Returns zero when there are no matching rows", async () => {
+    const { database } = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(dataSource.getCount({ objectType: "species" })).resolves.toEqual(0);
   });
 });
 
@@ -204,6 +362,220 @@ describe("Testing filters", () => {
   });
 });
 
+describe("Testing upsert function", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    capacitorMocks.getPlatform.mockReturnValue("ios");
+  });
+
+  test("Persists web writes after committing the transaction", async () => {
+    capacitorMocks.getPlatform.mockReturnValue("web");
+    const mock = createSQLiteDatabaseMock();
+    mock.commitTransaction.mockImplementation(async () => {
+      expect(capacitorMocks.saveToStore).not.toHaveBeenCalled();
+    });
+    capacitorMocks.saveToStore.mockImplementationOnce(async () => {
+      expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    });
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await dataSource.upsert({ objectType: "sample", payload: [{ type: "sample", id: "one" }] });
+
+    expect(capacitorMocks.saveToStore).toHaveBeenCalledWith({ database: "offline" });
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  test("Does not roll back an already committed transaction if web persistence fails", async () => {
+    capacitorMocks.getPlatform.mockReturnValue("web");
+    capacitorMocks.saveToStore.mockRejectedValueOnce(new Error("Storage failed"));
+    const mock = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(dataSource.upsert({
+      objectType: "sample", payload: [{ type: "sample", id: "one" }],
+    })).rejects.toThrow("Storage failed");
+
+    expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  test("Binds values, updates on ID conflicts, and returns stored rows", async () => {
+    const mock = createSQLiteDatabaseMock([{ id: "one", name: "O'Brien", synonyms: '["first"]' }]);
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    const result = await dataSource.upsert({
+      objectType: "species",
+      payload: [{ type: "species", id: "one", attributes: { name: "O'Brien", synonyms: ["first"] } }],
+    });
+
+    expect(mock.beginTransaction).toHaveBeenCalledOnce();
+    expect(mock.run).toHaveBeenCalledWith(
+      'INSERT INTO "species" ("id", "name", "synonyms") VALUES (?, ?, ?) ON CONFLICT("id") DO UPDATE SET "name" = excluded."name", "synonyms" = excluded."synonyms";',
+      ["one", "O'Brien", '["first"]'],
+      false,
+    );
+    expect(mock.query).toHaveBeenCalledWith('SELECT * FROM "species" WHERE "id" = ?', ["one"]);
+    expect(result).toEqual([{ objectType: "species", id: "one", name: "O'Brien", synonyms: ["first"] }]);
+    expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+    expect(capacitorMocks.saveToStore).not.toHaveBeenCalled();
+  });
+
+  test("Serializes dates and booleans, preserves null, and omits undefined attributes", async () => {
+    const mock = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+    const date = new Date("2026-10-26T12:00:00Z");
+
+    await dataSource.upsert({
+      objectType: "record",
+      payload: [{ type: "record", id: "one", attributes: { created_at: date, active: true, notes: null, name: undefined, id: "ignored" } }],
+    });
+
+    expect(mock.run).toHaveBeenCalledWith(
+      expect.not.stringContaining('"name"'),
+      ["one", date.toISOString(), 1, null],
+      false,
+    );
+  });
+
+  test("Handles an ID-only payload without replacing existing rows", async () => {
+    const mock = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await dataSource.upsert({ objectType: "sample", payload: [{ type: "sample", id: "one" }] });
+
+    expect(mock.run).toHaveBeenCalledWith(
+      'INSERT INTO "sample" ("id") VALUES (?) ON CONFLICT("id") DO NOTHING;',
+      ["one"],
+      false,
+    );
+  });
+
+  test("Skips empty payloads", async () => {
+    const mock = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(dataSource.upsert({ objectType: "sample", payload: [] })).resolves.toEqual([]);
+    expect(mock.beginTransaction).not.toHaveBeenCalled();
+  });
+
+  test("Rolls back the batch and rethrows when a later write fails", async () => {
+    const mock = createSQLiteDatabaseMock();
+    const error = new Error("Constraint failed");
+    mock.run.mockResolvedValueOnce({}).mockRejectedValueOnce(error);
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(dataSource.upsert({
+      objectType: "sample",
+      payload: [{ type: "sample", id: "one" }, { type: "sample", id: "two" }],
+    })).rejects.toThrow(error);
+    expect(mock.rollbackTransaction).toHaveBeenCalledOnce();
+    expect(mock.commitTransaction).not.toHaveBeenCalled();
+  });
+
+  test.each([
+    { objectType: "sample; DROP TABLE sample", item: { type: "sample", id: "one" }, message: "Invalid SQL identifier" },
+    { objectType: "sample", item: { type: "sample", id: "one", attributes: { "bad-column": "value" } }, message: "Invalid SQL identifier" },
+    { objectType: "sample", item: { type: "sample" }, message: "requires an ID" },
+    { objectType: "sample", item: { type: "sample", id: "one", relationships: { species: {} } }, message: "foreign-key attributes" },
+  ])("Rejects unsupported or unsafe input: $message", async ({ objectType, item, message }) => {
+    const mock = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(dataSource.upsert({ objectType, payload: [item] })).rejects.toThrow(message);
+    expect(mock.run).not.toHaveBeenCalled();
+    expect(mock.commitTransaction).not.toHaveBeenCalled();
+  });
+});
+
+describe("Testing deleteByID function", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    capacitorMocks.getPlatform.mockReturnValue("ios");
+  });
+
+  test("Begins a transaction before deleting and commits afterwards", async () => {
+    const mock = createSQLiteDatabaseMock();
+    mock.run.mockImplementationOnce(async () => {
+      expect(mock.beginTransaction).toHaveBeenCalledOnce();
+      expect(mock.commitTransaction).not.toHaveBeenCalled();
+    });
+    mock.commitTransaction.mockImplementationOnce(async () => {
+      expect(mock.run).toHaveBeenCalledOnce();
+    });
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await dataSource.deleteByID({ objectType: "record", id: "one" });
+
+    expect(mock.run).toHaveBeenCalledWith(
+      'DELETE FROM record WHERE "id" = ?', ["one"], false,
+    );
+    expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+    expect(capacitorMocks.saveToStore).not.toHaveBeenCalled();
+  });
+
+  test.each(["run", "commitTransaction"] as const)(
+    "Rolls back and propagates the original error when %s fails",
+    async (operation) => {
+      const mock = createSQLiteDatabaseMock();
+      const error = new Error("Delete failed");
+      mock[operation].mockRejectedValueOnce(error);
+      const dataSource = new SQLiteDataSource({ database: mock.database });
+
+      await expect(
+        dataSource.deleteByID({ objectType: "record", id: "one" }),
+      ).rejects.toBe(error);
+      expect(mock.rollbackTransaction).toHaveBeenCalledOnce();
+      expect(capacitorMocks.saveToStore).not.toHaveBeenCalled();
+    },
+  );
+
+  test("Does not roll back if starting the transaction fails", async () => {
+    const mock = createSQLiteDatabaseMock();
+    const error = new Error("Begin failed");
+    mock.beginTransaction.mockRejectedValueOnce(error);
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(
+      dataSource.deleteByID({ objectType: "record", id: "one" }),
+    ).rejects.toBe(error);
+    expect(mock.run).not.toHaveBeenCalled();
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  test("Persists web deletions only after committing", async () => {
+    capacitorMocks.getPlatform.mockReturnValue("web");
+    const mock = createSQLiteDatabaseMock();
+    mock.commitTransaction.mockImplementationOnce(async () => {
+      expect(capacitorMocks.saveToStore).not.toHaveBeenCalled();
+    });
+    capacitorMocks.saveToStore.mockImplementationOnce(async () => {
+      expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    });
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await dataSource.deleteByID({ objectType: "record", id: "one" });
+
+    expect(capacitorMocks.saveToStore).toHaveBeenCalledWith({ database: "offline" });
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+
+  test("Does not roll back a committed deletion if web persistence fails", async () => {
+    capacitorMocks.getPlatform.mockReturnValue("web");
+    const mock = createSQLiteDatabaseMock();
+    const error = new Error("Storage failed");
+    capacitorMocks.saveToStore.mockRejectedValueOnce(error);
+    const dataSource = new SQLiteDataSource({ database: mock.database });
+
+    await expect(
+      dataSource.deleteByID({ objectType: "record", id: "one" }),
+    ).rejects.toBe(error);
+    expect(mock.commitTransaction).toHaveBeenCalledOnce();
+    expect(mock.rollbackTransaction).not.toHaveBeenCalled();
+  });
+});
+
 describe("Testing metadata functions", () => {
   test("Returns no attribute descriptor", async () => {
     const { database } = createSQLiteDatabaseMock();
@@ -226,4 +598,3 @@ describe("Testing metadata functions", () => {
     ).resolves.toBe(false);
   });
 });
-

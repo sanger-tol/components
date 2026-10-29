@@ -188,9 +188,19 @@
     font-weight: 400 !important;
   }
 
-  // modal
+  // modal, centred in the screen and clear of mobile safe areas
+  .rs-modal-wrapper {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+      env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+  }
+
   .rs-modal {
     margin: 30px auto 30px auto;
+    top: 0;
     transition:
       transform 0.3s ease-out,
       width 0.3s ease,

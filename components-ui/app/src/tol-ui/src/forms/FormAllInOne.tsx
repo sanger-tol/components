@@ -535,6 +535,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                   outline={button.outline}
                   active={button.active}
                   disabled={button.disabled}
+                  testid={button.testid}
                   disabledTooltip={button.disabledTooltip}
                   loading={button.loading}
                   icon={button.icon}

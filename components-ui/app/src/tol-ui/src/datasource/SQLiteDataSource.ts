@@ -7,14 +7,27 @@ SPDX-License-Identifier: MIT
 import {
   SQLiteDBConnection,
 } from '@capacitor-community/sqlite';
+import {
+  DetailGetter,
+  quoteIdentifier,
+  saveToStoreIfWeb,
+  API_OPERATIONS
+} from "..";
 import type {
   ListGetter,
   PageGetter,
+  Upserter,
+  CustomOperator,
+  Counter,
+  Deleter,
   TDataObjectOrNull,
   IDataObject,
   IAttributeDescriptor,
+  ICustom,
   IGetList,
   IGetListPage,
+  IGetOne,
+  IGetByIds,
   ISQLiteDataSource,
   IQueryResult,
   IFilter,
@@ -22,11 +35,21 @@ import type {
   IFilterOperatorOptions,
   TFilterOperatorType,
   IGetAttributeDescriptor,
+  ICounter,
   IParsedSQLFilter,
-  TDataObjectListOrNull
+  IUpsert,
+  TDataObjectListOrNull,
+  TCountOrNull,
 } from "..";
 
-export class SQLiteDataSource implements ListGetter, PageGetter {
+export class SQLiteDataSource implements
+  ListGetter,
+  PageGetter,
+  Upserter,
+  CustomOperator,
+  Counter,
+  Deleter {
+  private readonly detailGetter = new DetailGetter((args) => this.getOne(args));
   private database: Promise<SQLiteDBConnection>;
 
   constructor({ database }: ISQLiteDataSource) {
@@ -239,23 +262,153 @@ export class SQLiteDataSource implements ListGetter, PageGetter {
   }
 
   /**
-     * Determines whether a dot-delimited relationship path resolves to a `many` relationship.
-     *
-     * @param objectType - Root object type to start traversal from.
-     * @param field - Dot-delimited relationship path (for example: `"samples.accession.id"`).
-     * @returns always returns `false` until full implementation is done.
-     */
-    public async isManyDataPointsByName(
-      _objectType: string,
-      field: string
-    ): Promise<boolean> {
-      // I really do not like this approach but it is a quick way around a bigger problem.
-      // Ideally we would have some kind of local attribute metadata, similar to the SQLite
-      // schema.
-      if (field == "goat_synonym") {
-        return true;
-      }
-      return false;
+   * Determines whether a dot-delimited relationship path resolves to a `many` relationship.
+   *
+   * @param objectType - Root object type to start traversal from.
+   * @param field - Dot-delimited relationship path (for example: `"samples.accession.id"`).
+   * @returns always returns `false` until full implementation is done.
+   */
+  public async isManyDataPointsByName(
+    _objectType: string,
+    field: string
+  ): Promise<boolean> {
+    // I really do not like this approach but it is a quick way around a bigger problem.
+    // Ideally we would have some kind of local attribute metadata, similar to the SQLite
+    // schema.
+    if (field == "goat_synonym") {
+      return true;
     }
+    return false;
+  }
+
+  /**
+   * Inserts or updates rows by ID in one transaction and returns the stored rows.
+   * IDs must be supplied; relationships must be passed as foreign-key attributes.
+   * API-specific params are not used by SQLite.
+   * @param payload - Array of objects to be upserted.
+   * @param objectType - The type of object being upserted.
+   * @returns The stored rows after the upsert operation.
+   */
+  public async upsert({
+    payload,
+    objectType,
+  }: IUpsert): Promise<TDataObjectListOrNull> {
+    if (payload.length === 0) return [];
+
+    const table = quoteIdentifier(objectType);
+    const db = await this.database;
+    const results: IDataObject[] = [];
+
+    await db.beginTransaction();
+    try {
+      for (const item of payload) {
+        if (item.id == null || item.id === '') {
+          throw new Error('SQLite upsert requires an ID for every row');
+        }
+        if (item.relationships && Object.keys(item.relationships).length > 0) {
+          throw new Error('SQLite upsert requires foreign-key attributes instead of relationships');
+        }
+
+        const attributes = Object.entries(item.attributes ?? {})
+          .filter(([column, value]) => column !== 'id' && value !== undefined);
+        const columns = ['id', ...attributes.map(([column]) => column)]
+          .map(quoteIdentifier);
+        const values = [item.id, ...attributes.map(([, value]) => {
+          if (value instanceof Date) return value.toISOString();
+          if (value !== null && typeof value === 'object') return JSON.stringify(value);
+          if (typeof value === 'boolean') return Number(value);
+          return value;
+        })];
+        const updates = columns.slice(1)
+          .map(column => `${column} = excluded.${column}`);
+        const conflict = updates.length > 0
+          ? `DO UPDATE SET ${updates.join(', ')}`
+          : 'DO NOTHING';
+
+        await db.run(
+          `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')}) ON CONFLICT("id") ${conflict};`,
+          values,
+          false,
+        );
+        const rows = await db.query(`SELECT * FROM ${table} WHERE "id" = ?`, [item.id]);
+        results.push(...this.parseQueryToDataObject(objectType, {
+          ...rows,
+          values: rows.values ?? [],
+        }));
+      }
+      await db.commitTransaction();
+    } catch (error) {
+      await db.rollbackTransaction();
+      throw error;
+    }
+
+    // This is just to check if you are developing on the browser
+    await saveToStoreIfWeb(db);
+    return results;
+  }
+
+  public async custom({
+    resource,
+    body,
+  }: ICustom): Promise<any> {
+    if (resource.includes(API_OPERATIONS.COUNT)) {
+      const objectType = resource.replace(API_OPERATIONS.COUNT, '');
+      return this.getCount({ objectType, filter: body?.filter ?? {} });
+    }
+  }
+
+  public async getCount({
+    objectType,
+    filter
+  }: ICounter): Promise<TCountOrNull> {
+    const db = await this.database;
+    const { clause: filterClause, values: filterValues } = this.parseDataObjectFilter(filter);
+
+    try {
+      const rows = await db.query(
+        `SELECT COUNT(*) as count FROM ${objectType} ${filterClause}`,
+        filterValues
+      );
+      return rows.values?.[0]?.count ?? 0;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /** Deletes a row transactionally and persists committed changes on the web. */
+  public async deleteByID({ objectType, id }: IGetOne): Promise<void> {
+    const db = await this.database;
+    await db.beginTransaction();
+    try {
+      await db.run(`DELETE FROM ${objectType} WHERE "id" = ?`, [id], false);
+      await db.commitTransaction();
+    } catch (error) {
+      await db.rollbackTransaction();
+      throw error;
+    }
+
+    await saveToStoreIfWeb(db);
+  }
+
+  /** Returns a single stored object, or null when the ID is not found. */
+  public async getOne({
+    objectType,
+    id,
+    requestedFields,
+  }: IGetOne): Promise<TDataObjectOrNull> {
+    const table = quoteIdentifier(objectType);
+    const fields = requestedFields?.map(quoteIdentifier).join(',') || '*';
+    const db = await this.database;
+    const rows = await db.query(`SELECT ${fields} FROM ${table} WHERE "id" = ?`, [id]);
+    return this.parseQueryToDataObject(objectType, {
+      ...rows,
+      values: rows.values ?? [],
+    })[0] ?? null;
+  }
+
+  /** Preserves ID order and duplicates, with null entries for missing objects. */
+  public getByIds(args: IGetByIds): Promise<TDataObjectOrNull[]> {
+    return this.detailGetter.getByIds(args);
+  }
 
 }

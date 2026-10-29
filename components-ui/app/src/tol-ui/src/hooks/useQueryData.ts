@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useQuery, Query } from "@tanstack/react-query";
+import { useQuery, Query, type NetworkMode } from "@tanstack/react-query";
 import { REFRESH_INTERVAL } from "../constants";
 
 export interface RefetchBackoffOptions {
@@ -33,6 +33,7 @@ export function useQueryData<T>(
     refetchOnMount?: boolean;
     retry?: boolean | number;
     retryDelay?: number | ((attemptIndex: number) => number);
+    networkMode?: NetworkMode;
     placeholderData?: T;
     refetchBackoff?: RefetchBackoff;
   },

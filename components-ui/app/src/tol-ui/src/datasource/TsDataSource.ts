@@ -15,11 +15,15 @@ import {
   isAttributeField,
   splitRelationshipsForField,
   DetailGetter,
+  Deleter,
 } from "..";
 import type {
   ListGetter,
   PageGetter,
   Upserter,
+  Counter,
+  ICounter,
+  TCountOrNull,
   IAttributeDescriptor,
   TAttributes,
   TClient,
@@ -47,13 +51,20 @@ import type {
   TDataObjectListOrNull,
   TDataObjectOrNull,
   TRelationshipValues,
+  CustomOperator,
 } from "..";
 
 
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
-export class TsDataSource implements ListGetter, PageGetter, Upserter {
+export class TsDataSource implements
+  ListGetter,
+  PageGetter,
+  Upserter,
+  CustomOperator,
+  Deleter,
+  Counter {
   private readonly detailGetter = new DetailGetter((args) => this.getOne(args));
   private client: TClient;
   private url: string | undefined;
@@ -601,6 +612,18 @@ export class TsDataSource implements ListGetter, PageGetter, Upserter {
         if (error?.response?.status === 404) return null;
         throw error;
       });
+  }
+
+  public async getCount({
+    objectType,
+    filter
+  }: ICounter): Promise<TCountOrNull> {
+    const response = await this.custom({
+      method: API_METHODS.POST,
+      resource: this.generateEndpoint(objectType, API_OPERATIONS.COUNT),
+      body: { filter },
+    });
+    return response?.data?.meta?.total ?? null;
   }
 
   private async getAttributeDescriptorValue(
