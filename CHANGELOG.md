@@ -8,9 +8,12 @@ SPDX-License-Identifier: MIT
 
 ## tol-ui `6.3.0`
 
-26-10-26
+29-10-26
 
 - Adding upsert capabilities to SQLiteDataSource
+- Adding new getCount method for both TSDataSource and SQLiteDataSource
+- Adding tests for both new features
+- Adding NetworkMode to the useQueryData hook
 
 ## tol-ui `6.2.0`
 
