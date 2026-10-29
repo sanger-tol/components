@@ -591,6 +591,26 @@ describe("Testing getOne function", () => {
   });
 });
 
+describe("Testing getCount function", () => {
+  test("Requests the count for the object type and returns the response", async () => {
+    const response = { data: { data: [], meta: { total: 3 } } };
+    const mockClientInstance = mockClient();
+    const postSpy = vitest.spyOn(mockClientInstance, "post").mockResolvedValue(response);
+    const dataSource = new TsDataSource({
+      apiDataPath: "/test-data-path",
+      client: () => mockClientInstance,
+    });
+    const filter = { and_: { name: { eq: { value: "Test species" } } } };
+
+    await expect(dataSource.getCount({ objectType: "species", filter })).resolves.toBe(response);
+    expect(postSpy).toHaveBeenCalledWith(
+      "/species:count",
+      { filter },
+      { baseURL: "/test-data-path" },
+    );
+  });
+});
+
 describe("Testing getByIds function", () => {
   test("Single ID request returns correct object", async () => {
     const dataObjects = await mockDataSource.getByIds({

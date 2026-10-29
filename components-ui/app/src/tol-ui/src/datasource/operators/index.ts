@@ -9,4 +9,5 @@ export * from "./DetailGetter";
 export * from "./Deleter";
 export * from "./ListGetter";
 export * from "./PageGetter";
+export * from "./Counter";
 export * from "./Upserter";

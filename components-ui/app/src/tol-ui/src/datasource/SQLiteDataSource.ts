@@ -4,17 +4,20 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Capacitor } from '@capacitor/core';
 import {
-  CapacitorSQLite,
   SQLiteDBConnection,
 } from '@capacitor-community/sqlite';
-import { DetailGetter } from "..";
+import {
+  DetailGetter,
+  quoteIdentifier,
+  saveToStoreIfWeb
+} from "..";
 import type {
   ListGetter,
   PageGetter,
   Upserter,
   CustomOperator,
+  Counter,
   Deleter,
   TDataObjectOrNull,
   IDataObject,
@@ -31,9 +34,11 @@ import type {
   IFilterOperatorOptions,
   TFilterOperatorType,
   IGetAttributeDescriptor,
+  ICounter,
   IParsedSQLFilter,
   IUpsert,
-  TDataObjectListOrNull
+  TDataObjectListOrNull,
+  TCounterResultOrNull,
 } from "..";
 
 export class SQLiteDataSource implements
@@ -41,6 +46,7 @@ export class SQLiteDataSource implements
   PageGetter,
   Upserter,
   CustomOperator,
+  Counter,
   Deleter {
   private readonly detailGetter = new DetailGetter((args) => this.getOne(args));
   private database: Promise<SQLiteDBConnection>;
@@ -274,13 +280,6 @@ export class SQLiteDataSource implements
     return false;
   }
 
-  public quoteIdentifier = (identifier: string): string => {
-    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(identifier)) {
-      throw new Error(`Invalid SQL identifier: ${identifier}`);
-    }
-    return `"${identifier}"`;
-  };
-
   /**
    * Inserts or updates rows by ID in one transaction and returns the stored rows.
    * IDs must be supplied; relationships must be passed as foreign-key attributes.
@@ -295,7 +294,7 @@ export class SQLiteDataSource implements
   }: IUpsert): Promise<TDataObjectListOrNull> {
     if (payload.length === 0) return [];
 
-    const table = this.quoteIdentifier(objectType);
+    const table = quoteIdentifier(objectType);
     const db = await this.database;
     const results: IDataObject[] = [];
 
@@ -312,7 +311,7 @@ export class SQLiteDataSource implements
         const attributes = Object.entries(item.attributes ?? {})
           .filter(([column, value]) => column !== 'id' && value !== undefined);
         const columns = ['id', ...attributes.map(([column]) => column)]
-          .map(this.quoteIdentifier);
+          .map(quoteIdentifier);
         const values = [item.id, ...attributes.map(([, value]) => {
           if (value instanceof Date) return value.toISOString();
           if (value !== null && typeof value === 'object') return JSON.stringify(value);
@@ -343,9 +342,7 @@ export class SQLiteDataSource implements
     }
 
     // This is just to check if you are developing on the browser
-    if (Capacitor.getPlatform() === 'web') {
-      await CapacitorSQLite.saveToStore({ database: db.getConnectionDBName() });
-    }
+    await saveToStoreIfWeb(db);
     return results;
   }
 
@@ -355,14 +352,14 @@ export class SQLiteDataSource implements
   }: ICustom): Promise<any> {
     if (resource.includes(':count')) {
       const objectType = resource.replace(':count', '');
-      return this.handleCount(objectType, body?.filter ?? {});
+      return this.getCount({ objectType, filter: body?.filter ?? {} });
     }
   }
 
-  private async handleCount(
-    objectType: string,
-    filter: any
-  ): Promise<{ data: { data: any[]; meta: { total: number } } }> {
+  public async getCount({
+    objectType,
+    filter
+  }: ICounter): Promise<TCounterResultOrNull> {
     const db = await this.database;
     const { clause: filterClause, values: filterValues } = this.parseDataObjectFilter(filter);
 
@@ -396,9 +393,7 @@ export class SQLiteDataSource implements
       throw error;
     }
 
-    if (Capacitor.getPlatform() === 'web') {
-      await CapacitorSQLite.saveToStore({ database: db.getConnectionDBName() });
-    }
+    await saveToStoreIfWeb(db);
   }
 
   /** Returns a single stored object, or null when the ID is not found. */
@@ -407,8 +402,8 @@ export class SQLiteDataSource implements
     id,
     requestedFields,
   }: IGetOne): Promise<TDataObjectOrNull> {
-    const table = this.quoteIdentifier(objectType);
-    const fields = requestedFields?.map(this.quoteIdentifier).join(',') || '*';
+    const table = quoteIdentifier(objectType);
+    const fields = requestedFields?.map(quoteIdentifier).join(',') || '*';
     const db = await this.database;
     const rows = await db.query(`SELECT ${fields} FROM ${table} WHERE "id" = ?`, [id]);
     return this.parseQueryToDataObject(objectType, {

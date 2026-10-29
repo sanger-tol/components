@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Capacitor } from "@capacitor/core";
+import { CapacitorSQLite } from '@capacitor-community/sqlite';
 import {
   ATTRIBUTE_NAME_AND_PROVENANCE_IN_FIELD_REGEX,
   RELATIONSHIP_SEPARATOR,
@@ -227,3 +229,23 @@ export function isRelationshipField(field: string): boolean {
 export function isAttributeField(field: string): boolean {
   return !isRelationshipField(field);
 }
+
+/**
+ * Quotes an SQL identifier, ensuring it is valid.
+ *
+ * @param identifier - The SQL identifier to quote.
+ * @returns The quoted identifier.
+ * @throws Error if the identifier is invalid.
+ */
+export const quoteIdentifier = (identifier: string): string => {
+  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(identifier)) {
+    throw new Error(`Invalid SQL identifier: ${identifier}`);
+  }
+  return `"${identifier}"`;
+};
+
+export const saveToStoreIfWeb = async (db: any) => {
+  if (Capacitor.getPlatform() === 'web') {
+    await CapacitorSQLite.saveToStore({ database: db.getConnectionDBName() });
+  }
+};

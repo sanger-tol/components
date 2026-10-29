@@ -194,6 +194,31 @@ describe("Testing getList function", () => {
   });
 });
 
+describe("Testing getCount function", () => {
+  test("Returns the number of matching rows", async () => {
+    const { database, query } = createSQLiteDatabaseMock([{ count: 3 }]);
+    const dataSource = new SQLiteDataSource({ database });
+    const filter = { and_: { name: { eq: { value: "Test species" } } } };
+
+    await expect(dataSource.getCount({ objectType: "species", filter })).resolves.toEqual({
+      data: { data: [], meta: { total: 3 } },
+    });
+    expect(query).toHaveBeenCalledWith(
+      "SELECT COUNT(*) as count FROM species WHERE name = ?",
+      ["Test species"],
+    );
+  });
+
+  test("Returns zero when there are no matching rows", async () => {
+    const { database } = createSQLiteDatabaseMock();
+    const dataSource = new SQLiteDataSource({ database });
+
+    await expect(dataSource.getCount({ objectType: "species" })).resolves.toEqual({
+      data: { data: [], meta: { total: 0 } },
+    });
+  });
+});
+
 describe("Testing getListPage function", () => {
   test("Applies sorting, limit, and page offset", async () => {
     const { database, query } = createSQLiteDatabaseMock();

@@ -21,6 +21,9 @@ import type {
   ListGetter,
   PageGetter,
   Upserter,
+  Counter,
+  ICounter,
+  TCounterResultOrNull,
   IAttributeDescriptor,
   TAttributes,
   TClient,
@@ -55,7 +58,13 @@ import type {
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
-export class TsDataSource implements ListGetter, PageGetter, Upserter, CustomOperator, Deleter {
+export class TsDataSource implements
+  ListGetter,
+  PageGetter,
+  Upserter,
+  CustomOperator,
+  Deleter,
+  Counter {
   private readonly detailGetter = new DetailGetter((args) => this.getOne(args));
   private client: TClient;
   private url: string | undefined;
@@ -276,6 +285,18 @@ export class TsDataSource implements ListGetter, PageGetter, Upserter, CustomOpe
       default:
         throw new Error(`Unsupported method: ${method}`);
     }
+  }
+
+  public async getCount({
+      objectType,
+      filter
+    }: ICounter): Promise<TCounterResultOrNull> {
+    const client = this.client();
+    const config = {
+      baseURL: this.baseURL ?? "",
+    };
+    const response = await client.post(`/${objectType}:count`, { filter }, config);
+    return response;
   }
 
   private getSavedConfig(key: string): { data: object; expiry: Date } | null {

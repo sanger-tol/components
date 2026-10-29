@@ -46,6 +46,11 @@ export interface IGetByIds {
   ids: string[];
 }
 
+export interface ICounter {
+  objectType: string;
+  filter?: IFilter;
+}
+
 export interface IGetListPage {
   objectType: string;
   page?: number;
@@ -105,3 +110,5 @@ export type TDataObjectListOrNull = TDataObjectOrNull[] | null;
 
 export type TCursorSearchAfterOrNull = string[] | null;
 export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null
+
+export type TCounterResultOrNull = { data: { data: any[]; meta: { total: number } } } | null;
