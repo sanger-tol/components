@@ -74,37 +74,14 @@ export const getNavBackgroundClass = (environment: string): string => {
   }
 };
 
-/** Updates navbar and board header backing styles while scrolling. */
+/** Updates navbar styles while scrolling. */
 export function setupBoardScrollEffects(): () => void {
-  // Find the navbar and backing elements; there is nothing to update if either is absent.
   const navbar = document.getElementById("tol-navbar");
-  const appBackground = document.getElementById("tol-smart-app-background");
-  const boardBacking = appBackground?.querySelector<HTMLElement>(".tol-board-backing-fade");
-  if (!navbar || !appBackground || !boardBacking) return () => {};
+  if (!navbar) return () => {};
 
-  // Reveal the backing once content reaches the navbar or the board bar sticks.
   const updateScrollStyles = () => {
     // Gradually darken the navbar as the page scrolls down.
     navbar.style.setProperty("--tol-navbar-scroll", String(Math.min(window.scrollY / 100, 1)));
-
-    const content = appBackground.querySelector<HTMLElement>(".tol-board-content");
-    const boardBar = appBackground.querySelector<HTMLElement>(".tol-board-bar");
-    // For masthead pages, show the backing when board content scrolls under the navbar.
-    const hasMasthead = appBackground.querySelector(".masthead") !== null;
-    const contentReachedNavbar = Boolean(
-      content && content.getBoundingClientRect().top <= navbar.getBoundingClientRect().bottom,
-    );
-
-    // For sticky board bars, show it only after the bar reaches its sticky position.
-    const boardBarTop = boardBar ? parseFloat(getComputedStyle(boardBar).top) : NaN;
-    const boardBarReachedStickyPosition = Boolean(
-      boardBar &&
-      window.scrollY > 0 &&
-      boardBar.getBoundingClientRect().top <= boardBarTop,
-    );
-
-    const showBacking = (hasMasthead && contentReachedNavbar) || boardBarReachedStickyPosition;
-    boardBacking.style.setProperty("--tol-board-backing-visible", showBacking ? "1" : "0");
   };
 
   updateScrollStyles();
