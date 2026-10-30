@@ -23,6 +23,7 @@ export function FormDatetime(props: PFormDatetime) {
     placeholder = "Select date/time",
     hideMinutes = () => false,
     format = "dd-MM-yyyy HH:mm",
+    readOnly,
   } = props;
 
   return (
@@ -33,6 +34,7 @@ export function FormDatetime(props: PFormDatetime) {
         hideMinutes={hideMinutes}
         format={format}
         placeholder={placeholder}
+        disabled={readOnly}
         block
       />
     </FormComponentWrapper>

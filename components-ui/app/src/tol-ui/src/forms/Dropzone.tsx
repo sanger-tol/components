@@ -19,6 +19,7 @@ import {
   TFormDropzoneField,
   FormComponentWrapper,
   MAX_FILE_SIZE,
+  READ_ONLY_FIELD_PLACEHOLDER,
   USER_SHOWN_FILE_TYPE_DEFAULTS,
 } from "..";
 
@@ -42,6 +43,7 @@ export function Dropzone(props: PDropzone) {
     parentToSubmit = false,
     resetKey,
     validating = false,
+    readOnly,
     allowedSize = MAX_FILE_SIZE,
     allowedFileTypes = USER_SHOWN_FILE_TYPE_DEFAULTS, // This is more concise than the actual allowed file list,
     // found under the prop 'fileType'.
@@ -143,7 +145,7 @@ export function Dropzone(props: PDropzone) {
             setFileList(mapped);
           }}
           fileListVisible={fileListVisible}
-          disabled={fileList.length > 0 && validating}
+          disabled={readOnly || (fileList.length > 0 && validating)}
           onUpload={() => {
             setValidate(!validate);
           }}
@@ -162,6 +164,8 @@ export function Dropzone(props: PDropzone) {
                     message={
                       fileList.length > 0 && validating ? (
                         "Please reset to upload a new file."
+                      ) : readOnly ? (
+                        READ_ONLY_FIELD_PLACEHOLDER
                       ) : (
                         <div>
                           <p>Click or drag file to this area to upload.</p>

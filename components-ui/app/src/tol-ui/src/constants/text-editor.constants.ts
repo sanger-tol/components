@@ -62,3 +62,7 @@ export const DEFAULT_TEXT_EDITOR_BUTTONS = [
   "bullet_list",
   "ordered_list",
 ] as TTextEditorButtons;
+
+export const RESIZE_STEP = 20;
+export const MIN_HEIGHT = 120;
+export const MAX_HEIGHT = 600;

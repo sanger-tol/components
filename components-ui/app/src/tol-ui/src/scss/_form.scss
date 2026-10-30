@@ -44,6 +44,35 @@
   }
 }
 
+.rs-form-control.rs-form-control-wrapper {
+  input::placeholder {
+    color: var(--tol-text-subtle) !important;
+  }
+}
+
+.form-wrapper,
+.rs-form-group {
+  --tol-form-control-bg: var(--tol-form-bg);
+  --rs-input-bg: var(--tol-form-bg);
+
+  :is(
+    .rs-input,
+    .rs-input-group,
+    .rs-picker-toggle,
+    .rs-picker-input,
+    .rs-input-group-addon,
+    .rs-input-group-btn,
+    .rs-input-number-btn-group-vertical,
+    .tol-text-editor,
+    .tol-form-markdown,
+    .w-md-editor,
+    .wmde-markdown,
+    textarea
+  ) {
+    background-color: var(--tol-form-bg) !important;
+  }
+}
+
 .tol-form-search-controls {
   display: grid;
   gap: var(--tol-spacing-xs);
@@ -65,30 +94,168 @@
   flex-direction: column;
 }
 
-.tol-form-field-inline {
-  margin-top: 20px !important;
+.rs-form-vertical .rs-form-group .rs-form-help-text:not(.rs-form-help-text-tooltip) {
+  padding: 0;
 }
 
 .tol-form-field-inline {
+  margin-top: 20px !important;
+  display: block;
+
+  > .rs-form-help-text,
+  > .rs-form-error-message,
+  > .tol-multiple-select-error-message,
+  > span:has(> .rs-form-error-message) {
+    margin-left: 12rem;
+  }
+}
+
+.tol-form-field-inline-controls {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   label {
     margin-bottom: 0 !important;
+  }
+
+  &:has(.tol-text-editor, .tol-form-markdown, textarea) {
+    > label {
+      align-self: flex-start;
+    }
   }
 }
 
 .tol-form-label {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
 
   &.inline {
     display: inline-flex;
-    width: 140px;
+    width: 12rem;
+    box-sizing: border-box;
     padding-right: 10px;
     text-overflow: ellipsis;
     overflow: hidden;
   }
+
+  &.required-as-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    .tol-form-label-required-text {
+      font-size: 12px;
+      color: var(--tol-text-subtle);
+    }
+  }
+
+  .tol-form-label-read-only {
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--tol-text-subtle);
+  }
+
+  .tol-form-label-automatic {
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--tol-text-subtle);
+  }
+}
+
+.tol-form-automatic-control {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+
+  > .tol-form-automatic-placeholder-lock ~ * {
+    width: 100%;
+  }
+
+  .tol-form-automatic-placeholder-lock {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: var(--tol-text-subtle);
+    pointer-events: none;
+  }
+
+  &:has(
+    input:placeholder-shown,
+    textarea:placeholder-shown,
+    .rs-picker-toggle-placeholder,
+    .tol-text-editor__placeholder
+  ) {
+    .tol-form-automatic-placeholder-lock {
+      display: block;
+    }
+
+    :is(input, textarea, .rs-picker-toggle) {
+      padding-left: 32px;
+    }
+  }
+
+  &:has(.tol-text-editor__placeholder) {
+    .tol-form-automatic-placeholder-lock {
+      top: 14px;
+      transform: none;
+    }
+
+    .tol-text-editor__placeholder {
+      padding-left: 2rem;
+    }
+  }
+}
+
+.tol-form-markdown-read-only-placeholder {
+  min-height: 120px;
+  padding: 0.75rem 1rem;
+  border: var(--tol-border-grey);
+  border-radius: var(--tol-border-radius);
+  color: var(--tol-text-subtle);
+}
+
+.tol-form-section-optional {
+  color: var(--tol-text-subtle);
+  font-size: 0.8em;
+  font-weight: normal;
+}
+
+.tol-form-section-read-only {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tol-spacing-xs);
+  margin-left: var(--tol-spacing-sm);
+  color: var(--tol-text-subtle);
+  font-size: 0.8em;
+  font-weight: normal;
+
+  svg {
+    font-size: 0.85em;
+  }
+}
+
+.tol-form-read-only-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--tol-spacing-sm);
+  margin-bottom: var(--tol-spacing-md);
+  padding: var(--tol-spacing-sm) var(--tol-spacing-md);
+  border: var(--tol-border-grey);
+  border-radius: var(--tol-border-radius);
+  color: var(--tol-text-subtle);
 }
 
 .tol-multiple-form-input-row {

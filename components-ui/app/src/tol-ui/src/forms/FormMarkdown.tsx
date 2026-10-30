@@ -24,6 +24,8 @@ export function FormMarkdown(props: PFormMarkdown) {
     label,
     removeCommands,
     height,
+    readOnly,
+    placeholder,
   } = props;
 
   return (
@@ -32,22 +34,29 @@ export function FormMarkdown(props: PFormMarkdown) {
       id={name}
       label={label || "Markdown Editor:"}
     >
-      <MDEditor
-        id={label}
-        value={value}
-        onChange={(value) => onChange(value ?? "")}
-        preview={preview ? "live" : "edit"}
-        className="tol-markdown-viewer tol-form-markdown"
-        fullscreen={false}
-        height={height || "100%"}
-        visibleDragbar={false}
-        previewOptions={{
-          rehypePlugins: [[rehypeSanitize]],
-        }}
-        commandsFilter={(commands: any) => {
-          return !removeCommands?.includes(commands.name) ? commands : [];
-        }}
-      />
+      {readOnly && !value ? (
+        <div className="tol-form-markdown-read-only-placeholder">
+          {placeholder ?? "Locked"}
+        </div>
+      ) : (
+        <MDEditor
+          id={label}
+          value={value}
+          onChange={(value) => onChange(value ?? "")}
+          preview={readOnly ? "preview" : preview ? "live" : "edit"}
+          hideToolbar={readOnly}
+          className="tol-markdown-viewer tol-form-markdown"
+          fullscreen={false}
+          height={height || "100%"}
+          visibleDragbar={false}
+          previewOptions={{
+            rehypePlugins: [[rehypeSanitize]],
+          }}
+          commandsFilter={(commands: any) => {
+            return !removeCommands?.includes(commands.name) ? commands : [];
+          }}
+        />
+      )}
     </FormComponentWrapper>
   );
 }

@@ -21,6 +21,8 @@ import type {
   TPlateSize,
   TDataObjectListOrNull,
   IVideoDetails,
+  IScrollNavGroup,
+  IScrollNavItem,
 } from "..";
 
 export function formatPath(name: string) {
@@ -59,7 +61,8 @@ export function formatDate(text: string) {
  */
 export function isDateString(value: any): boolean {
   if (typeof value !== "string") return false;
-  const isoRegex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/;
+  const isoRegex =
+    /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/;
   const dmyRegex = /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/;
   if (isoRegex.test(value)) return !isNaN(new Date(value).getTime());
   if (dmyRegex.test(value)) {
@@ -67,7 +70,11 @@ export function isDateString(value: any): boolean {
     const [day, month, year] = datePart.split("/").map(Number);
     const [hours, minutes] = timePart.split(":").map(Number);
     const date = new Date(year, month - 1, day, hours, minutes);
-    return !isNaN(date.getTime()) && date.getDate() === day && date.getMonth() === month - 1;
+    return (
+      !isNaN(date.getTime()) &&
+      date.getDate() === day &&
+      date.getMonth() === month - 1
+    );
   }
   return false;
 }
@@ -214,7 +221,7 @@ export function generateId(prefix: string) {
 export function getAttributeSources(
   entityMeta: any,
   objectType: string,
-  customAttributeSelection?: string[] | undefined
+  customAttributeSelection?: string[] | undefined,
 ) {
   const sources = new Set<string>();
   if (
@@ -242,7 +249,7 @@ export function getAttributeSources(
 export function filterBySource(
   source: string,
   selectedSources: string[],
-  setSelectedSources: any
+  setSelectedSources: any,
 ) {
   if (source === "all") {
     setSelectedSources([]);
@@ -273,7 +280,13 @@ export function encodeImageSrc(url: string): string {
   if (!match) return url;
   const origin = match[1];
   const path = match[2];
-  return origin + path.split("/").map(s => encodeURIComponent(s)).join("/");
+  return (
+    origin +
+    path
+      .split("/")
+      .map((s) => encodeURIComponent(s))
+      .join("/")
+  );
 }
 
 export function copyToClipboard(
@@ -307,7 +320,7 @@ export function identifyDimension(dimension: TPlateSize) {
     if (index < PLATE_DIMENSIONS[dimension]["y"]) rowLabels.push(letter);
   });
   const columnLabels = [...Array(PLATE_DIMENSIONS[dimension].x).keys()].map(
-    (i) => String(i + 1)
+    (i) => String(i + 1),
   );
   return [rowLabels, columnLabels];
 }
@@ -333,7 +346,7 @@ export function generatePlateData(
   dataObjects: TDataObjectListOrNull,
   data: TPlateData,
   wellPositionAttribute: string,
-  wellHoverAttributeKeys: string[]
+  wellHoverAttributeKeys: string[],
 ): TPlateData {
   dataObjects?.forEach((obj) => {
     const wellData = {};
@@ -357,7 +370,7 @@ export function generatePlateData(
 
 export function generateWellFilter(
   clickedOnWellId: string | undefined,
-  wellPositionAttribute: string
+  wellPositionAttribute: string,
 ) {
   const localFilters = createEmptyFilter();
   localFilters["and_"][wellPositionAttribute] = {
@@ -425,7 +438,7 @@ export function getHeight(type: string) {
 }
 
 export function sortObjectAlphabetically(
-  obj: Record<string, any>
+  obj: Record<string, any>,
 ): Record<string, any> {
   return Object.keys(obj)
     .sort() // sort keys alphabetically
@@ -435,9 +448,8 @@ export function sortObjectAlphabetically(
     }, {});
 }
 
-
 /**
-  * Formats very large or very small numbers with SI prefix (e.g. 1K, 1M, 1G or 1m, 1µ, 1n).
+ * Formats very large or very small numbers with SI prefix (e.g. 1K, 1M, 1G or 1m, 1µ, 1n).
  * @param value The number to format.
  * @returns The formatted string.
  */
@@ -456,10 +468,13 @@ export function normaliseNumber(value: number) {
 function normaliseLargeNumber(value: number, iteration: number = 0) {
   let normalisedValue = value;
   if (normalisedValue > 999999 && iteration < 5) {
-    normalisedValue = Number((normalisedValue / 1000));
+    normalisedValue = Number(normalisedValue / 1000);
     return normaliseLargeNumber(Math.round(normalisedValue), iteration + 1);
   }
-  return numberWithSpaces(Number(normalisedValue)) + ["", "k", "M", "G", "T", "P"][iteration];
+  return (
+    numberWithSpaces(Number(normalisedValue)) +
+    ["", "k", "M", "G", "T", "P"][iteration]
+  );
 }
 
 function normaliseDecimalNumber(value: number, iteration: number = 0) {
@@ -495,7 +510,9 @@ export function deepestEqual(a: any, b: any): boolean {
   if (a == null || b == null) return a === b;
   if (typeof a !== "object" || typeof b !== "object") return false;
   if (a instanceof Date || b instanceof Date) {
-    return a instanceof Date && b instanceof Date && a.getTime() === b.getTime();
+    return (
+      a instanceof Date && b instanceof Date && a.getTime() === b.getTime()
+    );
   }
   if (Array.isArray(a) !== Array.isArray(b)) return false;
   if (Array.isArray(a)) {
@@ -526,7 +543,7 @@ export function isValidJson(jsonString: string): boolean {
 
 /**
  * Splits a URL path into its non-empty segments.
- * 
+ *
  * @param path - The URL path string to split.
  */
 export function splitPath(path: string): string[] {
@@ -536,7 +553,7 @@ export function splitPath(path: string): string[] {
 
 /**
  * Joins path segments into an absolute URL path prefixed with `/`.
- * 
+ *
  * @param paths - Ordered array of path segments to join.
  */
 export function generateLinkFromRequestedPath(paths: string[]): string {
@@ -547,11 +564,11 @@ export function generateLinkFromRequestedPath(paths: string[]): string {
 /**
  * Builds a list of `{ text, url }` link objects from attribute values.
  * Entries with a `null` value are included without a URL; entries resolving to `"Unknown"` are omitted.
- * 
+ *
  * @param objectAttributes - Ordered attribute values fetched for the object.
  * @param attributes - Attribute names corresponding to each value in `objectAttributes`.
  * @param urlConstructFn - Function that builds a URL from an attribute name and its value.
- * 
+ *
  * @returns The filtered link list, or `null` if `objectAttributes` is empty.
  */
 export function constructRemoteLinks(
@@ -604,4 +621,115 @@ export function getVideoDetails(url: string): IVideoDetails | undefined {
  */
 export function isVideo(url: string): boolean {
   return getVideoDetails(url) !== undefined;
+}
+
+/**
+ * Builds the DOM anchor id for an individual field within a section.
+ *
+ * Combines the section, subsection, field name, and index into a single
+ * deterministic id used to anchor/scroll to a specific field.
+ *
+ * @param sectionKey - The key of the section the field belongs to.
+ * @param subSection - The subsection within the section.
+ * @param name - The field's name.
+ * @param index - The field's index within the subsection.
+ * @returns The composed anchor id (e.g. `gn-overview-authors-name-0`).
+ */
+export function getFieldAnchorId(
+  sectionKey: string,
+  subSection: string,
+  name: string,
+  index: number,
+) {
+  return `gn-${sectionKey}-${subSection}-${name}-${index}`;
+}
+
+/**
+ * Builds the DOM id for a section's scroll container.
+ *
+ * @param sectionKey - The key of the section.
+ * @returns The prefixed scroll container id (e.g. `tol-gn-scroll-overview`).
+ */
+export function getScrollContainerId(sectionKey: string) {
+  const containerPrefix = "tol-gn-scroll-";
+  return `${containerPrefix}${sectionKey}`;
+}
+
+/**
+ * Groups a section's configured fields by their `section` (sub-section)
+ * property, preserving the order in which they appear in the form config.
+ *
+ * @param sectionKey - The key of the section to read fields from.
+ * @returns The sub-section groups, each with its ordered fields and indices.
+ */
+export function getNavGroups(sectionKey: string): IScrollNavGroup[] {
+  const fields = GN_FORM
+  _CONFIG[sectionKey]?.fields ?? [];
+  const groups: IScrollNavGroup[] = [];
+  fields.forEach((field: any, index: number) => {
+    const sub = field.section ?? "misc";
+    let group = groups.find((g) => g.subSection === sub);
+    if (!group) {
+      group = { subSection: sub, fields: [] };
+      groups.push(group);
+    }
+    group.fields.push({ field, index });
+  });
+  return groups;
+}
+
+/**
+ * Flattens a section's nav groups into a flat, DOM-ordered list of nav items,
+ * each carrying its anchor id, sub-section, field name, and index.
+ *
+ * @param sectionKey - The key of the section to build nav items for.
+ * @returns The flattened nav items in display order.
+ */
+export function getNavItems(sectionKey: string): IScrollNavItem[] {
+  return getNavGroups(sectionKey).flatMap((group) =>
+    group.fields.map(({ field, index }) => ({
+      anchorId: getFieldAnchorId(
+        sectionKey,
+        group.subSection,
+        field.name,
+        index,
+      ),
+      subSection: group.subSection,
+      field: field.name,
+      index,
+    })),
+  );
+}
+
+/**
+ * Returns the first nav item of a section, or `undefined` if it has none.
+ *
+ * @param sectionKey - The key of the section.
+ * @returns The first nav item, or `undefined`.
+ */
+export function getFirstAnchor(sectionKey: string): IScrollNavItem | undefined {
+  return getNavItems(sectionKey)[0];
+}
+
+/**
+ * Looks up a section's scroll container element in the DOM.
+ *
+ * @param sectionKey - The key of the section.
+ * @returns The container element, or `null` if it is not mounted.
+ */
+export function findScrollContainer(sectionKey: string): HTMLDivElement | null {
+  return document.getElementById(
+    getScrollContainerId(sectionKey),
+  ) as HTMLDivElement | null;
+}
+
+/**
+ * Computes the scroll-spy activation offset for a container: a quarter of its
+ * visible height, capped at 120px.
+ *
+ * @param container - The scroll container.
+ * @returns The offset in pixels.
+ */
+export function getScrollSpyOffset(container: HTMLDivElement): number {
+  return Math.min(container.clientHeight * 0.25, 120);
 }

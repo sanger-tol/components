@@ -16,6 +16,7 @@ import type {
   TFormField,
   TLabelAndValueData,
 } from "../..";
+import type { IEditorOptions } from "../../text-editor/TextEditor";
 
 export interface IWaitingUpload {
   /**
@@ -93,6 +94,8 @@ export interface IFormComponent {
    * Whether the form field is read-only. If true, the user cannot modify the value of the field.
    */
   readOnly?: boolean;
+  /** Marks a field as generated automatically. */
+  automatic?: boolean;
   /**
    * Whether the form field is required. If true, the user must provide a value for the field before submitting the form.
    * This will also display a red asterisk next to the label.
@@ -127,6 +130,8 @@ export interface IFormComponent {
   minOne?: boolean;
   /** Creates an optional action button for each row of a multiple field. */
   rowButton?: (inputId: string, value: any) => PButton;
+  /** Whether the required field should display the required text instead of the asterisk. */
+  requiredAsText?: boolean;
 }
 
 export interface ITextField extends IFormComponent {
@@ -163,6 +168,7 @@ export interface ISingleselectField extends IFormComponent {
   type: "singleselect";
   data: string[] | TLabelAndValueData; // Array of selectable options
   block?: boolean;
+  disabled?: boolean;
 }
 
 export interface ISingleselectcustomoptionField extends IFormComponent {
@@ -262,6 +268,7 @@ export interface IMarkdownField extends IFormComponent {
 
 export interface ITextAreaField extends IFormComponent {
   type: "textarea";
+  options?: IEditorOptions;
   menuButtons?: TTextEditorButtons;
   errorText?: string;
   returnValueType?: "html" | "json" | "text";
@@ -282,6 +289,24 @@ export interface ICheckboxFormField extends IFormComponent {
   defaultChecked?: string[];
 }
 
+export interface IFormOptions {
+  inlineLabels?: boolean;
+  requiredAsText?: boolean;
+  /** Prevent editing all fields while retaining their values. */
+  locked?: boolean;
+}
+
+export type IFormSection = {
+  /** Section identifier referenced by each field's `section` property. */
+  id: string;
+  /** Display label. Defaults to a normalized version of the section ID. */
+  label?: string;
+} & (
+  | { locked: true; optional?: false }
+  | { optional: true; locked?: false }
+  | { locked?: false; optional?: false }
+);
+
 export interface IFormButtons {
   buttons: PButton[];
   buttonStyle?: React.CSSProperties;
@@ -289,7 +314,9 @@ export interface IFormButtons {
 
 export interface IFormConfig {
   fields: TFormField[];
+  sections?: IFormSection[];
   buttonConfig?: IFormButtons;
+  options?: IFormOptions;
 }
 
 /** Optional search-first controls for forms that can prefill their fields from a lookup. */

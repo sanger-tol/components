@@ -6,6 +6,8 @@ SPDX-License-Identifier: MIT
 
 import React, { useState, useEffect, useRef } from "react";
 import { Schema } from "rsuite";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 import {
   RSForm,
   CountrySelect,
@@ -28,6 +30,7 @@ import {
   normaliseCaps,
   FormComponentWrapper,
   FormTextArea,
+  READ_ONLY_FIELD_PLACEHOLDER,
 } from "..";
 
 import type {
@@ -48,6 +51,7 @@ import type {
   ITextAreaField,
   IFormSearchConfig,
 } from "..";
+import { FormOptionsContext } from "./FormOptionsContext";
 
 export interface PFormAllInOne<TResult extends object = Record<string, unknown>> {
   formConfig: IFormConfig;
@@ -88,6 +92,10 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
 
   const formRef = useRef<any>(null);
   const defaultModel = Schema.Model({});
+  const formLocked = formConfig.options?.locked ?? false;
+  const sectionsById = new Map(
+    formConfig.sections?.map((section) => [section.id, section]),
+  );
   onUnsavedChangesRef.current = props.onUnsavedChanges;
 
   useEffect(() => {
@@ -183,6 +191,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         label={searchConfig.searchLabel}
         placeholder={searchConfig.searchPlaceholder}
         value={searchQuery}
+        readOnly={formLocked}
         onChange={setSearchQuery}
         onKeyDown={(event) => {
           if (event.key === "Enter") {
@@ -199,7 +208,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
       <div className="tol-form-search-actions">
         <Button
           text={searchConfig.manualEntryButtonText}
-          disabled={searching}
+          disabled={searching || formLocked}
           onClick={() => {
             setSearchError("");
             setShowFields(true);
@@ -210,17 +219,49 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           text={searchConfig.searchButtonText}
           icon="search"
           loading={searching}
-          disabled={searching}
+          disabled={searching || formLocked}
           onClick={handleSearch}
         />
       </div>
     </div>
   );
 
+  const isFieldReadOnly = (field: TFormField) =>
+    Boolean(
+      formLocked ||
+        field.automatic ||
+        field.readOnly ||
+        (field.section && sectionsById.get(field.section)?.locked),
+    );
+
+  const isEmptyFieldValue = (value: unknown): boolean => {
+    if (value === undefined || value === null || value === "") {
+      return true;
+    }
+    if (Array.isArray(value)) {
+      return value.length === 0;
+    }
+    if (
+      typeof value === "object" &&
+      Object.getPrototypeOf(value) === Object.prototype
+    ) {
+      return Object.values(value).every(isEmptyFieldValue);
+    }
+    return false;
+  };
+
   const renderField = (field: TFormField) => {
     if (!field) {
       return null;
     }
+
+    const readOnly = isFieldReadOnly(field);
+    const placeholder =
+      readOnly &&
+      !field.automatic &&
+      isEmptyFieldValue(formData[field.name])
+        ? READ_ONLY_FIELD_PLACEHOLDER
+        : field.placeholder;
 
     // Fetch any errors for this field from the record of all errors
     const errorText: string | undefined = formErrors[field.name];
@@ -234,6 +275,8 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           <FormTextField
             id={formId}
             {...textField}
+            readOnly={readOnly}
+            placeholder={placeholder}
             value={formData[textField.name] ?? ""}
             onChange={(value: any) => handleInputChange(textField.name, value)}
             errorText={errorText}
@@ -244,6 +287,8 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <CountrySelect
             {...countryselectField}
+            readOnly={readOnly}
+            placeholder={placeholder}
             value={formData[countryselectField.name] ?? ""}
             setValue={(value: any) => handleInputChange(field.name, value)}
             errorText={errorText}
@@ -254,6 +299,8 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <FormDatetime
             {...datetimeField}
+            readOnly={readOnly}
+            placeholder={placeholder}
             value={formData[datetimeField.name] ?? ""}
             onChange={(value: any) =>
               handleInputChange(datetimeField.name, value)
@@ -267,10 +314,14 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           <FormComponentWrapper
             id={formId}
             {...singleselectField}
+            readOnly={readOnly}
+            placeholder={placeholder}
             errorText={errorText}
           >
             <SingleSelect
               {...singleselectField}
+              disabled={readOnly || singleselectField.disabled}
+              placeholder={placeholder}
               value={formData[singleselectField.name] ?? ""}
               onChange={(value: any) =>
                 handleInputChange(singleselectField.name, value)
@@ -285,6 +336,8 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           <SingleSelectCustomOption
             id={formId}
             {...singleselectcustomoptionField}
+            readOnly={readOnly}
+            placeholder={placeholder}
             value={formData[singleselectcustomoptionField.name] ?? ""}
             setValue={(value: any) =>
               handleInputChange(singleselectcustomoptionField.name, value)
@@ -297,6 +350,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <Dropzone
             {...dropzoneField}
+            readOnly={readOnly}
             errorText={errorText}
           />
         );
@@ -311,6 +365,8 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           return (
             <RemoteAutoComplete
               {...remoteAutocompleteField}
+              readOnly={readOnly}
+              placeholder={placeholder}
               value={formData[remoteAutocompleteField.name] ?? ""}
               onChange={(value: any) =>
                 handleInputChange(remoteAutocompleteField.name, value)
@@ -322,6 +378,8 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           return (
             <AutoComplete
               {...autocompleteField}
+              readOnly={readOnly}
+              placeholder={placeholder}
               value={formData[autocompleteField.name] ?? ""}
               onChange={(value: any) =>
                 handleInputChange(autocompleteField.name, value)
@@ -337,9 +395,12 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           <MultipleSelect
             {...multipleselectField}
             disabled={Boolean(
+              readOnly ||
               multipleselectField.disabled ||
               multipleselectField.disabledWhen?.(formData),
             )}
+            readOnly={readOnly}
+            placeholder={placeholder}
             value={Array.isArray(multipleSelectValue) ? multipleSelectValue : []}
             setValue={(value: any) =>
               handleInputChange(multipleselectField.name, value)
@@ -352,6 +413,8 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <FormMarkdown
             {...markdownField}
+            readOnly={readOnly}
+            placeholder={placeholder}
             value={formData[markdownField.name] ?? ""}
             onChange={(value: any) =>
               handleInputChange(markdownField.name, value)
@@ -364,6 +427,8 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <FormTextArea
             {...textareaField}
+            readOnly={readOnly}
+            placeholder={placeholder}
             value={formData[textareaField.name] ?? ""}
             setValue={(value: any) =>
               handleInputChange(textareaField.name, value)
@@ -382,6 +447,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           <FormCheckboxes
             id={`${formId}-${checkboxField.name}-checkbox`}
             {...(hasInitialValue ? checkboxProps : checkboxField)}
+            readOnly={readOnly}
             checkedItems={formData[checkboxField.name] ?? []}
             setCheckedItems={(value: any) =>
               handleInputChange(checkboxField.name, value)
@@ -400,9 +466,16 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
   )
     .filter((section) => section !== undefined)
     .map((section) => section as string);
+  const inlineLabels = formConfig.options?.inlineLabels ?? false;
 
-  return (
+  const formContent = (
     <div className="form-wrapper">
+      {formLocked && (
+        <div className="tol-form-read-only-banner" role="status">
+          <FontAwesomeIcon icon={faLock} aria-hidden="true" />
+          <span>This form is read-only</span>
+        </div>
+      )}
       <RSForm
         fluid={fluid}
         ref={formRef}
@@ -419,45 +492,76 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         {SearchControls}
         {showFields && uniqueSections.length > 0 ? (
           <>
-            {uniqueSections.map((section) => (
-              <div
-                key={`section-${section}`}
-                id={`section-${section}`}
-                className="tol-form-wrapper-unique-sections-container"
-              >
-                <div className="tol-form-wrapper-unique-sections-header">
-                  <h5>{normaliseCaps(section)}</h5>
-                </div>
-                {formConfig.fields
-                  .filter((field) => field.section === section)
-                  .map((field: any) => (
-                    <div key={`${field.id ?? formId}-${field.name}`}>
-                      {field.multiple ? (
-                        <MultipleFormInput
-                          renderField={renderField}
-                          field={field}
-                          formData={formData}
-                          setFormData={setFormData}
-                          setModifiedFields={setModifiedFields}
-                          minOne={field.minOne}
-                          onMinus={field.onMinus}
-                          onChange={handleInputChange}
-                        />
-                      ) : (
-                        <div
-                          id={`${field.id}`}
-                          key={`${field.id ?? formId}-${field.name}`}
-                          className={`tol-form-wrapper-unique-sections-field ${
-                            field.labelInline ? "tol-form-field-inline" : ""
-                          }`}
-                        >
-                          {renderField(field)}
-                        </div>
-                      )}
+            {uniqueSections.map((section) => {
+              const sectionConfig = sectionsById.get(section);
+              const sectionLocked = !formLocked && sectionConfig?.locked === true;
+
+              return (
+                <FormOptionsContext.Provider
+                  key={`section-${section}`}
+                  value={{
+                    ...formConfig.options,
+                    sectionLocked,
+                  }}
+                >
+                  <div
+                    id={`section-${section}`}
+                    className="tol-form-wrapper-unique-sections-container"
+                  >
+                    <div className="tol-form-wrapper-unique-sections-header">
+                      <h5>
+                        {sectionConfig?.label ?? normaliseCaps(section)}
+                        {sectionLocked ? (
+                          <span className="tol-form-section-read-only">
+                            <FontAwesomeIcon icon={faLock} aria-hidden="true" />
+                            <em>Read-only</em>
+                          </span>
+                        ) : (
+                          sectionConfig?.optional && (
+                            <span className="tol-form-section-optional">
+                              {" "}<em>Optional</em>
+                            </span>
+                          )
+                        )}
+                      </h5>
                     </div>
-                  ))}
-              </div>
-            ))}
+                    {formConfig.fields
+                      .filter((field) => field.section === section)
+                      .map((field: any) => (
+                        <div key={`${field.id ?? formId}-${field.name}`}>
+                          {field.multiple ? (
+                            <MultipleFormInput
+                              renderField={renderField}
+                              field={{
+                                ...field,
+                                readOnly: isFieldReadOnly(field),
+                              }}
+                              formData={formData}
+                              setFormData={setFormData}
+                              setModifiedFields={setModifiedFields}
+                              minOne={field.minOne}
+                              onMinus={field.onMinus}
+                              onChange={handleInputChange}
+                            />
+                          ) : (
+                            <div
+                              id={`${field.id}`}
+                              key={`${field.id ?? formId}-${field.name}`}
+                              className={`tol-form-wrapper-unique-sections-field ${
+                                inlineLabels || field.labelInline
+                                  ? "tol-form-field-inline"
+                                  : ""
+                              }`}
+                            >
+                              {renderField(field)}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+                </FormOptionsContext.Provider>
+              );
+            })}
             {formConfig.fields.some((field) => !field.section) && (
               <div
                 key="section-misc"
@@ -474,7 +578,10 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                       {field.multiple ? (
                         <MultipleFormInput
                           renderField={renderField}
-                          field={field}
+                          field={{
+                            ...field,
+                            readOnly: isFieldReadOnly(field),
+                          }}
                           formData={formData}
                           setFormData={setFormData}
                           setModifiedFields={setModifiedFields}
@@ -487,7 +594,9 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                           id={`${field.id}`}
                           key={`${field.id ?? formId}-${field.name}`}
                           className={`tol-form-wrapper-unique-sections-field ${
-                            field.labelInline ? "tol-form-field-inline" : ""
+                            inlineLabels || field.labelInline
+                              ? "tol-form-field-inline"
+                              : ""
                           }`}
                         >
                           {renderField(field)}
@@ -504,7 +613,10 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
               {field.multiple ? (
                 <MultipleFormInput
                   renderField={renderField}
-                  field={field}
+                  field={{
+                    ...field,
+                    readOnly: isFieldReadOnly(field),
+                  }}
                   formData={formData}
                   setFormData={setFormData}
                   setModifiedFields={setModifiedFields}
@@ -516,7 +628,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                 <div
                   id={`${field.id}`}
                   key={`${field.id ?? formId}-${field.name}`}
-                  className={`tol-form-wrapper-unique-sections-field ${field.labelInline ? "tol-form-field-inline" : ""}`}
+                  className={`tol-form-wrapper-unique-sections-field ${inlineLabels || field.labelInline ? "tol-form-field-inline" : ""}`}
                 >
                   {renderField(field)}
                 </div>
@@ -567,5 +679,11 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         )}
       </RSForm>
     </div>
+  );
+
+  return (
+    <FormOptionsContext.Provider value={formConfig.options ?? {}}>
+      {formContent}
+    </FormOptionsContext.Provider>
   );
 }

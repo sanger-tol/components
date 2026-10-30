@@ -20,6 +20,7 @@ export * from "./general.constants";
 export * from "./messaging.constants";
 export * from "./nav.constants";
 export * from "./offline.constants";
+export * from "./page-scroll.constants";
 export * from "./plates.constants";
 export * from "./regex.constants";
 export * from "./statistics.constants";

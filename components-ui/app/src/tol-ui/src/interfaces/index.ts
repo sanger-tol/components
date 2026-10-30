@@ -32,6 +32,7 @@ export * from "./Markdown";
 export * from "./Messaging";
 export * from "./Nav";
 export * from "./ObjectDetail";
+export * from "./PageScroll";
 export * from "./Plate";
 export * from "./Privilege";
 export * from "./Relationship";

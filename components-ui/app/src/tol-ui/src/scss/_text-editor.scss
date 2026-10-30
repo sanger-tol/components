@@ -4,14 +4,23 @@
  * SPDX-License-Identifier: MIT
  */
 
+.tol-text-editor-wrapper {
+  width: 100%;
+  min-width: 0;
+}
+
+.tol-form-field-inline-controls .tol-text-editor-wrapper {
+  flex: 1;
+}
+
 .tol-text-editor {
   display: flex;
   flex-direction: column;
   height: 250px;
   overflow: hidden;
   border: var(--tol-border-grey);
-  border-radius: 6px;
-  background-color: var(--tol-bg);
+  border-radius: var(--tol-border-radius);
+  background-color: var(--tol-form-control-bg, var(--tol-bg));
   transition:
     border-color 0.15s ease-in-out,
     box-shadow 0.15s ease-in-out;
@@ -87,6 +96,50 @@
     color: var(--tol-text);
     opacity: 0.65;
   }
+
+  &__resize-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 10px;
+    background-color: var(--tol-form-control-bg, var(--tol-bg));
+    color: var(--tol-text-subtle);
+    cursor: ns-resize;
+    touch-action: none;
+    user-select: none;
+
+    &::before {
+      content: "";
+      width: 24px;
+      height: 2px;
+      border-radius: 1px;
+      background-color: currentColor;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    &:hover,
+    &:active,
+    &:focus-visible {
+      color: var(--tol-primary);
+
+      &::before {
+        opacity: 1;
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--tol-primary);
+      outline-offset: -2px;
+    }
+  }
+}
+
+.tol-text-editor__word-count {
+  margin-top: 0.25rem;
+  color: var(--tol-text-subtle);
+  font-size: 0.8rem;
+  text-align: left;
 }
 
 .tol-text-editor__content-wrapper {
@@ -105,7 +158,7 @@
   position: absolute;
   inset: 0;
   padding: 0.5rem 1rem;
-  color: var(--tol-grey-light);
+  color: var(--tol-text-subtle);
   pointer-events: none;
   user-select: none;
 

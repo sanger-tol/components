@@ -18,6 +18,11 @@
   --color-canvas-default: var(--tol-bg);
 }
 
+.tol-form-markdown,
+.tol-form-markdown .wmde-markdown {
+  --color-canvas-default: var(--tol-form-control-bg, var(--tol-bg));
+}
+
 .tol-markdown {
   overflow: auto;
 }

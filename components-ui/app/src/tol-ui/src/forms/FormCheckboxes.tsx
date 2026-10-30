@@ -61,7 +61,7 @@ export function FormCheckboxes(props: PFormCheckboxes) {
                 indeterminate={indeterminate}
                 name={`checkbox${index}`}
                 defaultChecked={field.defaultChecked}
-                disabled={field.disabled}
+                disabled={props.readOnly || field.disabled}
                 onChange={() => handleCheckboxChange(field.value)}
               >
                 <div className="tol-form-checkboxes-text">

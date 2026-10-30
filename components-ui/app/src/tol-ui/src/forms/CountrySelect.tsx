@@ -16,7 +16,14 @@ export interface PCountrySelect extends TFormCountrySelectField {
 }
 
 export function CountrySelect(props: PCountrySelect) {
-  const { name, label, value, setValue } = props;
+  const {
+    name,
+    label,
+    value,
+    setValue,
+    readOnly,
+    placeholder = "Please Select...",
+  } = props;
 
   const countryOptions = useMemo(() => countryList().getData(), []);
   const countryItems = countryOptions.map((item: any) => item.label);
@@ -25,9 +32,10 @@ export function CountrySelect(props: PCountrySelect) {
     <FormComponentWrapper {...props} id={name} label={label || "Nationality:"}>
       <SingleSelect
         data={countryItems}
-        placeholder="Please Select..."
+        placeholder={placeholder}
         value={value}
         onChange={setValue}
+        readOnly={readOnly}
         block
       />
     </FormComponentWrapper>

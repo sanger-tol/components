@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import {
   useEditor,
   EditorContent,
@@ -17,8 +17,27 @@ import Superscript from "@tiptap/extension-superscript";
 import Subscript from "@tiptap/extension-subscript";
 import TextAlign from "@tiptap/extension-text-align";
 import CharacterCount from "@tiptap/extension-character-count";
-import { DEFAULT_TEXT_EDITOR_BUTTONS, MenuBar } from "..";
+import {
+  DEFAULT_TEXT_EDITOR_BUTTONS,
+  MenuBar,
+  RESIZE_STEP,
+  MIN_HEIGHT,
+  MAX_HEIGHT,
+} from "..";
 import type { TTextEditorButtons, TTextEditorCustomButton } from "..";
+
+export interface IEditorOptions {
+  /** Minimum editor height in pixels. Defaults to 120. */
+  minHeight?: number;
+  /** Maximum editor height in pixels. Defaults to 600. */
+  maxHeight?: number;
+  /** Initial height in pixels when height is not provided. Defaults to minHeight. */
+  startHeight?: number;
+  /** Whether to show the pointer and keyboard resize handle. Defaults to true. */
+  resizable?: boolean;
+  /** Whether to display the live word count below the editor. */
+  showWordCount?: boolean;
+}
 
 export interface PTextEditor {
   /**
@@ -76,11 +95,15 @@ export interface PTextEditor {
    */
   onEditorChange?: (editor: any) => void;
   /**
-   * An optional string or number to specify the height of the text editor.
+   * Initial editor height as a CSS length or pixel number. Overrides options.startHeight.
    */
   height?: string | number;
   /** An optional placeholder to render before a user starts typing. */
   placeholder?: React.ReactNode;
+  /**
+   * An optional object to configure editor options such as minHeight, maxHeight, startHeight, and resizable.
+   */
+  options?: IEditorOptions;
 }
 
 /**
@@ -104,9 +127,25 @@ export function TextEditor(props: PTextEditor) {
     customExtensions,
     editable = true,
     onEditorChange,
-    height,
     placeholder,
+    options: {
+      minHeight = MIN_HEIGHT,
+      maxHeight = MAX_HEIGHT,
+      startHeight = minHeight,
+      resizable = true,
+      showWordCount = false,
+    } = {},
   } = props;
+
+  const clamp = (h: number) => Math.min(Math.max(h, minHeight), maxHeight);
+  const [height, setHeight] = useState<string | number>(() => {
+    const initialHeight = props.height ?? startHeight;
+    return typeof initialHeight === "number"
+      ? clamp(initialHeight)
+      : initialHeight;
+  });
+  const editorContainer = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ startY: number; startH: number } | null>(null);
 
   // Memoize the extensions array to avoid unnecessary editor rebuilds.
   // Relies on customExtensions being referentially stable (see prop docs).
@@ -146,10 +185,55 @@ export function TextEditor(props: PTextEditor) {
     [extensions],
   );
 
+  // Pointer event handlers for resizing the editor
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!resizable || !editorContainer.current) return;
+    e.preventDefault();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drag.current = {
+      startY: e.clientY,
+      startH: editorContainer.current.getBoundingClientRect().height,
+    };
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!resizable || !drag.current) return;
+    setHeight(clamp(drag.current.startH + (e.clientY - drag.current.startY)));
+  };
+
+  // Attach pointer event handlers to the content wrapper
+  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    drag.current = null;
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+
+  // Determine whether to show the placeholder based on editor state
   const showPlaceholder = useEditorState({
     editor,
     selector: ({ editor }) => !!editor && !editor.isDestroyed && editor.isEmpty,
   });
+
+  const wordCount = useEditorState({
+    editor,
+    selector: ({ editor }) =>
+      editor?.storage.characterCount.words() ?? 0,
+  });
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!resizable || !(e.ctrlKey || e.metaKey) || !editorContainer.current)
+      return;
+
+    const currentHeight =
+      editorContainer.current.getBoundingClientRect().height;
+
+    if (e.key === "ArrowDown") {
+      setHeight(clamp(currentHeight + RESIZE_STEP));
+      e.preventDefault();
+    } else if (e.key === "ArrowUp") {
+      setHeight(clamp(currentHeight - RESIZE_STEP));
+      e.preventDefault();
+    }
+  };
 
   // Apply editable changes in place instead of rebuilding the editor
   useEffect(() => {
@@ -170,30 +254,59 @@ export function TextEditor(props: PTextEditor) {
 
   // Memoize the provider value to avoid unnecessary re-renders of the context provider
   const providerValue = useMemo(() => ({ editor }), [editor]);
+  const editorHasButtons =
+    (menuButtons && menuButtons.length > 0) ||
+    (customButtons && customButtons.length > 0);
 
   return (
     <EditorContext.Provider value={providerValue}>
-      <div
-        className="tol-text-editor"
-        style={height ? { height: height } : undefined}
-      >
-        <MenuBar
-          editor={editor}
-          buttons={menuButtons}
-          customButtons={customButtons}
-        />
+      <div className="tol-text-editor-wrapper">
+        <div
+          ref={editorContainer}
+          className="tol-text-editor"
+          style={{ height, minHeight, maxHeight }}
+        >
+          {editorHasButtons && (
+            <MenuBar
+              editor={editor}
+              buttons={menuButtons}
+              customButtons={customButtons}
+            />
+          )}
 
-        <div className="tol-text-editor__content-wrapper">
-          <EditorContent editor={editor} className="tol-text-editor__body" />
+          <div className="tol-text-editor__content-wrapper">
+            <EditorContent editor={editor} className="tol-text-editor__body" />
 
-          {showPlaceholder && placeholder && (
-            <div className="tol-text-editor__placeholder">{placeholder}</div>
+            {showPlaceholder && placeholder && (
+              <div className="tol-text-editor__placeholder">{placeholder}</div>
+            )}
+          </div>
+
+          {resizable && (
+            <div
+              className="tol-text-editor__resize-handle"
+              tabIndex={0}
+              role="separator"
+              aria-orientation="horizontal"
+              aria-label="Resize editor"
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onLostPointerCapture={() => {
+                drag.current = null;
+              }}
+              onKeyDown={onKeyDown}
+            />
+          )}
+          {keyboardShortcutElement && (
+            <div className="tol-text-editor__footer">
+              {keyboardShortcutElement}
+            </div>
           )}
         </div>
-
-        {keyboardShortcutElement && (
-          <div className="tol-text-editor__footer">
-            {keyboardShortcutElement}
+        {showWordCount && (editable || wordCount > 0) && (
+          <div className="tol-text-editor__word-count" aria-live="polite">
+            {wordCount} {wordCount === 1 ? "word" : "words"}
           </div>
         )}
       </div>

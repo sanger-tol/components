@@ -19,3 +19,4 @@ export * from "./useQueryData";
 export * from "./useStateFallback";
 export * from "./useStickyShadow";
 export * from "./useTimeout";
+export * from "./useScrollSpy";

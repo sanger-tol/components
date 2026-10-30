@@ -4,8 +4,12 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React from "react";
+import React, { useContext } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { FormLabel, RSForm, TFormComponentWrapper } from "..";
+import { FormOptionsContext } from "./FormOptionsContext";
+import { AUTOMATIC_FIELD_HELP_TEXT } from "../constants/form.constants";
 
 export interface PFormComponentWrapper extends TFormComponentWrapper {
   /**
@@ -40,6 +44,7 @@ export interface PFormComponentWrapper extends TFormComponentWrapper {
  * message, while supporting inline labels and a configurable wrapper element.
  */
 export function FormComponentWrapper(props: PFormComponentWrapper) {
+  const formOptions = useContext(FormOptionsContext);
   const {
     id,
     name,
@@ -52,9 +57,15 @@ export function FormComponentWrapper(props: PFormComponentWrapper) {
     errorMessageClassName,
     as,
     required,
+    requiredAsText,
+    readOnly,
+    automatic,
   } = props;
+  const inline = formOptions.inlineLabels || labelInline;
 
   const ContentWrapper = as === "span" ? "span" : "div";
+  const ControlsWrapper = as === "span" ? "span" : "div";
+  const AutomaticControlWrapper = as === "span" ? "span" : "div";
   const errorMessage = (
     <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
       {errorText}
@@ -66,15 +77,36 @@ export function FormComponentWrapper(props: PFormComponentWrapper) {
       controlId={id && name ? `form-${id}-${name}` : undefined}
       as={as}
     >
-      <ContentWrapper className={labelInline ? "tol-form-field-inline" : ""}>
-        <FormLabel
-          label={label}
-          icon={icon}
-          inline={labelInline}
-          required={required}
-        />
-        {children}
+      <ContentWrapper className={inline ? "tol-form-field-inline" : ""}>
+        <ControlsWrapper
+          className={inline ? "tol-form-field-inline-controls" : ""}
+        >
+          <FormLabel
+            label={label}
+            icon={icon}
+            inline={inline}
+            required={required}
+            requiredAsText={requiredAsText}
+            readOnly={readOnly}
+            automatic={automatic}
+          />
+          {automatic ? (
+            <AutomaticControlWrapper className="tol-form-automatic-control">
+              <FontAwesomeIcon
+                className="tol-form-automatic-placeholder-lock"
+                icon={faLock}
+                aria-hidden="true"
+              />
+              {children}
+            </AutomaticControlWrapper>
+          ) : (
+            children
+          )}
+        </ControlsWrapper>
         {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
+        {automatic && (
+          <RSForm.HelpText>{AUTOMATIC_FIELD_HELP_TEXT}</RSForm.HelpText>
+        )}
         {errorMessageClassName ? (
           <span className={errorMessageClassName}>{errorMessage}</span>
         ) : (

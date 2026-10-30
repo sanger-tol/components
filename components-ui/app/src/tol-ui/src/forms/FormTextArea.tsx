@@ -29,11 +29,17 @@ export interface PFormTextArea extends TFormTextAreaField {
  * Renders a text-area form field inside the standard form component wrapper.
  */
 export function FormTextArea(props: PFormTextArea) {
-  const { name } = props;
+  const { name, readOnly, editable, options } = props;
 
   return (
     <FormComponentWrapper {...props} id={name}>
-      <TextEditor {...props} />
+      <TextEditor
+        {...props}
+        editable={readOnly ? false : editable}
+        placeholder={props.placeholder}
+        menuButtons={[]}
+        options={readOnly ? { ...options, resizable: false } : options}
+      />
     </FormComponentWrapper>
   );
 }

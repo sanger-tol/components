@@ -36,6 +36,7 @@ export const SingleSelect = (props: PSingleSelect) => {
     section: _section,
     multiple: _multiple,
     minOne: _minOne,
+    readOnly,
     ...selectPickerProps
   } = props;
   const [data, setData] = useState([{}]);
@@ -52,6 +53,7 @@ export const SingleSelect = (props: PSingleSelect) => {
     <SelectPicker
       {...selectPickerProps}
       data={data}
+      disabled={readOnly || selectPickerProps.disabled}
       data-testid={testid}
       onChange={(value) => onChange(value ?? "")}
     />

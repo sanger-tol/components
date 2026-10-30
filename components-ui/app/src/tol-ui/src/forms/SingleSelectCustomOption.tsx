@@ -26,7 +26,16 @@ export interface PSingleSelectCustomOption extends TFormSingleSelectCustomOption
 }
 
 export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
-  const { id, value, setValue, data, label, customOptionPlaceholder } = props;
+  const {
+    id,
+    value,
+    setValue,
+    data,
+    label,
+    customOptionPlaceholder,
+    readOnly,
+    placeholder,
+  } = props;
 
   const [selectedOption, setSelectedOption] = useState("");
   const [customValue, setCustomValue] = useState("");
@@ -74,9 +83,10 @@ export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
     <FormComponentWrapper {...props} label={label || "Select an option:"}>
       <SingleSelect
         data={data}
-        placeholder="Please Select..."
+        placeholder={placeholder ?? "Please Select..."}
         value={selectedOption}
         onChange={handleSelectChange}
+        readOnly={readOnly}
         block
       />
       {showCustomBox && (
@@ -88,6 +98,7 @@ export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
             customOptionPlaceholder || "Please enter a custom option..."
           }`}
           value={customValue}
+          readOnly={readOnly}
           onChange={handleCustomValueChange}
         />
       )}

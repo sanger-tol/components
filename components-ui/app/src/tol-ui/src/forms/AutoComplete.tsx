@@ -32,6 +32,8 @@ export function AutoComplete(props: PAutoComplete) {
     displayFields,
     displayFieldsTitle,
     loading,
+    readOnly,
+    placeholder,
   } = props;
 
   return (
@@ -39,6 +41,8 @@ export function AutoComplete(props: PAutoComplete) {
       <RSAutoComplete
         data={data}
         value={typeof value === "string" ? value : value?.value}
+        placeholder={placeholder}
+        disabled={readOnly}
         onChange={onChange}
         onKeyDown={(e) => e.stopPropagation()}
         renderMenu={(menu: any) => {
