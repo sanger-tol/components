@@ -14,6 +14,8 @@ swagger_server.egg-info/
 __init__.pyc
 launch.json
 .env.dev
+.keeper-env.*/
+keeper.ini
 .env.prod
 values-*.yaml
 *.tgz
