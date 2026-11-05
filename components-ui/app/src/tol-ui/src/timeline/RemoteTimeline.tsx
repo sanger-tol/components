@@ -6,10 +6,10 @@ SPDX-License-Identifier: MIT
 
 import { useCallback } from "react";
 import { getDataPoints, RemoteComponentDataList, Timeline } from "..";
-import type { IFieldMeta, IRemoteComponentDataList, PTimelineOptions, TDataObjectListOrNull } from "..";
+import type { IFieldMeta, TRemoteComponentDataList, PTimelineOptions, TDataObjectListOrNull } from "..";
 
 /** Props for the remote Timeline component. */
-export interface PRemoteTimeline extends PTimelineOptions, IRemoteComponentDataList { }
+export interface PRemoteTimeline extends PTimelineOptions, TRemoteComponentDataList { }
 
 /** Fetches one remote record and displays its selected fields as a timeline. */
 export function RemoteTimeline(props: PRemoteTimeline) {

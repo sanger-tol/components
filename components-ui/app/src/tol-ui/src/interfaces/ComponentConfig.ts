@@ -17,10 +17,22 @@ export type TStatisticsType =
 export type TComponentType =
   (typeof COMPONENT_TYPES)[keyof typeof COMPONENT_TYPES];
 
-/** Save payload for list-style component configuration. */
-export interface IListDataConfigSave extends IDefaultSortBy, IDefaultPageSize {
-  /** Field selection metadata for the list. */
-  fieldMeta?: IFieldMeta;
+/** Default shape for component-specific options when a component doesn't type its own. */
+export type TDefaultAdditionalOptions = Record<string, any>;
+
+/** Save payload for list-style component configuration, extended with component-specific options. */
+export type IListDataConfigSave<TAdditionalOptions = TDefaultAdditionalOptions> =
+  IDefaultSortBy & IDefaultPageSize & {
+    /** Field selection metadata for the list. */
+    fieldMeta?: IFieldMeta;
+  } & TAdditionalOptions;
+
+/** Props for content that edits a component's additional options. */
+export interface TAdditionalOptionsContent<TAdditionalOptions> {
+  /** Current draft values for the component-specific options. */
+  additionalOptions: TAdditionalOptions;
+  /** Updates the component-specific option draft. */
+  setAdditionalOptions: (options: TAdditionalOptions) => void;
 }
 
 /** Configuration for board charts. */
