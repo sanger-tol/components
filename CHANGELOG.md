@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `6.3.1`
+
+09-11-26
+
+- Add custom options to config drawers
+- Add component wide options to Board Cards
+
 ## tol-ui `6.3.0`
 
 29-10-26
