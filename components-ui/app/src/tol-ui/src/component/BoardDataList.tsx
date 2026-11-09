@@ -33,7 +33,8 @@ export function BoardDataList(props: PBoardDataList) {
     updateComponentConfigAndUpsert(id, nextConfig, zone, boardDataSource, editMode);
   };
 
-  const fields = config?.fieldMeta ?? { order: { active: [] } };
+  const { fieldMeta, defaultPageSize, defaultSortByAttribute, defaultSortByType, ...additionalOptions } = config;
+  const fields = fieldMeta ?? { order: { active: [] } };
 
   let Component: JSX.ElementType = RemoteObjectDetail;
 
@@ -48,15 +49,16 @@ export function BoardDataList(props: PBoardDataList) {
 
   return (
     <Component
+      {...additionalOptions}
       id={id}
       dataSource={dataSource}
       objectType={objectType}
       zone={zone}
       setZone={setZone}
       fields={fields}
-      defaultPageSize={config.defaultPageSize}
-      defaultSortByAttribute={config.defaultSortByAttribute}
-      defaultSortByType={config.defaultSortByType}
+      defaultPageSize={defaultPageSize}
+      defaultSortByAttribute={defaultSortByAttribute}
+      defaultSortByType={defaultSortByType}
       onConfigSave={onConfigSave}
       utilityBarConfig={props.utilityBarConfig}
     />

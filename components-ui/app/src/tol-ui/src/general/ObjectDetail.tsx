@@ -5,20 +5,20 @@ SPDX-License-Identifier: MIT
 */
 
 import { ComponentBase, getField } from "..";
-import type { IComponentData } from "..";
+import type { IComponentData, TObjectDetailKeyType } from "..";
 
 
 /** Specific options for the `ObjectDetail` component. */
 export interface PObjectDetailOptions {
-  /** Whether to display field keys alongside their values. Defaults to true. */
-  showKeys?: boolean;
+  /** How to display field keys alongside their values. Defaults to "standard". */
+  keyType?: TObjectDetailKeyType;
 }
 
 /** Props for the `ObjectDetail` component including base component data. */
 export interface PObjectDetail extends PObjectDetailOptions, IComponentData {}
 
 export function ObjectDetail(props: PObjectDetail) {
-  const { fields, data = {}, classNames = [], showKeys = true, ...rest } = props;
+  const { fields, data = {}, classNames = [], keyType = "standard", ...rest } = props;
 
   const activeFields = fields?.order?.active ?? [];
   const hasPositions = activeFields.some((attribute) => {
@@ -36,9 +36,14 @@ export function ObjectDetail(props: PObjectDetail) {
 
   const renderField = (attribute: string) => {
     const field = fields ? getField(fields, attribute) : undefined;
+    const key = field?.rename ?? attribute;
     return (
-      <div key={attribute} className="tol-object-detail-field">
-        {showKeys && <strong>{field?.rename ?? attribute}:</strong>}
+      <div
+        key={attribute}
+        className={`tol-object-detail-field${keyType === "heading" ? " tol-object-detail-field--heading" : ""}`}
+      >
+        {keyType === "standard" && <strong>{key}:</strong>}
+        {keyType === "heading" && <h6>{key}</h6>}
         {data[attribute]}
       </div>
     );
