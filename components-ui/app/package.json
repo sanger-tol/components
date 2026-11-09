@@ -39,7 +39,7 @@
   "resolutions": {
     "styled-components": "~6.4.0",
     "filelist": "1.0.6",
-    "entities": "7.0.1",
+    "parse5": "8.0.0",
     "sass": "1.77.0",
     "@eslint-community/eslint-utils": "4.9.1"
   },
