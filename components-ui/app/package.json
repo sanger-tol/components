@@ -39,8 +39,6 @@
   "resolutions": {
     "styled-components": "~6.4.0",
     "filelist": "1.0.6",
-    "parse5": "8.0.0",
-    "rollup": "4.68.0",
     "sass": "1.77.0",
     "@eslint-community/eslint-utils": "4.9.1"
   },
