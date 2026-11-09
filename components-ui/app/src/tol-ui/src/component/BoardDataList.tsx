@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { RemoteObjectDetail, RemoteTimeline, PVisualisationComponent, COMPONENT_TYPES, optimiseFieldMetaForSave, updateComponentConfigAndUpsert, useBoard } from "..";
-import type { IListDataConfigSave } from "..";
+import type { TListDataConfigSave } from "..";
 
 
 /** Props for the `BoardDataList` component. */
-export interface PBoardDataList extends PVisualisationComponent<IListDataConfigSave> {
+export interface PBoardDataList extends PVisualisationComponent<TListDataConfigSave> {
   /** Which underlying component `BoardDataList` should render. */
   type: typeof COMPONENT_TYPES.OBJECT_DETAIL | typeof COMPONENT_TYPES.TIMELINE;
 }
@@ -23,7 +23,7 @@ export function BoardDataList(props: PBoardDataList) {
   const { id, dataSource, objectType, zone, setZone, config, setConfig, boardDataSource, type } = props;
   const { editMode } = useBoard();
 
-  const onConfigSave = (updatedConfig: IListDataConfigSave) => {
+  const onConfigSave = (updatedConfig: TListDataConfigSave) => {
     const nextConfig = {
       ...config,
       ...updatedConfig,

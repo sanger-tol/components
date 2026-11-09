@@ -17,10 +17,10 @@ import {
   PageSizePicker,
   Tabs,
 } from "../..";
-import type { IFieldMeta, IListDataConfigSave, TAdditionalOptionsContent } from "../..";
+import type { IFieldMeta, TListDataConfigSave, TAdditionalOptionsContent } from "../..";
 
 /** Props for the `ListDataConfigDrawer`, optionally typed with component-specific options. */
-export type PListDataConfigDrawer<TAdditionalOptions> = IRemoteTarget & IListDataConfigSave<TAdditionalOptions> & {
+export type PListDataConfigDrawer<TAdditionalOptions> = IRemoteTarget & TListDataConfigSave<TAdditionalOptions> & {
   /** Whether the drawer is open. */
   open: boolean;
   /** Setter for toggling drawer open state. */
@@ -28,7 +28,7 @@ export type PListDataConfigDrawer<TAdditionalOptions> = IRemoteTarget & IListDat
   /** Initial values for component-specific configuration options. */
   additionalOptions?: TAdditionalOptions;
   /** Callback used to persist the updated field selection. */
-  onConfigSave: (config: IListDataConfigSave<TAdditionalOptions>) => void;
+  onConfigSave: (config: TListDataConfigSave<TAdditionalOptions>) => void;
   /** Additional options to render within the drawer. */
   AdditionalOptionsContent?: ComponentType<TAdditionalOptionsContent<TAdditionalOptions>>;
 };

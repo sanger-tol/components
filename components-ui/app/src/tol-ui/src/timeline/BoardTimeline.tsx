@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { BoardDataList, COMPONENT_TYPES } from "..";
-import type { IListDataConfigSave, PVisualisationComponent } from "..";
+import type { TListDataConfigSave, PVisualisationComponent } from "..";
 
 
 /** Props for the `BoardTimeline` component. */
-export interface PBoardTimeline extends PVisualisationComponent<IListDataConfigSave> { }
+export interface PBoardTimeline extends PVisualisationComponent<TListDataConfigSave> { }
 
 /** Displays x number of data objects in a timeline within a Board. */
 export function BoardTimeline(props: PBoardTimeline) {

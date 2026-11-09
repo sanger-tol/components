@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from "react";
-import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, IListDataConfigSave, TCustomDataPointRenderers, TDataRecord, TDataRecordList, TDefaultAdditionalOptions } from "..";
+import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, TListDataConfigSave, TCustomDataPointRenderers, TDataRecord, TDataRecordList, TDefaultAdditionalOptions } from "..";
 
 
 // TODO FUTURE: Remove IHeightDeprecated and migrate all components to use the height property in IComponentBase.
@@ -119,5 +119,5 @@ export type TRemoteComponentDataList<TAdditionalOptions = TDefaultAdditionalOpti
   IDefaultPageSize &
   TAdditionalOptions & {
     /** Callback to persist the component's configuration. */
-    onConfigSave?: (config: IListDataConfigSave<TAdditionalOptions>) => void;
+    onConfigSave?: (config: TListDataConfigSave<TAdditionalOptions>) => void;
   };

@@ -21,7 +21,7 @@ export type TComponentType =
 export type TDefaultAdditionalOptions = Record<string, any>;
 
 /** Save payload for list-style component configuration, extended with component-specific options. */
-export type IListDataConfigSave<TAdditionalOptions = TDefaultAdditionalOptions> =
+export type TListDataConfigSave<TAdditionalOptions = TDefaultAdditionalOptions> =
   IDefaultSortBy & IDefaultPageSize & {
     /** Field selection metadata for the list. */
     fieldMeta?: IFieldMeta;

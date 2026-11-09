@@ -20,7 +20,7 @@ import {
   useBoard,
   useComponentListData,
 } from "..";
-import type { IComponentData, IFieldMeta, IListDataConfigSave, TRemoteComponentDataList, PButton, TAdditionalOptionsContent, TDataObjectListOrNull } from "..";
+import type { IComponentData, IFieldMeta, TListDataConfigSave, TRemoteComponentDataList, PButton, TAdditionalOptionsContent, TDataObjectListOrNull } from "..";
 
 
 /** Props for the `RemoteComponentDataList` wrapper component. */
@@ -65,12 +65,12 @@ export function RemoteComponentDataList<TAdditionalOptions>(
 
   const { board, editMode } = useBoard();
   const [openConfig, setOpenConfig] = useState(false);
-  const [savedConfig, setSavedConfig] = useState<IListDataConfigSave<TAdditionalOptions>>(() => {
-    return (onConfigSave ? {} : getComponentConfigLocalStorage<IListDataConfigSave<TAdditionalOptions>>(id) ?? {}) as IListDataConfigSave<TAdditionalOptions>;
+  const [savedConfig, setSavedConfig] = useState<TListDataConfigSave<TAdditionalOptions>>(() => {
+    return (onConfigSave ? {} : getComponentConfigLocalStorage<TListDataConfigSave<TAdditionalOptions>>(id) ?? {}) as TListDataConfigSave<TAdditionalOptions>;
   });
 
   // External configuration (e.g. a board) must never inherit standalone saved settings.
-  const config: IListDataConfigSave<TAdditionalOptions> = (onConfigSave ? {} : savedConfig) as IListDataConfigSave<TAdditionalOptions>;
+  const config: TListDataConfigSave<TAdditionalOptions> = (onConfigSave ? {} : savedConfig) as TListDataConfigSave<TAdditionalOptions>;
   const {
     fieldMeta: configuredFieldMeta,
     defaultSortByAttribute: savedDefaultSortByAttribute,
@@ -131,14 +131,14 @@ export function RemoteComponentDataList<TAdditionalOptions>(
     defaultSortByType: nextDefaultSortByType,
     defaultPageSize: nextDefaultPageSize,
     ...nextAdditionalOptions
-  }: IListDataConfigSave<TAdditionalOptions>) => {
+  }: TListDataConfigSave<TAdditionalOptions>) => {
     const nextConfig = {
       fieldMeta: nextFieldMeta ?? activeFieldMeta,
       defaultSortByAttribute: nextDefaultSortByAttribute ?? undefined,
       defaultSortByType: nextDefaultSortByType ?? undefined,
       defaultPageSize: nextDefaultPageSize,
       ...nextAdditionalOptions,
-    } as IListDataConfigSave<TAdditionalOptions>;
+    } as TListDataConfigSave<TAdditionalOptions>;
     setPage(1);
     if (nextDefaultPageSize) setPageSize(nextDefaultPageSize);
     if (onConfigSave) {
