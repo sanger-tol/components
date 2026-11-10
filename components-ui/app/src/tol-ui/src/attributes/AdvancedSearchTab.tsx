@@ -10,6 +10,7 @@ import type { Dispatch, SetStateAction } from "react";
 import {
   AutoComplete,
   Button,
+  BUTTONS,
   IconTooltip,
   PopUpMessage,
   stopPropagation
@@ -26,7 +27,7 @@ export function AdvancedSearchTab(props: PAdvancedSearchTab) {
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [isAttributeAvailable, setIsAttributeAvailable] = useState<boolean>(false);
-    // const [availableRelationships, setAvailableRelationships] = useState<string[] | undefined>(undefined);
+  // const [availableRelationships, setAvailableRelationships] = useState<string[] | undefined>(undefined);
 
   const handleOnChange = async (value: string) => {
     setSearchValue(value);
@@ -93,15 +94,11 @@ export function AdvancedSearchTab(props: PAdvancedSearchTab) {
           />
         </div>
         <div className='tol-attribute-selector-advanced-search-tab__button'>
-          {/* TODO Replace with standard button */}
           <Button
-            onClick={handleOnAdd}
+            {...BUTTONS.ADD}
             className="tol-attribute-selector-advanced-search-tab__button"
             disabled={!isAttributeAvailable}
             disabledTooltip="Attribute not found"
-            icon="plus"
-            type="success"
-            position="right"
           />
         </div>
       </span>
