@@ -96,6 +96,7 @@ export function AdvancedSearchTab(props: PAdvancedSearchTab) {
         <div className="tol-attribute-selector-advanced-search-tab__button-wrapper">
           <Button
             {...BUTTONS.ADD}
+            onClick={handleOnAdd}
             disabled={!isAttributeAvailable}
             disabledTooltip="Attribute not found"
           />
