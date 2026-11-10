@@ -178,29 +178,29 @@ SPDX-License-Identifier: MIT
   }
 }
 
-.tol-advance-search-tabs {
+.tol-attribute-selector__tabs {
   .rs-nav.rs-nav-pills.rs-nav-horizontal {
     margin-left: 12px !important;
   }
 }
 
-.tol-advance-search-tab-container {
+.tol-attribute-selector-advanced-search-tab {
   padding: 0px 12px 12px 12px;
 
   .tol-advance-search-tab-button {
     margin-top: 10px;
   }
 
-  .tol-advance-search-tab-search {
+  .tol-attribute-selector-advanced-search-tab__search {
     display: flex;
     align-items: flex-end;
 
-    .tol-advance-search-tab-tooltip {
+    .tol-attribute-selector-advanced-search-tab__tooltip {
       margin-left: 3px;
       margin-right: 6px;
     }
 
-    .tol-advance-search-tab-button {
+    .tol-attribute-selector-advanced-search-tab__button {
       width: 100%;
     }
 

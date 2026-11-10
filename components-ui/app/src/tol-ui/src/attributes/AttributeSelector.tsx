@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { Checkbox as RSCheckbox } from "rsuite";
 import {
-  AdvanceSearchTab,
+  AdvancedSearchTab,
   attributeSelectorSearchBy,
   extractProvenancesForAttribute,
   filterAttributes,
@@ -24,6 +24,7 @@ import {
   PROVENANCE_IN_FIELD_REGEX_GLOBAL,
   renderTotalSelectedItems,
   SourceTag,
+  Tabs,
   updateProvenanceFields,
 } from "..";
 import type {
@@ -206,15 +207,26 @@ export function AttributeSelector(props: PAttributeSelector) {
         }}
         renderMenuItem={(l: any, index: number) => RenderMenuItem(l, index)}
         renderMenu={
-          advanceTab
-            ? (menuItem) =>
-              <AdvanceSearchTab
-                MenuItem={menuItem}
-                dataSource={dataSource}
-                objectType={objectType}
-                setAttributes={setAttributes}
-              />
-            : undefined
+          (menuItem) =>
+            <div className="tol-attribute-selector__tabs">
+              <Tabs defaultActiveKey="all">
+                <Tabs.Tab eventKey="all" title="All">
+                  {menuItem}
+                </Tabs.Tab>
+                {advanceTab && (
+                  <Tabs.Tab eventKey="advanced" title="Advanced Search">
+                    <AdvancedSearchTab
+                      dataSource={dataSource}
+                      objectType={objectType}
+                      setAttributes={
+                        setAttributes as React.Dispatch<React.SetStateAction<string[]>>
+                      }
+                    />
+                  </Tabs.Tab>
+                )}
+                {/* TODO If neither tab is available, don't show tabs */}
+              </Tabs>
+            </div>
         }
         renderValue={(values: string[]) => {
           return renderTotalSelectedItems(
