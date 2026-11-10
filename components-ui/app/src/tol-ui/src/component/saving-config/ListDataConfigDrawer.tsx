@@ -12,12 +12,15 @@ import {
   deepEqual,
   deepCopy,
   Drawer,
+  Icon,
+  Modal,
+  optimiseFieldMetaForSave,
   SelectedAttributesContainer,
   IRemoteTarget,
   PageSizePicker,
   Tabs,
 } from "../..";
-import type { IFieldMeta, TListDataConfigSave, TAdditionalOptionsContent } from "../..";
+import type { IFieldMeta, TListDataConfigSave, TAdditionalOptionsContent, TFieldOptionsContent } from "../..";
 
 /** Props for the `ListDataConfigDrawer`, optionally typed with component-specific options. */
 export type PListDataConfigDrawer<TAdditionalOptions> = IRemoteTarget & TListDataConfigSave<TAdditionalOptions> & {
@@ -31,6 +34,8 @@ export type PListDataConfigDrawer<TAdditionalOptions> = IRemoteTarget & TListDat
   onConfigSave: (config: TListDataConfigSave<TAdditionalOptions>) => void;
   /** Additional options to render within the drawer. */
   AdditionalOptionsContent?: ComponentType<TAdditionalOptionsContent<TAdditionalOptions>>;
+  /** Optional editor opened by each field's settings icon. */
+  FieldOptionsContent?: ComponentType<TFieldOptionsContent>;
 };
 
 /**
@@ -51,8 +56,10 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
     defaultPageSize,
     additionalOptions,
     AdditionalOptionsContent,
+    FieldOptionsContent,
   } = props;
 
+  const [optionsAttribute, setOptionsAttribute] = useState<string | null>(null);
   const [draftFieldMeta, setDraftFieldMeta] = useState<IFieldMeta>(() => ({
     ...deepCopy(fieldMeta),
     data: deepCopy(fieldMeta?.data ?? {}),
@@ -77,6 +84,7 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
   );
 
   useEffect(() => {
+    setOptionsAttribute(null);
     setDraftFieldMeta({
       ...deepCopy(fieldMeta),
       data: deepCopy(fieldMeta?.data ?? {}),
@@ -99,15 +107,24 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
     />
   );
 
-  const additionalIcons = [CellRendererConfigurerWrapper];
+  const FieldOptionsIcon = ({ attributeId }: { attributeId: string }) => (
+    <div className="tol-active-column-btn" onClick={() => setOptionsAttribute(attributeId)}>
+      <Icon icon="gear" tooltip="Field Options" />
+    </div>
+  );
+
+  const additionalIcons = [
+    CellRendererConfigurerWrapper,
+    ...(FieldOptionsContent ? [FieldOptionsIcon] : []),
+  ];
 
   const onSave = () => {
     if (hasPendingChanges) {
       onConfigSave({
-        fieldMeta: {
+        fieldMeta: optimiseFieldMetaForSave({
           ...draftFieldMeta,
           order: { ...draftFieldMeta.order, active: draftAttributes },
-        },
+        }),
         defaultSortByAttribute: draftSortByAttribute,
         defaultSortByType: draftSortByType,
         defaultPageSize: draftPageSize,
@@ -220,6 +237,20 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
       hasPendingChanges={hasPendingChanges}
     >
       {Content}
+      {FieldOptionsContent && optionsAttribute !== null && (
+        <Modal
+          size="xs"
+          open={open}
+          setOpen={() => setOptionsAttribute(null)}
+          header={<h4>Options</h4>}
+        >
+          <FieldOptionsContent
+            attributeId={optionsAttribute}
+            fieldMeta={draftFieldMeta}
+            setFieldMeta={setDraftFieldMeta}
+          />
+        </Modal>
+      )}
     </Drawer>
   );
 }

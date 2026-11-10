@@ -48,14 +48,17 @@ export function optimiseFieldMetaForSave(fieldMeta?: IFieldMeta): IFieldMeta {
 }
 
 /**
- * Looks up a field's metadata, preferring defaults over the field's own configuration.
+ * Merges a field's defaults with its explicit configuration, preferring explicit settings.
  *
  * @param fields - The field metadata to look up the attribute in.
  * @param attribute - The identifier of the field to look up.
- * @returns The field's metadata, or `undefined` if not present in either `dataWithDefaults` or `data`.
+ * @returns The merged metadata, or `undefined` if the field is absent from both maps.
  */
 export function getField(fields: IFieldMeta, attribute: string): TField | undefined {
-  return fields.data?.[attribute] ?? fields.dataWithDefaults?.[attribute];
+  const defaults = fields.dataWithDefaults?.[attribute];
+  const configured = fields.data?.[attribute];
+  if (!defaults && !configured) return undefined;
+  return { ...defaults, ...configured };
 }
 
 /**
