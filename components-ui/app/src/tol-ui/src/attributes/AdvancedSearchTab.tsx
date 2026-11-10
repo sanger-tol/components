@@ -22,6 +22,7 @@ export interface PAdvancedSearchTab extends IRemoteTarget {
   setAttributes: Dispatch<SetStateAction<string[]>>;
 }
 
+/** The contents of the "Advanced Search" tab in the AttributeSelector */
 export function AdvancedSearchTab(props: PAdvancedSearchTab) {
   const { objectType, dataSource, setAttributes } = props;
 
