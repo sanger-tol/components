@@ -93,10 +93,9 @@ export function AdvancedSearchTab(props: PAdvancedSearchTab) {
           E.g. 'relationship1.relationship2.attribute_name'"
           />
         </div>
-        <div className='tol-attribute-selector-advanced-search-tab__button'>
+        <div className="tol-attribute-selector-advanced-search-tab__button-wrapper">
           <Button
             {...BUTTONS.ADD}
-            className="tol-attribute-selector-advanced-search-tab__button"
             disabled={!isAttributeAvailable}
             disabledTooltip="Attribute not found"
           />
