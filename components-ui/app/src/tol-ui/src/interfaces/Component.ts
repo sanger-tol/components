@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from "react";
-import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, IListDataConfigSave, TCustomDataPointRenderers, TDataRecord, TDataRecordList } from "..";
+import type { IRemoteTargetAndZone, TUtilityBarOrNull, IFieldMeta, TListDataConfigSave, TCustomDataPointRenderers, TDataRecord, TDataRecordList, TDefaultAdditionalOptions } from "..";
 
 
 // TODO FUTURE: Remove IHeightDeprecated and migrate all components to use the height property in IComponentBase.
@@ -110,13 +110,14 @@ export interface IRemoteComponentData extends IRemoteComponentBase, IComponentFi
   customDataPointRenderers?: TCustomDataPointRenderers;
 }
 
-/** Interface for a remote component with list capabilities. */
-export interface IRemoteComponentDataList extends
-  IRemoteComponentData,
-  IRemoteTargetAndZone,
-  IPagination,
-  IDefaultSortBy,
-  IDefaultPageSize {
-  /** Persist configuration externally instead of reading or writing standalone local storage. */
-  onConfigSave?: (config: IListDataConfigSave) => void;
-}
+/** Props for a remote component with list capabilities, extended with its component-specific options. */
+export type TRemoteComponentDataList<TAdditionalOptions = TDefaultAdditionalOptions> =
+  IRemoteComponentData &
+  IRemoteTargetAndZone &
+  IPagination &
+  IDefaultSortBy &
+  IDefaultPageSize &
+  TAdditionalOptions & {
+    /** Callback to persist the component's configuration. */
+    onConfigSave?: (config: TListDataConfigSave<TAdditionalOptions>) => void;
+  };

@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { RemoteObjectDetail, RemoteTimeline, PVisualisationComponent, COMPONENT_TYPES, optimiseFieldMetaForSave, updateComponentConfigAndUpsert, useBoard } from "..";
-import type { IListDataConfigSave } from "..";
+import type { TListDataConfigSave } from "..";
 
 
 /** Props for the `BoardDataList` component. */
-export interface PBoardDataList extends PVisualisationComponent<IListDataConfigSave> {
+export interface PBoardDataList extends PVisualisationComponent<TListDataConfigSave> {
   /** Which underlying component `BoardDataList` should render. */
   type: typeof COMPONENT_TYPES.OBJECT_DETAIL | typeof COMPONENT_TYPES.TIMELINE;
 }
@@ -23,7 +23,7 @@ export function BoardDataList(props: PBoardDataList) {
   const { id, dataSource, objectType, zone, setZone, config, setConfig, boardDataSource, type } = props;
   const { editMode } = useBoard();
 
-  const onConfigSave = (updatedConfig: IListDataConfigSave) => {
+  const onConfigSave = (updatedConfig: TListDataConfigSave) => {
     const nextConfig = {
       ...config,
       ...updatedConfig,
@@ -33,7 +33,8 @@ export function BoardDataList(props: PBoardDataList) {
     updateComponentConfigAndUpsert(id, nextConfig, zone, boardDataSource, editMode);
   };
 
-  const fields = config?.fieldMeta ?? { order: { active: [] } };
+  const { fieldMeta, defaultPageSize, defaultSortByAttribute, defaultSortByType, ...additionalOptions } = config;
+  const fields = fieldMeta ?? { order: { active: [] } };
 
   let Component: JSX.ElementType = RemoteObjectDetail;
 
@@ -48,15 +49,16 @@ export function BoardDataList(props: PBoardDataList) {
 
   return (
     <Component
+      {...additionalOptions}
       id={id}
       dataSource={dataSource}
       objectType={objectType}
       zone={zone}
       setZone={setZone}
       fields={fields}
-      defaultPageSize={config.defaultPageSize}
-      defaultSortByAttribute={config.defaultSortByAttribute}
-      defaultSortByType={config.defaultSortByType}
+      defaultPageSize={defaultPageSize}
+      defaultSortByAttribute={defaultSortByAttribute}
+      defaultSortByType={defaultSortByType}
       onConfigSave={onConfigSave}
       utilityBarConfig={props.utilityBarConfig}
     />

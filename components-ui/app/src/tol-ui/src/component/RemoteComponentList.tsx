@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { cloneElement, ReactElement, useMemo, useRef, useState } from "react";
+import { cloneElement, ComponentType, ReactElement, useMemo, useRef, useState } from "react";
 import {
   ComponentList,
   createSort,
@@ -20,11 +20,12 @@ import {
   useBoard,
   useComponentListData,
 } from "..";
-import type { IComponentData, IFieldMeta, IListDataConfigSave, IRemoteComponentDataList, PButton, TDataObjectListOrNull } from "..";
+import type { IComponentData, IFieldMeta, TListDataConfigSave, TRemoteComponentDataList, PButton, TAdditionalOptionsContent, TDataObjectListOrNull } from "..";
 
 
 /** Props for the `RemoteComponentDataList` wrapper component. */
-export interface PRemoteComponentDataList extends IRemoteComponentDataList {
+export type PRemoteComponentDataList<TAdditionalOptions> =
+  TRemoteComponentDataList<TAdditionalOptions> & {
   /** The single top-level component to enhance with fetched data, e.g. an `<ObjectDetail />`. */
   children: ReactElement<IComponentData>;
   /** Whether to display the page size picker in the utility bar. Defaults to true. */
@@ -33,14 +34,18 @@ export interface PRemoteComponentDataList extends IRemoteComponentDataList {
   componentDefaultPageSize?: number;
   /** To adapt the fieldMeta for display purposes without affecting the underlying configuration. */
   manipulateViewableFieldMeta?: (fieldMeta: IFieldMeta, dataObjects?: TDataObjectListOrNull) => IFieldMeta;
-}
+  /** Editor for the component-specific options. */
+  AdditionalOptionsContent?: ComponentType<TAdditionalOptionsContent<TAdditionalOptions>>;
+};
 
 /**
  * Enhances a single top-level component with data fetched via `useComponentListData`.
  * Wraps the result in `RemoteComponentBase` to handle loading, error, and no-fields-selected states.
  * Also provides pagination controls and a record counter when applicable.
  */
-export function RemoteComponentDataList(props: PRemoteComponentDataList) {
+export function RemoteComponentDataList<TAdditionalOptions>(
+  props: PRemoteComponentDataList<TAdditionalOptions>,
+) {
   const {
     id,
     fields,
@@ -49,6 +54,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     page: initialPage,
     defaultPageSize,
     componentDefaultPageSize,
+    AdditionalOptionsContent,
     onConfigSave,
     pageSizePicker,
     children,
@@ -59,27 +65,35 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
 
   const { board, editMode } = useBoard();
   const [openConfig, setOpenConfig] = useState(false);
-  const [savedConfig, setSavedConfig] = useState<IListDataConfigSave>(() => {
-    return onConfigSave ? {} : getComponentConfigLocalStorage<IListDataConfigSave>(id) ?? {};
+  const [savedConfig, setSavedConfig] = useState<TListDataConfigSave<TAdditionalOptions>>(() => {
+    return (onConfigSave ? {} : getComponentConfigLocalStorage<TListDataConfigSave<TAdditionalOptions>>(id) ?? {}) as TListDataConfigSave<TAdditionalOptions>;
   });
 
   // External configuration (e.g. a board) must never inherit standalone saved settings.
-  const config: IListDataConfigSave = onConfigSave ? {} : savedConfig;
+  const config: TListDataConfigSave<TAdditionalOptions> = (onConfigSave ? {} : savedConfig) as TListDataConfigSave<TAdditionalOptions>;
+  const {
+    fieldMeta: configuredFieldMeta,
+    defaultSortByAttribute: savedDefaultSortByAttribute,
+    defaultSortByType: savedDefaultSortByType,
+    defaultPageSize: savedDefaultPageSize,
+    ...savedAdditionalOptions
+  } = config;
+  const configuredAdditionalOptions = savedAdditionalOptions as TAdditionalOptions;
 
   // Normalize the configured metadata from props/storage before passing it to the data hook.
   const activeFieldMeta = useMemo(
-    () => normaliseFieldMeta(config.fieldMeta ?? fields),
-    [config.fieldMeta, fields],
+    () => normaliseFieldMeta(configuredFieldMeta ?? fields),
+    [configuredFieldMeta, fields],
   );
 
   // Only a saved or passed-in default; the drawer shows no page size unless one is set.
-  const configuredDefaultPageSize = config.defaultPageSize ?? defaultPageSize;
+  const configuredDefaultPageSize = savedDefaultPageSize ?? defaultPageSize;
   // The component and global defaults are only a fallback for the page size state.
   const apiPageSize = configuredDefaultPageSize ?? componentDefaultPageSize ?? DEFAULT_PAGE_SIZE;
 
   // Use the first active field only for the API request when no explicit sort is configured.
-  const configuredDefaultSortByAttribute = config.defaultSortByAttribute ?? defaultSortByAttribute;
-  const configuredDefaultSortByType = config.defaultSortByType ?? defaultSortByType;
+  const configuredDefaultSortByAttribute = savedDefaultSortByAttribute ?? defaultSortByAttribute;
+  const configuredDefaultSortByType = savedDefaultSortByType ?? defaultSortByType;
   const apiSortByAttribute = configuredDefaultSortByAttribute ?? activeFieldMeta.order?.active?.[0];
   const apiSortByType = configuredDefaultSortByType ?? "asc";
 
@@ -116,13 +130,15 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
     defaultSortByAttribute: nextDefaultSortByAttribute,
     defaultSortByType: nextDefaultSortByType,
     defaultPageSize: nextDefaultPageSize,
-  }: IListDataConfigSave) => {
-    const nextConfig: IListDataConfigSave = {
+    ...nextAdditionalOptions
+  }: TListDataConfigSave<TAdditionalOptions>) => {
+    const nextConfig = {
       fieldMeta: nextFieldMeta ?? activeFieldMeta,
       defaultSortByAttribute: nextDefaultSortByAttribute ?? undefined,
       defaultSortByType: nextDefaultSortByType ?? undefined,
       defaultPageSize: nextDefaultPageSize,
-    };
+      ...nextAdditionalOptions,
+    } as TListDataConfigSave<TAdditionalOptions>;
     setPage(1);
     if (nextDefaultPageSize) setPageSize(nextDefaultPageSize);
     if (onConfigSave) {
@@ -169,10 +185,11 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         data={data}
         fields={fieldMeta}
       >
-        {children}
+        {cloneElement(children, configuredAdditionalOptions as Partial<IComponentData>)}
       </ComponentList>
     )
     : cloneElement(children, {
+      ...configuredAdditionalOptions,
       id,
       data: data[0] ?? {},
       fields: fieldMeta,
@@ -180,7 +197,7 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
 
   return (
     <div ref={parentRef} className="tol-remote-component-list" style={{ height }}>
-      <ListDataConfigDrawer
+      <ListDataConfigDrawer<TAdditionalOptions>
         {...props}
         open={openConfig}
         setOpen={setOpenConfig}
@@ -189,6 +206,8 @@ export function RemoteComponentDataList(props: PRemoteComponentDataList) {
         defaultSortByAttribute={configuredDefaultSortByAttribute}
         defaultSortByType={configuredDefaultSortByType}
         defaultPageSize={configuredDefaultPageSize}
+        additionalOptions={configuredAdditionalOptions}
+        AdditionalOptionsContent={AdditionalOptionsContent}
         onConfigSave={onSave}
       />
       {showCounter && (

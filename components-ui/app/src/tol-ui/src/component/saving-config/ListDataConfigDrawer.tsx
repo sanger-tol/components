@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useRef, useState } from "react";
+import { ComponentType, useEffect, useRef, useState } from "react";
 import {
   AttributeSelector,
   Button,
@@ -17,18 +17,21 @@ import {
   PageSizePicker,
   Tabs,
 } from "../..";
-import type { IFieldMeta, IListDataConfigSave } from "../..";
+import type { IFieldMeta, TListDataConfigSave, TAdditionalOptionsContent } from "../..";
 
-
-/** Props for the `ListDataConfigDrawer` component. */
-export interface PListDataConfigDrawer extends IRemoteTarget, IListDataConfigSave {
+/** Props for the `ListDataConfigDrawer`, optionally typed with component-specific options. */
+export type PListDataConfigDrawer<TAdditionalOptions> = IRemoteTarget & TListDataConfigSave<TAdditionalOptions> & {
   /** Whether the drawer is open. */
   open: boolean;
   /** Setter for toggling drawer open state. */
   setOpen: (open: boolean) => void;
+  /** Initial values for component-specific configuration options. */
+  additionalOptions?: TAdditionalOptions;
   /** Callback used to persist the updated field selection. */
-  onConfigSave: (config: IListDataConfigSave) => void;
-}
+  onConfigSave: (config: TListDataConfigSave<TAdditionalOptions>) => void;
+  /** Additional options to render within the drawer. */
+  AdditionalOptionsContent?: ComponentType<TAdditionalOptionsContent<TAdditionalOptions>>;
+};
 
 /**
  * ListDataConfigDrawer provides field selection, sorting, and renderer configuration
@@ -37,7 +40,7 @@ export interface PListDataConfigDrawer extends IRemoteTarget, IListDataConfigSav
  * Parameters are prefixed with draft as they represent the temporary state
  * of the configuration before it is saved.
  */
-export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
+export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigDrawer<TAdditionalOptions>) {
   const {
     open,
     setOpen,
@@ -46,6 +49,8 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
     defaultSortByAttribute,
     defaultSortByType,
     defaultPageSize,
+    additionalOptions,
+    AdditionalOptionsContent,
   } = props;
 
   const [draftFieldMeta, setDraftFieldMeta] = useState<IFieldMeta>(() => ({
@@ -58,13 +63,17 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
   const [draftSortByAttribute, setDraftSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
   const [draftSortByType, setDraftSortByType] = useState<string | undefined>(defaultSortByType);
   const [draftPageSize, setDraftPageSize] = useState<number | undefined>(defaultPageSize);
+  const [draftAdditionalOptions, setDraftAdditionalOptions] = useState<TAdditionalOptions>(
+    () => deepCopy(additionalOptions ?? {}) as TAdditionalOptions,
+  );
 
   const hasPendingChanges = (
     !deepEqual(draftAttributes, savedAttributesRef.current) ||
     !deepEqual(draftFieldMeta, fieldMeta) ||
     defaultSortByAttribute !== draftSortByAttribute ||
     defaultSortByType !== draftSortByType ||
-    defaultPageSize !== draftPageSize
+    defaultPageSize !== draftPageSize ||
+    !deepEqual(draftAdditionalOptions, additionalOptions ?? {})
   );
 
   useEffect(() => {
@@ -74,11 +83,12 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
       dataWithDefaults: deepCopy(fieldMeta?.dataWithDefaults ?? {}),
     });
     setDraftAttributes(fieldMeta?.order?.active ?? []);
-    savedAttributesRef.current =  fieldMeta?.order?.active ?? [];
+    savedAttributesRef.current = fieldMeta?.order?.active ?? [];
     setDraftSortByAttribute(defaultSortByAttribute);
     setDraftSortByType(defaultSortByType);
     setDraftPageSize(defaultPageSize);
-  }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta, defaultPageSize]);
+    setDraftAdditionalOptions(deepCopy(additionalOptions ?? {}) as TAdditionalOptions);
+  }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta, defaultPageSize, additionalOptions]);
 
   const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
     <CellRendererConfigurer
@@ -101,6 +111,7 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
         defaultSortByAttribute: draftSortByAttribute,
         defaultSortByType: draftSortByType,
         defaultPageSize: draftPageSize,
+        ...draftAdditionalOptions,
       });
     }
   };
@@ -149,6 +160,13 @@ export function ListDataConfigDrawer(props: PListDataConfigDrawer) {
         sticky
       />
       {draftSortByAttribute && SortByButtons}
+      {AdditionalOptionsContent && (
+        <AdditionalOptionsContent
+          {...props}
+          additionalOptions={draftAdditionalOptions}
+          setAdditionalOptions={setDraftAdditionalOptions}
+        />
+      )}
     </>
   );
 
