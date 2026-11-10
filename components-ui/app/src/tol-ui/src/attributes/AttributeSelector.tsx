@@ -19,6 +19,7 @@ import {
   isRelationshipField,
   MenuItem,
   MultipleSelect,
+  MyFieldsTab,
   normaliseCaps,
   PROVENANCE_IN_FIELD_REGEX,
   PROVENANCE_IN_FIELD_REGEX_GLOBAL,
@@ -87,6 +88,8 @@ export function AttributeSelector(props: PAttributeSelector) {
     localStorage.getItem("attribute-selector-recommended-columns") === "true"
   );
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
+  // TODO Fetch somehow. User permissions?
+  const [showMyFieldsTab, setShowMyFieldsTab] = useState<boolean>(true);
 
   const placeholder = maxSelections && maxSelections === 1
     ? "Select an attribute"
@@ -207,7 +210,7 @@ export function AttributeSelector(props: PAttributeSelector) {
         }}
         renderMenuItem={(l: any, index: number) => RenderMenuItem(l, index)}
         renderMenu={
-          (menuItem) =>
+          advanceTab || showMyFieldsTab ? (menuItem) =>
             <div className="tol-attribute-selector__tabs">
               <Tabs defaultActiveKey="all">
                 <Tabs.Tab eventKey="all" title="All">
@@ -224,9 +227,14 @@ export function AttributeSelector(props: PAttributeSelector) {
                     />
                   </Tabs.Tab>
                 )}
-                {/* TODO If neither tab is available, don't show tabs */}
+                {showMyFieldsTab && (
+                  <Tabs.Tab eventKey="myFields" title="My Fields">
+                    <MyFieldsTab />
+                  </Tabs.Tab>
+                )}
               </Tabs>
             </div>
+          : undefined
         }
         renderValue={(values: string[]) => {
           return renderTotalSelectedItems(
