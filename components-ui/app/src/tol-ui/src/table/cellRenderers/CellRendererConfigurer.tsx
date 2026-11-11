@@ -51,13 +51,13 @@ export function CellRendererConfigurer(props: PCellRendererConfigurer) {
   );
 
   return (
-    <div>
+    <>
       {ConfigureCellRendererOpenIcon}
       <CellRendererModal
         {...props}
         open={modelOpen}
         setOpen={setModalOpen}
       />
-    </div>
+    </>
   )
 }

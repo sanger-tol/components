@@ -12,8 +12,8 @@ import {
   deepEqual,
   deepCopy,
   Drawer,
+  FieldOptionsModal,
   Icon,
-  Modal,
   optimiseFieldMetaForSave,
   SelectedAttributesContainer,
   IRemoteTarget,
@@ -108,7 +108,9 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
   );
 
   const FieldOptionsIcon = ({ attributeId }: { attributeId: string }) => (
-    <div className="tol-active-column-btn" onClick={() => setOptionsAttribute(attributeId)}>
+    <div className="tol-active-column-btn" onClick={() => {
+      setOptionsAttribute(attributeId);
+    }}>
       <Icon icon="gear" tooltip="Field Options" />
     </div>
   );
@@ -216,12 +218,12 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
   const Content = (
     <Tabs defaultActiveKey="fields">
       <Tabs.Tab eventKey="fields" title="Fields">
-        <section className="tol-section-spacing-top">
+        <section className="tol-mt-md">
           {FieldsContent}
         </section>
       </Tabs.Tab>
       <Tabs.Tab eventKey="options" title="Options">
-        <section className="tol-section-spacing-top">
+        <section className="tol-mt-md">
           {OptionsContent}
         </section>
       </Tabs.Tab>
@@ -238,18 +240,15 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
     >
       {Content}
       {FieldOptionsContent && optionsAttribute !== null && (
-        <Modal
-          size="xs"
-          open={open}
+        <FieldOptionsModal
+          {...props}
+          open={optionsAttribute !== null}
           setOpen={() => setOptionsAttribute(null)}
-          header={<h4>Options</h4>}
-        >
-          <FieldOptionsContent
-            attributeId={optionsAttribute}
-            fieldMeta={draftFieldMeta}
-            setFieldMeta={setDraftFieldMeta}
-          />
-        </Modal>
+          FieldOptionsContent={FieldOptionsContent}
+          attributeId={optionsAttribute}
+          fieldMeta={draftFieldMeta}
+          setFieldMeta={setDraftFieldMeta}
+        />
       )}
     </Drawer>
   );
