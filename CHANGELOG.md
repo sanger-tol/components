@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 
 - Add custom options to config drawers
 - Add component wide options to Board Cards
+- Correct filter pass through on boards
 
 ## tol-ui `6.3.0`
 
