@@ -13,7 +13,6 @@ import {
   enterEditMode,
   exitEditMode,
   isInHeadlessMode,
-  sleep
 } from "../../helpers";
 
 test.use({ headless: isInHeadlessMode });
@@ -40,18 +39,19 @@ const addTextToTextComponent = async (page: Page, textComponent: Locator) => {
   // click into the markdown editor and type text to simulate real user input
   await markdownEditor.click();
   await page.keyboard.type("Test Text", { delay: 10 });
-  await sleep(page, 1_000);
   await expect(markdownEditor).toHaveValue("Test Text");
 
   // click the preview button
   await clickUtilityBarButton(page, textComponent, "preview-markdown");
 
   // Check the text is in both of the expected places
-  await expect(textComponent.locator("textarea")).toHaveText("Test Text");
+  await expect(markdownEditor).toHaveValue("Test Text");
   await expect(textComponent.locator("p")).toHaveText("Test Text");
 
   // save
   await clickUtilityBarButton(page, textComponent, "save-markdown");
+  await expect(markdownEditor).toHaveCount(0);
+  await expect(textComponent.locator("p")).toHaveText("Test Text");
 };
 
 test("manage dashboard", async ({ page }) => {
