@@ -23,10 +23,6 @@ test.beforeEach(async ({ page }) => {
   await enterEditMode(page);
 });
 
-test.afterEach(async ({ page }) => {
-  await exitEditMode(page);
-});
-
 /**
  * Adds text to an empty Text component
  * @param page The Playwright page handle
@@ -44,9 +40,13 @@ const addTextToTextComponent = async (page: Page, textComponent: Locator) => {
   // click the preview button
   await clickUtilityBarButton(page, textComponent, "preview-markdown");
 
-  // Check the text is in both of the expected places
-  await expect(markdownEditor).toHaveValue("Test Text");
+  // Preview layouts can hide or unmount the textarea on small components.
   await expect(textComponent.locator("p")).toHaveText("Test Text");
+
+  // Return to editing and check that previewing preserved the content.
+  await clickUtilityBarButton(page, textComponent, "preview-markdown");
+  await expect(markdownEditor).toBeVisible();
+  await expect(markdownEditor).toHaveValue("Test Text");
 
   // save
   await clickUtilityBarButton(page, textComponent, "save-markdown");
@@ -59,4 +59,5 @@ test("manage dashboard", async ({ page }) => {
   await addTextToTextComponent(page, page.getByTestId("board-component-text"));
   await deleteComponent(page, page.getByTestId("board-component-text"), "text");
   await expect(page.locator(".tol-markdown-viewer")).not.toBeVisible();
+  await exitEditMode(page);
 });
