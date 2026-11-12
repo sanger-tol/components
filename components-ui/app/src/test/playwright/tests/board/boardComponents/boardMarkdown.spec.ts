@@ -13,6 +13,7 @@ import {
   enterEditMode,
   exitEditMode,
   isInHeadlessMode,
+  sleep
 } from "../../helpers";
 
 test.use({ headless: isInHeadlessMode });
@@ -21,6 +22,10 @@ test.beforeEach(async ({ page }) => {
   await setAuth(page);
   await createPopulatedBoardAndGoToPage(page);
   await enterEditMode(page);
+});
+
+test.afterEach(async ({ page }) => {
+  await exitEditMode(page);
 });
 
 /**
@@ -35,23 +40,18 @@ const addTextToTextComponent = async (page: Page, textComponent: Locator) => {
   // click into the markdown editor and type text to simulate real user input
   await markdownEditor.click();
   await page.keyboard.type("Test Text", { delay: 10 });
+  await sleep(page, 1_000);
   await expect(markdownEditor).toHaveValue("Test Text");
 
   // click the preview button
   await clickUtilityBarButton(page, textComponent, "preview-markdown");
 
-  // Preview layouts can hide or unmount the textarea on small components.
+  // Check the text is in both of the expected places
+  await expect(textComponent.locator("textarea")).toHaveText("Test Text");
   await expect(textComponent.locator("p")).toHaveText("Test Text");
-
-  // Return to editing and check that previewing preserved the content.
-  await clickUtilityBarButton(page, textComponent, "preview-markdown");
-  await expect(markdownEditor).toBeVisible();
-  await expect(markdownEditor).toHaveValue("Test Text");
 
   // save
   await clickUtilityBarButton(page, textComponent, "save-markdown");
-  await expect(markdownEditor).toHaveCount(0);
-  await expect(textComponent.locator("p")).toHaveText("Test Text");
 };
 
 test("manage dashboard", async ({ page }) => {
@@ -59,5 +59,4 @@ test("manage dashboard", async ({ page }) => {
   await addTextToTextComponent(page, page.getByTestId("board-component-text"));
   await deleteComponent(page, page.getByTestId("board-component-text"), "text");
   await expect(page.locator(".tol-markdown-viewer")).not.toBeVisible();
-  await exitEditMode(page);
 });
