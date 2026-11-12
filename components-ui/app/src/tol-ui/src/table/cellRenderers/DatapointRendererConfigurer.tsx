@@ -95,7 +95,7 @@ export function DatapointRendererConfigurer(props: PDatapointRendererConfigurer)
   );
 
   const RendererHelp = (
-    <p>
+    <p className="tol-mt-md">
       Please be aware that the selected Cell Renderer works on a current Data Object. Find out more:
       <span className="tol-data-point-renderer-info">
         <IconTooltip contents={TooltipHelp} />
