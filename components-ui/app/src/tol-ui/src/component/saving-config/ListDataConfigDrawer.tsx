@@ -19,7 +19,12 @@ import {
   PageSizePicker,
   Tabs,
 } from "../..";
-import type { IFieldMeta, TListDataConfigSave, TAdditionalOptionsContent, TFieldOptionsContent } from "../..";
+import type {
+  IFieldMeta,
+  TListDataConfigSave,
+  TAdditionalOptionsContent,
+  TFieldOptionsContent,
+} from "../..";
 
 /** Props for the `ListDataConfigDrawer`, optionally typed with component-specific options. */
 export type PListDataConfigDrawer<TAdditionalOptions> = IRemoteTarget & TListDataConfigSave<TAdditionalOptions> & {
@@ -98,11 +103,13 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
   }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta, defaultPageSize, additionalOptions]);
 
   const FieldOptionsIcon = ({ attributeId }: { attributeId: string }) => (
-    <div className="tol-active-column-btn" onClick={() => {
-      setOptionsAttribute(attributeId);
-    }}>
-      <Icon icon="gear" tooltip="Field Options" />
-    </div>
+    <Icon
+      icon="gear"
+      tooltip="Field Options"
+      className="tol-active-column-btn"
+      aria-label={`Field options for ${attributeId}`}
+      onClick={() => setOptionsAttribute(attributeId)}
+    />
   );
 
   const additionalIcons = FieldOptionsContent ? [FieldOptionsIcon] : [];

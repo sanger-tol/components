@@ -5,7 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { ComponentType, useState } from "react";
-import { AttributeTitle, DatapointRendererConfigurer, FIELD_SETTINGS_TAB_STORAGE_KEY, Modal, Tabs } from "../..";
+import {
+  AttributeTitle,
+  DatapointRendererConfigurer,
+  FIELD_SETTINGS_TAB_STORAGE_KEY,
+  Modal,
+  Tabs,
+} from "../..";
 import type { IRemoteTarget, TFieldOptionsContent } from "../..";
 
 

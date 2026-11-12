@@ -36,12 +36,13 @@ export function DatapointRendererConfigurerControl(props: PDatapointRendererConf
 
   return (
     <>
-      <div
+      <Icon
+        icon="palette"
+        tooltip="Configure DataPoint Renderer"
         className={`tol-active-column-btn tol-palette-icon${rendererExists ? " active" : ""}`}
+        aria-label={`Configure datapoint renderer for ${attributeId}`}
         onClick={() => setModalOpen(true)}
-      >
-        <Icon icon="palette" tooltip="Configure DataPoint Renderer" />
-      </div>
+      />
       <Modal
         open={modalOpen}
         setOpen={setModalOpen}

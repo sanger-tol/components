@@ -58,11 +58,11 @@
   cursor: default !important;
 }
 
-.tol-active-column-btn:hover {
+.tol-active-column-btn:hover:not(:disabled) {
   color: var(--tol-primary);
 }
 
-.tol-active-column-btn.delete:hover {
+.tol-active-column-btn.delete:hover:not(:disabled) {
   color: var(--tol-danger);
 }
 
