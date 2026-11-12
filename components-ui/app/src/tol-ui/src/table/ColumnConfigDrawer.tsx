@@ -9,7 +9,7 @@ import { Toggle } from "rsuite";
 import {
   AttributeSelector,
   Button,
-  CellRendererConfigurer,
+  DatapointRendererConfigurerControl,
   ConfigDrawerTabs,
   deepCopy,
   Drawer,
@@ -210,8 +210,8 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
     </div>
   );
 
-  const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
-    <CellRendererConfigurer
+  const DatapointRendererConfigurerControlWrapper = ({ attributeId }: { attributeId: string }) => (
+    <DatapointRendererConfigurerControl
       {...props}
       attributeId={attributeId}
       fieldMeta={newFieldMeta!}
@@ -220,7 +220,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   );
 
   const additionalIcons = [
-    CellRendererConfigurerWrapper,
+    DatapointRendererConfigurerControlWrapper,
   ];
 
   const resetButton: PButton = {

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { ComponentType, useState } from "react";
-import { AttributeTitle, FIELD_SETTINGS_TAB_STORAGE_KEY, Modal, Tabs } from "../..";
+import { AttributeTitle, DatapointRendererConfigurer, FIELD_SETTINGS_TAB_STORAGE_KEY, Modal, Tabs } from "../..";
 import type { IRemoteTarget, TFieldOptionsContent } from "../..";
 
 
@@ -23,9 +23,9 @@ export interface PFieldOptionsModal extends IRemoteTarget, TFieldOptionsContent 
  * Renders field-specific settings in a modal with Renderer and Options tabs.
  */
 export function FieldOptionsModal(props: PFieldOptionsModal) {
+  const { setOpen: setModalOpen, ...rendererProps } = props;
   const {
     open,
-    setOpen,
     objectType,
     dataSource,
     attributeId,
@@ -65,7 +65,7 @@ export function FieldOptionsModal(props: PFieldOptionsModal) {
     <Modal
       size="sm"
       open={open}
-      setOpen={setOpen}
+      setOpen={setModalOpen}
       header={Header}
     >
       <div className="tol-min-h-3xl">
@@ -76,7 +76,9 @@ export function FieldOptionsModal(props: PFieldOptionsModal) {
             setFieldMeta={setFieldMeta}
           />
         ) : (
-          <p>Cell renderer configuration will be available here.</p>
+          <DatapointRendererConfigurer
+            {...rendererProps}
+          />
         )}
       </div>
     </Modal>

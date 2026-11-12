@@ -8,7 +8,6 @@ import { ComponentType, useEffect, useRef, useState } from "react";
 import {
   AttributeSelector,
   Button,
-  CellRendererConfigurer,
   deepEqual,
   deepCopy,
   Drawer,
@@ -98,15 +97,6 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
     setDraftAdditionalOptions(deepCopy(additionalOptions ?? {}) as TAdditionalOptions);
   }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta, defaultPageSize, additionalOptions]);
 
-  const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
-    <CellRendererConfigurer
-      {...props}
-      attributeId={attributeId}
-      fieldMeta={draftFieldMeta}
-      setFieldMeta={setDraftFieldMeta}
-    />
-  );
-
   const FieldOptionsIcon = ({ attributeId }: { attributeId: string }) => (
     <div className="tol-active-column-btn" onClick={() => {
       setOptionsAttribute(attributeId);
@@ -115,10 +105,7 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
     </div>
   );
 
-  const additionalIcons = [
-    CellRendererConfigurerWrapper,
-    ...(FieldOptionsContent ? [FieldOptionsIcon] : []),
-  ];
+  const additionalIcons = FieldOptionsContent ? [FieldOptionsIcon] : [];
 
   const onSave = () => {
     if (hasPendingChanges) {
