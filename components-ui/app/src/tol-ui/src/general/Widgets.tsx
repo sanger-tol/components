@@ -7,8 +7,6 @@ SPDX-License-Identifier: MIT
 import {
   Row,
   Col,
-  getCssVarValue,
-  themeListener,
   IWidgetsComponent,
   getSm,
   getLg,
@@ -25,15 +23,6 @@ export interface PWidgets {
 
 export function Widgets(props: PWidgets) {
   const { components } = props;
-
-  themeListener(() => {
-    try {
-      const backing = document.getElementById("tol-smart-app-background");
-      backing!.style.backgroundColor = getCssVarValue("--tol-bg-dark");
-    } catch {
-      return;
-    }
-  });
 
   return (
     <div>

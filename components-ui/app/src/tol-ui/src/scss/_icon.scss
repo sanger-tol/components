@@ -4,6 +4,21 @@
  * SPDX-License-Identifier: MIT
  */
 
+button.tol-icon {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+
+  &:disabled {
+    color: var(--tol-grey);
+    cursor: not-allowed;
+  }
+}
+
 kbd {
   padding: 0.1rem 0.35rem;
   border: var(--tol-border-grey);
