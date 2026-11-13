@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import type { Dispatch, SetStateAction } from "react";
 import type { IFieldMeta, IDefaultPageSize, IDefaultSortBy, HistogramGrouping } from "..";
 import {
   CHART_TYPES,
@@ -33,6 +34,16 @@ export interface TAdditionalOptionsContent<TAdditionalOptions> {
   additionalOptions: TAdditionalOptions;
   /** Updates the component-specific option draft. */
   setAdditionalOptions: (options: TAdditionalOptions) => void;
+}
+
+/** Props for content that edits a selected field's draft options. */
+export interface TFieldOptionsContent {
+  /** Identifier of the field being configured. */
+  attributeId: string;
+  /** Draft field metadata shared with the configuration drawer. */
+  fieldMeta: IFieldMeta;
+  /** Updates the draft metadata without persisting it until the drawer is saved. */
+  setFieldMeta: Dispatch<SetStateAction<IFieldMeta>>;
 }
 
 /** Configuration for board charts. */
