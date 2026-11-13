@@ -188,12 +188,5 @@ export function DatapointRendererConfigurer(props: PDatapointRendererConfigurer)
     />
   ) : null;
 
-  const Content = selectedParameter ? (
-    <>
-      <hr />
-      {SecondPage}
-    </>
-  ) : FirstPage;
-
-  return Content;
+  return selectedParameter ? SecondPage : FirstPage;
 }
