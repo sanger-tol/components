@@ -46,7 +46,7 @@ export function FormCheckboxes(props: PFormCheckboxes) {
 
   return (
     <div style={{ display: hidden ? "none" : "block" }}>
-      <FormComponentWrapper {...props}>
+      <FormComponentWrapper {...props} value={checkedItems}>
         <CheckboxGroup
           id={id}
           name={`${id}-checkbox-group`}

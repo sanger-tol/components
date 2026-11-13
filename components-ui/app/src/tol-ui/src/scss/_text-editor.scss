@@ -154,10 +154,16 @@
   min-height: 0;
 }
 
+.tol-text-editor__placeholder,
+.tiptap.tol-text-editor__content {
+  padding: var(--tol-spacing-sm);
+  font-size: inherit;
+  line-height: 1.5;
+}
+
 .tol-text-editor__placeholder {
   position: absolute;
   inset: 0;
-  padding: 0.5rem 1rem;
   color: var(--tol-text-subtle);
   pointer-events: none;
   user-select: none;
@@ -170,7 +176,15 @@
 
 .tiptap.tol-text-editor__content {
   min-height: 100%;
-  padding: 0.75rem 1rem;
+
+  > p {
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  > :first-child {
+    margin-top: 0;
+  }
 
   &:focus,
   &:focus-visible,
@@ -237,6 +251,6 @@
   }
 
   .tiptap.tol-text-editor__content {
-    padding: 0.5rem 0.75rem;
+    padding: var(--tol-spacing-sm);
   }
 }

@@ -5,52 +5,48 @@ SPDX-License-Identifier: MIT
 */
 
 export interface IUseScrollSpyResult {
-  /**
-   * The sub-section of the editor that is currently active based on the user's
-   * scroll position.
-   */
+  /** The sub-section currently active based on the user's scroll position. */
   activeSubSection?: string;
-  /**
-   * Function to scroll the editor to a specific anchor ID.
-   */
+  /** Smoothly scrolls the container to the sub-section containing `anchorId`. */
   scrollToAnchor: (anchorId: string) => void;
 }
 
 export interface IUseScrollSpyArgs {
-  /** The key of the currently active section in the editor. */
-  activeKey: string;
+  /** Ordered nav items, matching the order they are rendered in the DOM. */
+  items: IScrollNavItem[];
+  /** DOM id of the scrollable container that holds the anchors. */
+  containerId: string;
+  /** Value written to the section query param while active. */
+  sectionKey?: string;
+  /** Query param used to store the active section. Omit to skip it. */
+  sectionParam?: string;
+  /** Query param used to store the active sub-section. Omit to skip URL syncing. */
+  subSectionParam?: string;
+  /** Only the active scroll spy reads from or writes to the URL. Defaults to `true`. */
+  active?: boolean;
 }
 
 export interface IScrollNavItem {
-  /**
-   * The unique identifier for the navigation item, typically used as an anchor in the DOM.
-   */
+  /** DOM id of the element the nav item scrolls to. */
   anchorId: string;
-  /**
-   * The display name of the navigation item, shown in the UI.
-   */
+  /** Sub-section the item belongs to. */
   subSection: string;
-  /**
-   * The field associated with the navigation item, used for linking to specific sections of the content.
-   */
+  /** Name of the field associated with the item. */
   field: string;
-  /**
-   * The index of the navigation item, indicating its position in the list of items.
-   */
+  /** Position of the field within the form config. */
   index: number;
 }
 
 export interface IScrollNavGroup {
-  /**
-   * The unique identifier for the navigation group, typically used as an anchor in the DOM.
-   */
+  /** Sub-section identifier, as referenced by each field's `section` property. */
   subSection: string;
-  /**
-   * The list of fields associated with the navigation group, each containing a field name and its index.
-   * This allows for grouping related fields together under a common sub-section in the navigation.
-   * Each field object contains:
-   * - `field`: The name of the field.
-   * - `index`: The position of the field within the group.
-   */
-  fields: { field: { name: string; label: string }; index: number }[];
+  /** Display label for the sub-section. */
+  label: string;
+  /** Ordered fields within the sub-section. */
+  fields: {
+    anchorId: string;
+    label: string;
+    name: string;
+    index: number;
+  }[];
 }

@@ -41,6 +41,14 @@ export function FormTextField(props: PFormTextField) {
     icon,
     labelInline,
     errorText,
+    automatic,
+    recommended,
+    requiredAsText,
+    section,
+    multiple,
+    minOne,
+    onMinus,
+    rowButton,
     ...controlProps
   } = props;
 

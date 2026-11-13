@@ -96,6 +96,8 @@ export interface IFormComponent {
   readOnly?: boolean;
   /** Marks a field as generated automatically. */
   automatic?: boolean;
+  /** Shows a Recommended subtitle when the field is editable and not automatic. */
+  recommended?: boolean;
   /**
    * Whether the form field is required. If true, the user must provide a value for the field before submitting the form.
    * This will also display a red asterisk next to the label.
@@ -289,11 +291,37 @@ export interface ICheckboxFormField extends IFormComponent {
   defaultChecked?: string[];
 }
 
+export interface IFormScrollNavConfig {
+  /** Defaults to `true` when a config object is supplied. */
+  enabled?: boolean;
+  /** Identifies the form in anchor/container ids and the section query param. Defaults to `"form"`. */
+  key?: string;
+  /** Heading shown above the scrollable form. */
+  title?: string;
+  /** Whether the side navigation starts expanded. Defaults to `false`. */
+  defaultOpen?: boolean;
+  /**
+   * Whether this form currently owns the URL query params, e.g. when it is
+   * the visible tab. Defaults to `true`.
+   */
+  active?: boolean;
+  /** Whether to mirror the section/sub-section in the URL. Defaults to `true`. */
+  syncUrl?: boolean;
+  /** Query param used to store the active form section in the URL. Defaults to `"s"`. */
+  sectionParam?: string;
+  /** Query param used to store the active sub-section in the URL. Defaults to `"sub"`. */
+  subSectionParam?: string;
+}
+
 export interface IFormOptions {
+  /** Whether to display form labels inline with their fields. */
   inlineLabels?: boolean;
+  /** Whether to display required fields as text instead of using an asterisk. */
   requiredAsText?: boolean;
   /** Prevent editing all fields while retaining their values. */
   locked?: boolean;
+  /** Optional on-page scroll navigation for form sections and grouped fields. */
+  scrollNav?: boolean | IFormScrollNavConfig;
 }
 
 export type IFormSection = {

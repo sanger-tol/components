@@ -12,6 +12,8 @@ import { FormOptionsContext } from "./FormOptionsContext";
 import { AUTOMATIC_FIELD_HELP_TEXT } from "../constants/form.constants";
 
 export interface PFormComponentWrapper extends TFormComponentWrapper {
+  /** Current field value, used to distinguish empty locked fields. */
+  value?: unknown;
   /**
    * The name of the form field. This is used to identify the field in the form data.
    */
@@ -60,6 +62,8 @@ export function FormComponentWrapper(props: PFormComponentWrapper) {
     requiredAsText,
     readOnly,
     automatic,
+    recommended,
+    value,
   } = props;
   const inline = formOptions.inlineLabels || labelInline;
 
@@ -89,6 +93,8 @@ export function FormComponentWrapper(props: PFormComponentWrapper) {
             requiredAsText={requiredAsText}
             readOnly={readOnly}
             automatic={automatic}
+            recommended={recommended}
+            value={value}
           />
           {automatic ? (
             <AutomaticControlWrapper className="tol-form-automatic-control">

@@ -31,6 +31,10 @@ import {
   FormComponentWrapper,
   FormTextArea,
   READ_ONLY_FIELD_PLACEHOLDER,
+  FormScrollNavLayout,
+  getNavGroups,
+  resolveScrollNavConfig,
+  withFieldAnchorIds,
 } from "..";
 
 import type {
@@ -52,6 +56,7 @@ import type {
   IFormSearchConfig,
 } from "..";
 import { FormOptionsContext } from "./FormOptionsContext";
+import { isEmptyFieldValue } from "./utils";
 
 export interface PFormAllInOne<TResult extends object = Record<string, unknown>> {
   formConfig: IFormConfig;
@@ -63,6 +68,12 @@ export interface PFormAllInOne<TResult extends object = Record<string, unknown>>
   onUnsavedChanges?: (hasUnsavedChanges: boolean) => void;
   onValidate?: (isValid: boolean) => void;
   onSubmit?: (formData: object, isValid: boolean) => void;
+  /** Shown beside the scroll-nav title. Requires `options.scrollNav`. */
+  titleAdornment?: React.ReactNode;
+  /** Shown above the form inside the scroll container. Requires `options.scrollNav`. */
+  contentHeader?: React.ReactNode;
+  /** Shown below the scroll container. Requires `options.scrollNav`. */
+  footer?: React.ReactNode;
 }
 
 /** Renders a configured form with optional search-first lookup and manual-entry controls. */
@@ -93,6 +104,10 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
   const formRef = useRef<any>(null);
   const defaultModel = Schema.Model({});
   const formLocked = formConfig.options?.locked ?? false;
+  const scrollNav = resolveScrollNavConfig(formConfig.options?.scrollNav);
+  const fields = scrollNav
+    ? withFieldAnchorIds(formConfig.fields, scrollNav.key)
+    : formConfig.fields;
   const sectionsById = new Map(
     formConfig.sections?.map((section) => [section.id, section]),
   );
@@ -234,22 +249,6 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         (field.section && sectionsById.get(field.section)?.locked),
     );
 
-  const isEmptyFieldValue = (value: unknown): boolean => {
-    if (value === undefined || value === null || value === "") {
-      return true;
-    }
-    if (Array.isArray(value)) {
-      return value.length === 0;
-    }
-    if (
-      typeof value === "object" &&
-      Object.getPrototypeOf(value) === Object.prototype
-    ) {
-      return Object.values(value).every(isEmptyFieldValue);
-    }
-    return false;
-  };
-
   const renderField = (field: TFormField) => {
     if (!field) {
       return null;
@@ -315,6 +314,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
             id={formId}
             {...singleselectField}
             readOnly={readOnly}
+            value={formData[singleselectField.name]}
             placeholder={placeholder}
             errorText={errorText}
           >
@@ -462,7 +462,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
   };
 
   const uniqueSections = Array.from(
-    new Set(formConfig.fields.map((field) => field.section)),
+    new Set(fields.map((field) => field.section)),
   )
     .filter((section) => section !== undefined)
     .map((section) => section as string);
@@ -525,10 +525,13 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                         )}
                       </h5>
                     </div>
-                    {formConfig.fields
+                    {fields
                       .filter((field) => field.section === section)
                       .map((field: any) => (
-                        <div key={`${field.id ?? formId}-${field.name}`}>
+                        <div
+                          key={`${field.id ?? formId}-${field.name}`}
+                          id={field.multiple ? field.id : undefined}
+                        >
                           {field.multiple ? (
                             <MultipleFormInput
                               renderField={renderField}
@@ -545,7 +548,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                             />
                           ) : (
                             <div
-                              id={`${field.id}`}
+                              id={field.id}
                               key={`${field.id ?? formId}-${field.name}`}
                               className={`tol-form-wrapper-unique-sections-field ${
                                 inlineLabels || field.labelInline
@@ -562,7 +565,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                 </FormOptionsContext.Provider>
               );
             })}
-            {formConfig.fields.some((field) => !field.section) && (
+            {fields.some((field) => !field.section) && (
               <div
                 key="section-misc"
                 id="section-misc"
@@ -571,10 +574,13 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                 <div className="tol-form-wrapper-unique-sections-header">
                   <h5>{normaliseCaps("Misc")}</h5>
                 </div>
-                {formConfig.fields
+                {fields
                   .filter((field) => !field.section)
                   .map((field: any) => (
-                    <div key={`${formId}-${field.name}`}>
+                    <div
+                      key={`${formId}-${field.name}`}
+                      id={field.multiple ? field.id : undefined}
+                    >
                       {field.multiple ? (
                         <MultipleFormInput
                           renderField={renderField}
@@ -591,7 +597,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                         />
                       ) : (
                         <div
-                          id={`${field.id}`}
+                          id={field.id}
                           key={`${field.id ?? formId}-${field.name}`}
                           className={`tol-form-wrapper-unique-sections-field ${
                             inlineLabels || field.labelInline
@@ -608,8 +614,11 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
             )}
           </>
         ) : showFields ? (
-          formConfig.fields.map((field: any) => (
-            <div key={`${formId}-${field.name}`}>
+          fields.map((field: any) => (
+            <div
+              key={`${formId}-${field.name}`}
+              id={field.multiple ? field.id : undefined}
+            >
               {field.multiple ? (
                 <MultipleFormInput
                   renderField={renderField}
@@ -626,7 +635,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                 />
               ) : (
                 <div
-                  id={`${field.id}`}
+                  id={field.id}
                   key={`${field.id ?? formId}-${field.name}`}
                   className={`tol-form-wrapper-unique-sections-field ${inlineLabels || field.labelInline ? "tol-form-field-inline" : ""}`}
                 >
@@ -683,7 +692,19 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
 
   return (
     <FormOptionsContext.Provider value={formConfig.options ?? {}}>
-      {formContent}
+      {scrollNav ? (
+        <FormScrollNavLayout
+          config={scrollNav}
+          groups={showFields ? getNavGroups(fields, formConfig.sections) : []}
+          titleAdornment={props.titleAdornment}
+          contentHeader={props.contentHeader}
+          footer={props.footer}
+        >
+          {formContent}
+        </FormScrollNavLayout>
+      ) : (
+        formContent
+      )}
     </FormOptionsContext.Provider>
   );
 }

@@ -80,7 +80,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
   };
 
   return (
-    <FormComponentWrapper {...field}>
+    <FormComponentWrapper {...field} value={fieldData}>
       {Object.keys(fieldData).length === 0 && (
         <div className="tol-multiple-form-input-row">
           <Button {...addButton} position="left" text="Add" />
@@ -88,7 +88,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
       )}
       {Object.keys(fieldData).map((input, index) => (
         <div key={index} className="tol-multiple-form-input-row">
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1 }} className="tol-multiple-form-input-field">
             {cloneElement(renderField(field)!, {
               value: formData[field.name][input],
               onChange: (value: string) => {
@@ -105,7 +105,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
             <Button {...field.rowButton(input, fieldData[input])} />
           )}
           {(!minOne || Object.keys(fieldData).length > 1) && (
-            <div style={{ alignSelf: "center" }}>
+            <div style={{ alignSelf: "center" }} className="">
               <Button
                 {...minusButton}
                 onClick={() => {

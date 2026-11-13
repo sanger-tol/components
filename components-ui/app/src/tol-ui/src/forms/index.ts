@@ -13,6 +13,7 @@ export * from "./FormComponentWrapper";
 export * from "./FormDatetime";
 export * from "./FormLabel";
 export * from "./FormMarkdown";
+export * from "./FormScrollNavLayout";
 export * from "./FormSideNavBar";
 export * from "./FormTextArea";
 export * from "./FormTextField";

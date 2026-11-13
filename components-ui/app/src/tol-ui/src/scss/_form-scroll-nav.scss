@@ -1,0 +1,187 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.tol-form-layout {
+  display: flex;
+  flex-direction: row;
+
+  .tol-form-layout__inner {
+    flex: 1;
+    min-width: 0;
+    padding: 0 10px;
+  }
+
+  .tol-form-layout__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+
+    .tol-form-layout__header-inner {
+      display: flex;
+      gap: var(--tol-spacing-sm);
+      align-items: center;
+
+      h3 {
+        margin: 0;
+        text-align: left;
+        overflow-wrap: anywhere;
+      }
+    }
+
+    @media (max-width: 768px) {
+      > :first-child {
+        grid-column: 1 / -1;
+        grid-row: 1;
+      }
+    }
+  }
+
+  .tol-form-layout__content {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    gap: 10px;
+  }
+
+  .tol-form-layout__scroll-container {
+    width: 100%;
+    min-height: calc(82vh - 200px);
+    max-height: calc(82vh - 200px);
+    overflow: auto;
+    border: 3px solid var(--tol-grey-subtle);
+    border-radius: var(--tol-border-radius-sm);
+  }
+
+  .tol-form-layout__form {
+    padding: 10px;
+
+    .form-wrapper {
+      padding: 0.5em 1em !important;
+    }
+  }
+}
+
+.tol-form-side-nav__wrapper {
+  width: 36px;
+  flex-shrink: 0;
+  height: 100%;
+  overflow: hidden;
+  transition: width 250ms ease;
+
+  &.open {
+    width: 185px;
+
+    .tol-form-side-nav__label {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+      transition-delay: 0ms;
+      color: var(--tol-grey-light) !important;
+    }
+
+    .tol-form-side-nav__button {
+      transform: rotate(180deg);
+    }
+
+    .tol-form-side-nav__content-wrapper {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+      transition-delay: 0ms;
+    }
+  }
+
+  .tol-form-side-nav__button-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2px;
+
+    .tol-form-side-nav__button {
+      flex-shrink: 0;
+      transition: transform 250ms ease;
+    }
+  }
+
+  .tol-form-side-nav__label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-8px);
+    transition:
+      opacity 200ms ease,
+      transform 250ms ease,
+      visibility 0s linear 250ms;
+  }
+
+  .tol-form-side-nav__content-wrapper {
+    width: 170px;
+    margin-top: 8px;
+    margin-left: 15px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(100%);
+    transition:
+      opacity 200ms ease,
+      transform 250ms ease,
+      visibility 0s linear 250ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    .tol-form-side-nav__label,
+    .tol-form-side-nav__button,
+    .tol-form-side-nav__content-wrapper {
+      transition: none;
+    }
+  }
+}
+
+.tol-form-sidenav {
+  position: sticky;
+  top: 0;
+
+  .tol-form-sidenav-group {
+    margin-bottom: 12px;
+  }
+
+  .tol-form-sidenav-group-header {
+    padding: 4px 0;
+    cursor: pointer;
+    font-weight: 600;
+
+    &.active {
+      color: var(--tol-primary);
+    }
+  }
+
+  .tol-form-sidenav-group-list {
+    margin: 0;
+    padding: 0 0 0 12px;
+    list-style: none;
+    border-left: 2px solid transparent;
+
+    &.active {
+      border-left-color: var(--tol-primary);
+    }
+  }
+
+  .tol-form-sidenav-field {
+    padding: 2px 0;
+    padding-left: 8px;
+    cursor: pointer;
+    color: var(--tol-grey-strong);
+
+    &.active {
+      color: var(--tol-primary-soft);
+    }
+  }
+}

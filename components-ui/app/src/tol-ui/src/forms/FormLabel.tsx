@@ -9,28 +9,31 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faRobot } from "@fortawesome/free-solid-svg-icons";
 import { RSForm, IFormComponent, Icon, RequiredAsterisk } from "..";
 import { FormOptionsContext } from "./FormOptionsContext";
+import { isEmptyFieldValue } from "./utils";
 
 export interface PFormLabel
   extends Pick<
     IFormComponent,
-    "label" | "icon" | "required" | "requiredAsText" | "readOnly" | "automatic"
+    "label" | "icon" | "required" | "requiredAsText" | "readOnly" | "automatic" | "recommended"
   > {
   inline?: boolean;
+  /** Current field value; empty read-only fields display "Locked". */
+  value?: unknown;
 }
 
 export function FormLabel(props: PFormLabel) {
-  const { label, inline, required, readOnly, automatic } = props;
+  const { label, inline, required, readOnly, automatic, recommended } = props;
   const formOptions = useContext(FormOptionsContext);
   const requiredAsText =
     props.requiredAsText ?? formOptions.requiredAsText ?? false;
-  const showReadOnly = Boolean(
-    readOnly &&
-      !automatic &&
-      !formOptions.locked &&
-      !formOptions.sectionLocked,
-  );
+  const locked = Boolean(readOnly || formOptions.locked || formOptions.sectionLocked);
+  const emptyLocked = locked && isEmptyFieldValue(props.value);
+  const showReadOnly = !automatic && (emptyLocked || Boolean(
+    readOnly && !formOptions.locked && !formOptions.sectionLocked,
+  ));
   const showRequired = Boolean(required && !readOnly);
   const showRequiredAsText = showRequired && requiredAsText;
+  const showRecommended = recommended && !automatic && !locked;
 
   const icon = { ...props.icon, position: props.icon?.position || "right" };
 
@@ -51,13 +54,18 @@ export function FormLabel(props: PFormLabel) {
             {showReadOnly && (
               <span className="tol-form-label-read-only">
                 <FontAwesomeIcon icon={faLock} aria-hidden="true" />
-                <em>Read-only</em>
+                <em>{emptyLocked ? "Locked" : "Read-only"}</em>
               </span>
             )}
             {automatic && (
               <span className="tol-form-label-automatic">
                 <FontAwesomeIcon icon={faRobot} aria-hidden="true" />
                 <em>Auto-generated</em>
+              </span>
+            )}
+            {showRecommended && (
+              <span className="tol-form-label-recommended">
+                <em>Recommended</em>
               </span>
             )}
           </div>

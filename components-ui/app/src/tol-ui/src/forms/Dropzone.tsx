@@ -127,7 +127,7 @@ export function Dropzone(props: PDropzone) {
   };
 
   return (
-    <FormComponentWrapper {...props} id={resetKey?.toString() ?? name}>
+    <FormComponentWrapper {...props} value={fileList} id={resetKey?.toString() ?? name}>
       <div className="tol-dropzone" key={resetKey}>
         <Uploader
           action="temp-error-please-ignore"

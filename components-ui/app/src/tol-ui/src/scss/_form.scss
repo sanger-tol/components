@@ -45,7 +45,7 @@
 }
 
 .rs-form-control.rs-form-control-wrapper {
-  input::placeholder {
+  textarea::placeholder, input::placeholder {
     color: var(--tol-text-subtle) !important;
   }
 }
@@ -114,6 +114,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: var(--tol-spacing-xs);
+
+  Button {
+    margin-top: 20px;
+  }
 
   label {
     margin-bottom: 0 !important;
@@ -161,7 +166,8 @@
     color: var(--tol-text-subtle);
   }
 
-  .tol-form-label-automatic {
+  .tol-form-label-automatic,
+  .tol-form-label-recommended {
     display: flex;
     flex-basis: 100%;
     align-items: center;
@@ -214,7 +220,7 @@
     }
 
     .tol-text-editor__placeholder {
-      padding-left: 2rem;
+      padding-left: var(--tol-spacing-md);
     }
   }
 }

@@ -12,7 +12,34 @@ import {
   MISSING_DATA_ERROR,
   PopUpMessage,
   TFormField,
+  DEFAULT_FORM_SCROLL_NAV_KEY,
+  SECTION_QUERY_PARAM,
+  SUB_SECTION_QUERY_PARAM,
+  UNDEFINED_FORM_SECTION_IDENTIFIER,
+  normaliseCaps,
 } from "..";
+import type {
+  IFormScrollNavConfig,
+  IFormSection,
+  IScrollNavGroup,
+  IScrollNavItem,
+} from "..";
+
+export function isEmptyFieldValue(value: unknown): boolean {
+  if (value === undefined || value === null || value === "") {
+    return true;
+  }
+  if (Array.isArray(value)) {
+    return value.length === 0;
+  }
+  if (
+    typeof value === "object" &&
+    Object.getPrototypeOf(value) === Object.prototype
+  ) {
+    return Object.values(value).every(isEmptyFieldValue);
+  }
+  return false;
+}
 
 /**
  * Sets the initial data in a form to `data`
@@ -201,3 +228,204 @@ export function prettify(value: string): string {
     .replace(/_/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+/**
+ * Builds the DOM anchor id for a field when a form uses scroll navigation.
+ *
+ * @param formKey - The scroll-nav key of the form.
+ * @param subSection - The sub-section the field belongs to.
+ * @param name - The field's name.
+ * @param index - The field's index within the form config.
+ * @returns The composed anchor id (e.g. `tol-form-metadata-general-doi-0`).
+ */
+export function getFieldAnchorId(
+  formKey: string,
+  subSection: string,
+  name: string,
+  index: number,
+): string {
+  return `tol-form-${formKey}-${subSection}-${name}-${index}`;
+}
+
+/**
+ * Builds the DOM id for a form's scroll container.
+ *
+ * @param formKey - The scroll-nav key of the form.
+ * @returns The scroll container id (e.g. `tol-form-scroll-metadata`).
+ */
+export function getScrollContainerId(formKey: string): string {
+  return `tol-form-scroll-${formKey}`;
+}
+
+/**
+ * Normalises the `scrollNav` form option into a full config, or `undefined`
+ * when scroll navigation is disabled.
+ *
+ * @param scrollNav - The raw `formConfig.options.scrollNav` value.
+ * @returns The resolved config with defaults applied.
+ */
+export function resolveScrollNavConfig(
+  scrollNav?: boolean | IFormScrollNavConfig,
+) {
+  if (!scrollNav) return undefined;
+  const config = scrollNav === true ? {} : scrollNav;
+  if (config.enabled === false) return undefined;
+  return {
+    ...config,
+    key: config.key ?? DEFAULT_FORM_SCROLL_NAV_KEY,
+    active: config.active ?? true,
+    syncUrl: config.syncUrl ?? true,
+    sectionParam: config.sectionParam ?? SECTION_QUERY_PARAM,
+    subSectionParam: config.subSectionParam ?? SUB_SECTION_QUERY_PARAM,
+  };
+}
+
+/**
+ * Gives every field an anchor id so scroll navigation can target it. Fields
+ * with an explicit `id` keep it.
+ *
+ * @param fields - The form fields.
+ * @param formKey - The scroll-nav key of the form.
+ * @returns The fields with an `id` set.
+ */
+export function withFieldAnchorIds(
+  fields: TFormField[],
+  formKey: string,
+): TFormField[] {
+  return fields.map((field, index) => ({
+    ...field,
+    id:
+      field.id ??
+      getFieldAnchorId(
+        formKey,
+        field.section ?? UNDEFINED_FORM_SECTION_IDENTIFIER,
+        field.name,
+        index,
+      ),
+  }));
+}
+
+/**
+ * Groups fields by their `section` (sub-section) in render order: sections in
+ * order of first appearance, then fields without a section last.
+ *
+ * @param fields - The form fields, with anchor ids applied.
+ * @param sections - Optional section metadata used for labels.
+ * @returns The sub-section groups with their ordered fields.
+ */
+export function getNavGroups(
+  fields: TFormField[],
+  sections: IFormSection[] = [],
+): IScrollNavGroup[] {
+  const sectionLabels = new Map(
+    sections.map((section) => [section.id, section.label]),
+  );
+  const groups = new Map<string, IScrollNavGroup>();
+  const miscFields: IScrollNavGroup["fields"] = [];
+
+  fields.forEach((field, index) => {
+    const navField = {
+      anchorId: field.id ?? field.name,
+      label: cleanTitle(field.label ?? prettify(field.name)),
+      name: field.name,
+      index,
+    };
+    if (!field.section) {
+      miscFields.push(navField);
+      return;
+    }
+    if (!groups.has(field.section)) {
+      groups.set(field.section, {
+        subSection: field.section,
+        label: sectionLabels.get(field.section) ?? normaliseCaps(field.section),
+        fields: [],
+      });
+    }
+    groups.get(field.section)!.fields.push(navField);
+  });
+
+  const orderedGroups = Array.from(groups.values());
+  if (miscFields.length) {
+    orderedGroups.push({
+      subSection: UNDEFINED_FORM_SECTION_IDENTIFIER,
+      label: normaliseCaps("Misc"),
+      fields: miscFields,
+    });
+  }
+  return orderedGroups;
+}
+
+/**
+ * Flattens nav groups into DOM-ordered nav items.
+ *
+ * @param groups - The nav groups.
+ * @returns The flattened nav items.
+ */
+export function getNavItems(groups: IScrollNavGroup[]): IScrollNavItem[] {
+  return groups.flatMap((group) =>
+    group.fields.map(({ anchorId, name, index }) => ({
+      anchorId,
+      subSection: group.subSection,
+      field: name,
+      index,
+    })),
+  );
+}
+
+/**
+ * Looks up a scroll container element in the DOM.
+ *
+ * @param containerId - The container's DOM id.
+ * @returns The container element, or `null` if it is not mounted.
+ */
+export function findScrollContainer(
+  containerId: string,
+): HTMLDivElement | null {
+  return document.getElementById(containerId) as HTMLDivElement | null;
+}
+
+/**
+ * Computes the scroll-spy activation offset for a container: a quarter of its
+ * visible height, capped at 120px.
+ *
+ * @param container - The scroll container.
+ * @returns The offset in pixels.
+ */
+export function getScrollSpyOffset(container: HTMLDivElement): number {
+  return Math.min(container.clientHeight * 0.25, 120);
+}
+
+export interface IFieldStatusContext {
+  formLocked: boolean;
+  sectionLocked: boolean;
+  error?: string;
+}
+
+export type TFieldNavStatus =
+  | "auto"
+  | "locked"
+  | "error"
+  | "required"
+  | "complete"
+  | "recommended"
+  | "none";
+
+export function getFieldStatus(
+  field: TFormField,
+  value: unknown,
+  ctx: IFieldStatusContext,
+): TFieldNavStatus {
+  if (field.automatic) return "auto";
+  if (ctx.formLocked || ctx.sectionLocked || field.readOnly) return "locked";
+  if (ctx.error) return "error";
+
+  const empty = isEmptyFieldValue(value);
+
+  if ((field.required || field.minOne) && empty) return "required";
+  if (!empty) return "complete";
+
+  return field.recommended ? "recommended" : "none";
+}
+
+//TODO
+//TODO

@@ -213,10 +213,9 @@ export function TextEditor(props: PTextEditor) {
     selector: ({ editor }) => !!editor && !editor.isDestroyed && editor.isEmpty,
   });
 
-  const wordCount = useEditorState({
+  const wordCount = useEditorState?.({
     editor,
-    selector: ({ editor }) =>
-      editor?.storage.characterCount.words() ?? 0,
+    selector: ({ editor }) => editor?.storage?.characterCount?.words() ?? 0,
   });
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -304,11 +303,13 @@ export function TextEditor(props: PTextEditor) {
             </div>
           )}
         </div>
-        {showWordCount && (editable || wordCount > 0) && (
-          <div className="tol-text-editor__word-count" aria-live="polite">
-            {wordCount} {wordCount === 1 ? "word" : "words"}
-          </div>
-        )}
+        {showWordCount &&
+          wordCount !== undefined &&
+          (editable || wordCount > 0) && (
+            <div className="tol-text-editor__word-count" aria-live="polite">
+              {wordCount} {wordCount === 1 ? "word" : "words"}
+            </div>
+          )}
       </div>
     </EditorContext.Provider>
   );
