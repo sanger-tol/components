@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
 
 12-11-26
 
+- Deal with incoming filter controls on dates and multiselect (e.g. negate)
 - Field level options adaptation
 
 ## tol-ui `6.3.1`
