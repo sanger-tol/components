@@ -72,6 +72,7 @@ export function CellRendererMarkdownParamOptions(props: PCellRendererMarkdownPar
     <div className="tol-data-point-renderer-modal-bottom-buttons">
       <Button
         {...BUTTONS.ADD}
+        text="Apply"
         disabled={!hasPendingChanges}
         onClick={handleSave}
       />
