@@ -137,9 +137,6 @@ export function Visualisation(props: PVisualisation) {
         deleteButton,
         filterButton,
       ],
-      elements: [
-        FilterDrawer
-      ]
     }
   )
 
@@ -202,6 +199,7 @@ export function Visualisation(props: PVisualisation) {
   return (
     <>
       {Visualisation}
+      {FilterDrawer}
       <ConfirmationModal
         setOpen={setConfirmationModalOpen}
         open={confirmationModalOpen}
