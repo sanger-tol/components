@@ -36,13 +36,6 @@ const pageElements = {
   ...autoDocPageElements,
 };
 
-const CONFIG_DS = new TsDataSource({
-  apiDataPath: API_PATHS.API_DATA_PATH,
-  dataspace: env.QUASAR_DATASPACE,
-  url: env.QUASAR_URL,
-  apiPath: env.QUASAR_API_PATH,
-});
-
 const root = createRoot(document.getElementById('root')!);
 root.render(
   <SmartApp
@@ -50,7 +43,6 @@ root.render(
     configurableBoards
     brand="Components"
     pageElements={pageElements}
-    configDataSource={CONFIG_DS}
   />
 );
 
