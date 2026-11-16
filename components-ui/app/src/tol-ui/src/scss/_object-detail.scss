@@ -25,7 +25,6 @@
     }
   }
 
-  h6,
   .tol-object-detail-field {
     margin: 0;
   }
@@ -41,6 +40,7 @@
     strong {
       flex: 0 0 auto;
       margin-right: var(--tol-spacing-sm);
+      color: var(--tol-text-subtle);
     }
 
     .tol-data-points {
@@ -55,9 +55,10 @@
         margin-bottom: var(--tol-spacing-md);
       }
 
-      h6 {
+      > strong {
         margin-bottom: var(--tol-spacing-xs);
       }
+
     }
   }
 }
