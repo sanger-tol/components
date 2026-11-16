@@ -22,7 +22,7 @@ export function MyFieldsTab({ value, onChange }: PMyFieldsTab) {
   return (
     <div className="tol-attribute-selector-my-fields-tab">
       <Button
-        className="tol-attribute-selector-advanced-search-tab__new-field-button"
+        className="tol-attribute-selector-my-fields-tab__new-field-button"
         testid="create-custom-field-button"
         type="success"
         icon="plus"
@@ -30,7 +30,7 @@ export function MyFieldsTab({ value, onChange }: PMyFieldsTab) {
         loading={loading}
         disabled={loading}
       />
-      <div className="tol-attribute-selector-advanced-search-tab__field-list">
+      <div className="tol-attribute-selector-my-fields-tab__field-list">
         {loading ? (
           <TolLoader />
         ) : (
