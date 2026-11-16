@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { CheckTree as RSCheckTree } from "rsuite";
 
+import CustomFieldModal from "./CustomFieldModal";
 import {
   Button,
   BUTTONS,
@@ -31,6 +32,8 @@ export function MyFieldsTab(props: PMyFieldsTab) {
   } = props;
 
   const [customFields, setCustomFields] = useState<{ id: string; name: string }[] | undefined>();
+  const [editFieldModalOpen, setEditFieldModalOpen] = useState<boolean>(false);
+  const [editingCustomFieldId, setEditingCustomFieldId] = useState<number | undefined>();
 
   useEffect(() => {
     CORE_CONFIG_DS.getList({ 
@@ -51,6 +54,11 @@ export function MyFieldsTab(props: PMyFieldsTab) {
     });
   }, []);
 
+  const editCustomField = (id?: number) => {
+    setEditingCustomFieldId(id);
+    setEditFieldModalOpen(true);
+  };
+
   const loading = customFields === undefined;
 
   return (
@@ -63,6 +71,7 @@ export function MyFieldsTab(props: PMyFieldsTab) {
         text="New Field"
         loading={loading}
         disabled={loading}
+        onClick={editCustomField}
       />
       <div className="tol-attribute-selector-my-fields-tab__field-list">
         {loading ? (
@@ -83,7 +92,10 @@ export function MyFieldsTab(props: PMyFieldsTab) {
                   onClick={stopPropagation}
                   onKeyDown={stopPropagation}
                 >
-                  <Button {...BUTTONS.EDIT} />
+                  <Button
+                    {...BUTTONS.EDIT}
+                    onClick={() => editCustomField(Number(node.value))}
+                  />
                 </span>
               </span>
             )}
@@ -100,6 +112,11 @@ export function MyFieldsTab(props: PMyFieldsTab) {
           />
         )}
       </div>
+      <CustomFieldModal
+        open={editFieldModalOpen}
+        setOpen={setEditFieldModalOpen}
+        customFieldId={editingCustomFieldId}
+      />
     </div>
   );
 }
