@@ -20,6 +20,7 @@ export interface PMyFieldsTab {
   objectType: string;
   userId: string;
   value: string[];
+  onNestedOverlayChange: (open: boolean) => void;
   onChange: (value: string[]) => void;
 }
 
@@ -28,11 +29,12 @@ export function MyFieldsTab(props: PMyFieldsTab) {
     objectType,
     userId,
     value,
+    onNestedOverlayChange,
     onChange,
   } = props;
 
   const [customFields, setCustomFields] = useState<{ id: string; name: string }[] | undefined>();
-  const [editFieldModalOpen, setEditFieldModalOpen] = useState<boolean>(false);
+  const [editFieldModalOpen, setEditFieldModalOpen] = useState(false);
   const [editingCustomFieldId, setEditingCustomFieldId] = useState<number | undefined>();
 
   useEffect(() => {
@@ -54,25 +56,46 @@ export function MyFieldsTab(props: PMyFieldsTab) {
     });
   }, []);
 
+  /**
+   * Opens the custom field editor modal.
+   * 
+   * If an ID is provided, the modal will edit the custom field with that ID.
+   * Else, the modal will create a new custom field
+   */
   const editCustomField = (id?: number) => {
+    // Store the ID (or `undefined` to mark no ID) in a state ready to pass to the modal
     setEditingCustomFieldId(id);
-    setEditFieldModalOpen(true);
+
+    // Show the modal
+    setCustomFieldModalOpen(true); 
+  };
+
+  /**
+   * Opens the custom field editor modal, while letting `AttributeSelector` know
+   * there's a nested overlay open so that clicking on the modal doesn't close the
+   * attribute selector, and thus the modal itself!
+   */
+  const setCustomFieldModalOpen = (open: boolean) => {
+    setEditFieldModalOpen(open);
+    onNestedOverlayChange(open);
   };
 
   const loading = customFields === undefined;
 
   return (
     <div className="tol-attribute-selector-my-fields-tab">
-      <Button
-        className="tol-attribute-selector-my-fields-tab__new-field-button"
-        testid="create-custom-field-button"
-        type="success"
-        icon="plus"
-        text="New Field"
-        loading={loading}
-        disabled={loading}
-        onClick={editCustomField}
-      />
+      <span onMouseDown={stopPropagation} onClick={stopPropagation}>
+        <Button
+          className="tol-attribute-selector-my-fields-tab__new-field-button"
+          testid="create-custom-field-button"
+          type="success"
+          icon="plus"
+          text="New Field"
+          loading={loading}
+          disabled={loading}
+          onClick={editCustomField}
+        />
+      </span>
       <div className="tol-attribute-selector-my-fields-tab__field-list">
         {loading ? (
           <TolLoader />
@@ -89,6 +112,7 @@ export function MyFieldsTab(props: PMyFieldsTab) {
                   {node.label}
                 </span>
                 <span
+                  onMouseDown={stopPropagation}
                   onClick={stopPropagation}
                   onKeyDown={stopPropagation}
                 >
@@ -114,7 +138,7 @@ export function MyFieldsTab(props: PMyFieldsTab) {
       </div>
       <CustomFieldModal
         open={editFieldModalOpen}
-        setOpen={setEditFieldModalOpen}
+        setOpen={setCustomFieldModalOpen}
         customFieldId={editingCustomFieldId}
       />
     </div>

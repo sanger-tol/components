@@ -92,6 +92,18 @@ export function AttributeSelector(props: PAttributeSelector) {
     localStorage.getItem("attribute-selector-recommended-columns") === "true"
   );
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [nestedOverlayOpen, setNestedOverlayOpen] = useState(false);
+
+  // There are some nested overlays in the attribute selector (e.g. the create/edit custom field
+  // modal in the MyFields tab), so we're controlling whether the picker is open manually so that
+  // if a nested overlay IS open, clicking within it doesn't close the attribute selector.
+  const handleNestedOverlayChange = (open: boolean) => {
+    if (open) {
+      setPickerOpen(true);
+    }
+    setNestedOverlayOpen(open);
+  };
 
   const user = useAuth().user;
   const showMyFieldsTab = Boolean(user); // Show only if logged in
@@ -183,6 +195,8 @@ export function AttributeSelector(props: PAttributeSelector) {
       <MultipleSelect
         className="tol-attribute-selector-select"
         menuClassName={`tol-attribute-selector-menu${maxSelections === 1 && ' tol-single-selector'}`}
+        open={pickerOpen}
+        onOpen={() => setPickerOpen(true)}
         block
         noSelectAll
         groupBy={groupBy ? "relationship_name" : undefined}
@@ -238,6 +252,7 @@ export function AttributeSelector(props: PAttributeSelector) {
                       objectType={objectType}
                       userId={user!.id}
                       value={attribute}
+                      onNestedOverlayChange={handleNestedOverlayChange}
                       onChange={(newAttribute) => {
                         handleSetAttribute(
                           newAttribute,
@@ -270,7 +285,12 @@ export function AttributeSelector(props: PAttributeSelector) {
         }}
         sticky={sticky}
         onClean={onClean}
-        onClose={() => setSelectedSources([])}
+        onClose={() => {
+          setSelectedSources([]);
+          if (!nestedOverlayOpen) {
+            setPickerOpen(false);
+          }
+        }}
       />
       {recommendedFilterAvailable && (
         <div className="tol-attribute-selector-suggested-toggle">

@@ -4,13 +4,11 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import type { Dispatch, SetStateAction } from "react";
-
 import { Button, BUTTONS, Modal } from "../..";
 
 export interface PCustomFieldModal {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (open: boolean) => void;
   /** The ID of the custom field to edit. If `undefined`, this modal creates a new field */
   customFieldId?: number | undefined;
 }
