@@ -18,9 +18,9 @@ export function MyFieldsTab() {
   const loading = customFields === undefined;
 
   return (
-    <div>
+    <div className="tol-attribute-selector-my-fields-tab">
       <Button
-        className="tol-create-custom-field-button"
+        className="tol-attribute-selector-advanced-search-tab__new-field-button"
         testid="create-custom-field-button"
         type="success"
         icon="plus"
@@ -28,6 +28,9 @@ export function MyFieldsTab() {
         loading={loading}
         disabled={loading}
       />
+      <div className="tol-attribute-selector-advanced-search-tab__field-list">
+        
+      </div>
     </div>
   );
 }
