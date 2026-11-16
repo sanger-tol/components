@@ -19,6 +19,13 @@ export interface PMultipleFormInput {
   minOne?: boolean;
 }
 
+export function removeTrailingCharacter(trailing: string, input: string) {
+  if (input.endsWith(trailing)) {
+    return input.slice(0, -trailing.length);
+  }
+  return input;
+}
+
 export function MultipleFormInput(props: PMultipleFormInput) {
   const {
     field,
@@ -50,16 +57,9 @@ export function MultipleFormInput(props: PMultipleFormInput) {
       // uses a random 3 digit number as an id
       createNewInput(field.name, formData, setFormData, setModifiedFields);
     },
-    type: "success",
     icon: "plus",
-    position: "right",
-    testid: "multiple-input-add-button"
-  };
-
-  const minusButton: PButton = {
-    type: "error",
-    icon: "minus",
-    position: "right",
+    position: "left",
+    testid: "multiple-input-add-button",
   };
 
   const handleDeleteInput = (input: string, modify: boolean) => {
@@ -81,49 +81,51 @@ export function MultipleFormInput(props: PMultipleFormInput) {
 
   return (
     <FormComponentWrapper {...field} value={fieldData}>
-      {Object.keys(fieldData).length === 0 && (
-        <div className="tol-multiple-form-input-row">
-          <Button {...addButton} position="left" text="Add" />
-        </div>
-      )}
-      {Object.keys(fieldData).map((input, index) => (
-        <div key={index} className="tol-multiple-form-input-row">
-          <div style={{ flex: 1 }} className="tol-multiple-form-input-field">
-            {cloneElement(renderField(field)!, {
-              value: formData[field.name][input],
-              onChange: (value: string) => {
-                const newValue = { [input]: value };
-                const values = formData[field.name];
-                onChange(field.name, { ...(values || {}), ...newValue });
-              },
-              key: input,
-              label: undefined,
-              helpText: undefined,
-            })}
-          </div>
-          {field.rowButton && (
-            <Button {...field.rowButton(input, fieldData[input])} />
-          )}
-          {(!minOne || Object.keys(fieldData).length > 1) && (
-            <div style={{ alignSelf: "center" }} className="">
-              <Button
-                {...minusButton}
-                onClick={() => {
-                  const remove = () => handleDeleteInput(input, true);
-                  if (onMinus) {
-                    onMinus(input, fieldData[input], remove);
-                  } else {
-                    remove();
-                  }
-                }}
-              />
+      <div className="tol-multiple-form-input">
+        {Object.keys(fieldData).map((input) => (
+          <div key={input} className="tol-multiple-form-input-row">
+            <div className="tol-multiple-form-input-field">
+              {cloneElement(renderField(field)!, {
+                value: formData[field.name][input],
+                onChange: (value: string) => {
+                  const newValue = { [input]: value };
+                  const values = formData[field.name];
+                  onChange(field.name, { ...(values || {}), ...newValue });
+                },
+                key: input,
+                label: undefined,
+                helpText: undefined,
+              })}
             </div>
-          )}
-          {index === Object.keys(fieldData).length - 1 && (
-            <Button {...addButton} />
-          )}
+            {field.rowButton && (
+              <Button {...field.rowButton(input, fieldData[input])} />
+            )}
+            {(!minOne || Object.keys(fieldData).length > 1) && (
+              <div style={{ alignSelf: "center" }} className="">
+                <Button
+                  icon="trash"
+                  onClick={() => {
+                    const remove = () => handleDeleteInput(input, true);
+                    if (onMinus) {
+                      onMinus(input, fieldData[input], remove);
+                    } else {
+                      remove();
+                    }
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+        <div className="tol-multiple-form-input-actions">
+          <Button
+            {...addButton}
+            text={`Add ${
+              Object.keys(fieldData).length === 0 ? "New" : "Another"
+            } ${removeTrailingCharacter("s", field.label ?? "")}`}
+          />
         </div>
-      ))}
+      </div>
     </FormComponentWrapper>
   );
 }

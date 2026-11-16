@@ -48,6 +48,8 @@ export interface PTextEditor {
    * A function to update the content of the text editor.
    */
   setValue: (value: string) => void;
+  /** Emit an empty string for an empty document instead of serialized markup. Defaults to false. */
+  normaliseEmptyValue?: boolean;
   /**
    * The list of standard toolbar buttons to display in the text editor.
    * If not provided, a basic set will be shown.
@@ -123,6 +125,7 @@ export function TextEditor(props: PTextEditor) {
     menuButtons = DEFAULT_TEXT_EDITOR_BUTTONS,
     customButtons,
     returnValueType = "json",
+    normaliseEmptyValue = false,
     keyboardShortcutElement,
     customExtensions,
     editable = true,
@@ -167,7 +170,9 @@ export function TextEditor(props: PTextEditor) {
       extensions: extensions,
       content: value,
       onUpdate: ({ editor }) => {
-        if (returnValueType === "html" || returnValueType === undefined) {
+        if (normaliseEmptyValue && editor.isEmpty) {
+          setValue("");
+        } else if (returnValueType === "html" || returnValueType === undefined) {
           setValue(editor.getHTML());
         } else if (returnValueType === "json") {
           setValue(JSON.stringify(editor.getJSON()));

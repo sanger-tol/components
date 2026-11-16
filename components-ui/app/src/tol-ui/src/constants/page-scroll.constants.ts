@@ -17,4 +17,6 @@ export const FORM_SCROLL_NAV_TEXT = {
   LABEL: "ON THIS PAGE",
   SHOW_NAVIGATION: "Show side navigation",
   HIDE_NAVIGATION: "Hide side navigation",
+  EXPAND_ALL: "Expand all",
+  SHOW_ACTIVE_ONLY: "Show active only",
 };

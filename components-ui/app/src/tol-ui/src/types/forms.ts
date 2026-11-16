@@ -23,6 +23,7 @@ import type {
   IUserProfileFormData,
   PAutoComplete,
   ICheckboxField,
+  IFormTagField,
 } from ".."
 
 export type TFormField =
@@ -38,7 +39,8 @@ export type TFormField =
   | IMultipleselectField
   | IMarkdownField
   | ITextAreaField
-  | ICheckboxFormField;
+  | ICheckboxFormField
+  | IFormTagField;
 
 export type TUserProfileFormDataOrNull = IUserProfileFormData | null;
 
@@ -89,4 +91,16 @@ export type TTextFieldType = "text" | "email" | "password";
 
 export type TCheckboxFields = ICheckboxField[];
 
+export type TFormTags = IFormTagField;
+
 export type TFormLabelIconPosition = "left" | "right";
+
+/** The navigation status of a form field. */
+export type TFieldNavStatus =
+  | "auto"
+  | "locked"
+  | "error"
+  | "required"
+  | "complete"
+  | "recommended"
+  | "none";

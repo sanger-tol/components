@@ -35,6 +35,9 @@ import {
   getNavGroups,
   resolveScrollNavConfig,
   withFieldAnchorIds,
+  getFieldStatus,
+  isEmptyFieldValue,
+  FormOptionsContext,
 } from "..";
 
 import type {
@@ -54,19 +57,27 @@ import type {
   ICheckboxFormField,
   ITextAreaField,
   IFormSearchConfig,
+  IFormTagField,
 } from "..";
-import { FormOptionsContext } from "./FormOptionsContext";
-import { isEmptyFieldValue } from "./utils";
+import { FormTags } from "./FormTags";
 
-export interface PFormAllInOne<TResult extends object = Record<string, unknown>> {
+export interface PFormAllInOne<
+  TResult extends object = Record<string, unknown>,
+> {
   formConfig: IFormConfig;
   /** Optional lookup controls shown before fields and used to prefill them. */
   searchConfig?: IFormSearchConfig<TResult>;
+  /** Initial form data to populate the fields with. */
   initialData?: object;
+  /** Whether the form should take the full width of its container. */
   fluid?: boolean;
+  /** The form model used for validation. */
   model?: any;
+  /** Callback invoked when the form has unsaved changes. */
   onUnsavedChanges?: (hasUnsavedChanges: boolean) => void;
+  /** Callback invoked after form validation. */
   onValidate?: (isValid: boolean) => void;
+  /** Callback invoked when the form is submitted. */
   onSubmit?: (formData: object, isValid: boolean) => void;
   /** Shown beside the scroll-nav title. Requires `options.scrollNav`. */
   titleAdornment?: React.ReactNode;
@@ -161,7 +172,9 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     setSearchError("");
 
     if (!query) {
-      setSearchError(searchConfig?.emptySearchMessage ?? "Enter a search term.");
+      setSearchError(
+        searchConfig?.emptySearchMessage ?? "Enter a search term.",
+      );
       return;
     }
 
@@ -241,24 +254,28 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     </div>
   );
 
+  const fieldStatus = (field: TFormField) =>
+    getFieldStatus(field, formData[field.name], {
+      formLocked,
+      sectionLocked: sectionsById.get(field.section ?? "")?.locked === true,
+      error: formErrors[field.name],
+    });
+
+  const isReadOnlyStatus = (status: ReturnType<typeof fieldStatus>) =>
+    status === "locked" || status === "auto";
+
   const isFieldReadOnly = (field: TFormField) =>
-    Boolean(
-      formLocked ||
-        field.automatic ||
-        field.readOnly ||
-        (field.section && sectionsById.get(field.section)?.locked),
-    );
+    isReadOnlyStatus(fieldStatus(field));
 
   const renderField = (field: TFormField) => {
     if (!field) {
       return null;
     }
 
-    const readOnly = isFieldReadOnly(field);
+    const status = fieldStatus(field);
+    const readOnly = isReadOnlyStatus(status);
     const placeholder =
-      readOnly &&
-      !field.automatic &&
-      isEmptyFieldValue(formData[field.name])
+      status === "locked" && isEmptyFieldValue(formData[field.name])
         ? READ_ONLY_FIELD_PLACEHOLDER
         : field.placeholder;
 
@@ -401,7 +418,9 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
             )}
             readOnly={readOnly}
             placeholder={placeholder}
-            value={Array.isArray(multipleSelectValue) ? multipleSelectValue : []}
+            value={
+              Array.isArray(multipleSelectValue) ? multipleSelectValue : []
+            }
             setValue={(value: any) =>
               handleInputChange(multipleselectField.name, value)
             }
@@ -432,6 +451,20 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
             value={formData[textareaField.name] ?? ""}
             setValue={(value: any) =>
               handleInputChange(textareaField.name, value)
+            }
+            errorText={errorText}
+          />
+        );
+      case "tag":
+        const tagField = field as IFormTagField;
+        return (
+          <FormTags
+            {...tagField}
+            readOnly={readOnly}
+            placeholder={placeholder}
+            value={[...(formData[tagField.name] ?? [])]}
+            setValue={(value: readonly string[]) =>
+              handleInputChange(tagField.name, [...value])
             }
             errorText={errorText}
           />
@@ -494,7 +527,8 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           <>
             {uniqueSections.map((section) => {
               const sectionConfig = sectionsById.get(section);
-              const sectionLocked = !formLocked && sectionConfig?.locked === true;
+              const sectionLocked =
+                !formLocked && sectionConfig?.locked === true;
 
               return (
                 <FormOptionsContext.Provider
@@ -519,7 +553,8 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                         ) : (
                           sectionConfig?.optional && (
                             <span className="tol-form-section-optional">
-                              {" "}<em>Optional</em>
+                              {" "}
+                              <em>Optional</em>
                             </span>
                           )
                         )}
@@ -668,11 +703,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
 
                     let isValid = true;
                     if (onValidate || props.onSubmit) {
-                      isValid = validateForm(
-                        formRef,
-                        formData,
-                        props.onSubmit,
-                      );
+                      isValid = validateForm(formRef, formData, props.onSubmit);
                       if (onValidate) {
                         onValidate(isValid);
                       }
@@ -695,7 +726,15 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
       {scrollNav ? (
         <FormScrollNavLayout
           config={scrollNav}
-          groups={showFields ? getNavGroups(fields, formConfig.sections) : []}
+          groups={
+            showFields
+              ? getNavGroups(
+                  fields,
+                  formConfig.sections,
+                  scrollNav.showStatus === false ? undefined : fieldStatus,
+                )
+              : []
+          }
           titleAdornment={props.titleAdornment}
           contentHeader={props.contentHeader}
           footer={props.footer}

@@ -19,6 +19,7 @@ export interface PFormTextArea extends TFormTextAreaField {
   value: string;
   /**
    * The callback function that is called when the value of the form field changes.
+   * Empty editor documents are returned as an empty string in every output format.
    */
   setValue: (value: string) => void;
 }
@@ -35,6 +36,7 @@ export function FormTextArea(props: PFormTextArea) {
     <FormComponentWrapper {...props} id={name}>
       <TextEditor
         {...props}
+        normaliseEmptyValue
         editable={readOnly ? false : editable}
         placeholder={props.placeholder}
         menuButtons={[]}

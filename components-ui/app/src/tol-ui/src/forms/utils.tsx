@@ -6,22 +6,25 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import {
-  IFieldMapping,
-  IFormConfig,
+  PopUpMessage,
+  normaliseCaps,
   MESSAGE_TYPE,
   MISSING_DATA_ERROR,
-  PopUpMessage,
-  TFormField,
-  DEFAULT_FORM_SCROLL_NAV_KEY,
   SECTION_QUERY_PARAM,
   SUB_SECTION_QUERY_PARAM,
+  DEFAULT_FORM_SCROLL_NAV_KEY,
   UNDEFINED_FORM_SECTION_IDENTIFIER,
-  normaliseCaps,
 } from "..";
 import type {
+  IFieldMapping,
+  IFieldStatusContext,
+  IFormConfig,
   IFormScrollNavConfig,
   IFormSection,
   IScrollNavGroup,
+  TScrollNavGroupStatus,
+  TFieldNavStatus,
+  TFormField,
   IScrollNavItem,
 } from "..";
 
@@ -311,40 +314,60 @@ export function withFieldAnchorIds(
  *
  * @param fields - The form fields, with anchor ids applied.
  * @param sections - Optional section metadata used for labels.
+ * @param getStatus - Optional callback to calculate each field's current status.
  * @returns The sub-section groups with their ordered fields.
  */
 export function getNavGroups(
   fields: TFormField[],
   sections: IFormSection[] = [],
+  getStatus?: (field: TFormField) => TFieldNavStatus,
 ): IScrollNavGroup[] {
-  const sectionLabels = new Map(
-    sections.map((section) => [section.id, section.label]),
+  const sectionsById = new Map(
+    sections.map((section) => [section.id, section]),
   );
   const groups = new Map<string, IScrollNavGroup>();
   const miscFields: IScrollNavGroup["fields"] = [];
 
   fields.forEach((field, index) => {
+    if (field.type === "checkbox" && field.hidden) return;
+    const status = getStatus?.(field);
+
     const navField = {
       anchorId: field.id ?? field.name,
       label: cleanTitle(field.label ?? prettify(field.name)),
       name: field.name,
       index,
+      ...(status
+        ? {
+            status,
+            requiredForProgress:
+              Boolean(field.required || field.minOne) &&
+              status !== "auto" &&
+              status !== "locked",
+          }
+        : {}),
     };
+
     if (!field.section) {
       miscFields.push(navField);
       return;
     }
+
     if (!groups.has(field.section)) {
       groups.set(field.section, {
         subSection: field.section,
-        label: sectionLabels.get(field.section) ?? normaliseCaps(field.section),
+        label:
+          sectionsById.get(field.section)?.label ??
+          normaliseCaps(field.section),
         fields: [],
       });
     }
+
     groups.get(field.section)!.fields.push(navField);
   });
 
   const orderedGroups = Array.from(groups.values());
+
   if (miscFields.length) {
     orderedGroups.push({
       subSection: UNDEFINED_FORM_SECTION_IDENTIFIER,
@@ -352,7 +375,63 @@ export function getNavGroups(
       fields: miscFields,
     });
   }
-  return orderedGroups;
+
+  if (!getStatus) return orderedGroups;
+
+  return orderedGroups.map((group) => ({
+    ...group,
+    status: getNavGroupStatus(
+      group.fields.map((field) => field.status ?? "none"),
+      sectionsById.get(group.subSection),
+      group.fields.some((field) => field.requiredForProgress),
+    ),
+  }));
+}
+
+/**
+ * Summarises the visible statuses in a section without treating filled fields as validated.
+ *
+ * @param statuses - The statuses of the fields in the section.
+ * @param section - The form section.
+ * @param hasRequiredFields - Whether the section contains editable required fields.
+ * @returns The summarized status of the section, or `undefined` if no status applies.
+ */
+export function getNavGroupStatus(
+  statuses: TFieldNavStatus[],
+  section?: IFormSection,
+  hasRequiredFields = false,
+): TScrollNavGroupStatus | undefined {
+  if (statuses.length === 0) return undefined;
+  if (section?.locked || statuses.every((status) => status === "locked")) {
+    return { kind: "locked" };
+  }
+  if (statuses.every((status) => status === "auto")) return { kind: "auto" };
+
+  const remaining = statuses.filter((status) => status === "required").length;
+  const errors = statuses.filter((status) => status === "error").length;
+  if (remaining && errors) {
+    return { kind: "attention", count: remaining + errors };
+  }
+
+  if (remaining) return { kind: "remaining", count: remaining };
+  if (errors) return { kind: "error", count: errors };
+  if (section?.optional) return { kind: "optional" };
+  const nonAutomatic = statuses.filter((status) => status !== "auto");
+  if (
+    hasRequiredFields ||
+    (nonAutomatic.some((status) => status === "complete") &&
+      nonAutomatic.every(
+        (status) => status === "complete" || status === "recommended",
+      ))
+  ) {
+    const recommendedRemaining = statuses.filter(
+      (status) => status === "recommended",
+    ).length;
+    return recommendedRemaining
+      ? { kind: "complete", recommendedRemaining }
+      : { kind: "complete" };
+  }
+  return undefined;
 }
 
 /**
@@ -395,21 +474,14 @@ export function getScrollSpyOffset(container: HTMLDivElement): number {
   return Math.min(container.clientHeight * 0.25, 120);
 }
 
-export interface IFieldStatusContext {
-  formLocked: boolean;
-  sectionLocked: boolean;
-  error?: string;
-}
-
-export type TFieldNavStatus =
-  | "auto"
-  | "locked"
-  | "error"
-  | "required"
-  | "complete"
-  | "recommended"
-  | "none";
-
+/**
+ * Determines the current status of a form field based on its value and context.
+ *
+ * @param field - The form field to get the status for.
+ * @param value - The current value of the field.
+ * @param ctx - Context with form and section lock status, and error information.
+ * @returns The current status of the field.
+ */
 export function getFieldStatus(
   field: TFormField,
   value: unknown,
@@ -419,7 +491,9 @@ export function getFieldStatus(
   if (ctx.formLocked || ctx.sectionLocked || field.readOnly) return "locked";
   if (ctx.error) return "error";
 
-  const empty = isEmptyFieldValue(value);
+  const empty = Array.isArray(value)
+    ? value.every(isEmptyFieldValue)
+    : isEmptyFieldValue(value);
 
   if ((field.required || field.minOne) && empty) return "required";
   if (!empty) return "complete";
@@ -427,5 +501,15 @@ export function getFieldStatus(
   return field.recommended ? "recommended" : "none";
 }
 
-//TODO
-//TODO
+/**
+ * Determines if a form is scrolled to the bottom.
+ *
+ * @param form - The form element.
+ * @returns `true` if the form is at the bottom, `false` otherwise.
+ */
+export function isFormAtBottom(form: HTMLDivElement): boolean {
+  const maxScroll = form.scrollHeight - form.clientHeight;
+  return (
+    form.clientHeight > 0 && maxScroll > 0 && form.scrollTop >= maxScroll - 1
+  );
+}

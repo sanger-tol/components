@@ -42,12 +42,42 @@
       display: block;
     }
   }
+
+  .tol-form-tag {
+    border: 2px dotted var(--tol-primary);
+    .rs-tag-icon-close {
+    @extend .icon-button-error-md;
+
+    margin: 2px 2px 0 0;
+    padding: 0;
+    height: 20px;
+    min-width: 20px;
+    color: var(--tol-text-subtle);
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    
+    &:hover {
+      border: none !important;
+    }
+  }
+  }
+
+  .rs-picker-input {
+    width: 100% !important;
+  }
 }
 
 .rs-form-control.rs-form-control-wrapper {
-  textarea::placeholder, input::placeholder {
+  textarea::placeholder,
+  input::placeholder {
     color: var(--tol-text-subtle) !important;
   }
+}
+
+.rs-form-group .rs-picker-input .rs-picker-toggle-placeholder {
+  color: var(--tol-text-subtle) !important;
 }
 
 .form-wrapper,
@@ -94,7 +124,9 @@
   flex-direction: column;
 }
 
-.rs-form-vertical .rs-form-group .rs-form-help-text:not(.rs-form-help-text-tooltip) {
+.rs-form-vertical
+  .rs-form-group
+  .rs-form-help-text:not(.rs-form-help-text-tooltip) {
   padding: 0;
 }
 
@@ -102,11 +134,16 @@
   margin-top: 20px !important;
   display: block;
 
+  &:has(.tol-multiple-form-input),
+  .tol-multiple-form-input & {
+    margin-top: 0 !important;
+  }
+
   > .rs-form-help-text,
   > .rs-form-error-message,
   > .tol-multiple-select-error-message,
   > span:has(> .rs-form-error-message) {
-    margin-left: 12rem;
+    margin-left: 12.3rem;
   }
 }
 
@@ -115,10 +152,11 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--tol-spacing-xs);
+  padding-bottom: 0 !important;
 
-  Button {
-    margin-top: 20px;
-  }
+  // button:not(.rs-btn-close) {
+  //   margin-top: 20px;
+  // }
 
   label {
     margin-bottom: 0 !important;
@@ -264,15 +302,26 @@
   color: var(--tol-text-subtle);
 }
 
+.tol-multiple-form-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+
+  :is(.tol-multiple-form-input-row, .tol-multiple-form-input-actions) button {
+    margin-top: 0;
+  }
+}
+
+.tol-multiple-form-input-field {
+  flex: 1;
+}
+
 .tol-multiple-form-input-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-
-  // Rows are spaced apart by `& + &` so the first row doesn't add a gap below the label
-  & + & {
-    margin-top: 10px;
-  }
+  width: 100%;
 
   .rs-form-group {
     margin: 0 !important;

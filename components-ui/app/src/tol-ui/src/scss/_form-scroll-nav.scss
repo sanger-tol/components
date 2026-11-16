@@ -5,12 +5,18 @@
  */
 
 .tol-form-layout {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
 
   .tol-form-layout__inner {
-    flex: 1;
+    grid-column: 2;
+    grid-row: 1;
     min-width: 0;
+    padding: 0 var(--tol-spacing-sm);
+  }
+
+  .tol-form-layout__footer {
+    grid-column: 2;
     padding: 0 10px;
   }
 
@@ -67,21 +73,33 @@
 }
 
 .tol-form-side-nav__wrapper {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1;
   width: 36px;
-  flex-shrink: 0;
-  height: 100%;
+  min-height: 0;
   overflow: hidden;
   transition: width 250ms ease;
 
+  .tol-form-side-nav__inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
   &.open {
-    width: 185px;
+    width: 300px;
 
     .tol-form-side-nav__label {
       opacity: 1;
       visibility: visible;
       transform: translateX(0);
       transition-delay: 0ms;
-      color: var(--tol-grey-light) !important;
+    }
+
+    &.open.with-status {
+      width: 270px;
     }
 
     .tol-form-side-nav__button {
@@ -93,11 +111,13 @@
       visibility: visible;
       transform: translateX(0);
       transition-delay: 0ms;
+      padding-right: var(--tol-spacing-xs);
     }
   }
 
   .tol-form-side-nav__button-wrapper {
     display: flex;
+    flex-shrink: 0;
     justify-content: space-between;
     align-items: center;
     margin-top: 2px;
@@ -113,6 +133,7 @@
     min-width: 0;
     overflow: hidden;
     white-space: nowrap;
+    color: var(--tol-text-subtle);
     opacity: 0;
     visibility: hidden;
     transform: translateX(-8px);
@@ -123,9 +144,11 @@
   }
 
   .tol-form-side-nav__content-wrapper {
-    width: 170px;
+    flex: 1;
+    min-height: 0;
     margin-top: 8px;
     margin-left: 15px;
+    overflow: hidden;
     opacity: 0;
     visibility: hidden;
     transform: translateX(100%);
@@ -146,8 +169,47 @@
 }
 
 .tol-form-sidenav {
-  position: sticky;
-  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+
+  .tol-form-sidenav-toggle-all {
+    display: block;
+    flex-shrink: 0;
+    margin: 0 0 8px auto;
+    padding: 2px 0;
+    border: 0;
+    background: transparent;
+    color: var(--tol-primary);
+    font: inherit;
+    font-size: 0.8em;
+    cursor: pointer;
+  }
+
+  .tol-form-sidenav-groups {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: var(--tol-spacing-xs);
+  }
+
+  .tol-form-sidenav-progress {
+    display: flex;
+    flex-shrink: 0;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+    color: var(--tol-text-subtle);
+    font-size: 0.8em;
+
+    progress {
+      width: 100%;
+      height: 6px;
+      accent-color: var(--tol-success);
+    }
+  }
 
   .tol-form-sidenav-group {
     margin-bottom: 12px;
@@ -161,6 +223,83 @@
     &.active {
       color: var(--tol-primary);
     }
+  }
+
+  .tol-form-sidenav-group-header,
+  .tol-form-sidenav-field {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .tol-form-sidenav-label {
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .tol-form-sidenav-chevron {
+    flex-shrink: 0;
+    font-size: 0.75em;
+  }
+
+  .tol-form-sidenav-status {
+    display: inline-flex;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 50%;
+    text-align: right;
+    align-items: center;
+    gap: 4px;
+    color: var(--tol-text-subtle);
+    font-size: 0.75em;
+    font-weight: normal;
+
+    > span[aria-hidden="true"] {
+      flex-shrink: 0;
+    }
+
+    > span:not([aria-hidden="true"]):not(.tol-form-sidenav-status__sr-only) {
+      min-width: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .tol-form-sidenav-status--required,
+  .tol-form-sidenav-status--remaining,
+  .tol-form-sidenav-status--attention {
+    color: var(--tol-warning);
+  }
+
+  .tol-form-sidenav-status--error {
+    color: var(--tol-danger);
+  }
+
+  .tol-form-sidenav-status--complete {
+    color: var(--tol-success);
+  }
+
+  .tol-form-sidenav-status--required svg,
+  .tol-form-sidenav-status--remaining svg,
+  .tol-form-sidenav-status--attention svg,
+  .tol-form-sidenav-status--error svg {
+    font-size: 0.55em;
+    margin-bottom: 2px;
+  }
+
+  .tol-form-sidenav-status__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .tol-form-sidenav-group-list {

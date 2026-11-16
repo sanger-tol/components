@@ -4,14 +4,16 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { Router } from "react-router-dom";
 import { createMemoryHistory } from "history";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   FormAllInOne,
+  FormSideNavBar,
   cleanTitle,
   findScrollContainer,
+  getFieldStatus,
   getFieldAnchorId,
   getNavGroups,
   getNavItems,
@@ -99,6 +101,33 @@ describe("scroll nav utils", () => {
     });
   });
 
+  test("computes statuses from flags, values and validation errors", () => {
+    const field: TFormField = { name: "title", type: "text", required: true };
+    const context = { formLocked: false, sectionLocked: false };
+    expect(getFieldStatus(field, "", context)).toBe("required");
+    expect(getFieldStatus(field, "Title", context)).toBe("complete");
+    expect(getFieldStatus(field, "Title", { ...context, error: "Invalid" })).toBe("error");
+    expect(getFieldStatus(field, "", { ...context, sectionLocked: true })).toBe("locked");
+    expect(getFieldStatus({ ...field, automatic: true }, "", { ...context, formLocked: true })).toBe("auto");
+    expect(getFieldStatus({ ...field, multiple: true }, { row: "" }, context)).toBe("required");
+    expect(getFieldStatus(field, [""], context)).toBe("required");
+    expect(getFieldStatus(field, ["", "value"], context)).toBe("complete");
+  });
+
+  test("summarises only visible fields and does not change scroll item indices", () => {
+    const fields: TFormField[] = [
+      { name: "hidden", type: "checkbox", label: "Hidden", hidden: true, checkboxConfig: { fields: [] }, section: "general" },
+      { name: "title", type: "text", required: true, section: "general" },
+      { name: "abstract", type: "text", required: true, section: "general" },
+    ];
+    const groups = getNavGroups(fields, [], (field) =>
+      getFieldStatus(field, "", { formLocked: false }),
+    );
+    expect(groups[0].fields.map((field) => field.name)).toEqual(["title", "abstract"]);
+    expect(groups[0].status).toEqual({ kind: "remaining", count: 2 });
+    expect(getNavItems(groups)[0].index).toBe(1);
+  });
+
   test("computes a capped scroll-spy offset", () => {
     expect(getScrollSpyOffset({ clientHeight: 200 } as HTMLDivElement)).toBe(50);
     expect(getScrollSpyOffset({ clientHeight: 2000 } as HTMLDivElement)).toBe(
@@ -165,6 +194,99 @@ describe("FormAllInOne scroll nav", () => {
     expect(
       view.container.querySelector("#tol-form-metadata-general-doi-0"),
     ).not.toBeNull();
+  });
+
+  test("updates field and section statuses as values change", () => {
+    const formConfig: IFormConfig = {
+      fields: [
+        { name: "doi", label: "DOI", type: "text", section: "general", automatic: true },
+        { name: "title", label: "Title", type: "text", section: "general", required: true },
+        { name: "abstract", label: "Abstract", type: "text", section: "general", required: true },
+        { name: "funding", label: "Funding source", type: "text", section: "funding" },
+      ],
+      sections: [{ id: "funding", optional: true }],
+      options: { scrollNav: { defaultOpen: true } },
+    };
+    const history = createMemoryHistory();
+    const { container } = render(
+      <Router history={history}>
+        <FormAllInOne formConfig={formConfig} />
+      </Router>,
+    );
+    const nav = within(container.querySelector("nav.tol-form-sidenav")!);
+    const progress = nav.getByRole("progressbar", { name: "0 of 2 required fields complete" });
+    expect(progress.getAttribute("value")).toBe("0");
+    expect(progress.getAttribute("max")).toBe("2");
+    expect(container.querySelector(".tol-form-sidenav-groups")!.contains(progress)).toBe(false);
+    expect(nav.getByRole("button", { name: /General 2 fields remaining/ })).toBeTruthy();
+    expect(nav.getByRole("button", { name: /DOI Auto-generated/ })).toBeTruthy();
+    expect(nav.getByRole("button", { name: /Funding Optional/ })).toBeTruthy();
+    expect(nav.getByRole("button", { name: /DOI Auto-generated/ })
+      .querySelector('.tol-icon svg[data-icon="robot"]')).toBeTruthy();
+    expect(nav.getByRole("button", { name: /Title Required/ })
+      .querySelector('.tol-icon svg[data-icon="circle"]')).toBeTruthy();
+    fireEvent.change(container.querySelector('input[name="title"]')!, {
+      target: { value: "A title" },
+    });
+    expect(nav.getByRole("button", { name: /General 1 field remaining/ })).toBeTruthy();
+    expect(nav.getByRole("progressbar", { name: "1 of 2 required fields complete" })
+      .getAttribute("value")).toBe("1");
+    expect(nav.getByRole("button", { name: /Title Provided/ })).toBeTruthy();
+    expect(nav.getByRole("button", { name: /Title Provided/ })
+      .querySelector('.tol-icon svg[data-icon="check"]')).toBeTruthy();
+    fireEvent.change(container.querySelector('input[name="abstract"]')!, {
+      target: { value: "An abstract" },
+    });
+    expect(nav.getByRole("progressbar", { name: "2 of 2 required fields complete" })
+      .getAttribute("value")).toBe("2");
+  });
+
+  test("marks required fields complete despite auto and missing recommended fields", () => {
+    const formConfig: IFormConfig = {
+      fields: [
+        { name: "doi", label: "DOI", type: "text", section: "general", automatic: true },
+        { name: "title", label: "Title", type: "text", section: "general", required: true },
+        { name: "notes", label: "Notes", type: "text", section: "general" },
+        { name: "abstract", label: "Abstract", type: "text", section: "general", recommended: true },
+      ],
+      options: { scrollNav: { defaultOpen: true } },
+    };
+    const { container } = render(
+      <Router history={createMemoryHistory()}>
+        <FormAllInOne formConfig={formConfig} />
+      </Router>,
+    );
+    const nav = within(container.querySelector("nav.tol-form-sidenav")!);
+    expect(nav.getByRole("button", { name: /General 1 field remaining/ })).toBeTruthy();
+    fireEvent.change(container.querySelector('input[name="title"]')!, {
+      target: { value: "Title" },
+    });
+    expect(nav.getByRole("button", {
+      name: /General Complete, 1 recommended field missing/,
+    })).toBeTruthy();
+    expect(nav.getByRole("progressbar", { name: "1 of 1 required fields complete" })).toBeTruthy();
+    fireEvent.change(container.querySelector('input[name="abstract"]')!, {
+      target: { value: "Abstract" },
+    });
+    expect(nav.getByRole("button", { name: "General Complete" })).toBeTruthy();
+  });
+
+  test("counts only visible, editable required fields in progress", () => {
+    const fields: TFormField[] = [
+      { name: "title", type: "text", required: true },
+      { name: "authors", type: "text", multiple: true, minOne: true },
+      { name: "automatic", type: "text", required: true, automatic: true },
+      { name: "locked", type: "text", required: true, readOnly: true },
+      { name: "hidden", type: "checkbox", label: "Hidden", required: true, hidden: true, checkboxConfig: { fields: [] } },
+      { name: "optional", type: "text" },
+    ];
+    const groups = getNavGroups(fields, [], (field) =>
+      getFieldStatus(field, field.name === "title" ? "Done" : "", { formLocked: false }),
+    );
+    const { rerender } = render(<FormSideNavBar groups={groups} onSelect={vi.fn()} />);
+    expect(screen.getByRole("progressbar", { name: "1 of 2 required fields complete" })).toBeTruthy();
+    rerender(<FormSideNavBar groups={getNavGroups(fields)} onSelect={vi.fn()} />);
+    expect(screen.queryByRole("progressbar")).toBeNull();
   });
 
   test("syncs the section and sub-section to the URL", async () => {

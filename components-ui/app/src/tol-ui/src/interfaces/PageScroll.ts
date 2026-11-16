@@ -4,6 +4,14 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import type { TFieldNavStatus } from "../types/forms";
+
+/** Summary displayed beside a form section in the scroll navigation. */
+export type TScrollNavGroupStatus =
+  | { kind: "auto" | "locked" | "optional" }
+  | { kind: "complete"; recommendedRemaining?: number }
+  | { kind: "remaining" | "error" | "attention"; count: number };
+
 export interface IUseScrollSpyResult {
   /** The sub-section currently active based on the user's scroll position. */
   activeSubSection?: string;
@@ -42,11 +50,16 @@ export interface IScrollNavGroup {
   subSection: string;
   /** Display label for the sub-section. */
   label: string;
+  /** Summary of field statuses within this section. */
+  status?: TScrollNavGroupStatus;
   /** Ordered fields within the sub-section. */
   fields: {
     anchorId: string;
     label: string;
     name: string;
     index: number;
+    status?: TFieldNavStatus;
+    /** Whether this field contributes to required-field progress. */
+    requiredForProgress?: boolean;
   }[];
 }
