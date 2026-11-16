@@ -14,8 +14,8 @@ import {
   IconTooltip,
   PopUpMessage,
   stopPropagation
-} from "..";
-import type { IAttributeDescriptor, IRemoteTarget } from "..";
+} from "../..";
+import type { IAttributeDescriptor, IRemoteTarget } from "../..";
 
 export interface PAdvancedSearchTab extends IRemoteTarget {
   /** State setter for the list of attributes selected */

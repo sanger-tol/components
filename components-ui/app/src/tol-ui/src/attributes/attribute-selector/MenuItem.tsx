@@ -8,17 +8,17 @@ import { forwardRef, useState } from "react";
 import type { HTMLAttributes } from "react";
 import { Animation as RSAnimation } from "rsuite";
 
+import { ProvenancePicker } from "./ProvenancePicker";
+import { handleExpandButtonKeyDownEvent } from "./utils";
 import {
   AttributeTitle,
   Col,
   ExpandButton,
-  handleExpandButtonKeyDownEvent,
   Icon,
   SourceTag,
   truncateString,
   TsDataSource,
-} from "..";
-import { ProvenancePicker } from "./ProvenancePicker";
+} from "../..";
 
 export interface PMenuItem {
   /**

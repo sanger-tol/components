@@ -10,8 +10,8 @@ import {
   handleProvenanceEntryClick,
   handleProvenanceEntryKeyDownEvent,
   handleProvenancePickerKeyDownEvent,
-  SourceTag,
-} from "..";
+} from ".";
+import { SourceTag } from "../..";
 
 export interface PProvenancePicker {
   /**

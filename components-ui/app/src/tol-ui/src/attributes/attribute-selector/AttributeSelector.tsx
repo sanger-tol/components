@@ -6,34 +6,37 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { Checkbox as RSCheckbox } from "rsuite";
+
 import {
   AdvancedSearchTab,
   attributeSelectorSearchBy,
+  handleAttributeSelectorKeyNavigation,
+  handleSetAttribute,
+  MenuItem,
+  MyFieldsTab,
+  renderTotalSelectedItems,
+  updateProvenanceFields
+} from ".";
+import {
   extractProvenancesForAttribute,
   filterAttributes,
   getAllAttributeData,
   getFlattenedMetaData,
-  handleAttributeSelectorKeyNavigation,
-  handleSetAttribute,
   IconTooltip,
   isRelationshipField,
-  MenuItem,
   MultipleSelect,
-  MyFieldsTab,
   normaliseCaps,
   PROVENANCE_IN_FIELD_REGEX,
   PROVENANCE_IN_FIELD_REGEX_GLOBAL,
-  renderTotalSelectedItems,
   SourceTag,
   Tabs,
-  updateProvenanceFields,
   useAuth,
-} from "..";
+} from "../..";
 import type {
   IAllowedCardinality,
   IAttributeDescriptor,
   IRemoteTarget,
-} from "..";
+} from "../..";
 
 
 export interface PAttributeSelector extends IRemoteTarget {
@@ -89,10 +92,9 @@ export function AttributeSelector(props: PAttributeSelector) {
     localStorage.getItem("attribute-selector-recommended-columns") === "true"
   );
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
-  // TODO Fetch somehow. User permissions?
-  const [showMyFieldsTab, setShowMyFieldsTab] = useState<boolean>(true);
 
   const user = useAuth().user;
+  const showMyFieldsTab = Boolean(user); // Show only if logged in
 
   const placeholder = maxSelections && maxSelections === 1
     ? "Select an attribute"

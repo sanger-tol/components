@@ -13,7 +13,7 @@ import {
   CORE_CONFIG_DS,
   stopPropagation,
   TolLoader,
-} from "..";
+} from "../..";
 
 export interface PMyFieldsTab {
   objectType: string;
