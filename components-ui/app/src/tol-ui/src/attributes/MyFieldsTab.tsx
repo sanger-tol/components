@@ -4,18 +4,52 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckTree as RSCheckTree } from "rsuite";
 
-import { Button, BUTTONS, stopPropagation, TolLoader } from "..";
+import {
+  Button,
+  BUTTONS,
+  CORE_CONFIG_DS,
+  stopPropagation,
+  TolLoader,
+} from "..";
 
 export interface PMyFieldsTab {
+  objectType: string;
+  userId: string;
   value: string[];
   onChange: (value: string[]) => void;
 }
 
-export function MyFieldsTab({ value, onChange }: PMyFieldsTab) {
-  const [customFields, setCustomFields] = useState<string[] | undefined>(["one", "two", "three"]);
+export function MyFieldsTab(props: PMyFieldsTab) {
+  const {
+    objectType,
+    userId,
+    value,
+    onChange,
+  } = props;
+
+  const [customFields, setCustomFields] = useState<{ id: string; name: string }[] | undefined>();
+
+  useEffect(() => {
+    CORE_CONFIG_DS.getList({ 
+      objectType: "custom_field",
+      filter: {
+        and_: {
+          "object_type": { eq: { value: objectType } },
+          "user_id": { eq: { value: userId } },
+        }
+      },
+      requestedFields: ["id", "display_name"]
+    }).then(res => {
+      if (!res) {
+        setCustomFields([]);
+      } else {
+        setCustomFields(res.map(obj => ({ id: obj!.id, name: obj!.display_name })));
+      }
+    });
+  }, []);
 
   const loading = customFields === undefined;
 
@@ -37,8 +71,8 @@ export function MyFieldsTab({ value, onChange }: PMyFieldsTab) {
           <RSCheckTree
             className="tol-attribute-selector-my-fields-tab__field-tree"
             data={customFields.map((field) => ({
-              label: field,
-              value: field,
+              label: field.name,
+              value: field.id,
             }))}
             renderTreeNode={(node) => (
               <span className="tol-attribute-selector-my-fields-tab__field-row">
@@ -53,9 +87,9 @@ export function MyFieldsTab({ value, onChange }: PMyFieldsTab) {
                 </span>
               </span>
             )}
-            value={value.filter((field) => customFields.includes(field))}
+            value={value.filter((field) => customFields.some(({ id }) => id === field))}
             onChange={(selectedFields) => {
-              const customFieldValues = new Set(customFields);
+              const customFieldValues = new Set(customFields.map(({ id }) => id));
               onChange([
                 ...value.filter((field) => !customFieldValues.has(field)),
                 ...selectedFields.filter(

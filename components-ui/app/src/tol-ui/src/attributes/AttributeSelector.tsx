@@ -27,6 +27,7 @@ import {
   SourceTag,
   Tabs,
   updateProvenanceFields,
+  useAuth,
 } from "..";
 import type {
   IAllowedCardinality,
@@ -90,6 +91,8 @@ export function AttributeSelector(props: PAttributeSelector) {
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
   // TODO Fetch somehow. User permissions?
   const [showMyFieldsTab, setShowMyFieldsTab] = useState<boolean>(true);
+
+  const user = useAuth().user;
 
   const placeholder = maxSelections && maxSelections === 1
     ? "Select an attribute"
@@ -230,6 +233,8 @@ export function AttributeSelector(props: PAttributeSelector) {
                 {showMyFieldsTab && (
                   <Tabs.Tab eventKey="myFields" title="My Fields">
                     <MyFieldsTab
+                      objectType={objectType}
+                      userId={user!.id}
                       value={attribute}
                       onChange={(newAttribute) => {
                         handleSetAttribute(
