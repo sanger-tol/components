@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import type { Dispatch, SetStateAction } from "react";
 
-import { Modal } from "../..";
+import { Button, BUTTONS, Modal } from "../..";
 
 export interface PCustomFieldModal {
   open: boolean;
@@ -19,7 +19,12 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   const { open, setOpen, customFieldId } = props;
 
   return (
-    <Modal open={open} setOpen={setOpen}>
+    <Modal
+      open={open}
+      setOpen={setOpen}
+      header={<h4>{customFieldId ? "Edit Custom Field" : "Create Custom Field"}</h4>}
+      actionButton={<Button {...BUTTONS.CONFIRM} />}
+    >
       Editing {customFieldId ? "field with ID " + customFieldId : "new field"}
     </Modal>
   );
