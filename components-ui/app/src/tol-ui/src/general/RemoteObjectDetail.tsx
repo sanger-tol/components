@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import {
+  CARD_KEY_TYPE,
   getField,
   normaliseCaps,
   ObjectDetail,
@@ -15,7 +16,7 @@ import type {
   IFieldCard,
   TFieldOptionsContent,
   TAdditionalOptionsContent,
-  TObjectDetailKeyType,
+  TCardKeyType,
   TRemoteComponentDataList,
   PObjectDetailOptions,
 } from "..";
@@ -30,6 +31,29 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
   const FieldOptionsContent = ({ attributeId, fieldMeta, setFieldMeta }: TFieldOptionsContent) => {
     const field = getField(fieldMeta, attributeId);
     const position = field && "position" in field ? field.position : "left";
+    const fieldKeyType = field && "keyType" in field ? field.keyType : undefined;
+
+    const updateField = (options: Partial<IFieldCard>) => {
+      setFieldMeta((previous) => {
+        const nextField: IFieldCard = {
+          position: position ?? "left",
+          ...previous.data?.[attributeId],
+          ...options,
+        };
+        // Default removes the saved override, rather than fixing the field to today's component setting.
+        if ("keyType" in options && options.keyType === undefined) delete nextField.keyType;
+        const nextFieldWithDefaults = {
+          ...previous.dataWithDefaults?.[attributeId],
+          ...nextField,
+        };
+        if ("keyType" in options && options.keyType === undefined) delete nextFieldWithDefaults.keyType;
+        return {
+          ...previous,
+          data: { ...previous.data, [attributeId]: nextField },
+          dataWithDefaults: { ...previous.dataWithDefaults, [attributeId]: nextFieldWithDefaults },
+        };
+      });
+    };
 
     return (
       <>
@@ -42,17 +66,24 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
           value={position}
           onChange={(value) => {
             if (value !== "left" && value !== "right") return;
-            setFieldMeta((previous) => {
-              const nextField: IFieldCard = { ...previous.data?.[attributeId], position: value };
-              return {
-                ...previous,
-                data: { ...previous.data, [attributeId]: nextField },
-                dataWithDefaults: {
-                  ...previous.dataWithDefaults,
-                  [attributeId]: { ...previous.dataWithDefaults?.[attributeId], ...nextField },
-                },
-              };
-            });
+            updateField({ position: value });
+          }}
+        />
+        <h6 className="tol-mt-md tol-mb-sm">Key Type:</h6>
+        <SingleSelect
+          block
+          cleanable={false}
+          searchable={false}
+          data={[
+            { label: "Default (component setting)", value: "default" },
+            ...CARD_KEY_TYPE.map((type) => ({ label: normaliseCaps(type), value: type })),
+          ]}
+          value={fieldKeyType ?? "default"}
+          onChange={(value) => {
+            if (value === "default") updateField({ keyType: undefined });
+            else if (CARD_KEY_TYPE.includes(value as TCardKeyType)) {
+              updateField({ keyType: value as TCardKeyType });
+            }
           }}
         />
       </>
@@ -64,8 +95,6 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
     setAdditionalOptions
   }: TAdditionalOptionsContent<PObjectDetailOptions>) => {
 
-    const keyTypes: TObjectDetailKeyType[] = ["standard", "heading", "none"];
-
     return (
       <>
         <h6 className="tol-mt-md tol-mb-sm">Key Type:</h6>
@@ -73,9 +102,9 @@ export function RemoteObjectDetail(props: PRemoteObjectDetail) {
           block
           cleanable={false}
           searchable={false}
-          data={keyTypes.map((type) => ({ label: normaliseCaps(type), value: type }))}
+          data={CARD_KEY_TYPE.map((type) => ({ label: normaliseCaps(type), value: type }))}
           value={additionalOptions.keyType ?? keyType ?? "standard"}
-          onChange={(value) => setAdditionalOptions({ ...additionalOptions, keyType: value as TObjectDetailKeyType })}
+          onChange={(value) => setAdditionalOptions({ ...additionalOptions, keyType: value as TCardKeyType })}
         />
       </>
     );

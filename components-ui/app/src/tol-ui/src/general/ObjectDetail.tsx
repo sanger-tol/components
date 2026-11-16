@@ -5,13 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { ComponentBase, getField } from "..";
-import type { IComponentData, TObjectDetailKeyType } from "..";
+import type { IComponentData, TCardKeyType } from "..";
 
 
 /** Specific options for the `ObjectDetail` component. */
 export interface PObjectDetailOptions {
   /** How to display field keys alongside their values. Defaults to "standard". */
-  keyType?: TObjectDetailKeyType;
+  keyType?: TCardKeyType;
 }
 
 /** Props for the `ObjectDetail` component including base component data. */
@@ -37,13 +37,16 @@ export function ObjectDetail(props: PObjectDetail) {
   const renderField = (attribute: string) => {
     const field = fields ? getField(fields, attribute) : undefined;
     const key = field?.rename ?? attribute;
+    // A field-specific key type takes precedence; otherwise inherit the component-wide setting.
+    const fieldKeyType = field && "keyType" in field ? field.keyType ?? keyType : keyType;
     return (
       <div
         key={attribute}
-        className={`tol-object-detail-field${keyType === "heading" ? " tol-object-detail-field--heading" : ""}`}
+        className={`tol-object-detail-field${fieldKeyType === "heading" ? " tol-object-detail-field--heading" : ""}`}
       >
-        {keyType === "standard" && <strong>{key}:</strong>}
-        {keyType === "heading" && <h6>{key}</h6>}
+        {fieldKeyType !== "none" && (
+          <strong>{key}{fieldKeyType === "standard" ? ":" : ""}</strong>
+        )}
         {data[attribute]}
       </div>
     );

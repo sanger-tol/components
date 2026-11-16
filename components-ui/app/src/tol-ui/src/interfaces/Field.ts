@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import type { TCellRenderer } from "./Cells";
+import type { TCardKeyType } from "./ObjectDetail";
 
 /** Core metadata shared by all fields. */
 export interface IFieldBasic {
@@ -40,6 +41,8 @@ export interface IFieldTable extends IFieldBasic {
 export interface IFieldCard extends IFieldBasic {
   /** Position of the value within the card layout. */
   position: "left" | "right";
+  /** Field key display override. When omitted, uses the object detail's key type. */
+  keyType?: TCardKeyType;
 }
 
 export interface IFieldTimeline extends IFieldBasic {
