@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { CheckTree as RSCheckTree } from "rsuite";
 
-import { Button, TolLoader } from "..";
+import { Button, BUTTONS, TolLoader } from "..";
 
 export interface PMyFieldsTab {
   value: string[];
@@ -40,6 +40,19 @@ export function MyFieldsTab({ value, onChange }: PMyFieldsTab) {
               label: field,
               value: field,
             }))}
+            renderTreeNode={(node) => (
+              <span className="tol-attribute-selector-my-fields-tab__field-row">
+                <span className="tol-attribute-selector-my-fields-tab__field-name">
+                  {node.label}
+                </span>
+                <span
+                  onClick={(event) => event.stopPropagation()}
+                  onKeyDown={(event) => event.stopPropagation()}
+                >
+                  <Button {...BUTTONS.EDIT} />
+                </span>
+              </span>
+            )}
             value={value.filter((field) => customFields.includes(field))}
             onChange={(selectedFields) => {
               const customFieldValues = new Set(customFields);

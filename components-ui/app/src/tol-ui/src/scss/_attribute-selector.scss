@@ -188,6 +188,17 @@ SPDX-License-Identifier: MIT
   margin-left: var(--tol-spacing-sm);
 }
 
+.tol-attribute-selector-my-fields-tab__field-row {
+  display: flex;
+  align-items: center;
+  gap: var(--tol-spacing-sm);
+}
+
+.tol-attribute-selector-my-fields-tab__field-name {
+  flex: 1;
+  min-width: 0;
+}
+
 .tol-attribute-selector-my-fields-tab__field-tree {
   .rs-check-tree-node-content,
   .rs-check-tree-node .rs-check-item {
@@ -209,7 +220,8 @@ SPDX-License-Identifier: MIT
     position: absolute;
     inset-inline-start: 12px;
     left: 12px;
-    top: 10px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .rs-check-tree-node-content .rs-check-item .rs-checkbox-checker .rs-checkbox-label {
