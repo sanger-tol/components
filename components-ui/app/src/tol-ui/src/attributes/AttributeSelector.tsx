@@ -210,11 +210,11 @@ export function AttributeSelector(props: PAttributeSelector) {
         }}
         renderMenuItem={(l: any, index: number) => RenderMenuItem(l, index)}
         renderMenu={
-          advanceTab || showMyFieldsTab ? (menuItem) =>
+          advanceTab || showMyFieldsTab ? (menu) =>
             <div className="tol-attribute-selector__tabs">
               <Tabs defaultActiveKey="all">
                 <Tabs.Tab eventKey="all" title="All">
-                  {menuItem}
+                  {menu}
                 </Tabs.Tab>
                 {advanceTab && (
                   <Tabs.Tab eventKey="advanced" title="Advanced Search">
