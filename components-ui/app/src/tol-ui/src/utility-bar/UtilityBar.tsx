@@ -16,6 +16,7 @@ import {
   IconTooltip,
   PDropdownButton,
   DropdownButton,
+  hasUtilityBarLayout,
 } from "..";
 
 export interface PUtilityBar {
@@ -60,6 +61,7 @@ export function UtilityBar(props: PUtilityBar) {
   } = props;
 
   const wrapperId = "tol-utility-bar-wrapper-" + id;
+  const isCompact = !hasUtilityBarLayout(props, noLeftSide);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
 
@@ -152,9 +154,9 @@ export function UtilityBar(props: PUtilityBar) {
 
   return (
     <div className={noLeftSide ? "tol-utility-bar-no-left-side" : ""}>
-      <div ref={wrapperRef} className={`tol-utility-bar ${className ?? ""}`} data-testid={id} id={wrapperId}>
+      <div ref={wrapperRef} className={`tol-utility-bar${isCompact ? " tol-utility-bar-no-layout" : ""} ${className ?? ""}`} data-testid={id} id={wrapperId}>
+        {!noLeftSide && description && <IconTooltip icon={<div className="tol-utility-bar-info" />} className="tol-utility-bar-tooltip" contents={description} />}
         {!noLeftSide && title && <EditableTitle {...title} />}
-        {!noLeftSide && description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
         {elements && elements.map(
           (element, index) => <Fragment key={index}>{element}</Fragment>
         )}

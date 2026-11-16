@@ -109,6 +109,10 @@ export class TsDataSource implements
     return this.baseURL;
   }
 
+  public getDataspace(): string | undefined {
+    return this.dataspace;
+  }
+
   public generateEndpoint(target?: string, suffix?: string): string {
     const tg = target ? `${target}` : "";
     const sf = suffix ? `${suffix}` : "";

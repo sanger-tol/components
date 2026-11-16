@@ -18,6 +18,33 @@
   height: var(--tol-utility-bar-height);
   align-items: center;
   z-index: 5;
+
+  .tol-utility-bar-info {
+    height: calc(var(--tol-utility-bar-height)/2);
+    width: 8px;
+    background-color: var(--tol-grey);
+    position: absolute;
+    left: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 3px;
+    z-index: 1;
+    outline: 2px solid var(--tol-bg-dark);
+
+    &:hover {
+      background-color: var(--tol-primary);
+    }
+  }
+}
+
+.tol-utility-bar-no-layout {
+  height: 0;
+  margin-bottom: 0;
+  overflow: visible;
+
+  .tol-utility-bar-info {
+    top: calc(var(--tol-utility-bar-height) / 2);
+  }
 }
 
 // Ensures that the editable title within the utility bar does not overflow and
@@ -78,7 +105,7 @@
 }
 
 .tol-icon-tooltip.tol-utility-bar-tooltip {
-  margin: 0 10px;
+  margin: 0;
 }
 
 .tol-utility-bar-title-tooltip {
