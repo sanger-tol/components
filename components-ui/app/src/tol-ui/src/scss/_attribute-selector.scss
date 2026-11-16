@@ -184,6 +184,57 @@ SPDX-License-Identifier: MIT
   }
 }
 
+.tol-attribute-selector-my-fields-tab__field-tree {
+  .rs-check-tree-node-content,
+  .rs-check-tree-node .rs-check-item {
+    display: block;
+    width: 100%;
+  }
+
+  .rs-tree-node-toggle-placeholder {
+    display: none;
+  }
+
+  .rs-check-tree-node .rs-check-item .rs-checkbox-checker > label {
+    display: block;
+    padding: 8px 12px 8px 40px;
+    border-radius: 0;
+  }
+
+  .rs-checkbox-control {
+    left: 12px;
+    top: 10px;
+  }
+
+  .rs-check-tree-node-content .rs-check-item .rs-checkbox-checker .rs-checkbox-label {
+    display: block;
+    width: 100%;
+    padding: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    background-color: transparent;
+    color: inherit;
+    border-radius: 0;
+  }
+
+  .rs-check-tree-node .rs-check-item {
+    &.rs-checkbox-checked .rs-checkbox-checker > label {
+      background-color: transparent;
+      color: inherit;
+      font-weight: normal;
+    }
+
+    &:hover,
+    &:focus,
+    &.rs-check-item-focus {
+      .rs-checkbox-checker > label {
+        background-color: var(--rs-listbox-option-hover-bg);
+        color: var(--rs-listbox-option-hover-text);
+      }
+    }
+  }
+}
+
 .tol-attribute-selector-advanced-search-tab {
   padding: 0px 12px 12px 12px;
 

@@ -229,7 +229,19 @@ export function AttributeSelector(props: PAttributeSelector) {
                 )}
                 {showMyFieldsTab && (
                   <Tabs.Tab eventKey="myFields" title="My Fields">
-                    <MyFieldsTab />
+                    <MyFieldsTab
+                      value={attribute}
+                      onChange={(newAttribute) => {
+                        handleSetAttribute(
+                          newAttribute,
+                          maxSelections!,
+                          setAttributes,
+                          entityMeta,
+                          objectType,
+                          setAttributeMeta
+                        );
+                      }}
+                    />
                   </Tabs.Tab>
                 )}
               </Tabs>
