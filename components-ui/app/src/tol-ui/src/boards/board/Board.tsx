@@ -8,9 +8,7 @@ import { useEffect, useState } from "react";
 import { Redirect, useHistory, useLocation, useParams } from "react-router-dom";
 import {
   BOARD_ENTITIES,
-  getCssVarValue,
   LoadingContent,
-  themeListener,
   View,
   useBoard,
   PRIVILEGE,
@@ -75,15 +73,6 @@ export function Board(props: PBoard) {
   const queryParams = new URLSearchParams(location.search);
   const objectType = props.object_type ?? queryParams.get("object_type") ?? undefined;
   const filter = props.filter ?? JSON.parse(queryParams.get("filter") ?? "null") ?? undefined;
-
-  themeListener(() => {
-    try {
-      const backing = document.getElementById("tol-smart-app-background");
-      backing!.style.backgroundColor = getCssVarValue("--tol-bg-dark");
-    } catch {
-      return;
-    }
-  });
 
   const {
     data: boardData,

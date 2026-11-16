@@ -20,12 +20,12 @@ export interface PCellRendererMarkdownParamOptions extends IRemoteTarget {
   renderer: TCellRenderer;
   /**
    * The state setter for `renderer`.
-   * Like `fieldMeta` in `CellRendererModal`, this is written to by reference,
+  * Like `fieldMeta` in `DatapointRendererConfigurer`, this is written to by reference,
    * then 'formally updated' with `setRenderer({ ...renderer })`. 
    */
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
   /**
-   * The state of the same name from the parent `CellRendererModal` component. Needed to disable
+  * The state of the same name from the parent `DatapointRendererConfigurer` component. Needed to disable
    * the confirmation button
    */
   hasPendingChanges: boolean;
@@ -34,13 +34,13 @@ export interface PCellRendererMarkdownParamOptions extends IRemoteTarget {
    */
   setHasPendingChanges: Dispatch<SetStateAction<boolean>>;
   /**
-   * Switches the active page in `CellRendererModal` back to the first one (this is the second)
+  * Switches the active page in `DatapointRendererConfigurer` back to the first one (this is the second)
    */
   goBack: () => void;
 }
 
 /**
- * The second page of `CellRendererModal` when a markdown parameter is being edited
+ * The second page of `DatapointRendererConfigurer` when a markdown parameter is being edited
  */
 export function CellRendererMarkdownParamOptions(props: PCellRendererMarkdownParamOptions) {
   const {

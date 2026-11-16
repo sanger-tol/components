@@ -16,6 +16,10 @@
   flex-direction: column;
 }
 
+#tol-smart-app-background:has(.tol-widget) {
+  background-color: var(--tol-bg-dark);
+}
+
 .tol-smart-app {
   margin: 10px;
   width: calc(100% - 20px);

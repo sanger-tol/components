@@ -9,7 +9,7 @@ import { Toggle } from "rsuite";
 import {
   AttributeSelector,
   Button,
-  CellRendererConfigurer,
+  DatapointRendererConfigurerControl,
   ConfigDrawerTabs,
   deepCopy,
   Drawer,
@@ -210,8 +210,8 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
     </div>
   );
 
-  const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
-    <CellRendererConfigurer
+  const DatapointRendererConfigurerControlWrapper = ({ attributeId }: { attributeId: string }) => (
+    <DatapointRendererConfigurerControl
       {...props}
       attributeId={attributeId}
       fieldMeta={newFieldMeta!}
@@ -220,7 +220,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   );
 
   const additionalIcons = [
-    CellRendererConfigurerWrapper,
+    DatapointRendererConfigurerControlWrapper,
   ];
 
   const resetButton: PButton = {
@@ -238,7 +238,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const AttributeSelecting = (
     <>
       {isEditable && (
-        <div className="tol-section-spacing">
+        <div className="tol-mb-md">
           <Message
             type="info"
             showIcon
@@ -254,7 +254,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         </div>
       )}
       {!editMode && !warningDismissed && (
-        <div className="tol-section-spacing">
+        <div className="tol-mb-md">
           <Message
             type="warning"
             showIcon
@@ -296,7 +296,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       />
       {sortByAttribute && SortByButtons}
       {canManageColumnVisibility && (
-        <div className="tol-config-drawer-column-title tol-section-spacing-top">
+        <div className="tol-config-drawer-column-title tol-mt-md">
           <div className="tol-toggle-option">
             <Toggle
               onClick={() => {
@@ -320,7 +320,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         </div>
       )}
       {canManageColumnVisibility && limitVisibility && (
-        <div className="tol-small-spacing">
+        <div className="tol-my-sm">
           <HoverOverlay
             contents="Active Columns are shown by default. Inactive Columns are allowed to be selected but hidden by default, and users can add them later from column selection."
             placement="top"
@@ -375,7 +375,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         </>
       )}
       {actions && actionChoices && (
-        <div className="tol-section-spacing-vertical">
+        <div className="tol-my-md">
           <h6>Actions</h6>
           {ActionDropdown}
         </div>

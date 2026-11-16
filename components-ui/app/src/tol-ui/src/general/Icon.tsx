@@ -34,6 +34,10 @@ export interface PIcon {
    * Handler for if this icon is clicked
    */
   onClick?: () => void;
+  /** Whether the clickable icon is disabled. */
+  disabled?: boolean;
+  /** Accessible name for a clickable icon; defaults to its tooltip or icon name. */
+  "aria-label"?: string;
   /**
    * Tooltip to show when this icon is hovered over
    */
@@ -49,9 +53,13 @@ export interface PIcon {
  * 
  * Displays an icon from the FontAwesome icon set (determined by the `icon` passed in).
  * Accepts additional options such as config and colour.
+ * Renders a native button when an onClick handler is provided.
  */
 export function Icon(props: PIcon) {
-  const { icon, size, colour, config = "solid", className, onClick, tooltip, testid } = props;
+  const {
+    icon, size, colour, config = "solid", className, onClick, tooltip, testid,
+    disabled, "aria-label": ariaLabel,
+  } = props;
 
   const prefix = config === "brands" ? "fab" : config === "regular" ? "far" : "fas";
   const IconContents = (
@@ -62,19 +70,31 @@ export function Icon(props: PIcon) {
     />
   );
 
+  const contents = tooltip ? (
+    <HoverOverlay contents={tooltip}>
+      {IconContents}
+    </HoverOverlay>
+  ) : IconContents;
+  const iconClassName = "tol-icon" + (className ? ` ${className}` : "");
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        className={iconClassName}
+        onClick={onClick}
+        disabled={disabled}
+        aria-label={ariaLabel ?? tooltip ?? icon}
+        data-testid={testid}
+      >
+        {contents}
+      </button>
+    );
+  }
+
   return (
-    <span
-      className={"tol-icon" + (className ? ` ${className}` : "")}
-      onClick={onClick} data-testid={testid}
-      style={onClick ? {cursor: "pointer"} : {}}
-    >
-      {tooltip ? (
-        <HoverOverlay contents={tooltip}>
-          {IconContents}
-        </HoverOverlay>
-      ) : (
-        IconContents
-      )}
+    <span className={iconClassName} data-testid={testid}>
+      {contents}
     </span>
   );
 }

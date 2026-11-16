@@ -120,24 +120,29 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
           {additionalIcons?.map(Icon =>
             <Icon attributeId={attributeId} key={attributeId}/>
           )}
-          <div
-            className={"tol-active-column-btn"}
+          <Icon
+            icon="arrow-up"
+            tooltip="Move Column Up"
+            className="tol-active-column-btn"
+            aria-label={`Move ${attributeId} up`}
+            disabled={index === 0}
             onClick={() => moveAttributeUp(index)}
-          >
-            <Icon icon="arrow-up" tooltip="Move Column Up" />
-          </div>
-          <div
-            className={"tol-active-column-btn"}
+          />
+          <Icon
+            icon="arrow-down"
+            tooltip="Move Column Down"
+            className="tol-active-column-btn"
+            aria-label={`Move ${attributeId} down`}
+            disabled={index === attributes.length - 1}
             onClick={() => moveAttributeDown(index)}
-          >
-            <Icon icon="arrow-down" tooltip="Move Column Down" />
-          </div>
-          <div
+          />
+          <Icon
+            icon="close"
+            tooltip="Delete Column"
             className="tol-active-column-btn delete"
+            aria-label={`Delete ${attributeId}`}
             onClick={() => removeAttribute(index)}
-          >
-            <Icon icon="close" tooltip="Delete Column" />
-          </div>
+          />
         </div>
       </div>
     );

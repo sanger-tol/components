@@ -13,6 +13,7 @@ import {
   ListDataConfigDrawer,
   mergeUtilityBarConfigs,
   normaliseFieldMeta,
+  optimiseFieldMetaForSave,
   Pagination,
   RecordCounter,
   RemoteComponentBase,
@@ -20,7 +21,7 @@ import {
   useBoard,
   useComponentListData,
 } from "..";
-import type { IComponentData, IFieldMeta, TListDataConfigSave, TRemoteComponentDataList, PButton, TAdditionalOptionsContent, TDataObjectListOrNull } from "..";
+import type { IComponentData, IFieldMeta, TListDataConfigSave, TRemoteComponentDataList, PButton, TAdditionalOptionsContent, TFieldOptionsContent, TDataObjectListOrNull } from "..";
 
 
 /** Props for the `RemoteComponentDataList` wrapper component. */
@@ -36,6 +37,8 @@ export type PRemoteComponentDataList<TAdditionalOptions> =
   manipulateViewableFieldMeta?: (fieldMeta: IFieldMeta, dataObjects?: TDataObjectListOrNull) => IFieldMeta;
   /** Editor for the component-specific options. */
   AdditionalOptionsContent?: ComponentType<TAdditionalOptionsContent<TAdditionalOptions>>;
+  /** Optional editor for each field's settings modal. */
+  FieldOptionsContent?: ComponentType<TFieldOptionsContent>;
 };
 
 /**
@@ -55,6 +58,7 @@ export function RemoteComponentDataList<TAdditionalOptions>(
     defaultPageSize,
     componentDefaultPageSize,
     AdditionalOptionsContent,
+    FieldOptionsContent,
     onConfigSave,
     pageSizePicker,
     children,
@@ -133,7 +137,7 @@ export function RemoteComponentDataList<TAdditionalOptions>(
     ...nextAdditionalOptions
   }: TListDataConfigSave<TAdditionalOptions>) => {
     const nextConfig = {
-      fieldMeta: nextFieldMeta ?? activeFieldMeta,
+      fieldMeta: optimiseFieldMetaForSave(nextFieldMeta ?? activeFieldMeta),
       defaultSortByAttribute: nextDefaultSortByAttribute ?? undefined,
       defaultSortByType: nextDefaultSortByType ?? undefined,
       defaultPageSize: nextDefaultPageSize,
@@ -208,6 +212,7 @@ export function RemoteComponentDataList<TAdditionalOptions>(
         defaultPageSize={configuredDefaultPageSize}
         additionalOptions={configuredAdditionalOptions}
         AdditionalOptionsContent={AdditionalOptionsContent}
+        FieldOptionsContent={FieldOptionsContent}
         onConfigSave={onSave}
       />
       {showCounter && (

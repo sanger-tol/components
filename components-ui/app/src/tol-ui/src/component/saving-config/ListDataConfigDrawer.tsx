@@ -8,16 +8,23 @@ import { ComponentType, useEffect, useRef, useState } from "react";
 import {
   AttributeSelector,
   Button,
-  CellRendererConfigurer,
   deepEqual,
   deepCopy,
   Drawer,
+  FieldOptionsModal,
+  Icon,
+  optimiseFieldMetaForSave,
   SelectedAttributesContainer,
   IRemoteTarget,
   PageSizePicker,
   Tabs,
 } from "../..";
-import type { IFieldMeta, TListDataConfigSave, TAdditionalOptionsContent } from "../..";
+import type {
+  IFieldMeta,
+  TListDataConfigSave,
+  TAdditionalOptionsContent,
+  TFieldOptionsContent,
+} from "../..";
 
 /** Props for the `ListDataConfigDrawer`, optionally typed with component-specific options. */
 export type PListDataConfigDrawer<TAdditionalOptions> = IRemoteTarget & TListDataConfigSave<TAdditionalOptions> & {
@@ -31,6 +38,8 @@ export type PListDataConfigDrawer<TAdditionalOptions> = IRemoteTarget & TListDat
   onConfigSave: (config: TListDataConfigSave<TAdditionalOptions>) => void;
   /** Additional options to render within the drawer. */
   AdditionalOptionsContent?: ComponentType<TAdditionalOptionsContent<TAdditionalOptions>>;
+  /** Optional editor opened by each field's settings icon. */
+  FieldOptionsContent?: ComponentType<TFieldOptionsContent>;
 };
 
 /**
@@ -51,8 +60,10 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
     defaultPageSize,
     additionalOptions,
     AdditionalOptionsContent,
+    FieldOptionsContent,
   } = props;
 
+  const [optionsAttribute, setOptionsAttribute] = useState<string | null>(null);
   const [draftFieldMeta, setDraftFieldMeta] = useState<IFieldMeta>(() => ({
     ...deepCopy(fieldMeta),
     data: deepCopy(fieldMeta?.data ?? {}),
@@ -77,6 +88,7 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
   );
 
   useEffect(() => {
+    setOptionsAttribute(null);
     setDraftFieldMeta({
       ...deepCopy(fieldMeta),
       data: deepCopy(fieldMeta?.data ?? {}),
@@ -90,24 +102,25 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
     setDraftAdditionalOptions(deepCopy(additionalOptions ?? {}) as TAdditionalOptions);
   }, [open, defaultSortByAttribute, defaultSortByType, fieldMeta, defaultPageSize, additionalOptions]);
 
-  const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
-    <CellRendererConfigurer
-      {...props}
-      attributeId={attributeId}
-      fieldMeta={draftFieldMeta}
-      setFieldMeta={setDraftFieldMeta}
+  const FieldOptionsIcon = ({ attributeId }: { attributeId: string }) => (
+    <Icon
+      icon="gear"
+      tooltip="Field Options"
+      className="tol-active-column-btn"
+      aria-label={`Field options for ${attributeId}`}
+      onClick={() => setOptionsAttribute(attributeId)}
     />
   );
 
-  const additionalIcons = [CellRendererConfigurerWrapper];
+  const additionalIcons = FieldOptionsContent ? [FieldOptionsIcon] : [];
 
   const onSave = () => {
     if (hasPendingChanges) {
       onConfigSave({
-        fieldMeta: {
+        fieldMeta: optimiseFieldMetaForSave({
           ...draftFieldMeta,
           order: { ...draftFieldMeta.order, active: draftAttributes },
-        },
+        }),
         defaultSortByAttribute: draftSortByAttribute,
         defaultSortByType: draftSortByType,
         defaultPageSize: draftPageSize,
@@ -199,12 +212,12 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
   const Content = (
     <Tabs defaultActiveKey="fields">
       <Tabs.Tab eventKey="fields" title="Fields">
-        <section className="tol-section-spacing-top">
+        <section className="tol-mt-md">
           {FieldsContent}
         </section>
       </Tabs.Tab>
       <Tabs.Tab eventKey="options" title="Options">
-        <section className="tol-section-spacing-top">
+        <section className="tol-mt-md">
           {OptionsContent}
         </section>
       </Tabs.Tab>
@@ -220,6 +233,17 @@ export function ListDataConfigDrawer<TAdditionalOptions>(props: PListDataConfigD
       hasPendingChanges={hasPendingChanges}
     >
       {Content}
+      {FieldOptionsContent && optionsAttribute !== null && (
+        <FieldOptionsModal
+          {...props}
+          open={optionsAttribute !== null}
+          setOpen={() => setOptionsAttribute(null)}
+          FieldOptionsContent={FieldOptionsContent}
+          attributeId={optionsAttribute}
+          fieldMeta={draftFieldMeta}
+          setFieldMeta={setDraftFieldMeta}
+        />
+      )}
     </Drawer>
   );
 }

@@ -139,7 +139,7 @@ export function defineBoardEntity(
       ...entity,
       filter: deepCopy(initialFilter),
       defaultFilter: deepCopy(initialFilter),
-      filterPassThrough: definedEntity.filter_pass_through ?? false,
+      filterPassThrough: definedEntity.filter_pass_through ?? definedEntity.filterPassThrough ?? false,
       title: definedEntity.title || "",
       dataspace: new TsDataSource({
         dataSourceInstanceId: definedEntity.data_source_instance_id,

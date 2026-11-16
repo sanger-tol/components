@@ -38,7 +38,7 @@ export function ConfigDrawerTabs(props: PConfigDrawerTabs) {
   return (
     <Tabs defaultActiveKey="active">
       <Tabs.Tab eventKey="active" title="Active Columns">
-        <div className="tol-section-spacing-top">
+        <div className="tol-mt-md">
           <AttributeSelector
             {...props}
             sticky
@@ -68,7 +68,7 @@ export function ConfigDrawerTabs(props: PConfigDrawerTabs) {
         </div>
       </Tabs.Tab>
       <Tabs.Tab eventKey="inactive" title="Inactive Columns">
-        <div className="tol-section-spacing-top">
+        <div className="tol-mt-md">
           <AttributeSelector
             {...props}
             sticky
