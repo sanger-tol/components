@@ -8,11 +8,8 @@ import { createRoot } from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import "./scss/styling.scss";
 import {
-  API_PATHS,
-  env,
   generateAutoDocNavigation,
   SmartApp,
-  TsDataSource
 } from "./tol-ui/src";
 import {
   Home,
