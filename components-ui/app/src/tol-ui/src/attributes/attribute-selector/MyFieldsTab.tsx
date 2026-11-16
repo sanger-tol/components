@@ -16,6 +16,7 @@ import {
   TolLoader,
 } from "../..";
 
+/** Props for the MyFieldsTab component */
 export interface PMyFieldsTab {
   objectType: string;
   userId: string;
@@ -24,6 +25,7 @@ export interface PMyFieldsTab {
   onChange: (value: string[]) => void;
 }
 
+/** Displays the user's custom fields and lets them select, create, or edit fields. */
 export function MyFieldsTab(props: PMyFieldsTab) {
   const {
     objectType,
