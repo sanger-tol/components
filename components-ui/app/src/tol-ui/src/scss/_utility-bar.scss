@@ -29,7 +29,7 @@
     transform: translateY(-50%);
     border-radius: 3px;
     z-index: 1;
-    outline: 2px solid var(--tol-bg-dark);
+    outline: 1px solid var(--tol-grey-subtle);
 
     &:hover {
       background-color: var(--tol-primary);

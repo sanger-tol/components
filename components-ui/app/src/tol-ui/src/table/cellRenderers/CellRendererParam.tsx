@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Dispatch, SetStateAction } from "react";
-import { Input } from "rsuite";
+import { Input, Toggle } from "rsuite";
 
 import {
   Button,
@@ -32,8 +32,16 @@ export function CellRendererParam(props: PCellRendererParam) {
     setSelectedParam
   } = props;
 
-  const paramValue = renderer?.props![param];
+  const paramValue = renderer?.props?.[param];
   const conditionPresent = Object.keys((paramValue as IFilter || {}).and_ || {}).length > 0;
+
+  const updateRendererParam = (value: string | boolean) => {
+    if (!renderer) return;
+    setRenderer({
+      ...renderer,
+      props: { ...renderer.props, [param]: value },
+    });
+  };
 
   return (
     <div key={param}>
@@ -52,8 +60,7 @@ export function CellRendererParam(props: PCellRendererParam) {
             value={paramValue as string}
             onChange={(newValue: string) => {
               if (renderer) {
-                renderer.props![param] = newValue;
-                setRenderer({ ...renderer });
+                updateRendererParam(newValue);
               }
             }}
             placeholder={meta.placeholder}
@@ -69,6 +76,12 @@ export function CellRendererParam(props: PCellRendererParam) {
                 param === selectedParam ? undefined : param
               );
             }}
+          />
+        ) : meta.type === "boolean" ? (
+          <Toggle
+            checked={typeof paramValue === "boolean" ? paramValue : Boolean(meta.defaultValue)}
+            onChange={(checked) => updateRendererParam(checked)}
+            aria-label={meta.rename}
           />
         ) : meta.type === "markdown" ? (
           <Button

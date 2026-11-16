@@ -22,7 +22,7 @@ export type TCellRendererType =
   string;
 
 interface IElementProps {
-  [prop: string]: string | IFilter;
+  [prop: string]: string | boolean | IFilter;
 }
 
 export interface ICellRenderer {
@@ -60,6 +60,7 @@ export interface IBoardCellRendererParam {
   rename: string,
   description: string,
   required?: boolean,
+  defaultValue?: string | boolean,
   previewExample?: string,
   placeholder?: string,
 }
