@@ -7,7 +7,9 @@ SPDX-License-Identifier: MIT
 import { Button, BUTTONS, Modal } from "../..";
 
 export interface PCustomFieldModal {
+  /** Whether the modal is currently open */
   open: boolean;
+  /** Callback to control whether this modal is open */
   setOpen: (open: boolean) => void;
   /** The ID of the custom field to edit. If `undefined`, this modal creates a new field */
   customFieldId?: number | undefined;
