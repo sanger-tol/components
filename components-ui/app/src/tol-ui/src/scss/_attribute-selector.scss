@@ -212,7 +212,7 @@ SPDX-License-Identifier: MIT
 
   .rs-check-tree-node .rs-check-item .rs-checkbox-checker > label {
     display: block;
-    padding: 8px 12px 8px 38px;
+    padding: var(--tol-spacing-sm) 12px var(--tol-spacing-sm) 38px;
     border-radius: 0;
   }
 

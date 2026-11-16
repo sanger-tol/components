@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { CheckTree as RSCheckTree } from "rsuite";
 
-import { Button, BUTTONS, TolLoader } from "..";
+import { Button, BUTTONS, stopPropagation, TolLoader } from "..";
 
 export interface PMyFieldsTab {
   value: string[];
@@ -46,8 +46,8 @@ export function MyFieldsTab({ value, onChange }: PMyFieldsTab) {
                   {node.label}
                 </span>
                 <span
-                  onClick={(event) => event.stopPropagation()}
-                  onKeyDown={(event) => event.stopPropagation()}
+                  onClick={stopPropagation}
+                  onKeyDown={stopPropagation}
                 >
                   <Button {...BUTTONS.EDIT} />
                 </span>
