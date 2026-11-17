@@ -448,11 +448,21 @@ export async function fetchCustomFieldFunctions(configDataSource: ListGetter): P
 export function convertCustomFieldPythonTypeToFormField(
   pythonType: string
 ): [Omit<IFormComponent, "name">, ReturnType<(typeof Schema.Types)[keyof typeof Schema.Types]>] {
-  const fieldConfig = {
-    type: "text"
-  } satisfies Omit<IFormComponent, "name">;
+  if (pythonType == "int") {
+    const fieldConfig = {
+      type: "text"
+    } satisfies Omit<IFormComponent, "name">;
 
-  const fieldModel = Schema.Types.StringType().isRequired();
+    const fieldModel = Schema.Types.NumberType().isRequired().isInteger();
 
-  return [fieldConfig, fieldModel];
+    return [fieldConfig, fieldModel];
+  } else {
+    const fieldConfig = {
+      type: "text"
+    } satisfies Omit<IFormComponent, "name">;
+
+    const fieldModel = Schema.Types.StringType().isRequired();
+
+    return [fieldConfig, fieldModel];
+  }
 }
