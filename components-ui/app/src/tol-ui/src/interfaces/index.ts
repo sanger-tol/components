@@ -16,6 +16,7 @@ export * from "./Chart";
 export * from "./Colours";
 export * from "./Component";
 export * from "./ComponentConfig";
+export * from "./CustomFields";
 export * from "./Data";
 export * from "./datasource";
 export * from "./Drawer";
