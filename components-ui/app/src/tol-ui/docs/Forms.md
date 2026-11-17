@@ -30,6 +30,59 @@ Once you have chosen a component `type`, your IDE will be able to show you the p
 
 Every form component has the `name` property. This is the name by which you'll refer to this field in the object passed to your `onSubmit` function.
 
+#### Nested object fields
+
+Use `type: "subform"` when a field contains a nested object. Its `fields` define
+the fields inside that object, and the submitted data keeps the same nested
+shape:
+
+```ts
+{
+  name: "metadata",
+  type: "subform",
+  label: "Metadata",
+  fields: [
+    { name: "title", type: "text", label: "Title" },
+  ],
+}
+```
+
+Set `multiple: true` when the field contains an array of objects. Users can add
+and remove entries, and the submitted value remains an array:
+
+```ts
+{
+  name: "parentProjects",
+  type: "subform",
+  label: "Parent Projects",
+  multiple: true,
+  itemLabel: "Parent Project",
+  summaryFields: ["name", "accession"],
+  editor: { presentation: "drawer" },
+  minItems: 1,
+  fields: [
+    { name: "accession", type: "text", label: "Accession" },
+    { name: "title", type: "text", label: "Title" },
+  ],
+}
+```
+
+`minItems` and `maxItems` constrain the number of entries. A required subform
+always keeps at least one entry.
+
+Subforms render inline by default. Set `editor.presentation` to `"drawer"` to
+edit a subform in a drawer. Repeatable subforms show summary cards with edit and
+remove actions. The drawer edits a draft; changes are applied to the form when
+saved and discarded when cancelled.
+
+Set `editor.presentation` to `"auto"` to use a drawer when the subform has more
+than `drawerThreshold` editable fields. The default threshold is five. Use
+`summaryFields` to choose which item properties appear on each summary card.
+Set `summary: true` on an inline repeatable subform to show its items as summary
+cards too; editing expands the item in place, and changes apply immediately.
+Nested fields can use `hiddenWhen` to conditionally hide themselves based on
+their containing object.
+
 ### `buttonConfig`
 
 The button configuration describes the buttons at the bottom of your form (such as a submit or cancel button).

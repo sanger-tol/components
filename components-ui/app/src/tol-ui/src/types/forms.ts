@@ -25,6 +25,7 @@ import type {
   ICheckboxField,
   IFormTagField,
   IToggleFormField,
+  ISubformField,
 } from ".."
 
 export type TFormField =
@@ -42,7 +43,8 @@ export type TFormField =
   | ITextAreaField
   | ICheckboxFormField
   | IFormTagField
-  | IToggleFormField;
+  | IToggleFormField
+  | ISubformField;
 
 export type TUserProfileFormDataOrNull = IUserProfileFormData | null;
 
@@ -106,3 +108,9 @@ export type TFieldNavStatus =
   | "complete"
   | "recommended"
   | "none";
+
+/** A path into nested form data, using object keys and array indexes. */
+export type TFormValuePath = readonly (string | number)[];
+
+/** A form data path that starts with a top-level field name. */
+export type TFormFieldPath = readonly [string, ...(string | number)[]];

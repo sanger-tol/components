@@ -27,7 +27,7 @@ export function FormDatetime(props: PFormDatetime) {
   } = props;
 
   return (
-    <FormComponentWrapper {...props} id={name} label={label}>
+    <FormComponentWrapper {...props} id={props.id ?? name} label={label}>
       <DatePicker
         value={value ? new Date(value) : null}
         onChange={onChange}

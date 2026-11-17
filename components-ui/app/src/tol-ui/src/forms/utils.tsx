@@ -25,6 +25,8 @@ import type {
   TScrollNavGroupStatus,
   TFieldNavStatus,
   TFormField,
+  TFormFieldPath,
+  TFormValuePath,
   IScrollNavItem,
 } from "..";
 
@@ -45,6 +47,109 @@ export function isEmptyFieldValue(value: unknown): boolean {
 }
 
 /**
+ * Checks whether a value is a non-array object.
+ *
+ * @param value - The value to check.
+ * @returns `true` if the value is a non-null, non-array object.
+ */
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+/**
+ * Reads a value from nested form data.
+ *
+ * @param value - The form data, or part of it, to read from.
+ * @param path - Object keys and array indexes leading to the value.
+ * @returns The value at `path`, or `undefined` if the path does not exist.
+ */
+export function getValueAtPath(
+  value: unknown,
+  path: TFormValuePath,
+): unknown {
+  return path.reduce<unknown>((current, segment) => {
+    if (Array.isArray(current)) {
+      return typeof segment === "number" ? current[segment] : undefined;
+    }
+
+    return isRecord(current) ? current[String(segment)] : undefined;
+  }, value);
+}
+
+/**
+ * Recursively copies `current` along `path`, replacing the value at the end.
+ * Missing objects are created along the way; array segments must be indexes.
+ *
+ * @param current - The value at the current depth of the path.
+ * @param path - The remaining object keys and array indexes.
+ * @param value - The value to set at the end of the path.
+ * @returns A copy of `current` containing the updated value.
+ */
+function updateValueAtPath(
+  current: unknown,
+  path: TFormValuePath,
+  value: unknown,
+): unknown {
+  if (path.length === 0) {
+    return value;
+  }
+
+  const [segment, ...remainingPath] = path;
+
+  if (Array.isArray(current)) {
+    if (
+      typeof segment !== "number" ||
+      !Number.isInteger(segment) ||
+      segment < 0
+    ) {
+      throw new TypeError("Array paths must use non-negative integer indexes.");
+    }
+
+    const updated = [...current];
+    updated[segment] = updateValueAtPath(
+      current[segment],
+      remainingPath,
+      value,
+    );
+    return updated;
+  }
+
+  const source = isRecord(current) ? current : {};
+  const key = String(segment);
+
+  return {
+    ...source,
+    [key]: updateValueAtPath(source[key], remainingPath, value),
+  };
+}
+
+/**
+ * Sets a value in nested form data without mutating the original.
+ *
+ * @param data - The top-level form data.
+ * @param path - The field name, followed by any nested keys and array indexes.
+ * @param value - The value to set.
+ * @returns A copy of `data` containing the updated value.
+ */
+export function setValueAtPath(
+  data: Record<string, unknown>,
+  path: TFormFieldPath,
+  value: unknown,
+): Record<string, unknown> {
+  const [fieldName, ...remainingPath] = path;
+  const nextFieldValue = updateValueAtPath(
+    data[fieldName],
+    remainingPath,
+    value,
+  );
+
+  return {
+    ...data,
+    [fieldName]: nextFieldValue,
+  };
+}
+
+/**
  * Sets the initial data in a form to `data`
  *
  * @param formConfig - The form config object used to define the form
@@ -62,7 +167,8 @@ export function setInitialData<T>(
 /**
  * Builds the initial form state object from a form configuration and optional source data.
  * If source `data` contains a value for a field name, that value is used instead
- * of the fallback default.
+ * of the fallback default. Subform fields are initialized recursively, keeping
+ * multiple subforms as arrays of objects.
  *
  * @param formConfig - Form configuration containing the fields to initialize.
  * @param data - Optional source object used to pre-fill field values.
@@ -74,28 +180,41 @@ export function createInitialDataSnapshot<T>(
 ): Record<string, any> {
   const initialData: Record<string, any> = {};
   formConfig.fields.forEach((field: TFormField) => {
-    // Preserve false instead of defaulting to "" for toggle fields
+    const existing = data?.[field.name];
+
     if (field.type === "toggle") {
-      const existing = data?.[field.name];
       initialData[field.name] =
         typeof existing === "boolean"
           ? existing
           : (field.defaultChecked ?? false);
-    }
-
-    if (field.type === "checkbox") {
+    } else if (field.type === "checkbox") {
       // CheckboxGroup always requires an array value, so non-array DB values
       // (e.g. a boolean flag) must not be passed through as-is.
-      const existing = data?.[field.name];
       initialData[field.name] = Array.isArray(existing)
         ? existing
         : existing === undefined && field.defaultChecked
           ? field.defaultChecked
           : [];
+    } else if (field.type === "multipleselect" || field.type === "tag") {
+      initialData[field.name] = Array.isArray(existing) ? existing : [];
+    } else if (field.type === "subform") {
+      const createSubformData = (value: unknown) => {
+        const sourceData = isRecord(value) ? value : undefined;
+
+        return createInitialDataSnapshot({ fields: field.fields }, sourceData);
+      };
+
+      if (field.multiple) {
+        initialData[field.name] = Array.isArray(existing)
+          ? existing.map(createSubformData)
+          : [];
+      } else {
+        initialData[field.name] = createSubformData(existing);
+      }
     } else if (field.multiple) {
-      initialData[field.name] = data?.[field.name] || {};
+      initialData[field.name] = existing || {};
     } else {
-      initialData[field.name] = data?.[field.name] || "";
+      initialData[field.name] = existing || "";
     }
   });
   return initialData;

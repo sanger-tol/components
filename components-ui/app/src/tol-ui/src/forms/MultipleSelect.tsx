@@ -92,7 +92,7 @@ export function MultipleSelect(props: PMultipleSelect) {
   return (
     <FormComponentWrapper
       {...props}
-      id={name}
+      id={props.id ?? name}
       as="span"
       errorMessageClassName="tol-multiple-select-error-message"
     >

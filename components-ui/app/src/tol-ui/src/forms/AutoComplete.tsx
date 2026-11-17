@@ -37,7 +37,7 @@ export function AutoComplete(props: PAutoComplete) {
   } = props;
 
   return (
-    <FormComponentWrapper {...props} id={name}>
+    <FormComponentWrapper {...props} id={props.id ?? name}>
       <RSAutoComplete
         data={data}
         value={typeof value === "string" ? value : value?.value}

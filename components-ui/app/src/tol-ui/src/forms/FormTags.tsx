@@ -39,7 +39,7 @@ export function FormTags(props: PFormTags) {
       <TagInput
         block
         {...inputProps}
-        id={fieldId && name ? `{form-${fieldId}-{name}` : undefined}
+        id={fieldId && name ? `form-${fieldId}-${name}` : fieldId}
         trigger={["Comma", "Enter"]}
         name={name}
         value={value}

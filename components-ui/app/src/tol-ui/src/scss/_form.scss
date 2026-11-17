@@ -150,9 +150,20 @@
 .tol-form-field-inline-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: var(--tol-spacing-xs);
   padding-bottom: 0 !important;
+
+  // Controls fill the row beside the label; toggles keep their natural size on the left
+  > :not(.rs-form-control-label, .rs-toggle) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  > .rs-picker,
+  > :not(.rs-form-control-label) > .rs-picker {
+    width: 100%;
+  }
 
   // button:not(.rs-btn-close) {
   //   margin-top: 20px;
@@ -166,6 +177,72 @@
     > label {
       align-self: flex-start;
     }
+  }
+
+  // Line the parent label up with the first nested label, which is centred on its input
+  &:has(> .tol-form-subform-fields) {
+    --tol-form-subform-input-height: 45px;
+
+    align-items: flex-start;
+
+    > label {
+      padding-top: calc((var(--tol-form-subform-input-height) - 1lh) / 2);
+    }
+
+    // Repeatable entries are boxed, so line the label up with the top of the box
+    &:has(> .tol-form-subform-list > .tol-form-subform-item) > label {
+      padding-top: 0;
+    }
+  }
+}
+
+// Nested subform fields fill the remaining row width beside the parent label
+.tol-form-subform-fields {
+  flex: 1;
+  min-width: 0;
+
+  &:not(.tol-form-subform-list) > div:first-child .tol-form-field-inline,
+  .tol-form-subform-item > div:first-child .tol-form-field-inline {
+    margin-top: 0 !important;
+  }
+
+  .tol-form-field-inline-controls {
+    padding-top: 0;
+  }
+}
+
+.tol-form-subform-item {
+  padding: var(--tol-spacing-sm);
+  border: 1px solid var(--tol-grey-translucent);
+  border-radius: var(--tol-border-radius);
+
+  & + & {
+    margin-top: var(--tol-spacing-sm);
+  }
+}
+
+.tol-form-subform-item-actions {
+  display: flex;
+  gap: var(--tol-spacing-sm);
+  justify-content: flex-end;
+  margin-top: var(--tol-spacing-sm);
+}
+
+.tol-form-subform-card-title {
+  font-weight: 600;
+}
+
+.tol-form-subform-single-drawer {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.tol-form-subform-list-actions {
+  display: flex;
+  justify-content: flex-start;
+
+  .tol-form-subform-item + & {
+    margin-top: var(--tol-spacing-sm);
   }
 }
 
@@ -330,6 +407,14 @@
 
 .tol-multiple-select-error-message .rs-form-error-message {
   margin-top: 11px;
+}
+
+// Span-rendered wrappers (e.g. MultipleSelect) must lay out like the div wrappers,
+// otherwise inline line boxes add extra space below the field
+span.rs-form-group,
+span.rs-form-group > span:not(.tol-form-field-inline-controls),
+span.tol-multiple-select-error-message {
+  display: block;
 }
 
 .tol-required {

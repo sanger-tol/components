@@ -29,7 +29,11 @@ export function CountrySelect(props: PCountrySelect) {
   const countryItems = countryOptions.map((item: any) => item.label);
 
   return (
-    <FormComponentWrapper {...props} id={name} label={label || "Nationality:"}>
+    <FormComponentWrapper
+      {...props}
+      id={props.id ?? name}
+      label={label || "Nationality:"}
+    >
       <SingleSelect
         data={countryItems}
         placeholder={placeholder}

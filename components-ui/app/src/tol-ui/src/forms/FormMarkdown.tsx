@@ -31,7 +31,7 @@ export function FormMarkdown(props: PFormMarkdown) {
   return (
     <FormComponentWrapper
       {...props}
-      id={name}
+      id={props.id ?? name}
       label={label || "Markdown Editor:"}
     >
       {readOnly && !value ? (

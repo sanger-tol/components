@@ -22,7 +22,6 @@ import {
   Button,
   createInitialDataSnapshot,
   validateForm,
-  UNSUPPORTED_FIELD_TYPE,
   FormMarkdown,
   FormDatetime,
   MultipleFormInput,
@@ -36,9 +35,13 @@ import {
   resolveScrollNavConfig,
   withFieldAnchorIds,
   getFieldStatus,
+  getValueAtPath,
   isEmptyFieldValue,
+  isRecord,
   FormOptionsContext,
   FormToggle,
+  FormDrawer,
+  setValueAtPath,
 } from "..";
 
 import type {
@@ -59,7 +62,12 @@ import type {
   ITextAreaField,
   IFormSearchConfig,
   IFormTagField,
+  IFormValueSource,
+  ISubformDrawerState,
+  ISubformField,
   IToggleFormField,
+  TFormFieldPath,
+  TFormValuePath,
 } from "..";
 import { FormTags } from "./FormTags";
 
@@ -109,6 +117,14 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
   const [searchError, setSearchError] = useState<string>("");
   const [searching, setSearching] = useState<boolean>(false);
   const [showFields, setShowFields] = useState<boolean>(!searchConfig);
+  const [subformDrawerOpen, setSubformDrawerOpen] = useState(false);
+  const [subformDrawerState, setSubformDrawerState] =
+    useState<ISubformDrawerState | null>(null);
+  const [subformDrawerDraft, setSubformDrawerDraft] =
+    useState<Record<string, unknown> | null>(null);
+  const [expandedSubformItems, setExpandedSubformItems] = useState<
+    Record<string, boolean>
+  >({});
   const [formId, _] = useState<any>(() => crypto.randomUUID());
   const hasUnsavedChanges = useRef(false);
   const initialSnapshotRef = useRef<Record<string, any>>({});
@@ -157,16 +173,35 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     }
   }, [modifiedFields]);
 
-  const handleInputChange = (name: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
+  // Updates a nested field and tracks changes under its top-level field.
+  const handleFieldInputChange = (path: TFormFieldPath, value: unknown) => {
+    const [fieldName] = path;
+
+    setFormData((previousData) =>
+      setValueAtPath(previousData, path, value),
+    );
     setModifiedFields((prev: any) => {
-      const initialValue = initialSnapshotRef.current[name];
-      if (deepestEqual(value, initialValue ?? null)) {
-        const { [name]: _, ...rest } = prev as any;
+      const initialValue = initialSnapshotRef.current[fieldName];
+      const currentValue = Object.prototype.hasOwnProperty.call(prev, fieldName)
+        ? prev[fieldName]
+        : initialValue;
+      const updatedFieldValue = setValueAtPath(
+        { [fieldName]: currentValue },
+        path,
+        value,
+      )[fieldName];
+
+      if (deepestEqual(updatedFieldValue, initialValue ?? null)) {
+        const { [fieldName]: _, ...rest } = prev as any;
         return rest;
       }
-      return { ...prev, [name]: value };
+      return { ...prev, [fieldName]: updatedFieldValue };
     });
+  };
+
+  // Keeps the existing change interface for top-level form controls.
+  const handleInputChange = (name: string, value: any) => {
+    handleFieldInputChange([name], value);
   };
 
   const handleSearch = () => {
@@ -256,33 +291,203 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     </div>
   );
 
-  const fieldStatus = (field: TFormField) =>
-    getFieldStatus(field, formData[field.name], {
+  const fieldStatus = (
+    field: TFormField,
+    value: unknown,
+    error?: string,
+  ) =>
+    getFieldStatus(field, value, {
       formLocked,
       sectionLocked: sectionsById.get(field.section ?? "")?.locked === true,
-      error: formErrors[field.name],
+      error,
     });
+
+  // Counts the editable leaf fields used to decide whether auto mode needs a drawer.
+  const countSubformFields = (subformFields: TFormField[]): number =>
+    subformFields.reduce(
+      (count, subformField) =>
+        count +
+        (subformField.type === "subform"
+          ? countSubformFields(subformField.fields)
+          : 1),
+      0,
+    );
+
+  // Opens an item in a detached form-data snapshot so edits stay drafts until saved.
+  const openSubformDrawer = (
+    field: ISubformField,
+    path: TFormFieldPath,
+    itemIndex?: number,
+  ) => {
+    const currentItems = getValueAtPath(formData, path);
+    const items = Array.isArray(currentItems) ? currentItems : [];
+    const isNew =
+      field.multiple
+        ? itemIndex === undefined
+        : !isRecord(currentItems);
+    let draftData: Record<string, unknown>;
+    let initialValue: unknown;
+
+    if (field.multiple) {
+      const nextItem =
+        itemIndex === undefined
+          ? createInitialDataSnapshot({ fields: field.fields })
+          : items[itemIndex];
+      const nextIndex = itemIndex ?? items.length;
+      const nextItems =
+        itemIndex === undefined ? [...items, nextItem] : items;
+
+      draftData = setValueAtPath(formData, path, nextItems);
+      initialValue = isNew ? undefined : nextItem;
+      itemIndex = nextIndex;
+    } else {
+      initialValue = currentItems;
+      const objectValue = isRecord(currentItems)
+        ? currentItems
+        : createInitialDataSnapshot({ fields: field.fields });
+      draftData = setValueAtPath(formData, path, objectValue);
+    }
+
+    setSubformDrawerDraft(draftData);
+    setSubformDrawerState({
+      field,
+      path,
+      itemIndex,
+      isNew,
+      initialValue,
+    });
+    setSubformDrawerOpen(true);
+  };
+
+  // Commits the active draft to the live form data.
+  const saveSubformDrawer = () => {
+    if (!subformDrawerState || !subformDrawerDraft) return;
+
+    const { field, isNew, itemIndex, path } = subformDrawerState;
+
+    if (!field.multiple) {
+      handleFieldInputChange(path, getValueAtPath(subformDrawerDraft, path));
+    } else if (itemIndex === undefined) {
+      return;
+    } else if (isNew) {
+      const item = getValueAtPath(subformDrawerDraft, [...path, itemIndex]);
+      const currentItems = getValueAtPath(formData, path);
+      handleFieldInputChange(path, [
+        ...(Array.isArray(currentItems) ? currentItems : []),
+        item,
+      ]);
+    } else {
+      const item = getValueAtPath(subformDrawerDraft, [...path, itemIndex]);
+      handleFieldInputChange([...path, itemIndex] as TFormFieldPath, item);
+    }
+
+    setSubformDrawerOpen(false);
+    setSubformDrawerState(null);
+    setSubformDrawerDraft(null);
+  };
+
+  // Drops the active draft without changing the live form data.
+  const discardSubformDrawer = () => {
+    setSubformDrawerOpen(false);
+    setSubformDrawerState(null);
+    setSubformDrawerDraft(null);
+  };
+
+  // Expands or collapses an inline summary card for editing.
+  const setSubformItemExpanded = (
+    path: TFormFieldPath,
+    expanded: boolean,
+  ) => {
+    setExpandedSubformItems((current) => ({
+      ...current,
+      [path.join(".")]: expanded,
+    }));
+  };
+
+  // Clears expanded cards for a list, since removing an item shifts indexes.
+  const resetSubformItemsExpanded = (path: TFormFieldPath) => {
+    const listKey = `${path.join(".")}.`;
+
+    setExpandedSubformItems((current) =>
+      Object.fromEntries(
+        Object.entries(current).filter(([key]) => !key.startsWith(listKey)),
+      ),
+    );
+  };
+
+  const subformDrawerSource: IFormValueSource | undefined =
+    subformDrawerDraft === null
+      ? undefined
+      : {
+          data: subformDrawerDraft,
+          onChange: (path, value) =>
+            setSubformDrawerDraft((previousDraft) =>
+              previousDraft
+                ? setValueAtPath(previousDraft, path, value)
+                : previousDraft,
+            ),
+        };
 
   const isReadOnlyStatus = (status: ReturnType<typeof fieldStatus>) =>
     status === "locked" || status === "auto";
 
   const isFieldReadOnly = (field: TFormField) =>
-    isReadOnlyStatus(fieldStatus(field));
+    isReadOnlyStatus(
+      fieldStatus(field, formData[field.name], formErrors[field.name]),
+    );
 
-  const renderField = (field: TFormField) => {
+  // Repeatable subforms manage their own array, so only other multiple fields use MultipleFormInput
+  const usesMultipleFormInput = (field: TFormField) =>
+    Boolean(field.multiple) && field.type !== "subform";
+
+  // Renders a field against the live form data, or another source such as a drawer draft
+  const renderField = (
+    field: TFormField,
+    parentPath: TFormValuePath = [],
+    parentReadOnly = false,
+    source: IFormValueSource = {
+      data: formData,
+      onChange: handleFieldInputChange,
+    },
+  ) => {
     if (!field) {
       return null;
     }
 
-    const status = fieldStatus(field);
-    const readOnly = isReadOnlyStatus(status);
+    const containingData =
+      parentPath.length === 0
+        ? source.data
+        : getValueAtPath(source.data, parentPath);
+    if (
+      field.hiddenWhen?.(
+        isRecord(containingData) ? containingData : source.data,
+      )
+    ) {
+      return null;
+    }
+
+    const fieldPath: TFormFieldPath = [
+      ...parentPath,
+      field.name,
+    ] as TFormFieldPath;
+    const fieldValue =
+      parentPath.length === 0
+        ? source.data[field.name]
+        : getValueAtPath(source.data, fieldPath);
+    const setFieldValue = (value: unknown) => source.onChange(fieldPath, value);
+    const errorKey =
+      parentPath.length === 0 ? field.name : fieldPath.join(".");
+    const errorText: string | undefined = formErrors[errorKey];
+    const status = fieldStatus(field, fieldValue, errorText);
+    const readOnly = parentReadOnly || isReadOnlyStatus(status);
     const placeholder =
-      status === "locked" && isEmptyFieldValue(formData[field.name])
+      status === "locked" && isEmptyFieldValue(fieldValue)
         ? READ_ONLY_FIELD_PLACEHOLDER
         : field.placeholder;
-
-    // Fetch any errors for this field from the record of all errors
-    const errorText: string | undefined = formErrors[field.name];
+    const controlId =
+      parentPath.length === 0
+        ? formId
+        : `${formId}-${fieldPath.map(String).join("-")}`;
 
     switch (field.type.toLowerCase()) {
       case "text":
@@ -291,12 +496,12 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         const textField = field as ITextField;
         return (
           <FormTextField
-            id={formId}
             {...textField}
+            id={controlId}
             readOnly={readOnly}
             placeholder={placeholder}
-            value={formData[textField.name] ?? ""}
-            onChange={(value: any) => handleInputChange(textField.name, value)}
+            value={fieldValue ?? ""}
+            onChange={(value: any) => setFieldValue(value)}
             errorText={errorText}
           />
         );
@@ -305,10 +510,11 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <CountrySelect
             {...countryselectField}
+            id={controlId}
             readOnly={readOnly}
             placeholder={placeholder}
-            value={formData[countryselectField.name] ?? ""}
-            setValue={(value: any) => handleInputChange(field.name, value)}
+            value={fieldValue ?? ""}
+            setValue={(value: any) => setFieldValue(value)}
             errorText={errorText}
           />
         );
@@ -317,11 +523,12 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <FormDatetime
             {...datetimeField}
+            id={controlId}
             readOnly={readOnly}
             placeholder={placeholder}
-            value={formData[datetimeField.name] ?? ""}
+            value={fieldValue ?? ""}
             onChange={(value: any) =>
-              handleInputChange(datetimeField.name, value)
+              setFieldValue(value)
             }
             errorText={errorText}
           />
@@ -330,10 +537,10 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         const singleselectField = field as ISingleselectField;
         return (
           <FormComponentWrapper
-            id={formId}
             {...singleselectField}
+            id={controlId}
             readOnly={readOnly}
-            value={formData[singleselectField.name]}
+            value={fieldValue}
             placeholder={placeholder}
             errorText={errorText}
           >
@@ -341,9 +548,9 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
               {...singleselectField}
               disabled={readOnly || singleselectField.disabled}
               placeholder={placeholder}
-              value={formData[singleselectField.name] ?? ""}
+              value={fieldValue ?? ""}
               onChange={(value: any) =>
-                handleInputChange(singleselectField.name, value)
+                setFieldValue(value)
               }
             />
           </FormComponentWrapper>
@@ -353,13 +560,13 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           field as ISingleselectcustomoptionField;
         return (
           <SingleSelectCustomOption
-            id={formId}
             {...singleselectcustomoptionField}
+            id={controlId}
             readOnly={readOnly}
             placeholder={placeholder}
-            value={formData[singleselectcustomoptionField.name] ?? ""}
+            value={fieldValue ?? ""}
             setValue={(value: any) =>
-              handleInputChange(singleselectcustomoptionField.name, value)
+              setFieldValue(value)
             }
             errorText={errorText}
           />
@@ -369,6 +576,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <Dropzone
             {...dropzoneField}
+            id={controlId}
             readOnly={readOnly}
             errorText={errorText}
           />
@@ -384,11 +592,12 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           return (
             <RemoteAutoComplete
               {...remoteAutocompleteField}
+              id={controlId}
               readOnly={readOnly}
               placeholder={placeholder}
-              value={formData[remoteAutocompleteField.name] ?? ""}
+              value={fieldValue ?? ""}
               onChange={(value: any) =>
-                handleInputChange(remoteAutocompleteField.name, value)
+                setFieldValue(value)
               }
               errorText={errorText}
             />
@@ -397,11 +606,12 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           return (
             <AutoComplete
               {...autocompleteField}
+              id={controlId}
               readOnly={readOnly}
               placeholder={placeholder}
-              value={formData[autocompleteField.name] ?? ""}
+              value={fieldValue ?? ""}
               onChange={(value: any) =>
-                handleInputChange(autocompleteField.name, value)
+                setFieldValue(value)
               }
               errorText={errorText}
             />
@@ -409,10 +619,11 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         }
       case "multipleselect":
         const multipleselectField = field as IMultipleselectField;
-        const multipleSelectValue = formData[multipleselectField.name];
+        const multipleSelectValue = fieldValue;
         return (
           <MultipleSelect
             {...multipleselectField}
+            id={controlId}
             disabled={Boolean(
               readOnly ||
               multipleselectField.disabled ||
@@ -424,7 +635,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
               Array.isArray(multipleSelectValue) ? multipleSelectValue : []
             }
             setValue={(value: any) =>
-              handleInputChange(multipleselectField.name, value)
+              setFieldValue(value)
             }
             errorText={errorText}
           />
@@ -434,11 +645,12 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <FormMarkdown
             {...markdownField}
+            id={controlId}
             readOnly={readOnly}
             placeholder={placeholder}
-            value={formData[markdownField.name] ?? ""}
+            value={fieldValue ?? ""}
             onChange={(value: any) =>
-              handleInputChange(markdownField.name, value)
+              setFieldValue(value)
             }
             errorText={errorText}
           />
@@ -448,11 +660,12 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <FormTextArea
             {...textareaField}
+            id={controlId}
             readOnly={readOnly}
             placeholder={placeholder}
-            value={formData[textareaField.name] ?? ""}
+            value={fieldValue ?? ""}
             setValue={(value: any) =>
-              handleInputChange(textareaField.name, value)
+              setFieldValue(value)
             }
             errorText={errorText}
           />
@@ -462,11 +675,12 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <FormTags
             {...tagField}
+            id={controlId}
             readOnly={readOnly}
             placeholder={placeholder}
-            value={[...(formData[tagField.name] ?? [])]}
+            value={[...(fieldValue ?? [])]}
             setValue={(value: readonly string[]) =>
-              handleInputChange(tagField.name, [...value])
+              setFieldValue([...value])
             }
             errorText={errorText}
           />
@@ -476,11 +690,11 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         return (
           <FormToggle
             {...toggleField}
-            id={`${formId}-${toggleField.name}-toggle`}
+            id={`${controlId}-toggle`}
             readOnly={readOnly}
-            value={formData[toggleField.name] ?? false}
+            value={fieldValue ?? false}
             onChange={(value: boolean) =>
-              handleInputChange(toggleField.name, value)
+              setFieldValue(value)
             }
             errorText={errorText}
           />
@@ -489,23 +703,242 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
         const checkboxField = field as ICheckboxFormField;
         const { defaultChecked, ...checkboxProps } = checkboxField;
         const hasInitialValue =
-          (initialData as Record<string, any> | undefined)?.[
-            checkboxField.name
-          ] !== undefined;
+          getValueAtPath(initialData, fieldPath) !== undefined;
         return (
           <FormCheckboxes
-            id={`${formId}-${checkboxField.name}-checkbox`}
             {...(hasInitialValue ? checkboxProps : checkboxField)}
+            id={`${controlId}-checkbox`}
             readOnly={readOnly}
-            checkedItems={formData[checkboxField.name] ?? []}
+            checkedItems={fieldValue ?? []}
             setCheckedItems={(value: any) =>
-              handleInputChange(checkboxField.name, value)
+              setFieldValue(value)
             }
             errorText={errorText}
           />
         );
+      case "subform": {
+        const subformField = field as ISubformField;
+        const subformItems = Array.isArray(fieldValue) ? fieldValue : [];
+        const minimumItems = Math.max(
+          subformField.minItems ?? 0,
+          subformField.required ? 1 : 0,
+        );
+        const canAddItems =
+          subformField.maxItems === undefined ||
+          subformItems.length < subformField.maxItems;
+        const itemLabel =
+          subformField.itemLabel ?? subformField.label ?? "Item";
+        const presentation = subformField.editor?.presentation ?? "inline";
+        const useDrawer =
+          presentation === "drawer" ||
+          (presentation === "auto" &&
+            countSubformFields(subformField.fields) >
+              (subformField.editor?.drawerThreshold ?? 5));
+
+        // Builds a readable card heading from the configured summary fields.
+        const getItemSummary = (item: unknown, index: number) => {
+          const summary = (subformField.summaryFields ?? [])
+            .map((path) => getValueAtPath(item, path.split(".")))
+            .filter(
+              (value): value is string | number =>
+                typeof value === "string" || typeof value === "number",
+            )
+            .map(String)
+            .filter(Boolean)
+            .join(" · ");
+
+          return summary || `${itemLabel} ${index + 1}`;
+        };
+
+        return (
+          <FormComponentWrapper
+            {...subformField}
+            id={controlId}
+            readOnly={readOnly}
+            value={
+              subformField.multiple
+                ? subformItems
+                : isRecord(fieldValue)
+                  ? fieldValue
+                  : {}
+            }
+            errorText={errorText}
+          >
+            {subformField.multiple ? (
+              useDrawer ? (
+                <div className="tol-form-subform-fields tol-form-subform-list tol-form-subform-cards">
+                  {subformItems.map((item, index) => (
+                    <div className="tol-form-subform-item" key={index}>
+                      <div className="tol-form-subform-card-title">
+                        {getItemSummary(item, index)}
+                      </div>
+                      {!readOnly && (
+                        <div className="tol-form-subform-item-actions">
+                          <Button
+                            type="warning"
+                            icon="edit"
+                            text={`Edit ${itemLabel}`}
+                            onClick={() =>
+                              openSubformDrawer(
+                                subformField,
+                                fieldPath,
+                                index,
+                              )
+                            }
+                          />
+                          <Button
+                            type="error"
+                            outline
+                            icon="trash"
+                            text={`Remove ${itemLabel}`}
+                            disabled={subformItems.length <= minimumItems}
+                            onClick={() =>
+                              setFieldValue(
+                                subformItems.filter(
+                                  (_item, itemIndex) => itemIndex !== index,
+                                ),
+                              )
+                            }
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {!readOnly && (
+                    <div className="tol-form-subform-list-actions">
+                      <Button
+                        icon="plus"
+                        position="left"
+                        text={`Add ${itemLabel}`}
+                        disabled={!canAddItems}
+                        onClick={() =>
+                          openSubformDrawer(subformField, fieldPath)
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div
+                  className={`tol-form-subform-fields tol-form-subform-list${
+                    subformField.summary ? " tol-form-subform-cards" : ""
+                  }`}
+                >
+                  {subformItems.map((item, index) => {
+                    const itemPath = [...fieldPath, index];
+                    const showSummaryCard =
+                      subformField.summary &&
+                      !expandedSubformItems[itemPath.join(".")];
+
+                    return (
+                      <div className="tol-form-subform-item" key={index}>
+                        {showSummaryCard ? (
+                          <div className="tol-form-subform-card-title">
+                            {getItemSummary(item, index)}
+                          </div>
+                        ) : (
+                          subformField.fields.map((nestedField) => (
+                            <div key={nestedField.name}>
+                              {renderField(
+                                nestedField,
+                                itemPath,
+                                readOnly,
+                                source,
+                              )}
+                            </div>
+                          ))
+                        )}
+                        {!readOnly && (
+                          <div className="tol-form-subform-item-actions">
+                            {subformField.summary &&
+                              (showSummaryCard ? (
+                                <Button
+                                  type="warning"
+                                  icon="edit"
+                                  text={`Edit ${itemLabel}`}
+                                  onClick={() =>
+                                    setSubformItemExpanded(itemPath, true)
+                                  }
+                                />
+                              ) : (
+                                <Button
+                                  icon="check"
+                                  text="Done"
+                                  disabled={isEmptyFieldValue(item)}
+                                  onClick={() =>
+                                    setSubformItemExpanded(itemPath, false)
+                                  }
+                                />
+                              ))}
+                            <Button
+                              type="error"
+                              outline
+                              icon="trash"
+                              text={`Remove ${itemLabel}`}
+                              disabled={subformItems.length <= minimumItems}
+                              onClick={() => {
+                                resetSubformItemsExpanded(fieldPath);
+                                setFieldValue(
+                                  subformItems.filter(
+                                    (_item, itemIndex) => itemIndex !== index,
+                                  ),
+                                );
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {!readOnly && (
+                    <div className="tol-form-subform-list-actions">
+                      <Button
+                        icon="plus"
+                        position="left"
+                        text={`Add ${itemLabel}`}
+                        disabled={!canAddItems}
+                        onClick={() => {
+                          if (subformField.summary) {
+                            setSubformItemExpanded(
+                              [...fieldPath, subformItems.length],
+                              true,
+                            );
+                          }
+
+                          setFieldValue([
+                            ...subformItems,
+                            createInitialDataSnapshot({
+                              fields: subformField.fields,
+                            }),
+                          ]);
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )
+            ) : useDrawer && !readOnly ? (
+              <div className="tol-form-subform-single-drawer">
+                <Button
+                  type="warning"
+                  icon="edit"
+                  text={`Edit ${itemLabel}`}
+                  onClick={() => openSubformDrawer(subformField, fieldPath)}
+                />
+              </div>
+            ) : (
+              <div className="tol-form-subform-fields">
+                {subformField.fields.map((nestedField) => (
+                  <div key={nestedField.name}>
+                    {renderField(nestedField, fieldPath, readOnly, source)}
+                  </div>
+                ))}
+              </div>
+            )}
+          </FormComponentWrapper>
+        );
+      }
       default:
-        console.warn(`${UNSUPPORTED_FIELD_TYPE} ${field.type}`);
         return null;
     }
   };
@@ -516,6 +949,26 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     .filter((section) => section !== undefined)
     .map((section) => section as string);
   const inlineLabels = formConfig.options?.inlineLabels ?? false;
+  const activeSubformDraftItem =
+    subformDrawerState && subformDrawerDraft
+      ? getValueAtPath(
+          subformDrawerDraft,
+          subformDrawerState.itemIndex === undefined
+            ? subformDrawerState.path
+            : [
+                ...subformDrawerState.path,
+                subformDrawerState.itemIndex,
+              ],
+        )
+      : undefined;
+  const subformDrawerHasPendingChanges = Boolean(
+    subformDrawerState &&
+      (subformDrawerState.isNew ||
+        !deepestEqual(
+          activeSubformDraftItem,
+          subformDrawerState.initialValue ?? null,
+        )),
+  );
 
   const formContent = (
     <div className="form-wrapper">
@@ -581,9 +1034,9 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                       .map((field: any) => (
                         <div
                           key={`${field.id ?? formId}-${field.name}`}
-                          id={field.multiple ? field.id : undefined}
+                          id={usesMultipleFormInput(field) ? field.id : undefined}
                         >
-                          {field.multiple ? (
+                          {usesMultipleFormInput(field) ? (
                             <MultipleFormInput
                               renderField={renderField}
                               field={{
@@ -630,9 +1083,9 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                   .map((field: any) => (
                     <div
                       key={`${formId}-${field.name}`}
-                      id={field.multiple ? field.id : undefined}
+                      id={usesMultipleFormInput(field) ? field.id : undefined}
                     >
-                      {field.multiple ? (
+                      {usesMultipleFormInput(field) ? (
                         <MultipleFormInput
                           renderField={renderField}
                           field={{
@@ -668,9 +1121,9 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           fields.map((field: any) => (
             <div
               key={`${formId}-${field.name}`}
-              id={field.multiple ? field.id : undefined}
+              id={usesMultipleFormInput(field) ? field.id : undefined}
             >
-              {field.multiple ? (
+              {usesMultipleFormInput(field) ? (
                 <MultipleFormInput
                   renderField={renderField}
                   field={{
@@ -734,6 +1187,38 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           </div>
         )}
       </RSForm>
+      {subformDrawerState && subformDrawerDraft && subformDrawerSource && (
+        <FormDrawer
+          open={subformDrawerOpen}
+          setOpen={setSubformDrawerOpen}
+          title={`${subformDrawerState.isNew ? "Add" : "Edit"} ${
+            subformDrawerState.field.itemLabel ??
+            subformDrawerState.field.label ??
+            "Item"
+          }`}
+          hasPendingChanges={subformDrawerHasPendingChanges}
+          onSave={saveSubformDrawer}
+          onDiscard={discardSubformDrawer}
+        >
+          <div className="tol-form-subform-fields">
+            {subformDrawerState.field.fields.map((nestedField) => (
+              <div key={nestedField.name}>
+                {renderField(
+                  nestedField,
+                  subformDrawerState.itemIndex === undefined
+                    ? subformDrawerState.path
+                    : [
+                        ...subformDrawerState.path,
+                        subformDrawerState.itemIndex,
+                      ],
+                  isFieldReadOnly(subformDrawerState.field),
+                  subformDrawerSource,
+                )}
+              </div>
+            ))}
+          </div>
+        </FormDrawer>
+      )}
     </div>
   );
 

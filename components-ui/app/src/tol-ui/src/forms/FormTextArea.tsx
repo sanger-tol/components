@@ -33,7 +33,7 @@ export function FormTextArea(props: PFormTextArea) {
   const { name, readOnly, editable, options } = props;
 
   return (
-    <FormComponentWrapper {...props} id={name}>
+    <FormComponentWrapper {...props} id={props.id ?? name}>
       <TextEditor
         {...props}
         normaliseEmptyValue
