@@ -10,13 +10,16 @@ import { describe, expect, test } from "vitest";
 import { convertCustomFieldPythonTypeToFormField } from "../../../tol-ui/src";
 import type { ITextField } from "../../../tol-ui/src";
 
-function expectModelValidationToMatch(
-  actualCheck: (value: unknown) => unknown,
-  expectedCheck: (value: unknown) => unknown,
+function expectModelValidationToMatch<
+  TActualModel extends { check(value: unknown): unknown },
+  TExpectedModel extends { check(value: unknown): unknown },
+>(
+  actualModel: TActualModel,
+  expectedModel: TExpectedModel,
   values: readonly unknown[],
 ) {
   for (const value of values) {
-    expect(actualCheck(value)).toEqual(expectedCheck(value));
+    expect(actualModel.check(value)).toEqual(expectedModel.check(value));
   }
 }
 
@@ -29,11 +32,11 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
     } satisfies Omit<ITextField, "name">);
 
     const expectedModel = Schema.Types.StringType();
-    const actualStringModel = fieldModel as typeof expectedModel;
+    const actualModel = fieldModel as typeof expectedModel;
     expectModelValidationToMatch(
-      value => actualStringModel.check(value),
-      value => expectedModel.check(value),
-      [undefined, "", "ordinary string", 42],
+      actualModel,
+      expectedModel,
+      [undefined, "", "ordinary string", 42]
     );
   });
 });
