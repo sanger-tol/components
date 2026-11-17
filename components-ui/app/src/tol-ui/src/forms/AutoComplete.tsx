@@ -17,6 +17,7 @@ export interface PAutoComplete extends TFormAutoCompleteField {
   name?: string;
   value: TAutoCompleteValue;
   onChange?: (value: string) => void;
+  onSelect?: (value: string) => void;
   displayFields?: object;
   displayFieldsTitle?: boolean;
   loading?: boolean;
@@ -29,6 +30,7 @@ export function AutoComplete(props: PAutoComplete) {
     data,
     value,
     onChange,
+    onSelect,
     displayFields,
     displayFieldsTitle,
     loading,
@@ -40,6 +42,7 @@ export function AutoComplete(props: PAutoComplete) {
         data={data}
         value={typeof value === "string" ? value : value?.value}
         onChange={onChange}
+        onSelect={onSelect}
         onKeyDown={(e) => e.stopPropagation()}
         renderMenu={(menu: any) => {
           if (loading === true) {

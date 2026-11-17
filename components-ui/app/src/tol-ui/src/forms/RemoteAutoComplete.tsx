@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState, useRef, ReactNode } from "react";
-import { AutoComplete, mergeFilters } from "..";
+import { AutoComplete, mergeFilters, Loader } from "..";
 import type {
   IRemoteTarget,
   IRemoteAutoCompleteData,
@@ -52,7 +52,7 @@ export interface PRemoteAutoComplete
   /**
    * The element to render when a choice is made in the autocomplete.
    */
-  RenderOnChoice?: (data: any) =>ReactNode;
+  RenderOnChoice?: (data: any) => ReactNode;
 }
 
 export function RemoteAutoComplete(props: PRemoteAutoComplete) {
@@ -66,6 +66,7 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
   const searchValue = typeof props.value === "string" ? props.value : props.value?.value ?? "";
   const [filteredData, setFilteredData] = useState<IRemoteAutoCompleteData>({});
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedValue, setSelectedValue] = useState<string>();
   // This state and RenderOnChoice are mostly needed for when this is being used in the Forms
   // to render additional elements. It cannot be done in the form itself due to not being able to access
   // the filtered data directly.
@@ -79,6 +80,7 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
   const handleChange = (value: string) => {
     ++requestIdRef.current;
     pendingValueRef.current = value;
+    setSelectedValue(previous => previous === value ? previous : undefined);
     setRenderExtraElement(false);
     onChange?.({ value, id: undefined });
   };
@@ -94,15 +96,17 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
       return;
     }
 
+    setLoading(true);
     const timeout = setTimeout(async () => {
       const { displayFields = [], filter, returnFields, setReturnedValues } = lookupPropsRef.current;
-      setLoading(true);
       try {
-        const mergedFilter = mergeFilters({and_: {
-          [searchBy]: {
-            contains: { value },
-          },
-        }}, filter);
+        const mergedFilter = mergeFilters({
+          and_: {
+            [searchBy]: {
+              contains: { value },
+            },
+          }
+        }, filter);
         const data = await dataSource.getList({
           objectType,
           filter: mergedFilter,
@@ -166,12 +170,17 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
       <AutoComplete
         {...props}
         onChange={handleChange}
+        onSelect={setSelectedValue}
         data={Object.keys(filteredData)}
         value={props.value}
         loading={loading}
         displayFields={filteredData}
       />
-      {renderExtraElement && RenderOnChoice?.(filteredData[Object.keys(filteredData)[0]][0])}
+      {RenderOnChoice && (loading
+        ? selectedValue === searchValue && <div style={{ textAlign: "center", marginTop: "10px" }}>
+          <Loader />
+        </div>
+        : renderExtraElement && RenderOnChoice(filteredData[Object.keys(filteredData)[0]][0]))}
     </div>
   );
 }
