@@ -120,9 +120,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
         <div className="tol-multiple-form-input-actions">
           <Button
             {...addButton}
-            text={`Add ${
-              Object.keys(fieldData).length === 0 ? "New" : "Another"
-            } ${removeTrailingCharacter("s", field.label ?? "")}`}
+            text={`Add ${removeTrailingCharacter("s", field.label ?? "")}`}
           />
         </div>
       </div>

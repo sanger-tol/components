@@ -404,13 +404,31 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     }));
   };
 
-  // Clears expanded cards for a list, since removing an item shifts indexes.
-  const resetSubformItemsExpanded = (path: TFormFieldPath) => {
+  // Drops a removed item's expanded state and shifts later items down by one.
+  const removeSubformItemExpanded = (
+    path: TFormFieldPath,
+    removedIndex: number,
+  ) => {
     const listKey = `${path.join(".")}.`;
 
     setExpandedSubformItems((current) =>
-      Object.fromEntries(
-        Object.entries(current).filter(([key]) => !key.startsWith(listKey)),
+      Object.entries(current).reduce<Record<string, boolean>>(
+        (next, [key, expanded]) => {
+          if (!key.startsWith(listKey)) {
+            next[key] = expanded;
+            return next;
+          }
+
+          const [indexPart, ...rest] = key.slice(listKey.length).split(".");
+          const index = Number(indexPart);
+
+          if (index === removedIndex) return next;
+
+          const shiftedIndex = index > removedIndex ? index - 1 : index;
+          next[[`${listKey}${shiftedIndex}`, ...rest].join(".")] = expanded;
+          return next;
+        },
+        {},
       ),
     );
   };
@@ -826,8 +844,10 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                 >
                   {subformItems.map((item, index) => {
                     const itemPath = [...fieldPath, index];
+                    // Empty items stay open, since there's nothing to summarise yet
                     const showSummaryCard =
                       subformField.summary &&
+                      !isEmptyFieldValue(item) &&
                       !expandedSubformItems[itemPath.join(".")];
 
                     return (
@@ -877,7 +897,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
                               text={`Remove ${itemLabel}`}
                               disabled={subformItems.length <= minimumItems}
                               onClick={() => {
-                                resetSubformItemsExpanded(fieldPath);
+                                removeSubformItemExpanded(fieldPath, index);
                                 setFieldValue(
                                   subformItems.filter(
                                     (_item, itemIndex) => itemIndex !== index,
@@ -1232,7 +1252,14 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
               ? getNavGroups(
                   fields,
                   formConfig.sections,
-                  scrollNav.showStatus === false ? undefined : fieldStatus,
+                  scrollNav.showStatus === false
+                    ? undefined
+                    : (field) =>
+                        fieldStatus(
+                          field,
+                          formData[field.name],
+                          formErrors[field.name],
+                        ),
                 )
               : []
           }

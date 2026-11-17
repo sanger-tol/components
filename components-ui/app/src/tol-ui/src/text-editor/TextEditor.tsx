@@ -11,6 +11,7 @@ import {
   EditorContext,
   useEditorState,
 } from "@tiptap/react";
+import type { Content } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Superscript from "@tiptap/extension-superscript";
@@ -112,7 +113,7 @@ export interface PTextEditor {
  * @autodoc
  *
  * Renders a Tiptap-powered rich text editor with a configurable formatting toolbar.
- * The editor initializes from `value` and calls `setValue` whenever its content changes,
+ * The editor initializes from `value`, syncs later external `value` changes, and calls `setValue` whenever its content changes,
  * serializing that content as HTML, JSON, or plain text according to `returnValueType`.
  *
  * Consumers can extend the editor, add toolbar controls, control its editability and height,
@@ -245,6 +246,40 @@ export function TextEditor(props: PTextEditor) {
       editor.setEditable(editable);
     }
   }, [editor, editable]);
+
+  // Sync external value changes (e.g. initial data loaded after mount) into the editor
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return;
+
+    const nextValue = value ?? "";
+
+    if (nextValue === "" && editor.isEmpty) return;
+
+    const currentValue =
+      returnValueType === "json"
+        ? JSON.stringify(editor.getJSON())
+        : returnValueType === "text"
+          ? editor.getText()
+          : editor.getHTML();
+
+    if (nextValue === currentValue) return;
+
+    let content: Content = nextValue;
+
+    if (returnValueType === "json") {
+      try {
+        const parsed = JSON.parse(nextValue);
+
+        if (parsed && typeof parsed === "object") {
+          content = parsed;
+        }
+      } catch {
+        // Plain strings are rendered as text content.
+      }
+    }
+
+    editor.commands.setContent(content, { emitUpdate: false });
+  }, [editor, value, returnValueType]);
 
   const onEditorChangeRef = useRef(onEditorChange);
   onEditorChangeRef.current = onEditorChange;
