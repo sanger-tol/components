@@ -95,7 +95,7 @@ export function MyFieldsTab(props: PMyFieldsTab) {
           text="New Field"
           loading={loading}
           disabled={loading}
-          onClick={editCustomField}
+          onClick={() => editCustomField()}
         />
       </span>
       <div className="tol-attribute-selector-my-fields-tab__field-list">
