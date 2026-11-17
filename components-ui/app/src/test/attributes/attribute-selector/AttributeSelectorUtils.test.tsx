@@ -30,12 +30,9 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
     expect(fieldConfig).toEqual({
       type: "text",
     } satisfies Omit<ITextField, "name">);
-
-    const expectedModel = Schema.Types.StringType();
-    const actualModel = fieldModel as typeof expectedModel;
     expectModelValidationToMatch(
-      actualModel,
-      expectedModel,
+      fieldModel,
+      Schema.Types.StringType(),
       [undefined, "", "ordinary string", 42]
     );
   });
