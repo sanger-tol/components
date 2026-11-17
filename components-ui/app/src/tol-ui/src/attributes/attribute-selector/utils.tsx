@@ -14,9 +14,15 @@ import {
   getAttributeDetail,
   getProvenanceFieldName,
   isProvenanceFieldOfAttribute,
+  MESSAGE_TYPE,
   PopUpMessage
 } from "../..";
-import type { IEntityMeta } from "../..";
+import type {
+  IEntityMeta,
+  IRuntimeFieldFunction,
+  ListGetter,
+  TDataObjectListOrNull,
+} from "../..";
 
 export function attributeSelectorSearchBy(keyword: string, label: any, entityMeta: IEntityMeta, objectType: string) {
   const name = getAttributeDetail(
@@ -394,3 +400,45 @@ export function handleProvenanceEntryKeyDownEvent(
   focusCheckboxInProvenanceEntry(event.currentTarget, provenance);
 };
 
+export async function fetchCustomFieldFunctions(configDataSource: ListGetter): Promise<IRuntimeFieldFunction[]> {
+  return await configDataSource.getList({ objectType: "runtime_field_function" })
+    .then((result: TDataObjectListOrNull) => {
+      // The data source may return null records; omit them from the function list.
+      return (result ?? []).flatMap((item) => {
+        if (!item) {
+          return [];
+        }
+
+        const params = (item.params ?? {}) as Record<
+          string,
+          { python_type: string; default_value?: unknown }
+        >;
+
+        // Convert the attributes to the format the UI expects
+        // (an integer ID, camelCase instead of snake_case)
+        return [{
+          id: Number(item.id),
+          name: item.name,
+          params: Object.fromEntries(
+            Object.entries(params).map(([param, details]) => [
+              param,
+              {
+                pythonType: details.python_type,
+                ...(details.default_value !== undefined && {
+                  defaultValue: details.default_value,
+                }),
+              },
+            ]),
+          ),
+        }];
+      });
+    })
+    .catch((error: unknown) => {
+      console.error("Error fetching runtime field functions:", error);
+      PopUpMessage({
+        type: MESSAGE_TYPE.ERROR,
+        message: "Could not fetch custom field functions",
+      });
+      return [];
+    });
+}
