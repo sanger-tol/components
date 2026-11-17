@@ -10,7 +10,9 @@ import {
   Button,
   BUTTONS,
   fetchCustomFieldFunctions,
+  FormTextField,
   Modal,
+  RSForm,
   SingleSelect,
   TolLoader
 } from "../..";
@@ -33,13 +35,13 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     open,
     setOpen,
     customFieldId,
-    objectType,
     dataSource: configDataSource,
   } = props;
 
   const [availableFunctions, setAvailableFunctions] = useState<
     IRuntimeFieldFunction[] | undefined
   >();
+  const [chosenName, setChosenName] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
 
   const resetEverything = () => {
@@ -58,15 +60,26 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       header={<h4>{customFieldId ? "Edit Custom Field" : "Create Custom Field"}</h4>}
       actionButton={<Button {...BUTTONS.CONFIRM} />}
     >
-      {availableFunctions === undefined ? (
-        <TolLoader />  
-      ) : (
-        <SingleSelect
-          data={availableFunctions.map(fn => fn.name)}
-          value={chosenFunction || ""}
-          onChange={setChosenFunction}
+      <RSForm fluid>
+        <FormTextField
+          id="custom-field-modal-top"
+          name="name"
+          label="Name"
+          type="text"
+          value={chosenName}
+          onChange={setChosenName}
         />
-      )}
+        {availableFunctions === undefined ? (
+          <TolLoader />
+        ) : (
+          <SingleSelect
+            block
+            data={availableFunctions.map(fn => fn.name)}
+            value={chosenFunction || ""}
+            onChange={setChosenFunction}
+          />
+        )}
+      </RSForm>
     </Modal>
   );
 }
