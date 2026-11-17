@@ -405,15 +405,19 @@ function filterListenerUpdater(params: {
         operatorFound = true;
         const filter = and_[attribute][op];
         filterMeta.disabled = disableCondition;
-        if (updateValues) filterMeta.values = zoneToValue(filter.value, filterMeta.values);
-        filterMeta.exists = false;
-        filterMeta.negate = filter.negate || filterMeta.negate;
-        filterMeta.currentOperator = operatorToSymbol(op, [filterMeta.values]);
+        if (updateValues) {
+          filterMeta.values = zoneToValue(filter.value, filterMeta.values);
+          filterMeta.exists = false;
+          filterMeta.negate = filter.negate ?? false;
+          filterMeta.currentOperator = operatorToSymbol(op, [filterMeta.values]);
+        }
       }
     }
     if (!operatorFound && "exists" in and_[attribute]) {
-      filterMeta.exists = true;
-      filterMeta.negate = and_[attribute]["exists"].negate || filterMeta.negate;
+      if (updateValues) {
+        filterMeta.exists = true;
+        filterMeta.negate = and_[attribute]["exists"].negate ?? false;
+      }
       filterMeta.disabled = disableCondition;
     }
   }

@@ -10,6 +10,7 @@ SPDX-License-Identifier: MIT
 
 12-11-26
 
+- Deal with incoming filter controls on dates and multiselect (e.g. negate)
 - Field level options adaptation
 - Point TOL_DS and CORE_CONFIG_DS at Quasar
 
