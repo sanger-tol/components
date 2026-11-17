@@ -36,4 +36,18 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
       [undefined, "", "ordinary string", 42]
     );
   });
+
+  test("pythonType of 'int'", () => {
+    const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField("int");
+
+    expect(fieldConfig).toEqual({
+      type: "text",
+    } satisfies Omit<ITextField, "name">);
+
+    expectModelValidationToMatch(
+      fieldModel,
+      Schema.Types.NumberType().isRequired().isInteger(),
+      [undefined, 100, 100.0, 7.25, "string"]
+    );
+  });
 });
