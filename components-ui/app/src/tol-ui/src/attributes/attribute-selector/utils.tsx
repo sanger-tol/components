@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Schema } from "rsuite";
 import type {
   KeyboardEvent as ReactKeyboardEvent,
   MouseEvent as ReactMouseEvent,
@@ -19,6 +20,7 @@ import {
 } from "../..";
 import type {
   IEntityMeta,
+  IFormComponent,
   IRuntimeFieldFunction,
   ListGetter,
   TDataObjectListOrNull,
@@ -441,4 +443,16 @@ export async function fetchCustomFieldFunctions(configDataSource: ListGetter): P
       });
       return [];
     });
+}
+
+export function convertCustomFieldPythonTypeToFormField(
+  pythonType: string
+): [Omit<IFormComponent, "name">, ReturnType<(typeof Schema.Types)[keyof typeof Schema.Types]>] {
+  const fieldConfig = {
+    type: "text"
+  } satisfies Omit<IFormComponent, "name">;
+
+  const fieldModel = Schema.Types.StringType();
+
+  return [fieldConfig, fieldModel];
 }
