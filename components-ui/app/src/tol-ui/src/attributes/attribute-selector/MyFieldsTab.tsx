@@ -142,6 +142,8 @@ export function MyFieldsTab(props: PMyFieldsTab) {
         open={editFieldModalOpen}
         setOpen={setCustomFieldModalOpen}
         customFieldId={editingCustomFieldId}
+        objectType={objectType}
+        dataSource={CORE_CONFIG_DS}
       />
     </div>
   );
