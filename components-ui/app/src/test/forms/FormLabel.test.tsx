@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { render, screen } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
-import { FormLabel } from "../../tol-ui/src/forms/FormLabel";
-import { FormOptionsContext } from "../../tol-ui/src/forms/FormOptionsContext";
+import { FormLabel } from "../../tol-ui/src/forms/core/FormLabel";
+import { FormOptionsContext } from "../../tol-ui/src/forms/core/FormOptionsContext";
 
 vi.mock("../../tol-ui/src", async () => {
   const { Form } = await import("rsuite");

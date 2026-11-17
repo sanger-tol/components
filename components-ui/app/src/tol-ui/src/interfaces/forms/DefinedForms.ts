@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IFieldMapping, IFormConfig } from "..";
+import type { IFieldMapping, IFormConfig } from "..";
 
+/** Optional configuration extensions for a user profile form. */
 export interface IUserProfileAdditionalConfigs {
   /**
    * Optional additional form configuration to merge with the base form configuration.
@@ -20,3 +21,25 @@ export interface IUserProfileAdditionalConfigs {
    */
   additionalFieldMappings?: IFieldMapping[];
 }
+
+/** Common user profile values used to initialize or submit a profile form. */
+export interface IUserProfileFormData {
+  /** User's display name. */
+  name?: string;
+  /** User's email address. */
+  email?: string;
+  /** User's workplace or organization. */
+  workplace?: string;
+  /** Additional profile values supported by a particular application. */
+  [key: string]: any;
+}
+
+/**
+ * The base configuration for a user profile form,
+ * including fields and button configuration.
+ */
+export type TProfileBaseConfig =
+  /** Static fields and button configuration for the base form. */
+  | IFormConfig
+  /** Factory that can adjust the base form configuration based on edit state. */
+  | ((hasUnsavedChanges: boolean, ...args: any[]) => IFormConfig);

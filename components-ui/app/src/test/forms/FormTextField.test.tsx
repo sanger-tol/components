@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import type { ReactNode } from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
-import { FormTextField } from "../../tol-ui/src/forms/FormTextField";
+import { FormTextField } from "../../tol-ui/src/forms/fields/FormTextField";
 
 vi.mock("../../tol-ui/src", async () => {
   const { Form } = await import("rsuite");

@@ -8,8 +8,8 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import type { ReactNode, MouseEventHandler } from "react";
 import { FormAllInOne } from "../../tol-ui/src/forms/FormAllInOne";
-import { MultipleFormInput } from "../../tol-ui/src/forms/MultipleFormInput";
-import type { PMultipleFormInput } from "../../tol-ui/src/forms/MultipleFormInput";
+import { MultipleFormInput } from "../../tol-ui/src/forms/fields/MultipleFormInput";
+import type { PMultipleFormInput } from "../../tol-ui/src/forms/fields/MultipleFormInput";
 import type {
   IFormConfig,
   IFormSearchConfig,
