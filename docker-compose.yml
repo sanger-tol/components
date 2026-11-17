@@ -2,12 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-# This is used for local development only
-version: "3.1"
-
 services:
   components-db:
-    image: postgres:14
+    image: postgres:18
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
@@ -91,7 +88,7 @@ services:
       - "/usr/src/app/node_modules"
 
   components-dbutils:
-    image: gitlab-registry.internal.sanger.ac.uk/tol/tol-core/dbutils:1.0.10
+    image: gitlab-registry.internal.sanger.ac.uk/tol/tol-core/dbutils:1.1.0
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
