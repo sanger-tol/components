@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `6.5.0`
+
+17-11-26
+
+- Adding extra elements to RemoteAutoComplete
+
 ## tol-ui `6.4.0`
 
 12-11-26
