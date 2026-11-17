@@ -119,6 +119,9 @@ export interface IFormComponent {
    * Whether multiple of a particular form field should be allowed. If true, the user can add multiple instances of this field.
    */
   multiple?: boolean;
+  /**
+   * Callback function triggered when the minus button is clicked in a multiple field row.
+   */
   onMinus?: (inputId: string, value: any, remove: () => void) => void;
   /**
    * Whether at least one instance of a particular form field is required.
