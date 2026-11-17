@@ -65,9 +65,8 @@ export * from "./types";
 export const TOL_DS = new TsDataSource(env.TOL_DATA);
 export const PIPELINE_DS = new TsDataSource();
 export const CORE_CONFIG_DS = new TsDataSource({
-  ...env.TOL_DATA,
-  apiDataPath: API_PATHS.BOARDS,
-  dataspace: "",
+  ...env.QUASAR_BASE,
+  dataspace: "core",
 });
 export const LOCAL_DS = new TsDataSource({
   apiPath: API_PATHS.API_PATH,

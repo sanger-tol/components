@@ -11,6 +11,7 @@ SPDX-License-Identifier: MIT
 12-11-26
 
 - Field level options adaptation
+- Point TOL_DS and CORE_CONFIG_DS at Quasar
 
 ## tol-ui `6.3.1`
 
