@@ -44,7 +44,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   const [chosenName, setChosenName] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
 
-  const resetEverything = () => {
+  const handleReset = () => {
     // Set the available functions to undefined but start fetching them
     setAvailableFunctions(undefined);
     fetchCustomFieldFunctions(configDataSource).then(setAvailableFunctions);
@@ -52,13 +52,17 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     setChosenFunction(undefined);
   };
 
+  const handleSave = () => {
+    console.log(`Creating new custom field called ${chosenName} using function ${chosenFunction}`);
+  };
+
   return (
     <Modal
       open={open}
       setOpen={setOpen}
-      onOpen={resetEverything}
+      onOpen={handleReset}
       header={<h4>{customFieldId ? "Edit Custom Field" : "Create Custom Field"}</h4>}
-      actionButton={<Button {...BUTTONS.CONFIRM} />}
+      actionButton={<Button {...BUTTONS.CONFIRM} onClick={handleSave} />}
     >
       <RSForm fluid>
         <FormTextField
