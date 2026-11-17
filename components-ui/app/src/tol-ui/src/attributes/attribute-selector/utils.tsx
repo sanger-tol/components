@@ -452,7 +452,7 @@ export function convertCustomFieldPythonTypeToFormField(
     type: "text"
   } satisfies Omit<IFormComponent, "name">;
 
-  const fieldModel = Schema.Types.StringType();
+  const fieldModel = Schema.Types.StringType().isRequired();
 
   return [fieldConfig, fieldModel];
 }

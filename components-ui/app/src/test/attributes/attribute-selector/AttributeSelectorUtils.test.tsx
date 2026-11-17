@@ -32,7 +32,7 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
     } satisfies Omit<ITextField, "name">);
     expectModelValidationToMatch(
       fieldModel,
-      Schema.Types.StringType(),
+      Schema.Types.StringType().isRequired(),
       [undefined, "", "ordinary string", 42]
     );
   });
