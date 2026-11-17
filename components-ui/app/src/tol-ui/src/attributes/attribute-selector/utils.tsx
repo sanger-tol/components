@@ -449,20 +449,14 @@ export function convertCustomFieldPythonTypeToFormField(
   pythonType: string
 ): [Omit<IFormComponent, "name">, ReturnType<(typeof Schema.Types)[keyof typeof Schema.Types]>] {
   if (pythonType == "int") {
-    const fieldConfig = {
-      type: "text"
-    } satisfies Omit<IFormComponent, "name">;
-
-    const fieldModel = Schema.Types.NumberType().isRequired().isInteger();
-
-    return [fieldConfig, fieldModel];
+    return [
+      { type: "text" },
+      Schema.Types.NumberType().isRequired().isInteger(),
+    ];
   } else {
-    const fieldConfig = {
-      type: "text"
-    } satisfies Omit<IFormComponent, "name">;
-
-    const fieldModel = Schema.Types.StringType().isRequired();
-
-    return [fieldConfig, fieldModel];
+    return [
+      { type: "text" },
+      Schema.Types.StringType().isRequired(),
+    ];
   }
 }
