@@ -29,12 +29,9 @@ This folder handles zone/component filtering.
 - Exists: toggling this will remove an inputted value filter. They cannot coexist.
 - Negate: you can only toggle this once a filter has been added. You cannot negate 'nothing'.
 
-For controls that deal with specificity (multi-select and date range), these toggles
-reflect only the control's own filter, not upstream constraints. An incoming negated
-filter still restricts the available options/dates, but a new local selection is
-non-negated unless the user negates it. Controls displaying a disabled upstream
-filter show that filter's toggles instead. A local filter's explicit or omitted
-`negate: false` always takes precedence over incoming negation.
+For multi-select and date range controls, an upstream filter limits the available
+choices but does not set the control's Negate toggle. New filters are not negated
+unless the user turns Negate on. Disabled controls show the upstream filter's toggles.
 
 ## Behind the scenes
 

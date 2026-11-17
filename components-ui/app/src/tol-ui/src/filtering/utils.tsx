@@ -382,7 +382,7 @@ function filterListenerUpdater(params: {
   disableCondition?: boolean;
   // Differentials
   zoneToValue: (filterValue: any, exisitingValue?: any) => any;
-  // Whether to update the displayed filter state, or just its disabled state
+  // Whether to update the component's values based on the filter changes, or just update the other variables
   updateValues: boolean;
 }) {
   let {
@@ -445,8 +445,8 @@ export function filterListener(
     emptyValue: any;
     zoneToValue: (filterValue: any, exisitingValue?: any) => any;
     /**
-      * Whether values, existence, negation, and operator reflect only the component's
-      * own filter. Incoming filters still determine upstream constraints and disabled state.
+     * Whether to only listen to the component's own filter changes,
+     * ignoring changes from components above in the hierarchy
      */
     onlyUpdateMyValues?: boolean;
   },
@@ -490,8 +490,8 @@ export function filterListener(
       disableCondition: true,
       zoneToValue,
       /**
-        * Editable filter state must come from the same source as its values,
-        * so upstream negation is not copied into an independent local filter.
+       * If onlyUpdateMyValues is true, we only want to update the component's
+       * values based on its own filter, not the filters of components above it in the hierarchy
        */
       updateValues: !onlyUpdateMyValues,
     });
