@@ -406,6 +406,13 @@ export interface IUserProfileFormData {
   [key: string]: any;
 }
 
+export interface IToggleFormField extends IFormComponent {
+  /** The type of the form field, which is "toggle". */
+  type: "toggle";
+  /** The initial checked state of the toggle. */
+  defaultChecked?: boolean;
+}
+
 /**
  * The base configuration for a user profile form,
  * including fields and button configuration.

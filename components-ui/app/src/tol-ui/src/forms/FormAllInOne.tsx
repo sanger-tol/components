@@ -38,6 +38,7 @@ import {
   getFieldStatus,
   isEmptyFieldValue,
   FormOptionsContext,
+  FormToggle,
 } from "..";
 
 import type {
@@ -58,6 +59,7 @@ import type {
   ITextAreaField,
   IFormSearchConfig,
   IFormTagField,
+  IToggleFormField,
 } from "..";
 import { FormTags } from "./FormTags";
 
@@ -465,6 +467,20 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
             value={[...(formData[tagField.name] ?? [])]}
             setValue={(value: readonly string[]) =>
               handleInputChange(tagField.name, [...value])
+            }
+            errorText={errorText}
+          />
+        );
+      case "toggle":
+        const toggleField = field as IToggleFormField;
+        return (
+          <FormToggle
+            {...toggleField}
+            id={`${formId}-${toggleField.name}-toggle`}
+            readOnly={readOnly}
+            value={formData[toggleField.name] ?? false}
+            onChange={(value: boolean) =>
+              handleInputChange(toggleField.name, value)
             }
             errorText={errorText}
           />

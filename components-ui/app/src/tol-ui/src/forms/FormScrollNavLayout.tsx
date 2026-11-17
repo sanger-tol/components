@@ -178,7 +178,6 @@ export function FormScrollNavLayout(props: PFormScrollNavLayout) {
         </div>
       )}
       <div className="tol-form-layout__inner">
-        <div style={{ height: "16px", width: "1px", color: "blue" }} />
         {(config.title || titleAdornment) && (
           <div className="tol-form-layout__header">
             <div className="tol-form-layout__header-inner">

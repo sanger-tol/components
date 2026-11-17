@@ -74,6 +74,15 @@ export function createInitialDataSnapshot<T>(
 ): Record<string, any> {
   const initialData: Record<string, any> = {};
   formConfig.fields.forEach((field: TFormField) => {
+    // Preserve false instead of defaulting to "" for toggle fields
+    if (field.type === "toggle") {
+      const existing = data?.[field.name];
+      initialData[field.name] =
+        typeof existing === "boolean"
+          ? existing
+          : (field.defaultChecked ?? false);
+    }
+
     if (field.type === "checkbox") {
       // CheckboxGroup always requires an array value, so non-array DB values
       // (e.g. a boolean flag) must not be passed through as-is.

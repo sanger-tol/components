@@ -24,6 +24,7 @@ import type {
   PAutoComplete,
   ICheckboxField,
   IFormTagField,
+  IToggleFormField,
 } from ".."
 
 export type TFormField =
@@ -40,7 +41,8 @@ export type TFormField =
   | IMarkdownField
   | ITextAreaField
   | ICheckboxFormField
-  | IFormTagField;
+  | IFormTagField
+  | IToggleFormField;
 
 export type TUserProfileFormDataOrNull = IUserProfileFormData | null;
 
