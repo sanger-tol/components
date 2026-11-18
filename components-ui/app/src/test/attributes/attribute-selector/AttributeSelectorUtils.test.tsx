@@ -43,7 +43,7 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
     [
       "Literal['first', 'second', 'third']",
       { type: "singleselect", data: ["first", "second", "third"] },
-      Schema.Types.StringType().isRequired(),
+      Schema.Types.StringType().isRequired().isOneOf(["first", "second", "third"]),
     ],
     [
       "FieldName",

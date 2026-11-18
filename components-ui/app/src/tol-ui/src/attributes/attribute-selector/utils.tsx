@@ -465,7 +465,7 @@ export function convertCustomFieldPythonTypeToFormField(
     const values = [...pythonType.matchAll(regex)].map(match => match[1]);
     return [
       { type: "singleselect", data: values } as ISingleselectField,
-      Schema.Types.StringType().isRequired(),
+      Schema.Types.StringType().isRequired().isOneOf(values),
     ];
   } else if (pythonType == "FieldName") {
     return [
