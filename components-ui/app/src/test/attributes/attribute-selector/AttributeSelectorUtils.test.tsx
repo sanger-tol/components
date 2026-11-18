@@ -8,7 +8,7 @@ import { Schema } from "rsuite";
 import { describe, expect, test } from "vitest";
 
 import { convertCustomFieldPythonTypeToFormField, filterAttributes } from "../../../tol-ui/src";
-import type { ITextField } from "../../../tol-ui/src";
+import type { ISingleselectField, ITextField } from "../../../tol-ui/src";
 
 function expectModelValidationToMatch<
   TActualModel extends { check(value: unknown): unknown },
@@ -62,6 +62,23 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
       fieldModel,
       Schema.Types.NumberType().isRequired(),
       [undefined, 100, 100.0, 7.25, "string"]
+    );
+  });
+
+  test("pythonType of 'Literal", () => {
+    const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField(
+      "Literal['first', 'second', 'third']"
+    );
+
+    expect(fieldConfig).toEqual({
+      type: "singleselect",
+      data: ["first", "second", "third"]
+    } satisfies Omit<ISingleselectField, "name">);
+
+    expectModelValidationToMatch(
+      fieldModel,
+      Schema.Types.StringType().isRequired(),
+      [undefined, "first", "second", "third", 42]
     );
   });
 });
