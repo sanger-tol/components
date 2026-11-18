@@ -59,6 +59,7 @@ export interface PAttributeSelector extends IRemoteTarget {
   allowedCardinality?: IAllowedCardinality;
   groupBy?: boolean;
   advanceTab?: boolean;
+  myFieldsTab?: boolean;
   testid?: string;
 }
 
@@ -83,6 +84,7 @@ export function AttributeSelector(props: PAttributeSelector) {
     setAttributeMeta,
     groupBy,
     advanceTab,
+    myFieldsTab,
     testid
   } = props;
 
@@ -106,7 +108,8 @@ export function AttributeSelector(props: PAttributeSelector) {
   };
 
   const user = useAuth().user;
-  const showMyFieldsTab = Boolean(user); // Show only if logged in
+  // Show only if logged in and the tab is enabled
+  const showMyFieldsTab = Boolean(user) && myFieldsTab;
 
   const placeholder = maxSelections && maxSelections === 1
     ? "Select an attribute"

@@ -293,6 +293,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         renderSearchBySource={true}
         customAttributeSelection={customAttributeSelection}
         sticky={true}
+        myFieldsTab
       />
       {sortByAttribute && SortByButtons}
       {canManageColumnVisibility && (
@@ -363,6 +364,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
               populatedFieldType={"column"}
               additionalPopulatedFieldData={"."}
               customAttributeSelection={customAttributeSelection}
+              myFieldsTab
             />
           </div>
           <SelectedAttributesContainer
