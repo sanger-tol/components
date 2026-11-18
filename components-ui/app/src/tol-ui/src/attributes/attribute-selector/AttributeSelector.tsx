@@ -250,6 +250,7 @@ export function AttributeSelector(props: PAttributeSelector) {
                   <Tabs.Tab eventKey="myFields" title="My Fields">
                     <MyFieldsTab
                       objectType={objectType}
+                      dataSource={dataSource}
                       userId={user!.id}
                       value={attribute}
                       onNestedOverlayChange={handleNestedOverlayChange}

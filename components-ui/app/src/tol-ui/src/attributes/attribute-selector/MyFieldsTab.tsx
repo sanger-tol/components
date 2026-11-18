@@ -15,10 +15,10 @@ import {
   stopPropagation,
   TolLoader,
 } from "../..";
+import type { IRemoteTarget } from "../..";
 
 /** Props for the MyFieldsTab component */
-export interface PMyFieldsTab {
-  objectType: string;
+export interface PMyFieldsTab extends IRemoteTarget {
   userId: string;
   value: string[];
   onNestedOverlayChange: (open: boolean) => void;
@@ -29,6 +29,7 @@ export interface PMyFieldsTab {
 export function MyFieldsTab(props: PMyFieldsTab) {
   const {
     objectType,
+    dataSource,
     userId,
     value,
     onNestedOverlayChange,
@@ -144,6 +145,7 @@ export function MyFieldsTab(props: PMyFieldsTab) {
         customFieldId={editingCustomFieldId}
         objectType={objectType}
         dataSource={CORE_CONFIG_DS}
+        attributeDataSource={dataSource}
       />
     </div>
   );

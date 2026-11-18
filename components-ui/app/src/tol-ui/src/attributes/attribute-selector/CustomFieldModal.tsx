@@ -4,12 +4,15 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Schema } from "rsuite";
 
 import {
   Button,
   BUTTONS,
+  convertCustomFieldPythonTypeToFormField,
   fetchCustomFieldFunctions,
+  FormAllInOne,
   FormTextField,
   Modal,
   RSForm,
@@ -17,11 +20,15 @@ import {
   TolLoader
 } from "../..";
 import type {
+  IFormConfig,
   IRemoteTarget,
   IRuntimeFieldFunction,
+  TFormField,
 } from "../..";
 
 export interface PCustomFieldModal extends IRemoteTarget {
+  /** Data source used to select attributes for the target object type. */
+  attributeDataSource: IRemoteTarget["dataSource"];
   /** Whether the modal is currently open */
   open: boolean;
   /** Callback to control whether this modal is open */
@@ -36,6 +43,8 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     setOpen,
     customFieldId,
     dataSource: configDataSource,
+    attributeDataSource,
+    objectType,
   } = props;
 
   const [availableFunctions, setAvailableFunctions] = useState<
@@ -43,6 +52,44 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   >();
   const [chosenName, setChosenName] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
+
+  const [paramsFormConfig, paramsFormModel, paramsInitialData] = useMemo(() => {
+    const config: IFormConfig = {
+      fields: []
+    };
+    const model = Schema.Model({});
+    const initialData: Record<string, unknown> = {};
+
+    if (!availableFunctions || !chosenFunction) {
+      return [config, model, initialData] as const;
+    }
+
+    const functionDetails = availableFunctions.find(fn => fn.name == chosenFunction);
+    if (!functionDetails) {
+      console.error(`Unable to fetch function details for ${chosenFunction}`);
+      return [config, model, initialData] as const;
+    }
+
+    for (const [paramName, paramDetails] of Object.entries(functionDetails.params)) {
+      const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField(
+        paramDetails.pythonType
+      );
+
+      config.fields.push({
+        ...fieldConfig,
+        ...(fieldConfig.type === "attributeselector" && {
+          dataSource: attributeDataSource,
+          objectType,
+        }),
+        name: paramName,
+        label: paramName
+      } as TFormField);
+      model[paramName] = fieldModel;
+      initialData[paramName] = paramDetails.defaultValue;
+    }
+
+    return [config, model, initialData] as const;
+  }, [chosenFunction, availableFunctions, attributeDataSource, objectType]);
 
   const handleReset = () => {
     // Set the available functions to undefined but start fetching them
@@ -84,6 +131,13 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
           />
         )}
       </RSForm>
+      {chosenFunction && availableFunctions && (
+        <FormAllInOne
+          formConfig={paramsFormConfig}
+          model={paramsFormModel}
+          initialData={paramsInitialData}
+        />
+      )}
     </Modal>
   );
 }

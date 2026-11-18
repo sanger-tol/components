@@ -59,7 +59,7 @@ export function createInitialDataSnapshot<T>(
       const existing = data?.[field.name];
       initialData[field.name] = Array.isArray(existing) ? existing : [];
     } else {
-      initialData[field.name] = data?.[field.name] || "";
+      initialData[field.name] = data?.[field.name] ?? "";
     }
   });
   return initialData;

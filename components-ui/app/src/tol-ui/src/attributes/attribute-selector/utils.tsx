@@ -26,6 +26,7 @@ import type {
   ITextField,
   ListGetter,
   TDataObjectListOrNull,
+  TFormField,
 } from "../..";
 
 export function attributeSelectorSearchBy(keyword: string, label: any, entityMeta: IEntityMeta, objectType: string) {
@@ -449,7 +450,7 @@ export async function fetchCustomFieldFunctions(configDataSource: ListGetter): P
 
 export function convertCustomFieldPythonTypeToFormField(
   pythonType: string
-): [Omit<IFormComponent, "name">, ReturnType<(typeof Schema.Types)[keyof typeof Schema.Types]>] {
+): [Omit<TFormField, "name">, ReturnType<(typeof Schema.Types)[keyof typeof Schema.Types]>] {
   if (pythonType == "int") {
     return [
       { type: "text" } as ITextField,
