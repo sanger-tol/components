@@ -22,6 +22,7 @@ import type {
   IEntityMeta,
   IFormComponent,
   IRuntimeFieldFunction,
+  ISingleselectField,
   ListGetter,
   TDataObjectListOrNull,
 } from "../..";
@@ -458,6 +459,13 @@ export function convertCustomFieldPythonTypeToFormField(
         { type: "text" },
         Schema.Types.NumberType().isRequired(),
       ];
+    } else if (pythonType.startsWith("Literal[")) {
+    const regex = /(?<=[\[,])\s*['"]?([^,'"\]]+?)['"]?\s*(?=,|\])/g;
+    const values = [...pythonType.matchAll(regex)].map(match => match[1]);
+    return [
+      { type: "singleselect", data: values } as ISingleselectField,
+      Schema.Types.StringType().isRequired()
+    ];
   } else {
     return [
       { type: "text" },
