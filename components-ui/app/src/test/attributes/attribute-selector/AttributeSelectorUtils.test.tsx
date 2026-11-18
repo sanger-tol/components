@@ -65,7 +65,7 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
     );
   });
 
-  test("pythonType of 'Literal", () => {
+  test("pythonType of 'Literal'", () => {
     const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField(
       "Literal['first', 'second', 'third']"
     );

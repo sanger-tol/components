@@ -23,6 +23,7 @@ import type {
   IFormComponent,
   IRuntimeFieldFunction,
   ISingleselectField,
+  ITextField,
   ListGetter,
   TDataObjectListOrNull,
 } from "../..";
@@ -451,15 +452,15 @@ export function convertCustomFieldPythonTypeToFormField(
 ): [Omit<IFormComponent, "name">, ReturnType<(typeof Schema.Types)[keyof typeof Schema.Types]>] {
   if (pythonType == "int") {
     return [
-      { type: "text" },
+      { type: "text" } as ITextField,
       Schema.Types.NumberType().isRequired().isInteger(),
     ];
   } else if (pythonType == "float") {
       return [
-        { type: "text" },
+        { type: "text" } as ITextField,
         Schema.Types.NumberType().isRequired(),
       ];
-    } else if (pythonType.startsWith("Literal[")) {
+  } else if (pythonType.startsWith("Literal[")) {
     const regex = /(?<=[\[,])\s*['"]?([^,'"\]]+?)['"]?\s*(?=,|\])/g;
     const values = [...pythonType.matchAll(regex)].map(match => match[1]);
     return [
@@ -468,7 +469,7 @@ export function convertCustomFieldPythonTypeToFormField(
     ];
   } else {
     return [
-      { type: "text" },
+      { type: "text" } as ITextField,
       Schema.Types.StringType().isRequired(),
     ];
   }
