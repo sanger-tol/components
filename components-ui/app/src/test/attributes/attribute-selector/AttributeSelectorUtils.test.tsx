@@ -49,6 +49,11 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
       "FieldName",
       { type: "attributeselector" },
       Schema.Types.StringType().isRequired(),
+    ],
+    [
+      "list[FieldName]",
+      { type: "attributeselector" },
+      Schema.Types.ArrayType().isRequired().of(Schema.Types.StringType()),
     ]
   ])("pythonType of %s", (pythonType, expectedFieldConfig, expectedFieldModel) => {
     // Run the function we're testing

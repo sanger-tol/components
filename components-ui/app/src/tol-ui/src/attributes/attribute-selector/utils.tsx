@@ -472,6 +472,11 @@ export function convertCustomFieldPythonTypeToFormField(
       { type: "attributeselector" },
       Schema.Types.StringType().isRequired(),
     ];
+  } else if (pythonType == "list[FieldName]") {
+    return [
+      { type: "attributeselector" },
+      Schema.Types.ArrayType().isRequired().of(Schema.Types.StringType()),
+    ];
   } else {
     return [
       { type: "text" } as ITextField,
