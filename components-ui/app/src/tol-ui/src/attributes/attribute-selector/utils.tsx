@@ -453,6 +453,11 @@ export function convertCustomFieldPythonTypeToFormField(
       { type: "text" },
       Schema.Types.NumberType().isRequired().isInteger(),
     ];
+  } else if (pythonType == "float") {
+      return [
+        { type: "text" },
+        Schema.Types.NumberType().isRequired(),
+      ];
   } else {
     return [
       { type: "text" },
