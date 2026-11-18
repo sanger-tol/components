@@ -13,6 +13,7 @@ import {
   convertCustomFieldPythonTypeToFormField,
   fetchCustomFieldFunctions,
   FormAllInOne,
+  FormComponentWrapper,
   FormTextField,
   Modal,
   RSForm,
@@ -120,16 +121,18 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
           value={chosenName}
           onChange={setChosenName}
         />
-        {availableFunctions === undefined ? (
-          <TolLoader />
-        ) : (
-          <SingleSelect
-            block
-            data={availableFunctions.map(fn => fn.name)}
-            value={chosenFunction || ""}
-            onChange={setChosenFunction}
-          />
-        )}
+        <FormComponentWrapper name="function" label="Function">
+          {availableFunctions === undefined ? (
+            <TolLoader />
+          ) : (
+            <SingleSelect
+              block
+              data={availableFunctions.map(fn => fn.name)}
+              value={chosenFunction || ""}
+              onChange={setChosenFunction}
+            />
+          )}
+        </FormComponentWrapper>
       </RSForm>
       {chosenFunction && availableFunctions && (
         <FormAllInOne
