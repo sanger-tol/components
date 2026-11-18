@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Schema } from "rsuite";
 import { describe, expect, test } from "vitest";
 
-import { convertCustomFieldPythonTypeToFormField } from "../../../tol-ui/src";
+import { convertCustomFieldPythonTypeToFormField, filterAttributes } from "../../../tol-ui/src";
 import type { ITextField } from "../../../tol-ui/src";
 
 function expectModelValidationToMatch<
@@ -47,6 +47,20 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
     expectModelValidationToMatch(
       fieldModel,
       Schema.Types.NumberType().isRequired().isInteger(),
+      [undefined, 100, 100.0, 7.25, "string"]
+    );
+  });
+
+  test("pythonType of 'float'", () => {
+    const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField("float");
+
+    expect(fieldConfig).toEqual({
+      type: "text"
+    } satisfies Omit<ITextField, "name">);
+
+    expectModelValidationToMatch(
+      fieldModel,
+      Schema.Types.NumberType().isRequired(),
       [undefined, 100, 100.0, 7.25, "string"]
     );
   });
