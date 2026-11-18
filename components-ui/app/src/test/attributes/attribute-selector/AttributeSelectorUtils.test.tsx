@@ -24,76 +24,46 @@ function expectModelValidationToMatch<
 }
 
 describe("convertCustomFieldPythonTypeToFormField function", () => {
-  test("pythonType of 'str'", () => {
-    const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField("str");
-
-    expect(fieldConfig).toEqual({
-      type: "text",
-    } satisfies Omit<ITextField, "name">);
-    expectModelValidationToMatch(
-      fieldModel,
+  test.each([
+    [
+      "str",
+      { type: "text" },
       Schema.Types.StringType().isRequired(),
-      [undefined, "", "ordinary string", 42]
-    );
-  });
-
-  test("pythonType of 'int'", () => {
-    const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField("int");
-
-    expect(fieldConfig).toEqual({
-      type: "text",
-    } satisfies Omit<ITextField, "name">);
-
-    expectModelValidationToMatch(
-      fieldModel,
+    ],
+    [
+      "int",
+      { type: "text" },
       Schema.Types.NumberType().isRequired().isInteger(),
-      [undefined, 100, 100.0, 7.25, "string"]
-    );
-  });
-
-  test("pythonType of 'float'", () => {
-    const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField("float");
-
-    expect(fieldConfig).toEqual({
-      type: "text"
-    } satisfies Omit<ITextField, "name">);
-
-    expectModelValidationToMatch(
-      fieldModel,
+    ],
+    [
+      "float",
+      { type: "text" },
       Schema.Types.NumberType().isRequired(),
-      [undefined, 100, 100.0, 7.25, "string"]
-    );
-  });
-
-  test("pythonType of 'Literal'", () => {
-    const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField(
-      "Literal['first', 'second', 'third']"
-    );
-
-    expect(fieldConfig).toEqual({
-      type: "singleselect",
-      data: ["first", "second", "third"]
-    } satisfies Omit<ISingleselectField, "name">);
-
-    expectModelValidationToMatch(
-      fieldModel,
+    ],
+    [
+      "Literal['first', 'second', 'third']",
+      { type: "singleselect", data: ["first", "second", "third"] },
       Schema.Types.StringType().isRequired(),
-      [undefined, "first", "second", "third", 42]
-    );
-  });
-
-  test("pythonType of 'FieldName'", () => {
-    const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField("FieldName");
-
-    // TODO Add attribute selector type when it exists
-    expect(fieldConfig).toEqual({
-      type: "attributeselector",
-    });
-
-    expectModelValidationToMatch(
-      fieldModel,
+    ],
+    [
+      "FieldName",
+      { type: "attributeselector" },
       Schema.Types.StringType().isRequired(),
-      [undefined, "scientific_name", "custom_adgi763gd", 42]
+    ]
+  ])("pythonType of %s", (pythonType, expectedFieldConfig, expectedFieldModel) => {
+    // Run the function we're testing
+    const [actualFieldConfig, actualFieldModel] = convertCustomFieldPythonTypeToFormField(
+      pythonType
     );
+
+    // Check the field config matches
+    expect(actualFieldConfig).toEqual(expectedFieldConfig);
+
+    // Check the actual field model against the expected field model
+    // by trying validation against a bunch of values. Whether they pass or fail, both models
+    // should yield the same outcomes
+    for (const value of [undefined, "", "string", 42, 17.8, 80.0]) {
+      expect(actualFieldModel.check(value as any)).toEqual(expectedFieldModel.check(value));
+    }
   });
 });
