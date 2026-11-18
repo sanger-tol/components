@@ -48,5 +48,3 @@ export function FormAttributeSelector(props: PFormAttributeSelector) {
 		</FormComponentWrapper>
 	);
 }
-
-
