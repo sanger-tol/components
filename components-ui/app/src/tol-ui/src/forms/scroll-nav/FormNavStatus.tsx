@@ -5,61 +5,30 @@ SPDX-License-Identifier: MIT
 */
 
 import { Icon } from "../..";
+import { generateFormNavStatusLabel, generateFormNavStatusIcon } from "../..";
 import type { TFieldNavStatus, TScrollNavGroupStatus } from "../..";
 
-export function FormNavStatus({
-  status,
-}: {
+/** Props for the FormNavStatus component. */
+export interface PFormNavStatus {
+  /** The status of the form field or scroll navigation group. */
   status?: TFieldNavStatus | TScrollNavGroupStatus;
-}) {
-  if (!status || status === "none") return null;
+}
 
-  const kind = typeof status === "string" ? status : status.kind;
-  const sectionComplete = typeof status !== "string" && kind === "complete";
+/** Renders the status indicator for a form field or scroll navigation group. */
+export function FormNavStatus(props: PFormNavStatus) {
+  const { status } = props;
 
-  const recommendedRemaining =
-    typeof status !== "string" && status.kind === "complete"
-      ? (status.recommendedRemaining ?? 0)
-      : 0;
+  const label = generateFormNavStatusLabel(status || "none");
+  const icon = generateFormNavStatusIcon(status || "none");
 
-  const count =
-    typeof status === "object" && "count" in status ? status.count : 0;
-  const fieldCount = `${count} ${count === 1 ? "field" : "fields"}`;
+  const kind = typeof status === "string" ? status : status?.kind;
 
-  const labels = {
-    auto: "Auto-generated",
-    locked: "Locked",
-    error: count ? `${fieldCount} invalid` : "Invalid",
-    required: "Required",
-    remaining: `${fieldCount} remaining`,
-    attention: `${fieldCount} ${count === 1 ? "needs" : "need"} attention`,
-    complete: sectionComplete
-      ? recommendedRemaining
-        ? `Complete, ${recommendedRemaining} recommended ${recommendedRemaining === 1 ? "field" : "fields"} missing`
-        : "Complete"
-      : "Provided",
-    recommended: "Recommended",
-    optional: "Optional",
-  };
-
-  const icon =
-    kind === "auto"
-      ? "robot"
-      : kind === "locked"
-        ? "lock"
-        : kind === "complete" && !sectionComplete
-          ? "check"
-          : kind === "required" ||
-              kind === "remaining" ||
-              kind === "error" ||
-              kind === "attention"
-            ? "circle"
-            : undefined;
+  if (!label && !icon) return null;
 
   return (
     <span
-      className={`tol-form-sidenav-status tol-form-sidenav-status--${kind}`}
-      title={labels[kind]}
+      className={`tol-form-sidenav-status tol-form-sidenav-status--${kind || "none"}`}
+      title={label ?? ""}
     >
       {icon && (
         <span aria-hidden="true">
@@ -68,12 +37,10 @@ export function FormNavStatus({
       )}
       <span
         className={
-          kind === "complete" && !sectionComplete
-            ? "tol-form-sidenav-status__sr-only"
-            : undefined
+          status === "complete" ? "tol-form-sidenav-status__sr-only" : undefined
         }
       >
-        {labels[kind]}
+        {label}
       </span>
     </span>
   );

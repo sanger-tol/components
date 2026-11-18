@@ -17,7 +17,7 @@ export interface PSubformDrawer {
   renderField: TRenderFormField;
 }
 
-// Renders the open subform draft's fields in a drawer with save and discard controls.
+/** Renders the open subform draft's fields in a drawer with save and discard controls. */
 export function SubformDrawer(props: PSubformDrawer) {
   const { drawer, readOnly, renderField } = props;
   const { itemPath, source, state } = drawer;

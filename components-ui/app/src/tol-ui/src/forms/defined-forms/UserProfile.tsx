@@ -35,18 +35,19 @@ import type {
   IUserProfileFunctions,
 } from "../..";
 
+/** Props for the UserProfile component. */
 export interface PUserProfile extends IUserProfileFunctions {
   /** Base form configuration, or a factory receiving `hasUnsavedChanges` followed by any `baseConfigArgs`. */
   baseConfig?: TProfileBaseConfig;
   /** Extra arguments forwarded to `baseConfig` when it's a factory (e.g. `[termsaccepted]`). */
   baseConfigArgs?: unknown[];
-  /** Optional additional configurations for the user profile form,
-   * including additional fields, their positions, and field mappings. */
+  /** Optional additional configurations for the user profile form, including additional fields, their positions, and field mappings. */
   additionalConfigs?: IUserProfileAdditionalConfigs;
   /** Optional boolean flag to indicate whether to show a logout button in the profile page. */
   logout?: boolean;
 }
 
+/** Renders the user profile form, handling both display and submission logic. This is the default user profile used across all apps. */
 export function UserProfile(props: PUserProfile) {
   const {
     baseConfig: baseConfigProp,
@@ -82,6 +83,7 @@ export function UserProfile(props: PUserProfile) {
     enabledCondition: !!user?.id,
     isComplete: (data) => !!data?.email && !!data?.name,
   });
+  
   const history = useHistory();
   const location = useLocation<{ from?: string }>();
   const handleLogout = useLogout();

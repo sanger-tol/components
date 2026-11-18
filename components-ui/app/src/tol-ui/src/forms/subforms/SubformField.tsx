@@ -12,6 +12,7 @@ import {
   getValueAtPath,
   isEmptyFieldValue,
   isRecord,
+  DEFAULT_DRAWER_THRESHOLD_LIMIT,
 } from "../..";
 import type {
   IFormValueSource,
@@ -45,8 +46,6 @@ export interface PSubformField {
   controls: ISubformControls;
 }
 
-const DEFAULT_DRAWER_THRESHOLD = 5;
-
 // Renders a nested object or list as inline fields, summary cards or drawer cards.
 export function SubformField(props: PSubformField) {
   const {
@@ -74,7 +73,7 @@ export function SubformField(props: PSubformField) {
     presentation === "drawer" ||
     (presentation === "auto" &&
       countSubformFields(field.fields) >
-        (field.editor?.drawerThreshold ?? DEFAULT_DRAWER_THRESHOLD));
+        (field.editor?.drawerThreshold ?? DEFAULT_DRAWER_THRESHOLD_LIMIT));
 
   // Builds a readable card heading from the configured summary fields.
   const getItemSummary = (item: unknown, index: number) => {

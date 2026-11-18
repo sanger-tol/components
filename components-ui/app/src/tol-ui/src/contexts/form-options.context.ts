@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { createContext } from "react";
-import type { IFormOptions } from "../../interfaces/forms/Forms";
+import type { IFormOptions } from "../interfaces/forms/Forms";
 
 export interface IFormOptionsContext extends IFormOptions {
   sectionLocked?: boolean;

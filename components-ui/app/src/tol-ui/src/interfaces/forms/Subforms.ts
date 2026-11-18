@@ -14,8 +14,10 @@ import type {
 } from "../..";
 
 /** Configures a nested object form, or a repeatable form for an array of objects. */
-export interface ISubformField
-  extends Omit<IFormComponent, "multiple" | "minOne"> {
+export interface ISubformField extends Omit<
+  IFormComponent,
+  "multiple" | "minOne"
+> {
   /** Identifies this field as a subform. */
   type: "subform";
   /** Fields that make up each nested object. */
@@ -30,10 +32,7 @@ export interface ISubformField
   itemLabel?: string;
   /** Relative field names used to display a summary for each object. */
   summaryFields?: string[];
-  /**
-   * Shows inline repeatable items as summary cards, expanding an item only
-   * while it is being edited. Drawer subforms always use summary cards.
-   */
+  /** Shows inline repeatable items as summary cards, expanding an item only while it is being edited. Drawer subforms always use summary cards. */
   summary?: boolean;
   /** Controls whether the subform editor is shown inline or in a drawer. */
   editor?: {

@@ -25,7 +25,7 @@ export interface PFormDrawer {
   children: React.ReactNode;
 }
 
-// Wraps subform draft editing in the shared drawer and its save/discard controls.
+/** Wraps subform draft editing in the shared drawer and its save/discard controls. */
 export function FormDrawer(props: PFormDrawer) {
   const {
     children,

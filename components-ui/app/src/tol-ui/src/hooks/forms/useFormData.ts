@@ -12,8 +12,8 @@ import {
   PopUpMessage,
   MESSAGE_TYPE,
   useAuth,
-} from "..";
-import type { TsDataSource, IAndAttributes } from "..";
+} from "../..";
+import type { TsDataSource, IAndAttributes } from "../..";
 
 export interface IUseFormData<T> {
   /**

@@ -6,12 +6,12 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { findScrollContainer, getScrollSpyOffset } from "..";
+import { findScrollContainer, getScrollSpyOffset } from "../..";
 import type {
   IScrollNavItem,
   IUseScrollSpyArgs,
   IUseScrollSpyResult,
-} from "..";
+} from "../..";
 
 // Space left above a target when scrolling to it.
 const SCROLL_HEADROOM = 8;

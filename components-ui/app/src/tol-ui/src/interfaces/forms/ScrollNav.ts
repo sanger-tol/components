@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+/** Configuration for the scrollable form navigation. */
 export interface IFormScrollNavConfig {
   /** Defaults to `true` when a config object is supplied. */
   enabled?: boolean;
@@ -13,18 +14,9 @@ export interface IFormScrollNavConfig {
   title?: string;
   /** Whether the side navigation starts expanded. Defaults to `false`. */
   defaultOpen?: boolean;
-  /**
-   * Show field statuses and section summaries in the side navigation. Defaults to `true`.
-   * Also shows progress for required editable fields. A provided value is not
-   * necessarily valid until validation has run. A section with required fields
-   * is complete when those fields are provided and there are no known errors;
-   * unfilled recommended fields are reported separately.
-   */
+  /** Show field statuses and section summaries in the side navigation. Defaults to `true`. Also shows progress for required editable fields. */
   showStatus?: boolean;
-  /**
-   * Whether this form currently owns the URL query params, e.g. when it is
-   * the visible tab. Defaults to `true`.
-   */
+  /** Whether this form currently owns the URL query params, e.g. when it is the visible tab. Defaults to `true`. */
   active?: boolean;
   /** Whether to mirror the section/sub-section in the URL. Defaults to `true`. */
   syncUrl?: boolean;

@@ -69,7 +69,7 @@ export function renderFormField(
   parentReadOnly = false,
   source: IFormValueSource = context.source,
 ): JSX.Element | null {
-    if (!field) {
+  if (!field) {
     return null;
   }
 
@@ -78,33 +78,33 @@ export function renderFormField(
       ? source.data
       : getValueAtPath(source.data, parentPath);
   if (
-    field.hiddenWhen?.(
-      isRecord(containingData) ? containingData : source.data,
-    )
+    field.hiddenWhen?.(isRecord(containingData) ? containingData : source.data)
   ) {
     return null;
   }
 
   // Every parent path starts at a top-level field, so this is always a field path
-  const fieldPath = [
-    ...parentPath,
-    field.name,
-  ] as unknown as TFormFieldPath;
+  const fieldPath = [...parentPath, field.name] as unknown as TFormFieldPath;
+
   // Each control narrows the value to its own type
   const fieldValue: any =
     parentPath.length === 0
       ? source.data[field.name]
       : getValueAtPath(source.data, fieldPath);
+
   const setFieldValue = (value: unknown) => source.onChange(fieldPath, value);
-  const errorKey =
-    parentPath.length === 0 ? field.name : fieldPath.join(".");
+
+  const errorKey = parentPath.length === 0 ? field.name : fieldPath.join(".");
   const errorText: string | undefined = context.formErrors[errorKey];
+
   const status = context.getStatus(field, fieldValue, errorText);
   const readOnly = parentReadOnly || isReadOnlyStatus(status);
+
   const placeholder =
     status === "locked" && isEmptyFieldValue(fieldValue)
       ? READ_ONLY_FIELD_PLACEHOLDER
       : field.placeholder;
+
   const controlId =
     parentPath.length === 0
       ? context.formId
@@ -148,9 +148,7 @@ export function renderFormField(
           readOnly={readOnly}
           placeholder={placeholder}
           value={fieldValue ?? ""}
-          onChange={(value: any) =>
-            setFieldValue(value)
-          }
+          onChange={(value: any) => setFieldValue(value)}
           errorText={errorText}
         />
       );
@@ -170,9 +168,7 @@ export function renderFormField(
             disabled={readOnly || singleselectField.disabled}
             placeholder={placeholder}
             value={fieldValue ?? ""}
-            onChange={(value: any) =>
-              setFieldValue(value)
-            }
+            onChange={(value: any) => setFieldValue(value)}
           />
         </FormComponentWrapper>
       );
@@ -186,9 +182,7 @@ export function renderFormField(
           readOnly={readOnly}
           placeholder={placeholder}
           value={fieldValue ?? ""}
-          setValue={(value: any) =>
-            setFieldValue(value)
-          }
+          setValue={(value: any) => setFieldValue(value)}
           errorText={errorText}
         />
       );
@@ -217,9 +211,7 @@ export function renderFormField(
             readOnly={readOnly}
             placeholder={placeholder}
             value={fieldValue ?? ""}
-            onChange={(value: any) =>
-              setFieldValue(value)
-            }
+            onChange={(value: any) => setFieldValue(value)}
             errorText={errorText}
           />
         );
@@ -231,9 +223,7 @@ export function renderFormField(
             readOnly={readOnly}
             placeholder={placeholder}
             value={fieldValue ?? ""}
-            onChange={(value: any) =>
-              setFieldValue(value)
-            }
+            onChange={(value: any) => setFieldValue(value)}
             errorText={errorText}
           />
         );
@@ -252,12 +242,8 @@ export function renderFormField(
           )}
           readOnly={readOnly}
           placeholder={placeholder}
-          value={
-            Array.isArray(multipleSelectValue) ? multipleSelectValue : []
-          }
-          setValue={(value: any) =>
-            setFieldValue(value)
-          }
+          value={Array.isArray(multipleSelectValue) ? multipleSelectValue : []}
+          setValue={(value: any) => setFieldValue(value)}
           errorText={errorText}
         />
       );
@@ -270,9 +256,7 @@ export function renderFormField(
           readOnly={readOnly}
           placeholder={placeholder}
           value={fieldValue ?? ""}
-          onChange={(value: any) =>
-            setFieldValue(value)
-          }
+          onChange={(value: any) => setFieldValue(value)}
           errorText={errorText}
         />
       );
@@ -285,9 +269,7 @@ export function renderFormField(
           readOnly={readOnly}
           placeholder={placeholder}
           value={fieldValue ?? ""}
-          setValue={(value: any) =>
-            setFieldValue(value)
-          }
+          setValue={(value: any) => setFieldValue(value)}
           errorText={errorText}
         />
       );
@@ -300,9 +282,7 @@ export function renderFormField(
           readOnly={readOnly}
           placeholder={placeholder}
           value={[...(fieldValue ?? [])]}
-          setValue={(value: readonly string[]) =>
-            setFieldValue([...value])
-          }
+          setValue={(value: readonly string[]) => setFieldValue([...value])}
           errorText={errorText}
         />
       );
@@ -314,9 +294,7 @@ export function renderFormField(
           id={`${controlId}-toggle`}
           readOnly={readOnly}
           value={fieldValue ?? false}
-          onChange={(value: boolean) =>
-            setFieldValue(value)
-          }
+          onChange={(value: boolean) => setFieldValue(value)}
           errorText={errorText}
         />
       );
@@ -331,9 +309,7 @@ export function renderFormField(
           id={`${controlId}-checkbox`}
           readOnly={readOnly}
           checkedItems={fieldValue ?? []}
-          setCheckedItems={(value: any) =>
-            setFieldValue(value)
-          }
+          setCheckedItems={(value: any) => setFieldValue(value)}
           errorText={errorText}
         />
       );

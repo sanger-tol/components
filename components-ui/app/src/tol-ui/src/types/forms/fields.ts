@@ -114,3 +114,15 @@ export type TFormTags = IFormTagField;
 
 /** Supported positions for a form-field label icon. */
 export type TFormLabelIconPosition = "left" | "right";
+
+/** A group of fields, optionally marked as locked or optional. */
+export type IFormSection = {
+  /** Section identifier referenced by each field's `section` property. */
+  id: string;
+  /** Display label. Defaults to a normalized version of the section ID. */
+  label?: string;
+} & (
+  | { locked: true; optional?: false }
+  | { optional: true; locked?: false }
+  | { locked?: false; optional?: false }
+);

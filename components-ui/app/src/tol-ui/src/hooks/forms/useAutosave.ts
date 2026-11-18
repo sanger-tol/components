@@ -5,12 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AUTOSAVE_DELAY_MS } from "..";
+import { AUTOSAVE_DELAY_MS } from "../..";
 import type {
   IUseAutosaveOptions,
   IUseAutosaveResult,
   TAutosaveStatus,
-} from "..";
+} from "../..";
 
 /**
  * Debounces saving a changing value and tracks its save status.

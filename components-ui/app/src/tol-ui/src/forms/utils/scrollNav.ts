@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import type { KeyboardEvent } from "react";
 import {
   normaliseCaps,
   SECTION_QUERY_PARAM,
@@ -325,4 +326,97 @@ export function isFormAtBottom(form: HTMLDivElement): boolean {
   return (
     form.clientHeight > 0 && maxScroll > 0 && form.scrollTop >= maxScroll - 1
   );
+}
+
+/**
+ * Generates the label for a form field or scroll navigation group based on its status.
+ *
+ * @param status - The status of the form field or scroll navigation group.
+ * @returns The label corresponding to the status, or `null` if no label is applicable.
+ */
+export function generateFormNavStatusLabel(
+  status: TFieldNavStatus | TScrollNavGroupStatus,
+) {
+  if (status === "none") return null;
+
+  const kind = typeof status === "string" ? status : status.kind;
+  const sectionComplete = typeof status !== "string" && kind === "complete";
+
+  const recommendedRemaining =
+    typeof status !== "string" && status.kind === "complete"
+      ? (status.recommendedRemaining ?? 0)
+      : 0;
+
+  const count =
+    typeof status === "object" && "count" in status ? status.count : 0;
+  const fieldCount = `${count} ${count === 1 ? "field" : "fields"}`;
+
+  const labels = {
+    auto: "Auto-generated",
+    locked: "Locked",
+    error: count ? `${fieldCount} invalid` : "Invalid",
+    required: "Required",
+    remaining: `${fieldCount} remaining`,
+    attention: `${fieldCount} ${count === 1 ? "needs" : "need"} attention`,
+    complete: sectionComplete
+      ? recommendedRemaining
+        ? `Complete, ${recommendedRemaining} recommended ${recommendedRemaining === 1 ? "field" : "fields"} missing`
+        : "Complete"
+      : "Provided",
+    recommended: "Recommended",
+    optional: "Optional",
+  };
+
+  return labels[kind];
+}
+
+/**
+ * Generates the icon for a form field or scroll navigation group based on its status.
+ *
+ * @param status - The status of the form field or scroll navigation group.
+ * @returns The icon name corresponding to the status, or `null` if no icon is applicable.
+ */
+export function generateFormNavStatusIcon(
+  status: TFieldNavStatus | TScrollNavGroupStatus,
+) {
+  if (status === "none") return null;
+
+  const kind = typeof status === "string" ? status : status.kind;
+  const sectionComplete = typeof status !== "string" && kind === "complete";
+
+  const icon =
+    kind === "auto"
+      ? "robot"
+      : kind === "locked"
+        ? "lock"
+        : kind === "complete" && !sectionComplete
+          ? "check"
+          : kind === "required" ||
+              kind === "remaining" ||
+              kind === "error" ||
+              kind === "attention"
+            ? "circle"
+            : undefined;
+
+  return icon;
+}
+
+/**
+ * Returns the necessary props to make an element accessible as a clickable button.
+ *
+ * @param handler - The function to call when the element is activated via click or keyboard.
+ * @returns An object containing the role, tabIndex, onClick, and onKeyDown handlers.
+ */
+export function onActivate(handler: () => void) {
+  return {
+    role: "button",
+    tabIndex: 0,
+    onClick: handler,
+    onKeyDown: (event: KeyboardEvent) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handler();
+      }
+    },
+  };
 }

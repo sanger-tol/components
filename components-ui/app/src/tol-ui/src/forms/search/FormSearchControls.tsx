@@ -1,5 +1,5 @@
 /*
-SPDX-FileCopyrightText: 2024 Genome Research Ltd.
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
@@ -22,7 +22,7 @@ export interface PFormSearchControls<TResult extends object> {
   onManualEntry: () => void;
 }
 
-// Search-first lookup that prefills a form, with a way to skip to manual entry.
+/** Search-first lookup that prefills a form, with a way to skip to manual entry. */
 export function FormSearchControls<TResult extends object>(
   props: PFormSearchControls<TResult>,
 ) {

@@ -5,32 +5,49 @@ SPDX-License-Identifier: MIT
 */
 
 import { useContext } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faRobot } from "@fortawesome/free-solid-svg-icons";
-import { RSForm, IFormComponent, Icon, RequiredAsterisk } from "../..";
-import { FormOptionsContext } from "./FormOptionsContext";
-import { isEmptyFieldValue } from "../utils";
+import {
+  RSForm,
+  Icon,
+  RequiredAsterisk,
+  FormOptionsContext,
+  isEmptyFieldValue,
+} from "../..";
+import type { IFormComponent } from "../..";
 
-export interface PFormLabel
-  extends Pick<
-    IFormComponent,
-    "label" | "icon" | "required" | "requiredAsText" | "readOnly" | "automatic" | "recommended"
-  > {
+/** Props for the FormLabel component. */
+export interface PFormLabel extends Pick<
+  IFormComponent,
+  | "label"
+  | "icon"
+  | "required"
+  | "requiredAsText"
+  | "readOnly"
+  | "automatic"
+  | "recommended"
+> {
+  /** Whether the label should be displayed inline with the field. */
   inline?: boolean;
   /** Current field value; empty read-only fields display "Locked". */
   value?: unknown;
 }
 
+/** Renders a label for a form field, including icons, required indicators, and read-only/automatic/recommended status. */
 export function FormLabel(props: PFormLabel) {
   const { label, inline, required, readOnly, automatic, recommended } = props;
   const formOptions = useContext(FormOptionsContext);
+
   const requiredAsText =
     props.requiredAsText ?? formOptions.requiredAsText ?? false;
-  const locked = Boolean(readOnly || formOptions.locked || formOptions.sectionLocked);
+
+  const locked = Boolean(
+    readOnly || formOptions.locked || formOptions.sectionLocked,
+  );
   const emptyLocked = locked && isEmptyFieldValue(props.value);
-  const showReadOnly = !automatic && (emptyLocked || Boolean(
-    readOnly && !formOptions.locked && !formOptions.sectionLocked,
-  ));
+
+  const showReadOnly =
+    !automatic &&
+    (emptyLocked ||
+      Boolean(readOnly && !formOptions.locked && !formOptions.sectionLocked));
   const showRequired = Boolean(required && !readOnly);
   const showRequiredAsText = showRequired && requiredAsText;
   const showRecommended = recommended && !automatic && !locked;
@@ -41,7 +58,9 @@ export function FormLabel(props: PFormLabel) {
     <>
       {label && (
         <RSForm.ControlLabel>
-          <div className={`tol-form-label ${inline ? "inline" : ""} ${showRequiredAsText ? "required-as-text" : ""}`}>
+          <div
+            className={`tol-form-label ${inline ? "inline" : ""} ${showRequiredAsText ? "required-as-text" : ""}`}
+          >
             {showRequired && !requiredAsText && <RequiredAsterisk />}
             {icon.position === "right" && label}
             {icon.icon && (
@@ -50,16 +69,18 @@ export function FormLabel(props: PFormLabel) {
               </div>
             )}
             {icon.position === "left" && label}
-            {showRequiredAsText && <span className="tol-form-label-required-text">Required</span>}
+            {showRequiredAsText && (
+              <span className="tol-form-label-required-text">Required</span>
+            )}
             {showReadOnly && (
               <span className="tol-form-label-read-only">
-                <FontAwesomeIcon icon={faLock} aria-hidden="true" />
+                <Icon icon={"lock"} aria-hidden="true" />
                 <em>{emptyLocked ? "Locked" : "Read-only"}</em>
               </span>
             )}
             {automatic && (
               <span className="tol-form-label-automatic">
-                <FontAwesomeIcon icon={faRobot} aria-hidden="true" />
+                <Icon icon={"robot"} aria-hidden="true" />
                 <em>Auto-generated</em>
               </span>
             )}

@@ -16,26 +16,20 @@ import type {
   TMessageType,
   TTextEditorButtons,
   TsDataSource,
+  IEditorOptions
 } from "../..";
-import type { IEditorOptions } from "../../text-editor/TextEditor";
 
 /** Message shown while a dropzone waits for an upload to complete. */
 export interface IWaitingUpload {
-  /**
-   * The message to display while waiting for the upload to complete.
-   */
+  /** The message to display while waiting for the upload to complete. */
   message: string | React.ReactNode;
 }
 
 /** Message and presentation type displayed by a form. */
 export interface IMessage {
-  /**
-   * The type of message. Can be "success", "info", "warning", or "error".
-   */
+  /** The type of message. Can be "success", "info", "warning", or "error". */
   type: string;
-  /**
-   * The message to display. Can be a string or a React node.
-   */
+  /** The message to display. Can be a string or a React node. */
   message: TMessageType;
 }
 
@@ -107,10 +101,7 @@ export interface IFormComponent {
   automatic?: boolean;
   /** Shows a Recommended subtitle when the field is editable and not automatic. */
   recommended?: boolean;
-  /**
-   * Whether the form field is required. If true, the user must provide a value for the field before submitting the form.
-   * This will also display a red asterisk next to the label.
-   */
+  /** Whether the form field is required. If true, the user must provide a value for the field before submitting the form. This will also display a red asterisk next to the label. */
   required?: boolean;
   /** Hides this field when the predicate returns true for its containing object. */
   hiddenWhen?: (formData: Record<string, any>) => boolean;
@@ -118,23 +109,15 @@ export interface IFormComponent {
   centered?: boolean;
   /** The icon for the form field label. This is displayed next to the label. */
   icon?: IFormLabelIcon;
-  /**
-   * Whether the form field label is displayed inline with the input element.
-   * If true, the label will be displayed to the left of the input element.
-   */
+  /** Whether the form field label is displayed inline with the input element. If true, the label will be displayed to the left of the input element. */
   labelInline?: boolean;
   /** Section identifier used to group this field in the form. */
   section?: string;
-  /**
-   * Enables repeated rows for this field. Subforms use this to hold an array
-   * of nested objects instead.
-   */
+  /** Enables repeated rows for this field. Subforms use this to hold an array of nested objects instead. */
   multiple?: boolean;
   /** Called when a repeated row is removed; `remove` performs the actual removal. */
   onMinus?: (inputId: string, value: any, remove: () => void) => void;
-  /**
-   * Requires at least one row when this field is repeated.
-   */
+  /** Requires at least one row when this field is repeated. */
   minOne?: boolean;
   /** Creates an additional action button for each repeated row. */
   rowButton?: (inputId: string, value: any) => PButton;
@@ -211,7 +194,10 @@ export interface ISingleselectcustomoptionField extends IFormComponent {
 }
 
 /** Configuration for a tag-entry field. */
-export interface IFormTagField extends Omit<IFormComponent, "children" | "value"> {
+export interface IFormTagField extends Omit<
+  IFormComponent,
+  "children" | "value"
+> {
   /** Identifies this field as a tag input. */
   type: "tag";
   /** Props passed to the underlying RSuite tag input. */

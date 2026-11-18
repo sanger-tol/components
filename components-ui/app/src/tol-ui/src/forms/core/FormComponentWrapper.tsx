@@ -5,48 +5,38 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { useContext } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
-import { FormLabel, RSForm, TFormComponentWrapper } from "../..";
-import { FormOptionsContext } from "./FormOptionsContext";
-import { AUTOMATIC_FIELD_HELP_TEXT } from "../../constants/form.constants";
+import {
+  FormLabel,
+  Icon,
+  RSForm,
+  FormOptionsContext,
+  AUTOMATIC_FIELD_HELP_TEXT,
+} from "../..";
+import type { TFormComponentWrapper } from "../..";
 
+/** Props for the FormComponentWrapper component. */
 export interface PFormComponentWrapper extends TFormComponentWrapper {
   /** Current field value, used to distinguish empty locked fields. */
   value?: unknown;
-  /**
-   * The name of the form field. This is used to identify the field in the form data.
-   */
+  /** The name of the form field. This is used to identify the field in the form data. */
   id?: string;
-  /**
-   * Elements to be wrapped by the FormComponentWrapper.
-   * This can include input fields, buttons, or any other form-related elements.
-   */
+  /** Elements to be wrapped by the FormComponentWrapper. This can include input fields, buttons, or any other form-related elements. */
   children: React.ReactNode;
-  /**
-   * Error text to display when form fails validation. This will be displayed below the input field.
-   */
+  /** Error text to display when form fails validation. This will be displayed below the input field. */
   errorText?: string;
-  /**
-   * Optional class name for styling the error message. This allows for custom styling of the error message.
-   */
+  /** Optional class name for styling the error message. This allows for custom styling of the error message. */
   errorMessageClassName?: string;
-  /**
-   * Optional prop to specify the HTML element type for the wrapper.
-   * This can be used to change the default 'div' wrapper to another element type, such as 'span'.
-   */
+  /** Optional prop to specify the HTML element type for the wrapper. This can be used to change the default 'div' wrapper to another element type, such as 'span'. */
   as?: React.ElementType;
 }
 
 /**
  * @autodoc
  *
- * Wraps a form control in a consistently structured form group. It renders the
- * field label, optional icon and help text, child control, and validation error
- * message, while supporting inline labels and a configurable wrapper element.
+ * Wraps a form control in a consistently structured form group. It renders the field label, optional icon and help text, child control,
+ * and validation error message, while supporting inline labels and a configurable wrapper element.
  */
 export function FormComponentWrapper(props: PFormComponentWrapper) {
-  const formOptions = useContext(FormOptionsContext);
   const {
     id,
     name,
@@ -65,11 +55,14 @@ export function FormComponentWrapper(props: PFormComponentWrapper) {
     recommended,
     value,
   } = props;
+
+  const formOptions = useContext(FormOptionsContext);
   const inline = formOptions.inlineLabels || labelInline;
 
   const ContentWrapper = as === "span" ? "span" : "div";
   const ControlsWrapper = as === "span" ? "span" : "div";
   const AutomaticControlWrapper = as === "span" ? "span" : "div";
+
   const errorMessage = (
     <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
       {errorText}
@@ -96,11 +89,12 @@ export function FormComponentWrapper(props: PFormComponentWrapper) {
             recommended={recommended}
             value={value}
           />
+
           {automatic ? (
             <AutomaticControlWrapper className="tol-form-automatic-control">
-              <FontAwesomeIcon
+              <Icon
                 className="tol-form-automatic-placeholder-lock"
-                icon={faLock}
+                icon="lock"
                 aria-hidden="true"
               />
               {children}
@@ -110,9 +104,11 @@ export function FormComponentWrapper(props: PFormComponentWrapper) {
           )}
         </ControlsWrapper>
         {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
+
         {automatic && (
           <RSForm.HelpText>{AUTOMATIC_FIELD_HELP_TEXT}</RSForm.HelpText>
         )}
+
         {errorMessageClassName ? (
           <span className={errorMessageClassName}>{errorMessage}</span>
         ) : (

@@ -8,6 +8,6 @@ export * from "./FormComponentWrapper";
 export * from "./renderFormField";
 export * from "./FormFieldRow";
 export * from "./FormLabel";
-export * from "./FormOptionsContext";
+export * from "../../contexts/form-options.context";
 export * from "./FormSection";
 export * from "./RequiredAsterisk";

@@ -8,17 +8,11 @@ import type { IFieldMapping, IFormConfig } from "..";
 
 /** Optional configuration extensions for a user profile form. */
 export interface IUserProfileAdditionalConfigs {
-  /**
-   * Optional additional form configuration to merge with the base form configuration.
-   */
+  /** Optional additional form configuration to merge with the base form configuration. */
   additionalConfig?: IFormConfig;
-  /**
-   * Optional array of positions to insert the additional configuration into the base form configuration.
-   */
+  /** Optional array of positions to insert the additional configuration into the base form configuration. */
   additionalConfigArrayPositions?: number[];
-  /**
-   * Optional array of field mappings to apply to the form data.
-   */
+  /** Optional array of field mappings to apply to the form data. */
   additionalFieldMappings?: IFieldMapping[];
 }
 
@@ -33,13 +27,3 @@ export interface IUserProfileFormData {
   /** Additional profile values supported by a particular application. */
   [key: string]: any;
 }
-
-/**
- * The base configuration for a user profile form,
- * including fields and button configuration.
- */
-export type TProfileBaseConfig =
-  /** Static fields and button configuration for the base form. */
-  | IFormConfig
-  /** Factory that can adjust the base form configuration based on edit state. */
-  | ((hasUnsavedChanges: boolean, ...args: any[]) => IFormConfig);

@@ -15,13 +15,11 @@ import {
   useScrollSpy,
   isFormAtBottom,
 } from "../..";
-import type { IScrollNavGroup, resolveScrollNavConfig } from "../..";
+import type { IScrollNavGroup, TResolvedFormScrollNavConfig } from "../..";
 
-export type TResolvedFormScrollNavConfig = NonNullable<
-  ReturnType<typeof resolveScrollNavConfig>
->;
-
+/** Props for the FormScrollNavLayout component. */
 export interface PFormScrollNavLayout {
+  /** The resolved configuration for the form scroll navigation layout. */
   config: TResolvedFormScrollNavConfig;
   /** Sub-section groups shown in the side navigation. */
   groups: IScrollNavGroup[];
@@ -31,6 +29,7 @@ export interface PFormScrollNavLayout {
   contentHeader?: ReactNode;
   /** Rendered below the scroll container, e.g. pagination buttons. */
   footer?: ReactNode;
+  /** The main content of the form layout. */
   children: ReactNode;
 }
 
@@ -41,11 +40,13 @@ export interface PFormScrollNavLayout {
 export function FormScrollNavLayout(props: PFormScrollNavLayout) {
   const { config, groups, titleAdornment, contentHeader, footer, children } =
     props;
+
   const [open, setOpen] = useState<boolean>(config.defaultOpen ?? false);
   const [expandAll, setExpandAll] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
     () => new Set(),
   );
+
   const navScrollRef = useRef<HTMLDivElement>(null);
   const formScrollRef = useRef<HTMLDivElement>(null);
   const containerId = getScrollContainerId(config.key);
@@ -97,7 +98,7 @@ export function FormScrollNavLayout(props: PFormScrollNavLayout) {
     const header = container?.querySelector<HTMLElement>(
       ".tol-form-sidenav-group-header.active",
     );
-    
+
     if (!open || !container || !form || container.clientHeight === 0) return;
 
     if (isFormAtBottom(form)) {
@@ -141,7 +142,9 @@ export function FormScrollNavLayout(props: PFormScrollNavLayout) {
     <div className="tol-form-layout">
       {groups.length > 0 && (
         <div
-          className={`tol-form-side-nav__wrapper${open ? " open" : ""}${config.showStatus === false ? "" : " with-status"}`}
+          className={`tol-form-side-nav__wrapper${open ? " open" : ""}${
+            config.showStatus === false ? "" : " with-status"
+          }`}
         >
           <div className="tol-form-side-nav__inner">
             <div className="tol-form-side-nav__button-wrapper">

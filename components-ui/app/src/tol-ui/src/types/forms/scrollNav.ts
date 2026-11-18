@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { resolveScrollNavConfig } from "../..";
+
 /** The navigation status of a form field. */
 export type TFieldNavStatus =
   | "auto"
@@ -13,3 +15,7 @@ export type TFieldNavStatus =
   | "complete"
   | "recommended"
   | "none";
+
+export type TResolvedFormScrollNavConfig = NonNullable<
+  ReturnType<typeof resolveScrollNavConfig>
+>;

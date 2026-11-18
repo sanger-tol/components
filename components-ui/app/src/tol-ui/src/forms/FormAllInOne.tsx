@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 import React, { useState, useEffect, useRef } from "react";
 import { Schema } from "rsuite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
 import {
   RSForm,
   Button,
@@ -28,6 +26,9 @@ import {
   resolveScrollNavConfig,
   setValueAtPath,
   withFieldAnchorIds,
+  Icon,
+  useExpandedSubformItems,
+  useSubformDrawer,
 } from "..";
 
 import type {
@@ -39,8 +40,6 @@ import type {
   TFormFieldPath,
   TRenderFormField,
 } from "..";
-import { useExpandedSubformItems } from "./subforms/useExpandedSubformItems";
-import { useSubformDrawer } from "./subforms/useSubformDrawer";
 
 /** Props for `FormAllInOne`. */
 export interface PFormAllInOne<
@@ -287,7 +286,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     <div className="form-wrapper">
       {formLocked && (
         <div className="tol-form-read-only-banner" role="status">
-          <FontAwesomeIcon icon={faLock} aria-hidden="true" />
+          <Icon icon={"lock"} aria-hidden="true" />
           <span>This form is read-only</span>
         </div>
       )}

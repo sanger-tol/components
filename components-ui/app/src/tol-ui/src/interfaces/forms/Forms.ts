@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import type React from "react";
 import type {
   IFormScrollNavConfig,
+  IFormSection,
   ISubformControls,
   PButton,
   TFieldNavStatus,
@@ -26,18 +27,6 @@ export interface IFormOptions {
   /** Optional on-page scroll navigation for form sections and grouped fields. */
   scrollNav?: boolean | IFormScrollNavConfig;
 }
-
-/** A group of fields, optionally marked as locked or optional. */
-export type IFormSection = {
-  /** Section identifier referenced by each field's `section` property. */
-  id: string;
-  /** Display label. Defaults to a normalized version of the section ID. */
-  label?: string;
-} & (
-  | { locked: true; optional?: false }
-  | { optional: true; locked?: false }
-  | { locked?: false; optional?: false }
-);
 
 /** Buttons rendered after the configured form fields. */
 export interface IFormButtons {

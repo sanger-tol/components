@@ -5,12 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { useId } from "react";
-import type { KeyboardEvent, RefObject } from "react";
-import { Icon, FORM_SCROLL_NAV_TEXT, FormNavStatus } from "../..";
-import type {
-  IScrollNavGroup,
-} from "../..";
+import type { RefObject } from "react";
+import { Icon, FORM_SCROLL_NAV_TEXT, FormNavStatus, onActivate } from "../..";
+import type { IScrollNavGroup } from "../..";
 
+/** Props for the FormSideNavBar component. */
 export interface PFormSideNavBar {
   /** Sub-section groups to list, in render order. */
   groups: IScrollNavGroup[];
@@ -28,20 +27,6 @@ export interface PFormSideNavBar {
   onToggleSection?: (section: string, anchorId: string) => void;
   /** Ref for the independently scrollable list of sections. */
   scrollRef?: RefObject<HTMLDivElement>;
-}
-
-function onActivate(handler: () => void) {
-  return {
-    role: "button",
-    tabIndex: 0,
-    onClick: handler,
-    onKeyDown: (event: KeyboardEvent) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        handler();
-      }
-    },
-  };
 }
 
 /** Lists a form's sub-sections and fields, highlighting the one in view. */
@@ -92,6 +77,7 @@ export function FormSideNavBar(props: PFormSideNavBar) {
           />
         </div>
       )}
+
       <div className="tol-form-sidenav-groups" ref={scrollRef}>
         {groups.map((group, index) => {
           const active = group.subSection === activeSubSection ? " active" : "";

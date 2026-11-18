@@ -5,8 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import type React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
+import { Icon } from "../..";
 
 /** Props for a titled group of form fields. */
 export interface PFormSection {
@@ -22,7 +21,7 @@ export interface PFormSection {
   children: React.ReactNode;
 }
 
-// A titled group of fields, with a read-only or optional badge in the heading.
+/** A titled group of fields, with a read-only or optional badge in the heading. */
 export function FormSection(props: PFormSection) {
   const { children, id, locked, optional, title } = props;
 
@@ -36,7 +35,7 @@ export function FormSection(props: PFormSection) {
           {title}
           {locked ? (
             <span className="tol-form-section-read-only">
-              <FontAwesomeIcon icon={faLock} aria-hidden="true" />
+              <Icon icon={"lock"} aria-hidden="true" />
               <em>Read-only</em>
             </span>
           ) : (
