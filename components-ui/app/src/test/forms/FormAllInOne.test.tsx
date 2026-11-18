@@ -10,6 +10,7 @@ import type { ReactNode, MouseEventHandler } from "react";
 import { FormAllInOne } from "../../tol-ui/src/forms/FormAllInOne";
 import { MultipleFormInput } from "../../tol-ui/src/forms/MultipleFormInput";
 import type { PMultipleFormInput } from "../../tol-ui/src/forms/MultipleFormInput";
+import type { PFormAttributeSelector } from "../../tol-ui/src/forms/FormAttributeSelector";
 import type {
   IFormConfig,
   IFormSearchConfig,
@@ -23,6 +24,11 @@ vi.mock("../../tol-ui/src", async () => {
   const { Form } = await import("rsuite");
   return {
     RSForm: Form,
+    FormAttributeSelector: ({ label, value, onChange }: PFormAttributeSelector) => (
+      <label>{label}<input value={value.join(",")}
+        onChange={(event) => onChange(event.target.value ? event.target.value.split(",") : [])} />
+      </label>
+    ),
     FormTextField: ({ label, name, value, onChange, errorText }: {
       label: string;
       name: string;
@@ -93,6 +99,34 @@ describe("FormAllInOne search mode", () => {
     render(<FormAllInOne formConfig={FORM_CONFIG} initialData={{ title: "Existing" }} />);
     expect(screen.getByLabelText("Title")).toHaveValue("Existing");
     expect(screen.queryByRole("button", { name: "Search" })).not.toBeInTheDocument();
+  });
+
+  test("prefills attribute selectors and submits updated array values", () => {
+    const onSubmit = vi.fn();
+    const onUnsavedChanges = vi.fn();
+    render(<FormAllInOne
+      formConfig={{ fields: [{
+        type: "attributeselector",
+        name: "attributes",
+        label: "Attributes",
+        objectType: "specimen",
+        dataSource: {} as PFormAttributeSelector["dataSource"],
+      }] }}
+      initialData={{ attributes: ["name"] }}
+      onSubmit={onSubmit}
+      onUnsavedChanges={onUnsavedChanges}
+    />);
+
+    const input = screen.getByLabelText("Attributes");
+    expect(input).toHaveValue("name");
+    fireEvent.change(input, { target: { value: "species.name,name" } });
+    expect(onUnsavedChanges).toHaveBeenLastCalledWith(true);
+    fireEvent.submit(input.closest("form")!);
+    expect(onSubmit).toHaveBeenLastCalledWith({ attributes: ["species.name", "name"] }, true);
+
+    fireEvent.change(input, { target: { value: "" } });
+    fireEvent.submit(input.closest("form")!);
+    expect(onSubmit).toHaveBeenLastCalledWith({ attributes: [] }, true);
   });
 
   test.each(["unsectioned", "sectioned", "misc"])("defers minus removal to the field callback for %s fields", mode => {

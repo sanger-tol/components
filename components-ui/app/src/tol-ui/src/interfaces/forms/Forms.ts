@@ -15,6 +15,7 @@ import type {
   TCheckboxFields,
   TFormField,
   TLabelAndValueData,
+  PAttributeSelector,
 } from "../..";
 
 export interface IWaitingUpload {
@@ -251,6 +252,12 @@ export interface IMultipleselectField extends IFormComponent {
   /* The datasource for fetching actions. */
   groupBy?: string;
   /* The property by which to group the items in the multiple select field. */
+}
+
+export interface IAttributeSelectorField
+  extends IFormComponent,
+    Omit<PAttributeSelector, "attribute" | "setAttributes"> {
+  type: "attributeselector";
 }
 
 export interface IMarkdownField extends IFormComponent {

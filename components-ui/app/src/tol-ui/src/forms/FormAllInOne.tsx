@@ -28,6 +28,7 @@ import {
   normaliseCaps,
   FormComponentWrapper,
   FormTextArea,
+  FormAttributeSelector,
 } from "..";
 
 import type {
@@ -47,6 +48,7 @@ import type {
   ICheckboxFormField,
   ITextAreaField,
   IFormSearchConfig,
+  IAttributeSelectorField,
 } from "..";
 
 export interface PFormAllInOne<TResult extends object = Record<string, unknown>> {
@@ -330,6 +332,20 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
             />
           );
         }
+      case "attributeselector":
+        const attributeSelectorField = field as IAttributeSelectorField;
+        const attributeValue = formData[attributeSelectorField.name];
+        return (
+          <FormAttributeSelector
+            id={formId}
+            {...attributeSelectorField}
+            value={Array.isArray(attributeValue) ? attributeValue : []}
+            onChange={(value) =>
+              handleInputChange(attributeSelectorField.name, value)
+            }
+            errorText={errorText}
+          />
+        );
       case "multipleselect":
         const multipleselectField = field as IMultipleselectField;
         const multipleSelectValue = formData[multipleselectField.name];

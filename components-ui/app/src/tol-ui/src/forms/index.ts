@@ -8,6 +8,7 @@ export * from "./AutoComplete";
 export * from "./CountrySelect";
 export * from "./Dropzone";
 export * from "./FormAllInOne";
+export * from "./FormAttributeSelector";
 export * from "./FormCheckboxes";
 export * from "./FormComponentWrapper";
 export * from "./FormDatetime";

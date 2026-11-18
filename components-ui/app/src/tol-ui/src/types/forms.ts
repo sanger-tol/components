@@ -23,6 +23,7 @@ import type {
   IUserProfileFormData,
   PAutoComplete,
   ICheckboxField,
+  IAttributeSelectorField,
 } from ".."
 
 export type TFormField =
@@ -35,6 +36,7 @@ export type TFormField =
   | ISingleselectcustomoptionField
   | IDropzoneField
   | IAutocompleteField
+  | IAttributeSelectorField
   | IMultipleselectField
   | IMarkdownField
   | ITextAreaField

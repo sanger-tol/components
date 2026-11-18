@@ -55,6 +55,9 @@ export function createInitialDataSnapshot<T>(
           : [];
     } else if (field.multiple) {
       initialData[field.name] = data?.[field.name] || {};
+    } else if (field.type === "attributeselector") {
+      const existing = data?.[field.name];
+      initialData[field.name] = Array.isArray(existing) ? existing : [];
     } else {
       initialData[field.name] = data?.[field.name] || "";
     }
