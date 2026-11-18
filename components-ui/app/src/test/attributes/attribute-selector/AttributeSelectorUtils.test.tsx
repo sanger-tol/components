@@ -8,20 +8,6 @@ import { Schema } from "rsuite";
 import { describe, expect, test } from "vitest";
 
 import { convertCustomFieldPythonTypeToFormField } from "../../../tol-ui/src";
-import type { ISingleselectField, ITextField } from "../../../tol-ui/src";
-
-function expectModelValidationToMatch<
-  TActualModel extends { check(value: unknown): unknown },
-  TExpectedModel extends { check(value: unknown): unknown },
->(
-  actualModel: TActualModel,
-  expectedModel: TExpectedModel,
-  values: readonly unknown[],
-) {
-  for (const value of values) {
-    expect(actualModel.check(value)).toEqual(expectedModel.check(value));
-  }
-}
 
 describe("convertCustomFieldPythonTypeToFormField function", () => {
   test.each([
