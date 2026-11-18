@@ -81,4 +81,20 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
       [undefined, "first", "second", "third", 42]
     );
   });
+
+  test("pythonType of 'FieldName'", () => {
+    const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField("FieldName");
+
+    // TODO Add attribute selector type when it exists
+    expect(fieldConfig).toEqual({
+      type: "attributeselector",
+      data: ["first", "second", "third"]
+    });
+
+    expectModelValidationToMatch(
+      fieldModel,
+      Schema.Types.StringType().isRequired(),
+      [undefined, "scientific_name", "custom_adgi763gd", 42]
+    );
+  });
 });
