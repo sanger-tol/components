@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Schema } from "rsuite";
 import { describe, expect, test } from "vitest";
 
-import { convertCustomFieldPythonTypeToFormField, filterAttributes } from "../../../tol-ui/src";
+import { convertCustomFieldPythonTypeToFormField } from "../../../tol-ui/src";
 import type { ISingleselectField, ITextField } from "../../../tol-ui/src";
 
 function expectModelValidationToMatch<
