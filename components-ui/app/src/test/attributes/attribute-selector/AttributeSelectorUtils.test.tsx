@@ -88,7 +88,6 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
     // TODO Add attribute selector type when it exists
     expect(fieldConfig).toEqual({
       type: "attributeselector",
-      data: ["first", "second", "third"]
     });
 
     expectModelValidationToMatch(
