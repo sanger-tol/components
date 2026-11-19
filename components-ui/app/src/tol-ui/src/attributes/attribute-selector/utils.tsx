@@ -478,10 +478,12 @@ export function convertCustomFieldPythonTypeToFormField(
       { type: "attributeselector" },
       Schema.Types.ArrayType().isRequired().of(Schema.Types.StringType()),
     ];
-  } else {
+  } else if (pythonType == "str") {
     return [
       { type: "text" } as ITextField,
       Schema.Types.StringType().isRequired(),
     ];
+  } else {
+    throw new Error(`Unsupported pythonType '${pythonType}' for custom field`);
   }
 }

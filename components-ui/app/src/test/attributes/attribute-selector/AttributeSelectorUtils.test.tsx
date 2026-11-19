@@ -57,4 +57,8 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
       expect(actualFieldModel.check(value as any)).toEqual(expectedFieldModel.check(value));
     }
   });
+
+  test("Invalid pythonType", () => {
+    expect(() => convertCustomFieldPythonTypeToFormField("not one of the options")).toThrow();
+  });
 });
