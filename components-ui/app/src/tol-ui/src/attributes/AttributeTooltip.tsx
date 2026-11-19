@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { FormatTooltip, SourceTag, IconTooltip, IRemoteTarget, IZone } from "..";
+import { FormatTooltip, SourceTag, IconTooltip, IRemoteTarget, IZone, BooleanStatus } from "..";
 import { AttributeStatsBox } from "./AttributeStatsBox";
 import type { ReactNode } from "react";
 
@@ -19,9 +19,28 @@ export interface PAttributeTooltip extends IRemoteTarget {
 
 export function AttributeTooltip(props: PAttributeTooltip) {
   const {
-    attributeId: field, element, objectType, dataSource, id, componentId, zone } = props;
+    attributeId: field,
+    element,
+    objectType,
+    dataSource,
+    id,
+    componentId,
+    zone
+  } = props;
 
   const [details, setDetails] = useState<Record<string, ReactNode>>({});
+
+  const SourceTags = (sources?: string | string[]) => (
+    <>
+      {(Array.isArray(sources) ? sources : sources ? [sources] : []).map((source, index) => (
+        <SourceTag
+          key={`${source}-${index}`}
+          source={source}
+          className="tol-attribute-tooltip-source"
+        />
+      ))}
+    </>
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -31,21 +50,21 @@ export function AttributeTooltip(props: PAttributeTooltip) {
       .getAttributeDescriptor({ objectType, field }).then((attribute) => {
         if (cancelled) return;
 
+        console.log(field, attribute)
+
         if (attribute) {
           setDetails({
-            "Authoritative": attribute.authoritative,
-            "Available on Relationships": attribute.available_on_relationships,
-            "Cardinality": attribute.cardinality,
-            "Description": attribute.description,
             "Display Name": attribute.display_name,
-            "Python Type": attribute.python_type,
-            "Source": attribute.source && (
-              <SourceTag
-                source={attribute.source}
-                className="tol-attribute-tooltip-source"
-              />
-            ),
             "System Name": field,
+            "Description": attribute.description,
+            "Python Type": attribute.python_type,
+            "Cardinality": attribute.cardinality,
+            "Source": attribute.source ? SourceTags(attribute.source) : undefined,
+            "Source Order": attribute.source_order?.length
+              ? SourceTags(attribute.source_order)
+              : undefined,
+            "Authoritative": <BooleanStatus mini value={attribute.authoritative} />,
+            "Available on Relationships": <BooleanStatus mini value={attribute.available_on_relationships} />,
           });
         } else {
           setDetails({ "System Name": field });

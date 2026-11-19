@@ -658,12 +658,20 @@ export class TsDataSource implements
   }: IGetAttributeDescriptor): Promise<IAttributeDescriptor | undefined> {
     // If this is a Provenance field, the descriptor should come from the normal attribute,
     // not the Provenance variation
-    const fieldToGet = field.split("[")[0];
+    const baseField = field.split("[")[0];
+    const source = field.match(/\[(.*?)\]/)?.[1];
 
     return this.getAttributeDescriptorValue(
-      fieldToGet,
+      baseField,
       objectType
-    );
+    ).then((metadata) => {
+      if (!metadata) return undefined;
+
+      return {
+        ...metadata,
+        ...(source ? { source, source_order: undefined } : {}),
+      };
+    });
   }
 
   public async getMergedRelationshipConfig(
