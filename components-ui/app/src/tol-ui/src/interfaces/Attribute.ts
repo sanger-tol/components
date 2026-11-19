@@ -24,6 +24,8 @@ export interface IAttributeDescriptor {
   authoritative: boolean;
   /** Optional semantic role used by downstream renderers. */
   acts_as?: string;
+  /** Ordered provenance sources available for this attribute. */
+  source_order?: string[];
   /** Whether this attribute can be traversed through relationship paths. */
   available_on_relationships?: boolean;
   /** Optional distinct-value count or approximate selectivity metric. */

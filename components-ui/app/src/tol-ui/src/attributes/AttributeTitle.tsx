@@ -16,9 +16,7 @@ export interface PAttributeTitle extends PAttributeTooltip {
   titleElement?: keyof JSX.IntrinsicElements;
   className?: string;
   rename?: string;
-  /**
-   * Optional attribute source, if not provided, will be fetched from the data source
-   */
+  /** Optional attribute source, if not provided, will be fetched from the data source. */
   source?: string;
 }
 
@@ -34,15 +32,12 @@ export function AttributeTitle(props: PAttributeTitle) {
   } = props;
   const [fieldSource, setSource] = useState<string | undefined>(source);
   const [fieldDisplayName, setFieldDisplayName] = useState<string | undefined>();
+  const [hasSourceOrder, setHasSourceOrder] = useState(false);
   const [loaded, setLoaded] = useState<boolean>(!!source);
 
   useEffect(() => {
-    if (source && rename) {
-      setLoaded(true);
-      return;
-    }
-
     let cancelled = false;
+    setHasSourceOrder(false);
 
     dataSource
       .getAttributeDescriptor({ objectType, field: attributeId })
@@ -50,6 +45,9 @@ export function AttributeTitle(props: PAttributeTitle) {
         if (cancelled || !attribute) return;
         setSource((prev) => prev ?? attribute.source);
         setFieldDisplayName(attribute.display_name);
+        setHasSourceOrder(
+          Array.isArray(attribute.source_order) && attribute.source_order.length > 0,
+        );
       })
       .finally(() => {
         if (!cancelled) setLoaded(true);
@@ -58,7 +56,7 @@ export function AttributeTitle(props: PAttributeTitle) {
     return () => {
       cancelled = true;
     };
-  }, [attributeId, dataSource, objectType, rename, source]);
+  }, [attributeId, dataSource, objectType]);
 
   return (
     <div className="tol-attribute-title">
@@ -67,7 +65,7 @@ export function AttributeTitle(props: PAttributeTitle) {
           {...props}
           element={
             <span
-              className="tol-inline-source"
+              className={`tol-inline-source${hasSourceOrder ? " tol-inline-source-with-order tol-shine" : ""}`}
               style={{
                 backgroundColor: loaded
                   ? getSourceColour(fieldSource || "var(--tol-emphasis)")

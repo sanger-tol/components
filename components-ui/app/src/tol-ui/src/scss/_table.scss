@@ -310,6 +310,8 @@
 }
 
 .formatted-tooltip {
+  display: flex;
+  align-items: flex-start;
   margin: 5px;
 }
 
@@ -320,6 +322,11 @@
 .tooltip-value {
   padding-right: 10px;
   color: var(--tol-primary);
+
+  .tol-status {
+    display: inline-block;
+    width: fit-content;
+  }
 }
 
 .tol-none-value {
