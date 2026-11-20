@@ -25,7 +25,7 @@ export const cellRendererParams: IBoardCellRenderers = {
         type: "boolean",
         rename: "Background",
         description: "Show the card background colour.",
-        defaultValue: true,
+        defaultValue: false,
       },
       successBackground: {
         type: "condition",
