@@ -28,7 +28,10 @@ import type {
 } from "../..";
 
 export interface PCustomFieldModal extends IRemoteTarget {
-  /** Data source used to select attributes for the target object type. */
+  /**
+   * Data source used for any custom field parameters that are field names
+   * (and thus require an AttributeSelector)
+   */
   attributeDataSource: IRemoteTarget["dataSource"];
   /** Whether the modal is currently open */
   open: boolean;
@@ -54,6 +57,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   const [chosenName, setChosenName] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
 
+  // Calculate which controls need to be shown (if any) to configure the custom field parameters
   const [paramsFormConfig, paramsFormModel, paramsInitialData] = useMemo(() => {
     const config: IFormConfig = {
       fields: []
@@ -92,6 +96,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     return [config, model, initialData] as const;
   }, [chosenFunction, availableFunctions, attributeDataSource, objectType]);
 
+  // Reset the user's choices
   const handleReset = () => {
     // Set the available functions to undefined but start fetching them
     setAvailableFunctions(undefined);
@@ -100,6 +105,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     setChosenFunction(undefined);
   };
 
+  // Upsert the new custom field configuration to the database
   const handleSave = () => {
     console.log(`Creating new custom field called ${chosenName} using function ${chosenFunction}`);
   };
