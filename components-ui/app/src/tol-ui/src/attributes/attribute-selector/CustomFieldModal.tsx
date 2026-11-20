@@ -61,8 +61,6 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   const [chosenDescription, setChosenDescription] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
 
-  const loading = availableFunctions === undefined || storedParams === undefined;
-
   // Calculate which controls need to be shown (if any) to configure the custom field parameters
   const [paramsFormConfig, paramsFormModel, paramsInitialData] = useMemo(() => {
     const config: IFormConfig = {
@@ -153,7 +151,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     setAvailableFunctions(undefined);
     fetchCustomFieldFunctions(configDataSource).then(setAvailableFunctions);
 
-    setStoredParams(undefined);
+    setStoredParams(customFieldId === undefined ? {} : undefined);
     setChosenName("");
     setChosenDescription("");
     setChosenFunction(undefined);
@@ -196,15 +194,13 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
             <SingleSelect
               block
               data={availableFunctions.map(fn => fn.name)}
-              value={chosenFunction || ""}
+              value={chosenFunction ?? ""}
               onChange={setChosenFunction}
             />
           )}
         </FormComponentWrapper>
       </RSForm>
-      {loading ? (
-        <TolLoader />
-      ) : (
+      {chosenFunction && availableFunctions && (
         <FormAllInOne
           formConfig={paramsFormConfig}
           model={paramsFormModel}
