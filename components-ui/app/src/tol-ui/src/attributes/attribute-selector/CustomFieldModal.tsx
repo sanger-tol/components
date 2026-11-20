@@ -168,7 +168,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       setOpen={setOpen}
       onOpen={handleReset}
       header={<h4>{customFieldId ? "Edit Custom Field" : "Create Custom Field"}</h4>}
-      actionButton={<Button {...BUTTONS.CONFIRM} onClick={handleSave} />}
+      actionButton={<Button {...BUTTONS.SAVE} onClick={handleSave} />}
     >
       <RSForm fluid>
         <FormTextField
