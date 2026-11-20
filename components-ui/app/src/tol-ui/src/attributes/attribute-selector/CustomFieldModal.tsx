@@ -114,7 +114,8 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       }
 
       setChosenName(response.display_name);
-      // TODO CHOSEN PARAMS, FUNCTION KIND, DESCRIPTION
+      setChosenFunction(response.runtime_definition["function"]);
+      // TODO CHOSEN PARAMS, DESCRIPTION, HANDLE PARAMS
     }).catch((error: unknown) => {
       PopUpMessage({ type: "error", message: "Unable to fetch existing custom field information" });
       console.log(`Could not fetch existing custom field information for ID ${customFieldId}: `);
