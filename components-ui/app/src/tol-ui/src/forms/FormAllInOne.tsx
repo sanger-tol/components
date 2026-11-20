@@ -61,6 +61,11 @@ export interface PFormAllInOne<TResult extends object = Record<string, unknown>>
   onUnsavedChanges?: (hasUnsavedChanges: boolean) => void;
   onValidate?: (isValid: boolean) => void;
   onSubmit?: (formData: object, isValid: boolean) => void;
+  /**
+   * Fires every time the user changes one of the form inputs.
+   * This is useful if you need to see the data inside the form, but can't use onSubmit
+   */
+  onFormDataChange?: (formData: Record<string, unknown>) => void;
 }
 
 /** Renders a configured form with optional search-first lookup and manual-entry controls. */
@@ -100,6 +105,10 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     initialSnapshotRef.current = nextSnapshot;
     setFormData(nextSnapshot);
   }, [formConfig, initialData]);
+
+  useEffect(() => {
+    props.onFormDataChange?.(formData);
+  }, [formData, props.onFormDataChange]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
