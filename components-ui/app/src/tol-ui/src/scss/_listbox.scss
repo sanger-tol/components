@@ -1,0 +1,70 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.tol-list-box {
+  .rs-check-tree-node-content,
+  .rs-check-tree-node .rs-check-item {
+    display: block;
+    width: 100%;
+  }
+
+  .rs-tree-node-toggle-placeholder {
+    display: none;
+  }
+
+  .rs-check-tree-node .rs-check-item .rs-checkbox-checker > label {
+    display: block;
+    padding: var(--tol-spacing-sm) 12px var(--tol-spacing-sm) 38px;
+    border-radius: 0;
+  }
+
+  .rs-check-tree-node .rs-check-item .rs-checkbox-checker > label > .rs-checkbox-control {
+    position: absolute;
+    inset-inline-start: 12px;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .rs-check-tree-node-content .rs-check-item .rs-checkbox-checker .rs-checkbox-label {
+    display: block;
+    width: 100%;
+    padding: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    background-color: transparent;
+    color: inherit;
+    border-radius: 0;
+  }
+
+  .rs-check-tree-node .rs-check-item {
+    &.rs-checkbox-checked .rs-checkbox-checker > label {
+      background-color: transparent;
+      color: inherit;
+      font-weight: normal;
+    }
+
+    &:hover,
+    &:focus,
+    &.rs-check-item-focus {
+      .rs-checkbox-checker > label {
+        background-color: var(--rs-listbox-option-hover-bg);
+        color: var(--rs-listbox-option-hover-text);
+      }
+    }
+  }
+}
+
+.tol-list-box__item {
+  display: flex;
+  align-items: center;
+  gap: var(--tol-spacing-sm);
+}
+
+.tol-list-box__item-left {
+  flex: 1;
+  min-width: 0;
+}
