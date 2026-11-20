@@ -22,6 +22,7 @@ import {
   TolLoader
 } from "../..";
 import type {
+  ICheckboxFormField,
   IFormConfig,
   IRemoteTarget,
   IRuntimeFieldFunction,
@@ -55,9 +56,12 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   const [availableFunctions, setAvailableFunctions] = useState<
     IRuntimeFieldFunction[] | undefined
   >();
+  const [storedParams, setStoredParams] = useState<Record<string, any> | undefined>();
   const [chosenName, setChosenName] = useState<string>("");
   const [chosenDescription, setChosenDescription] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
+
+  const loading = availableFunctions === undefined || storedParams === undefined;
 
   // Calculate which controls need to be shown (if any) to configure the custom field parameters
   const [paramsFormConfig, paramsFormModel, paramsInitialData] = useMemo(() => {
@@ -67,7 +71,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     const model = Schema.Model({});
     const initialData: Record<string, unknown> = {};
 
-    if (!availableFunctions || !chosenFunction) {
+    if (!availableFunctions || !chosenFunction || storedParams === undefined) {
       return [config, model, initialData] as const;
     }
 
@@ -81,6 +85,24 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       const [fieldConfig, fieldModel] = convertCustomFieldPythonTypeToFormField(
         paramDetails.pythonType
       );
+      const paramInitalValue = storedParams[paramName] ?? paramDetails.defaultValue;
+
+      // Checkboxes are an edge case because the "checkbox" form field
+      // can actually contain multiple checkboxes
+      if (fieldConfig.type == "checkbox") {
+        // Add the checkbox to `checkboxConfig`
+        (fieldConfig as ICheckboxFormField).checkboxConfig.fields = [{
+          value: paramName,
+          children: "",
+        }];
+
+        // Set the default value of the checkbox
+        initialData[paramName] = paramInitalValue === true ? [paramName] : [];
+      } else {
+        // If it's anything other than a checkbox, set the default value too,
+        // but the format is different
+        initialData[paramName] = paramInitalValue;
+      }
 
       config.fields.push({
         ...fieldConfig,
@@ -92,11 +114,10 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
         label: paramName
       } as TFormField);
       model[paramName] = fieldModel;
-      initialData[paramName] = paramDetails.defaultValue;
     }
 
     return [config, model, initialData] as const;
-  }, [chosenFunction, availableFunctions, attributeDataSource, objectType]);
+  }, [chosenFunction, availableFunctions, storedParams, attributeDataSource, objectType]);
 
   // When the modal opens, a new `customFieldId` will be provided.
   // If there's already data for this custom field, populate the form.
@@ -117,11 +138,12 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       setChosenName(response.display_name);
       setChosenDescription(response.description ?? "");
       setChosenFunction(response.runtime_definition["function"]);
-      // TODO CHOSEN PARAMS, HANDLE PARAMS
+      setStoredParams(response.runtime_definition["function_kwargs"] ?? {});
     }).catch((error: unknown) => {
       PopUpMessage({ type: "error", message: "Unable to fetch existing custom field information" });
       console.log(`Could not fetch existing custom field information for ID ${customFieldId}: `);
       console.log(error);
+      setStoredParams({});
     });
   }, [customFieldId]);
 
@@ -131,6 +153,9 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     setAvailableFunctions(undefined);
     fetchCustomFieldFunctions(configDataSource).then(setAvailableFunctions);
 
+    setStoredParams(undefined);
+    setChosenName("");
+    setChosenDescription("");
     setChosenFunction(undefined);
   };
 
@@ -177,7 +202,9 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
           )}
         </FormComponentWrapper>
       </RSForm>
-      {chosenFunction && availableFunctions && (
+      {loading ? (
+        <TolLoader />
+      ) : (
         <FormAllInOne
           formConfig={paramsFormConfig}
           model={paramsFormModel}
