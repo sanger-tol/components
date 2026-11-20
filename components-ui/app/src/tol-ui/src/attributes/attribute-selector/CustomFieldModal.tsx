@@ -41,6 +41,8 @@ export interface PCustomFieldModal extends IRemoteTarget {
   setOpen: (open: boolean) => void;
   /** The ID of the custom field to edit. If `undefined`, this modal creates a new field */
   customFieldId?: number | undefined;
+  /** The ID of the currently logged in user */
+  userId: number;
 }
 
 export default function CustomFieldModal(props: PCustomFieldModal) {
@@ -51,6 +53,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     dataSource: configDataSource,
     attributeDataSource,
     objectType,
+    userId,
   } = props;
 
   const [availableFunctions, setAvailableFunctions] = useState<
@@ -60,6 +63,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   const [chosenName, setChosenName] = useState<string>("");
   const [chosenDescription, setChosenDescription] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
+  const [chosenParams, setChosenParams] = useState<Record<string, unknown>>({});
 
   // Calculate which controls need to be shown (if any) to configure the custom field parameters
   const [paramsFormConfig, paramsFormModel, paramsInitialData] = useMemo(() => {
@@ -155,11 +159,63 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     setChosenName("");
     setChosenDescription("");
     setChosenFunction(undefined);
+    setChosenParams({});
   };
 
   // Upsert the new custom field configuration to the database
-  const handleSave = () => {
-    console.log(`Creating new custom field called ${chosenName} using function ${chosenFunction}`);
+  const handleSave = async () => {
+    // Normalise chosenParams from UI format to API format
+    const normalizedFunctionKwargs = Object.fromEntries(
+      paramsFormConfig.fields.map((field) => {
+        const value = chosenParams[field.name];
+        return [
+          field.name,
+          field.type === "checkbox"
+            ? Array.isArray(value) && value.includes(field.name)
+            : value,
+        ];
+      }),
+    );
+
+    // Get the data_source_config_id, which will be needed for the upsert
+    let dataSourceConfigId: number | undefined;
+    try {
+      dataSourceConfigId = await attributeDataSource.getDataSourceConfigId(
+        configDataSource,
+      );
+    } catch (error) {
+      PopUpMessage({
+        type: "error",
+        message: "Unable to find the data source configuration for this dataspace",
+      });
+      console.error(error);
+      return;
+    }
+
+    // I would be incredibly surprised if this is ever triggered
+    // but thought it was worth including anyway
+    if (dataSourceConfigId === undefined) {
+      PopUpMessage({
+        type: "error",
+        message: "No data source configuration is associated with this dataspace",
+      });
+      return;
+    }
+
+    configDataSource.upsert({ objectType: "custom_field", payload: [{
+      type: "custom_field",
+      attributes: {
+        "user_id": userId,
+        "data_source_config_id": dataSourceConfigId,
+        "object_type": objectType,
+        "display_name": chosenName,
+        "description": chosenDescription || null,
+        "runtime_defintion": {
+          "function": chosenFunction,
+          "function_kwargs": normalizedFunctionKwargs,
+        }
+      }
+    }]});
   };
 
   return (
@@ -195,7 +251,10 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
               block
               data={availableFunctions.map(fn => fn.name)}
               value={chosenFunction ?? ""}
-              onChange={setChosenFunction}
+              onChange={(value) => {
+                setChosenFunction(value);
+                setChosenParams({});
+              }}
             />
           )}
         </FormComponentWrapper>
@@ -207,6 +266,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
             formConfig={paramsFormConfig}
             model={paramsFormModel}
             initialData={paramsInitialData}
+            onFormDataChange={setChosenParams}
           />
         </>
       )}

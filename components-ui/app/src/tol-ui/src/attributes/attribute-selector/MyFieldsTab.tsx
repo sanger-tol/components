@@ -134,6 +134,7 @@ export function MyFieldsTab(props: PMyFieldsTab) {
         objectType={objectType}
         dataSource={CORE_CONFIG_DS}
         attributeDataSource={dataSource}
+        userId={Number(userId)}
       />
     </div>
   );
