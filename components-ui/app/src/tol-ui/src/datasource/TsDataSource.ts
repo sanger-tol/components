@@ -124,7 +124,7 @@ export class TsDataSource implements
       requestedFields: ["data_source_config.id"],
     });
 
-    return getFieldByName(dataSourceInstance, "data_source_config.id");
+    return Number(getFieldByName(dataSourceInstance, "data_source_config.id"));
   }
 
   public getBaseUrl(): string | undefined {
