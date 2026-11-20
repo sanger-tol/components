@@ -9,34 +9,31 @@ import { clearExpiredToken } from "../services/auth/clearExpiredToken";
 import {
   API_METHODS,
   API_OPERATIONS,
+  BOARD_ENTITIES,
+  CORE_CONFIG_DS,
   deepCopy,
+  DetailGetter,
   getAttributeNameByField,
+  getFieldByName,
   httpClient,
   isAttributeField,
   splitRelationshipsForField,
-  DetailGetter,
-  Deleter,
 } from "..";
 import type {
-  ListGetter,
-  PageGetter,
-  Upserter,
   Counter,
-  ICounter,
-  TCountOrNull,
+  CustomOperator,
+  Deleter,
   IAttributeDescriptor,
-  TAttributes,
-  TClient,
+  ICounter,
   IConfigPromises,
   ICustom,
-  ITSDataSource,
   IEntityMeta,
   IEntityMetaPromises,
   IGetAttributeDescriptor,
+  IGetByIds,
   IGetList,
   IGetListCursor,
   IGetListPage,
-  IGetByIds,
   IGetOne,
   IGetToOneRelation,
   IIncludedLookup,
@@ -44,14 +41,20 @@ import type {
   IJsonApiResponse,
   IJsonApiResponseData,
   IRelationshipPointer,
-  TRelationships,
   ISourceDataObject,
+  ITSDataSource,
   IUpsert,
+  ListGetter,
+  PageGetter,
+  TAttributes,
+  TClient,
+  TCountOrNull,
   TCursorObjectOrNull,
   TDataObjectListOrNull,
   TDataObjectOrNull,
+  TRelationships,
   TRelationshipValues,
-  CustomOperator,
+  Upserter,
 } from "..";
 
 
@@ -103,6 +106,25 @@ export class TsDataSource implements
 
   public getDataSourceInstanceId(): string | undefined {
     return this.dataSourceInstanceId;
+  }
+
+  public getDataspace(): string | undefined {
+    return this.dataspace;
+  }
+
+  public async getDataSourceConfigId(
+    configDataSource: TsDataSource = CORE_CONFIG_DS,
+  ): Promise<number | undefined> {
+    if (!this.dataSourceInstanceId) return undefined;
+
+    // Get the data source config ID attached to this data source instance
+    const dataSourceInstance = await configDataSource.getOne({
+      objectType: BOARD_ENTITIES.ENTITIES.DATA_SOURCE_INSTANCE,
+      id: this.dataSourceInstanceId,
+      requestedFields: ["data_source_config.id"],
+    });
+
+    return getFieldByName(dataSourceInstance, "data_source_config.id");
   }
 
   public getBaseUrl(): string | undefined {

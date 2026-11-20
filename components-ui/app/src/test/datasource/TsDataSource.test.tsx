@@ -425,6 +425,31 @@ describe("generateEndpoint function", () => {
 });
 
 describe("Testing basic getter functions", () => {
+  test("getDataSourceConfigId looks up the current instance config", async () => {
+    const dataSource = new TsDataSource({ dataSourceInstanceId: "instance-1" });
+    const configDataSource = {
+      getOne: vitest.fn().mockResolvedValue({
+        relationships: {
+          data_source_config: { id: 42 },
+        },
+      }),
+    } as unknown as TsDataSource;
+
+    await expect(
+      dataSource.getDataSourceConfigId(configDataSource),
+    ).resolves.toBe(42);
+    expect(configDataSource.getOne).toHaveBeenCalledWith({
+      objectType: "data_source_instance",
+      id: "instance-1",
+      requestedFields: ["data_source_config.id"],
+    });
+  });
+
+  test("getDataspace returns the configured dataspace", () => {
+    const dataSource = new TsDataSource({ dataspace: "treeofsex" });
+    expect(dataSource.getDataspace()).toBe("treeofsex");
+  });
+
   test("getBaseUrl returns correct base URL", () => {
     const baseURL = mockDataSource.getBaseUrl();
     expect(baseURL).toBe("/test-data-path");
