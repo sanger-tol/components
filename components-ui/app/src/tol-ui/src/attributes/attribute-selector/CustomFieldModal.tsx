@@ -201,11 +201,14 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
         </FormComponentWrapper>
       </RSForm>
       {chosenFunction && availableFunctions && (
-        <FormAllInOne
-          formConfig={paramsFormConfig}
-          model={paramsFormModel}
-          initialData={paramsInitialData}
-        />
+        <>
+          <hr/>
+          <FormAllInOne
+            formConfig={paramsFormConfig}
+            model={paramsFormModel}
+            initialData={paramsInitialData}
+          />
+        </>
       )}
     </Modal>
   );
