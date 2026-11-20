@@ -30,17 +30,22 @@ export function AttributeTooltip(props: PAttributeTooltip) {
 
   const [details, setDetails] = useState<Record<string, ReactNode>>({});
 
-  const SourceTags = (sources?: string | string[]) => (
-    <>
-      {(Array.isArray(sources) ? sources : sources ? [sources] : []).map((source, index) => (
+  const SourceTags = (sources?: string | string[]) => {
+    // Normalize single sources and source lists so both render as individual tags.
+    const sourceList = Array.isArray(sources) ? sources : sources ? [sources] : [];
+
+    return (
+      <>
+        {sourceList.map((source, index) => (
         <SourceTag
           key={`${source}-${index}`}
           source={source}
           className="tol-attribute-tooltip-source"
         />
-      ))}
-    </>
-  );
+        ))}
+      </>
+    );
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -49,8 +54,6 @@ export function AttributeTooltip(props: PAttributeTooltip) {
     dataSource
       .getAttributeDescriptor({ objectType, field }).then((attribute) => {
         if (cancelled) return;
-
-        console.log(field, attribute)
 
         if (attribute) {
           setDetails({
