@@ -19,8 +19,8 @@ import {
   PopUpMessage
 } from "../..";
 import type {
+  ICheckboxFormField,
   IEntityMeta,
-  IFormComponent,
   IRuntimeFieldFunction,
   ISingleselectField,
   ITextField,
@@ -482,6 +482,16 @@ export function convertCustomFieldPythonTypeToFormField(
     return [
       { type: "text" } as ITextField,
       Schema.Types.StringType().isRequired(),
+    ];
+  } else if (pythonType == "bool") {
+    return [
+      {
+        type: "checkbox",
+        checkboxConfig: {
+          fields: [{}]
+        }
+      } as ICheckboxFormField,
+      Schema.Types.BooleanType().isRequired(),
     ];
   } else {
     throw new Error(`Unsupported pythonType '${pythonType}' for custom field`);

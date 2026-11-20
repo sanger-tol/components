@@ -17,6 +17,11 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
       Schema.Types.StringType().isRequired(),
     ],
     [
+      "bool",
+      { type: "checkbox" },
+      Schema.Types.BooleanType().isRequired(),
+    ],
+    [
       "int",
       { type: "text" },
       Schema.Types.NumberType().isRequired().isInteger(),
