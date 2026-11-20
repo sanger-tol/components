@@ -56,6 +56,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     IRuntimeFieldFunction[] | undefined
   >();
   const [chosenName, setChosenName] = useState<string>("");
+  const [chosenDescription, setChosenDescription] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
 
   // Calculate which controls need to be shown (if any) to configure the custom field parameters
@@ -114,8 +115,9 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       }
 
       setChosenName(response.display_name);
+      setChosenDescription(response.description ?? "");
       setChosenFunction(response.runtime_definition["function"]);
-      // TODO CHOSEN PARAMS, DESCRIPTION, HANDLE PARAMS
+      // TODO CHOSEN PARAMS, HANDLE PARAMS
     }).catch((error: unknown) => {
       PopUpMessage({ type: "error", message: "Unable to fetch existing custom field information" });
       console.log(`Could not fetch existing custom field information for ID ${customFieldId}: `);
@@ -147,12 +149,20 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     >
       <RSForm fluid>
         <FormTextField
-          id="custom-field-modal-top"
+          id="custom-field-name"
           name="name"
           label="Name"
           type="text"
           value={chosenName}
           onChange={setChosenName}
+        />
+        <FormTextField
+          id="custom-field-description"
+          name="description"
+          label="Description"
+          type="text"
+          value={chosenDescription}
+          onChange={setChosenDescription}
         />
         <FormComponentWrapper name="function" label="Function">
           {availableFunctions === undefined ? (
