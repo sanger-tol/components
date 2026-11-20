@@ -36,7 +36,7 @@ export interface PCard extends PCellDisplay {
 export function Card(props: PCard) {
   const {
     content,
-    background = true,
+    background = false,
     successBackground = false,
     warningBackground = false,
     errorBackground = false
