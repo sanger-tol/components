@@ -24,6 +24,11 @@ const httpsConfig =
 
 export default defineConfig({
   plugins: [react(), viteTsconfigPaths()],
+  resolve: {
+    // Ensure a single copy of react/react-dom is bundled even if
+    // dependencies (e.g. @tol/tol-ui) pull in their own
+    dedupe: ["react", "react-dom"],
+  },
   build: {
     emptyOutDir: true,
     outDir: "build",
