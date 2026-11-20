@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Schema } from "rsuite";
 
 import {
@@ -16,6 +16,7 @@ import {
   FormComponentWrapper,
   FormTextField,
   Modal,
+  PopUpMessage,
   RSForm,
   SingleSelect,
   TolLoader
@@ -95,6 +96,31 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
 
     return [config, model, initialData] as const;
   }, [chosenFunction, availableFunctions, attributeDataSource, objectType]);
+
+  // When the modal opens, a new `customFieldId` will be provided.
+  // If there's already data for this custom field, populate the form.
+  useEffect(() => {
+    // `customFieldId` can be `undefined` if we're creating a new field,
+    // so we don't need to fetch anything
+    if (!customFieldId) return;
+
+    configDataSource.getOne({
+      objectType: "custom_field",
+      id: String(customFieldId),
+      requestedFields: ["display_name", "description", "runtime_definition"]
+    }).then((response) => {
+      if (!response) {
+        throw new Error(`Expected a data object from the backend but recieved ${response}`);
+      }
+
+      setChosenName(response.display_name);
+      // TODO CHOSEN PARAMS, FUNCTION KIND, DESCRIPTION
+    }).catch((error: unknown) => {
+      PopUpMessage({ type: "error", message: "Unable to fetch existing custom field information" });
+      console.log(`Could not fetch existing custom field information for ID ${customFieldId}: `);
+      console.log(error);
+    });
+  }, [customFieldId]);
 
   // Reset the user's choices
   const handleReset = () => {
