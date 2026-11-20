@@ -36,9 +36,10 @@ export function ListBox(props: PListBox) {
   return (
     <RSCheckTree
       className="tol-list-box"
+      role="listbox"
       data={data}
       renderTreeNode={(node) => (
-        <span className="tol-list-box__item">
+        <span className="tol-list-box__item" role="listitem">
           <span className="tol-list-box__item-left">
             {renderItemLeft ? renderItemLeft(node) : node.label}
           </span>
