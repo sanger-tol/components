@@ -180,9 +180,10 @@ SPDX-License-Identifier: MIT
   }
 }
 
-.tol-attribute-title:hover {
+.tol-attribute-title:hover,
+.tol-config-drawer-selected-column {
   .tol-inline-source {
-    width: 0.75em;
+    width: 1rem;
   }
 }
 
