@@ -5,13 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { CheckTree as RSCheckTree } from "rsuite";
 
 import CustomFieldModal from "./CustomFieldModal";
 import {
   Button,
   BUTTONS,
   CORE_CONFIG_DS,
+  ListBox,
   stopPropagation,
   TolLoader,
 } from "../..";
@@ -103,29 +103,11 @@ export function MyFieldsTab(props: PMyFieldsTab) {
         {loading ? (
           <TolLoader />
         ) : (
-          <RSCheckTree
-            className="tol-attribute-selector-my-fields-tab__field-tree"
+          <ListBox
             data={customFields.map((field) => ({
               label: field.name,
               value: field.id,
             }))}
-            renderTreeNode={(node) => (
-              <span className="tol-attribute-selector-my-fields-tab__field-row">
-                <span className="tol-attribute-selector-my-fields-tab__field-name">
-                  {node.label}
-                </span>
-                <span
-                  onMouseDown={stopPropagation}
-                  onClick={stopPropagation}
-                  onKeyDown={stopPropagation}
-                >
-                  <Button
-                    {...BUTTONS.EDIT}
-                    onClick={() => editCustomField(Number(node.value))}
-                  />
-                </span>
-              </span>
-            )}
             value={value.filter((field) => customFields.some(({ id }) => id === field))}
             onChange={(selectedFields) => {
               const customFieldValues = new Set(customFields.map(({ id }) => id));
@@ -136,6 +118,12 @@ export function MyFieldsTab(props: PMyFieldsTab) {
                 ),
               ]);
             }}
+            renderItemRight={itemData => (
+              <Button
+                {...BUTTONS.EDIT}
+                onClick={() => editCustomField(Number(itemData.value))}
+              />
+            )}
           />
         )}
       </div>
