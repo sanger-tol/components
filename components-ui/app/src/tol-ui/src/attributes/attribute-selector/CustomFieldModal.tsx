@@ -242,13 +242,21 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     }]});
   };
 
+  const SaveButton = (
+    <Button
+      {...BUTTONS.SAVE}
+      onClick={handleSave}
+      disabled={!chosenFunction}
+    />
+  );
+
   return (
     <Modal
       open={open}
       setOpen={setOpen}
       onOpen={handleReset}
       header={<h4>{customFieldId ? "Edit Custom Field" : "Create Custom Field"}</h4>}
-      actionButton={<Button {...BUTTONS.SAVE} onClick={handleSave} />}
+      actionButton={SaveButton}
     >
       <RSForm fluid>
         <FormTextField
