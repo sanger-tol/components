@@ -57,7 +57,9 @@ export function createInitialDataSnapshot<T>(
       initialData[field.name] = data?.[field.name] || {};
     } else if (field.type === "attributeselector") {
       const existing = data?.[field.name];
-      initialData[field.name] = Array.isArray(existing) ? existing : [];
+      initialData[field.name] = field.singleValue
+        ? typeof existing === "string" ? existing : ""
+        : Array.isArray(existing) ? existing : [];
     } else {
       initialData[field.name] = data?.[field.name] ?? "";
     }

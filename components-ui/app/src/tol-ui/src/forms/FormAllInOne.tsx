@@ -373,7 +373,9 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
           <FormAttributeSelector
             id={formId}
             {...attributeSelectorField}
-            value={Array.isArray(attributeValue) ? attributeValue : []}
+            value={attributeSelectorField.singleValue
+              ? typeof attributeValue === "string" ? attributeValue : ""
+              : Array.isArray(attributeValue) ? attributeValue : []}
             onChange={(value) =>
               handleInputChange(attributeSelectorField.name, value)
             }

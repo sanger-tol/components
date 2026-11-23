@@ -258,6 +258,8 @@ export interface IAttributeSelectorField
   extends IFormComponent,
     Omit<PAttributeSelector, "attribute" | "setAttributes"> {
   type: "attributeselector";
+  /** Store the selection as a string instead of the selector's array value. */
+  singleValue?: boolean;
 }
 
 export interface IMarkdownField extends IFormComponent {

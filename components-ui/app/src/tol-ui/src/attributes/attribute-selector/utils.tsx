@@ -21,6 +21,7 @@ import {
 import type {
   ICheckboxFormField,
   IEntityMeta,
+  IAttributeSelectorField,
   IRuntimeFieldFunction,
   ISingleselectField,
   ITextField,
@@ -470,7 +471,11 @@ export function convertCustomFieldPythonTypeToFormField(
     ];
   } else if (pythonType == "FieldName") {
     return [
-      { type: "attributeselector" },
+      {
+        type: "attributeselector",
+        maxSelections: 1,
+        singleValue: true,
+      } as Omit<IAttributeSelectorField, "name">,
       Schema.Types.StringType().isRequired(),
     ];
   } else if (pythonType == "list[FieldName]") {

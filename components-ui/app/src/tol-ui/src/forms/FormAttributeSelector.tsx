@@ -17,11 +17,13 @@ export interface PFormAttributeSelector
   /**
    * The selected attribute names, represented as an array even when maxSelections is 1.
    */
-  value: string[];
+  value: string[] | string;
   /**
    * Called with the updated attribute names when the selection changes or is cleared.
    */
-  onChange: (value: string[]) => void;
+  onChange: (value: string[] | string) => void;
+  /** Store a single selected value as a string. */
+  singleValue?: boolean;
   /**
    * Validation error text displayed below the attribute selector.
    */
@@ -36,14 +38,18 @@ export interface PFormAttributeSelector
  * selector's attribute and setAttributes props, forwarding its other options.
  */
 export function FormAttributeSelector(props: PFormAttributeSelector) {
-  const { value, onChange, errorText, ...selectorProps } = props;
+  const { value, onChange, errorText, singleValue, ...selectorProps } = props;
+  const attributes = Array.isArray(value) ? value : value ? [value] : [];
 
   return (
     <FormComponentWrapper {...props}>
       <AttributeSelector
         {...selectorProps}
-        attribute={value}
-        setAttributes={onChange}
+        maxSelections={singleValue ? 1 : selectorProps.maxSelections}
+        attribute={attributes}
+        setAttributes={(selectedAttributes) =>
+          onChange(singleValue ? selectedAttributes[0] ?? "" : selectedAttributes)
+        }
       />
     </FormComponentWrapper>
   );
