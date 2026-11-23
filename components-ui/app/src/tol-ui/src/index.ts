@@ -66,7 +66,7 @@ export const TOL_DS = new TsDataSource(env.TOL_DATA);
 export const PIPELINE_DS = new TsDataSource();
 export const CORE_CONFIG_DS = new TsDataSource({
   ...env.QUASAR_BASE,
-  dataspace: env.QUASAR_CORE_DATASPACE ?? "core",
+  dataspace: env.QUASAR_DATASPACE ?? "core",
 });
 export const LOCAL_DS = new TsDataSource({
   apiPath: API_PATHS.API_PATH,
