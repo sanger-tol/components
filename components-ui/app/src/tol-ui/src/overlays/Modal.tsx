@@ -18,6 +18,7 @@ export interface PModal {
   actionButton?: JSX.Element;
   actionButtonInline?: boolean;
   className?: string;
+  "aria-labelledby"?: string;
   hasPendingChanges?: boolean;
   onClose?: () => void;
   onEnter?: () => void;
@@ -38,6 +39,7 @@ export function Modal(props: PModal) {
     actionButton,
     actionButtonInline = false,
     className,
+    "aria-labelledby": ariaLabelledBy,
     hasPendingChanges = false,
     onClose,
     onEnter,
@@ -65,6 +67,7 @@ export function Modal(props: PModal) {
         onExited={onExited}
         backdrop={hasPendingChanges ? "static" : true}
         data-testid={testid}
+        aria-labelledby={ariaLabelledBy}
       >
         <RSModal.Header closeButton={false}>{header}</RSModal.Header>
         <RSModal.Body>{children}</RSModal.Body>

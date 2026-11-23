@@ -255,7 +255,10 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       open={open}
       setOpen={setOpen}
       onOpen={handleReset}
-      header={<h4>{customFieldId ? "Edit Custom Field" : "Create Custom Field"}</h4>}
+      header={<h4 id="custom-field-modal__title">
+        {customFieldId ? "Edit Custom Field" : "Create Custom Field"}
+      </h4>}
+      aria-labelledby="custom-field-modal__title"
       actionButton={SaveButton}
     >
       <RSForm fluid>
