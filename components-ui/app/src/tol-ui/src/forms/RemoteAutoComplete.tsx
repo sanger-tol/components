@@ -177,7 +177,7 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
         displayFields={filteredData}
       />
       {RenderOnChoice && (loading
-        ? selectedValue === searchValue && <div style={{ textAlign: "center", marginTop: "10px" }}>
+        ? selectedValue === searchValue && <div className="tol-autocomplete-loader">
           <Loader />
         </div>
         : renderExtraElement && RenderOnChoice(filteredData[Object.keys(filteredData)[0]][0]))}
