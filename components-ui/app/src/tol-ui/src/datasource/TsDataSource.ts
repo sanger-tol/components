@@ -109,7 +109,7 @@ export class TsDataSource implements
     return this.dataSourceInstanceId;
   }
 
-  /** @returns The configured datasapce for this source */
+  /** @returns The configured dataspace for this source */
   public getDataspace(): string | undefined {
     return this.dataspace;
   }
