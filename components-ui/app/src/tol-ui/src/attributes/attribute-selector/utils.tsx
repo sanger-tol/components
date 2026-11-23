@@ -458,10 +458,10 @@ export function convertCustomFieldPythonTypeToFormField(
       Schema.Types.NumberType().isRequired().isInteger(),
     ];
   } else if (pythonType == "float") {
-      return [
-        { type: "text" } as ITextField,
-        Schema.Types.NumberType().isRequired(),
-      ];
+    return [
+      { type: "text" } as ITextField,
+      Schema.Types.NumberType().isRequired(),
+    ];
   } else if (pythonType.startsWith("Literal[")) {
     const regex = /(?<=[\[,])\s*['"]?([^,'"\]]+?)['"]?\s*(?=,|\])/g;
     const values = [...pythonType.matchAll(regex)].map(match => match[1]);
