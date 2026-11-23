@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Schema } from "rsuite";
 
 import {
@@ -17,6 +17,7 @@ import {
   FormTextField,
   Modal,
   PopUpMessage,
+  RequiredAsterisk,
   RSForm,
   SingleSelect,
   TolLoader
@@ -64,23 +65,24 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   const [chosenDescription, setChosenDescription] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
   const [chosenParams, setChosenParams] = useState<Record<string, unknown>>({});
+  const paramsValidationRef = useRef<(() => boolean) | undefined>(undefined);
 
   // Calculate which controls need to be shown (if any) to configure the custom field parameters
   const [paramsFormConfig, paramsFormModel, paramsInitialData] = useMemo(() => {
     const config: IFormConfig = {
       fields: []
     };
-    const model = Schema.Model({});
+    const modelConfig: Record<string, any> = {};
     const initialData: Record<string, unknown> = {};
 
     if (!availableFunctions || !chosenFunction || storedParams === undefined) {
-      return [config, model, initialData] as const;
+      return [config, Schema.Model(modelConfig), initialData] as const;
     }
 
     const functionDetails = availableFunctions.find(fn => fn.name == chosenFunction);
     if (!functionDetails) {
       console.error(`Unable to fetch function details for ${chosenFunction}`);
-      return [config, model, initialData] as const;
+      return [config, Schema.Model(modelConfig), initialData] as const;
     }
 
     for (const [paramName, paramDetails] of Object.entries(functionDetails.params)) {
@@ -115,10 +117,10 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
         name: paramName,
         label: paramName
       } as TFormField);
-      model[paramName] = fieldModel;
+      modelConfig[paramName] = fieldModel;
     }
 
-    return [config, model, initialData] as const;
+    return [config, Schema.Model(modelConfig), initialData] as const;
   }, [chosenFunction, availableFunctions, storedParams, attributeDataSource, objectType]);
 
   // When the modal opens, a new `customFieldId` will be provided.
@@ -164,6 +166,28 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
 
   // Upsert the new custom field configuration to the database
   const handleSave = async () => {
+    // Validate inputs not in FormAllInOne
+    const functionChoices = availableFunctions ?? [];
+    const validations = [
+      Schema.Types.StringType().isRequired().check(chosenName),
+      Schema.Types.StringType().isRequired().isOneOf(functionChoices.map(fn => fn.name)).check(chosenFunction),
+      Schema.Types.StringType().check(chosenDescription),
+    ];
+    if (validations.some(result => result.hasError)) {
+      PopUpMessage({ type: "error", message: "All fields but Description must be filled in" });
+      console.error(
+        "Top-half custom field form validations failed\n" +
+        `VALIDATIONS: ${validations}`
+      );
+      return;
+    }
+
+    // Validate parameters (from FormAllInOne)
+    if (chosenFunction && !paramsValidationRef.current?.()) {
+      // There's no need for a PopUpMessage because the form itself will display the right data
+      return;
+    }
+
     // Normalise chosenParams from UI format to API format
     const normalizedFunctionKwargs = Object.fromEntries(
       paramsFormConfig.fields.map((field) => {
@@ -230,7 +254,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
         <FormTextField
           id="custom-field-name"
           name="name"
-          label="Name"
+          label={"Name"}
           type="text"
           value={chosenName}
           onChange={setChosenName}
@@ -267,6 +291,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
             model={paramsFormModel}
             initialData={paramsInitialData}
             onFormDataChange={setChosenParams}
+            validationRef={paramsValidationRef}
           />
         </>
       )}

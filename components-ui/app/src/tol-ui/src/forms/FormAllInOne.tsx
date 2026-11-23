@@ -66,6 +66,13 @@ export interface PFormAllInOne<TResult extends object = Record<string, unknown>>
    * This is useful if you need to see the data inside the form, but can't use onSubmit
    */
   onFormDataChange?: (formData: Record<string, unknown>) => void;
+  /**
+   * React ref used to send a function to the parent component.
+   * 
+   * Calling `validationRef.current?.()` will validate the form and return the
+   * result as a boolean (whether the data currently entered into the form is valid)
+   */
+  validationRef?: React.RefObject<(() => boolean) | undefined>;
 }
 
 /** Renders a configured form with optional search-first lookup and manual-entry controls. */
@@ -79,6 +86,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     model,
     onValidate,
     searchConfig,
+    validationRef
   } = props;
 
   const [formData, setFormData] = useState<Record<string, any>>({});
@@ -109,6 +117,23 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
   useEffect(() => {
     props.onFormDataChange?.(formData);
   }, [formData, props.onFormDataChange]);
+
+  useEffect(() => {
+    if (!validationRef) return;
+
+    // The validation function is a thin wrapper around the internal `validateForm`,
+    // but we need to remember to call `onValidate` as well so the behaviour is
+    // the same as when the form is validated usually
+    validationRef.current = () => {
+      const isValid = validateForm(formRef, formData);
+      onValidate?.(isValid);
+      return isValid;
+    };
+
+    return () => {
+      validationRef!.current = undefined;
+    };
+  }, [formData, onValidate, validationRef]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
