@@ -290,7 +290,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
           )}
         </FormComponentWrapper>
       </RSForm>
-      {chosenFunction && availableFunctions && (
+      {chosenFunction && availableFunctions ? (
         <>
           <hr/>
           <FormAllInOne
@@ -301,7 +301,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
             validationRef={paramsValidationRef}
           />
         </>
-      )}
+      ) : <></>}
     </Modal>
   );
 }

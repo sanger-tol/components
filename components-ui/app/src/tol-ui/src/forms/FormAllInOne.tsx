@@ -72,7 +72,7 @@ export interface PFormAllInOne<TResult extends object = Record<string, unknown>>
    * Calling `validationRef.current?.()` will validate the form and return the
    * result as a boolean (whether the data currently entered into the form is valid)
    */
-  validationRef?: React.RefObject<(() => boolean) | undefined>;
+  validationRef?: { current: (() => boolean) | undefined };
 }
 
 /** Renders a configured form with optional search-first lookup and manual-entry controls. */
