@@ -43,7 +43,7 @@ describe("convertCustomFieldPythonTypeToFormField function", () => {
     ],
     [
       "FieldName",
-      { type: "attributeselector", maxSelections: 1, singleValue: true },
+      { type: "attributeselector", singleValue: true },
       Schema.Types.StringType().isRequired(),
     ],
     [

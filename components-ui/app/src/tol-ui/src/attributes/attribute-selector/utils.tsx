@@ -473,7 +473,6 @@ export function convertCustomFieldPythonTypeToFormField(
     return [
       {
         type: "attributeselector",
-        maxSelections: 1,
         singleValue: true,
       } as Omit<IAttributeSelectorField, "name">,
       Schema.Types.StringType().isRequired(),

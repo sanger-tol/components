@@ -149,7 +149,6 @@ describe("FormAllInOne search mode", () => {
         objectType: "specimen",
         dataSource: {} as PFormAttributeSelector["dataSource"],
         singleValue: true,
-        maxSelections: 1,
       }] }}
       initialData={{ attribute: "scientific_name" }}
       onSubmit={onSubmit}
