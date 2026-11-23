@@ -131,7 +131,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     };
 
     return () => {
-      validationRef!.current = undefined;
+      validationRef!.current = null;
     };
   }, [formData, onValidate, validationRef]);
 
