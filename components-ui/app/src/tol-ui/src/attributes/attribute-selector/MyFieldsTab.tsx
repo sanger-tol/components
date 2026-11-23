@@ -41,6 +41,7 @@ export function MyFieldsTab(props: PMyFieldsTab) {
   const [editingCustomFieldId, setEditingCustomFieldId] = useState<number | undefined>();
 
   useEffect(() => {
+    // Fetch the user's existing custom fields
     CORE_CONFIG_DS.getList({ 
       objectType: "custom_field",
       filter: {
