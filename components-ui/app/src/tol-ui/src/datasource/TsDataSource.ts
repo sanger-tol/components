@@ -104,14 +104,17 @@ export class TsDataSource implements
     return baseURL;
   }
 
+  /** @returns The configured data source instance ID for this source */
   public getDataSourceInstanceId(): string | undefined {
     return this.dataSourceInstanceId;
   }
 
+  /** @returns The configured datasapce for this source */
   public getDataspace(): string | undefined {
     return this.dataspace;
   }
 
+  /** @returns The data source config ID of the data source instance for this source */
   public async getDataSourceConfigId(
     configDataSource: TsDataSource = CORE_CONFIG_DS,
   ): Promise<number | undefined> {
