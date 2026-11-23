@@ -24,11 +24,21 @@ vi.mock("../../tol-ui/src", async () => {
   const { Form } = await import("rsuite");
   return {
     RSForm: Form,
-    FormAttributeSelector: ({ label, value, onChange }: PFormAttributeSelector) => (
-      <label>{label}<input value={value.join(",")}
-        onChange={(event) => onChange(event.target.value ? event.target.value.split(",") : [])} />
-      </label>
-    ),
+    FormAttributeSelector: ({ label, value, onChange, singleValue }: PFormAttributeSelector) => {
+      // A form attribute selector can return either a single field or a list of fields,
+      // so create an array of fields we can assume is an array (even if it only has one item)
+      const attributes = Array.isArray(value) ? value : value ? [value] : [];
+      return (
+        <label>{label}<input value={attributes.join(",")}
+          onChange={(event) => {
+            const selectedAttributes = event.target.value
+              ? event.target.value.split(",")
+              : [];
+            onChange(singleValue ? selectedAttributes[0] ?? "" : selectedAttributes);
+          }} />
+        </label>
+      );
+    },
     FormTextField: ({ label, name, value, onChange, errorText }: {
       label: string;
       name: string;
@@ -97,8 +107,8 @@ describe("FormAllInOne search mode", () => {
 
   test("keeps ordinary forms visible when search is not configured", () => {
     render(<FormAllInOne formConfig={FORM_CONFIG} initialData={{ title: "Existing" }} />);
-    expect(screen.getByLabelText("Title")).toHaveValue("Existing");
-    expect(screen.queryByRole("button", { name: "Search" })).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Title")).toHaveProperty("value", "Existing");
+    expect(screen.queryByRole("button", { name: "Search" })).toBeNull();
   });
 
   test("prefills attribute selectors and submits updated array values", () => {
@@ -117,8 +127,8 @@ describe("FormAllInOne search mode", () => {
       onUnsavedChanges={onUnsavedChanges}
     />);
 
-    const input = screen.getByLabelText("Attributes");
-    expect(input).toHaveValue("name");
+    const input: HTMLInputElement = screen.getByLabelText("Attributes");
+    expect(input).toHaveProperty("value", "name");
     fireEvent.change(input, { target: { value: "species.name,name" } });
     expect(onUnsavedChanges).toHaveBeenLastCalledWith(true);
     fireEvent.submit(input.closest("form")!);
@@ -127,6 +137,30 @@ describe("FormAllInOne search mode", () => {
     fireEvent.change(input, { target: { value: "" } });
     fireEvent.submit(input.closest("form")!);
     expect(onSubmit).toHaveBeenLastCalledWith({ attributes: [] }, true);
+  });
+
+  test("prefills single-value attribute selectors and submits a string", () => {
+    const onSubmit = vi.fn();
+    render(<FormAllInOne
+      formConfig={{ fields: [{
+        type: "attributeselector",
+        name: "attribute",
+        label: "Attribute",
+        objectType: "specimen",
+        dataSource: {} as PFormAttributeSelector["dataSource"],
+        singleValue: true,
+        maxSelections: 1,
+      }] }}
+      initialData={{ attribute: "scientific_name" }}
+      onSubmit={onSubmit}
+    />);
+
+    const input = screen.getByLabelText("Attribute");
+    expect(input).toHaveProperty("value", "scientific_name");
+    fireEvent.change(input, { target: { value: "taxonomy.kingdom" } });
+    fireEvent.submit(input.closest("form")!);
+
+    expect(onSubmit).toHaveBeenLastCalledWith({ attribute: "taxonomy.kingdom" }, true);
   });
 
   test.each(["unsectioned", "sectioned", "misc"])("defers minus removal to the field callback for %s fields", mode => {
@@ -146,11 +180,11 @@ describe("FormAllInOne search mode", () => {
     fireEvent.click(screen.getByRole("button", { name: "minus" }));
 
     expect(onMinus).toHaveBeenCalledWith("title1", "Existing", expect.any(Function));
-    expect(screen.getByDisplayValue("Existing")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Existing")).toBeTruthy();
 
     act(() => onMinus.mock.calls[0][2]());
 
-    expect(screen.queryByDisplayValue("Existing")).not.toBeInTheDocument();
+    expect(screen.queryByDisplayValue("Existing")).toBeNull();
   });
 
   test("removes a multiple row immediately without an onMinus callback", () => {
@@ -161,7 +195,7 @@ describe("FormAllInOne search mode", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "minus" }));
 
-    expect(screen.queryByDisplayValue("Existing")).not.toBeInTheDocument();
+    expect(screen.queryByDisplayValue("Existing")).toBeNull();
   });
 
   test("runs a configured action without submitting the form", () => {
@@ -185,7 +219,7 @@ describe("FormAllInOne search mode", () => {
     const onSearch = vi.fn();
     render(<FormAllInOne formConfig={FORM_CONFIG} searchConfig={createSearchConfig({ onSearch })} />);
     fireEvent.click(screen.getByRole("button", { name: "Search" }));
-    expect(screen.getByText("Enter a DOI.")).toBeInTheDocument();
+    expect(screen.getByText("Enter a DOI.")).toBeTruthy();
     expect(onSearch).not.toHaveBeenCalled();
   });
 
@@ -208,9 +242,9 @@ describe("FormAllInOne search mode", () => {
       />,
     );
 
-    expect(screen.queryByLabelText("Title")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Title")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Enter manually" }));
-    expect(screen.getByLabelText("Title")).toBeInTheDocument();
+    expect(screen.getByLabelText("Title")).toBeTruthy();
   });
 
   test("prefills the same form with successful search results", async () => {
@@ -230,7 +264,7 @@ describe("FormAllInOne search mode", () => {
     fireEvent.click(screen.getByRole("button", { name: "Search" }));
 
     await waitFor(() => {
-      expect(screen.getByLabelText("Title")).toHaveValue("Found reference");
+      expect(screen.getByLabelText("Title")).toHaveProperty("value", "Found reference");
     });
     expect(onSearch).toHaveBeenCalledWith("10.1234/example");
     expect(onSearchResult).toHaveBeenCalledWith({ title: "Found reference" });
@@ -251,7 +285,7 @@ describe("FormAllInOne search mode", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Search" }));
 
-    expect(await screen.findByText("DOI not found.")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Enter manually" })).toBeInTheDocument();
+    expect(await screen.findByText("DOI not found.")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Enter manually" })).toBeTruthy();
   });
 });
