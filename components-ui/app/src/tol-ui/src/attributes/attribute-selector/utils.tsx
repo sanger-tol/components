@@ -48,8 +48,8 @@ export function attributeSelectorSearchBy(keyword: string, label: any, entityMet
   return name.includes(kw) || label.includes(kw) || description.includes(kw);
 };
 
-export function handleSetAttribute(
-  newAttribute: string[],
+export function handleSetAttributes(
+  newAttributes: string[],
   maxSelections: number,
   setAttributes: (attrs: string[]) => void,
   entityMeta: IEntityMeta,
@@ -57,10 +57,10 @@ export function handleSetAttribute(
   setAttributeMeta?: any
 ) {
   if (maxSelections) {
-    if (maxSelections === 1 && newAttribute.length > 1) {
-      setAttributes([newAttribute[newAttribute.length - 1]]);
+    if (maxSelections === 1 && newAttributes.length > 1) {
+      setAttributes([newAttributes[newAttributes.length - 1]]);
       return;
-    } else if (newAttribute.length > maxSelections) {
+    } else if (newAttributes.length > maxSelections) {
       PopUpMessage({
         type: "warning",
         message: `You can select a maximum number of ${maxSelections} items.`,
@@ -68,11 +68,11 @@ export function handleSetAttribute(
       return;
     }
   }
-  setAttributes(newAttribute);
+  setAttributes(newAttributes);
 
   if (setAttributeMeta) {
     const allAttributeData = getAllAttributeData(
-      newAttribute,
+      newAttributes,
       entityMeta,
       objectType
     );

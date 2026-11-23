@@ -36,7 +36,9 @@ export function MyFieldsTab(props: PMyFieldsTab) {
     onChange,
   } = props;
 
-  const [customFields, setCustomFields] = useState<{ id: string; name: string }[] | undefined>();
+  const [customFields, setCustomFields] = useState<{
+    id: string; displayName: string; systemName: string
+  }[] | undefined>();
   const [editFieldModalOpen, setEditFieldModalOpen] = useState(false);
   const [editingCustomFieldId, setEditingCustomFieldId] = useState<number | undefined>();
 
@@ -55,10 +57,31 @@ export function MyFieldsTab(props: PMyFieldsTab) {
       if (!res) {
         setCustomFields([]);
       } else {
-        setCustomFields(res.map(obj => ({ id: obj!.id, name: obj!.display_name })));
+        setCustomFields(res.map(obj => ({
+          id: obj!.id,
+          displayName: obj!.display_name,
+          systemName: `custom_${obj!.id}`
+        })));
       }
     });
   }, []);
+
+  /**
+   * Updates the parent AttributeSelector with the new list of custom fields.
+   * @param selectedCustomFields The custom fields currently selected
+   */
+  const handleSelectionChange = (selectedCustomFields: string[]) => {
+    // A set of every available custom field
+    const availableCustomFields = new Set(customFields?.map(({ systemName }) => systemName));
+
+    // All other fields chosen in the attribute selector that are not custom fields
+    const otherFields = value.filter((field) => !availableCustomFields.has(field));
+
+    onChange([
+      ...otherFields,
+      ...selectedCustomFields,
+    ]);
+  };
 
   /**
    * Opens the custom field editor modal.
@@ -106,19 +129,13 @@ export function MyFieldsTab(props: PMyFieldsTab) {
         ) : (
           <ListBox
             data={customFields.map((field) => ({
-              label: field.name,
-              value: field.id,
+              label: field.displayName,
+              value: field.systemName,
             }))}
-            value={value.filter((field) => customFields.some(({ id }) => id === field))}
-            onChange={(selectedFields) => {
-              const customFieldValues = new Set(customFields.map(({ id }) => id));
-              onChange([
-                ...value.filter((field) => !customFieldValues.has(field)),
-                ...selectedFields.filter(
-                  (field): field is string => typeof field === "string"
-                ),
-              ]);
-            }}
+            value={value.filter(
+              (field) => customFields.some(({ systemName }) => systemName === field)
+            )}
+            onChange={handleSelectionChange}
             renderItemRight={itemData => (
               <Button
                 {...BUTTONS.EDIT}

@@ -11,7 +11,7 @@ import {
   AdvancedSearchTab,
   attributeSelectorSearchBy,
   handleAttributeSelectorKeyNavigation,
-  handleSetAttribute,
+  handleSetAttributes,
   MenuItem,
   MyFieldsTab,
   renderTotalSelectedItems,
@@ -221,7 +221,7 @@ export function AttributeSelector(props: PAttributeSelector) {
         placeholder={placeholder}
         value={attribute}
         setValue={(newAttribute) => {
-          handleSetAttribute(
+          handleSetAttributes(
             newAttribute,
             maxSelections!,
             setAttributes,
@@ -257,9 +257,9 @@ export function AttributeSelector(props: PAttributeSelector) {
                       userId={user!.id}
                       value={attribute}
                       onNestedOverlayChange={handleNestedOverlayChange}
-                      onChange={(newAttribute) => {
-                        handleSetAttribute(
-                          newAttribute,
+                      onChange={(newAttributes) => {
+                        handleSetAttributes(
+                          newAttributes,
                           maxSelections!,
                           setAttributes,
                           entityMeta,
