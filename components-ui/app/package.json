@@ -20,7 +20,7 @@
     "react-markdown": "10.1.0",
     "xlsx": "0.18.5",
     "@fortawesome/free-brands-svg-icons": "6.7.2",
-    "@tiptap/extension-character-count": "3.27.1"
+    "@tiptap/extension-character-count": "3.35.0"
   },
   "devDependencies": {
     "vite": "8.3.8",
@@ -30,12 +30,12 @@
     "@vitejs/plugin-react": "4.7.0",
     "@vitejs/plugin-basic-ssl": "1.2.0",
     "@testing-library/react": "12.1.5",
-    "@testing-library/user-event": "14.6.1",
+    "@testing-library/user-event": "14.6.13",
     "@testing-library/jest-dom": "5.17.0",
     "lorem-ipsum": "2.0.10",
-    "@uiw/react-md-editor": "4.1.1",
+    "@uiw/react-md-editor": "4.2.4",
     "rehype-sanitize": "6.0.0",
-    "rsuite": "5.75.0"
+    "rsuite": "5.83.4"
   },
   "scripts": {
     "start": "vite",
