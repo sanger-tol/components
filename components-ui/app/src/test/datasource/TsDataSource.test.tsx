@@ -445,11 +445,13 @@ describe("Testing basic getter functions", () => {
     });
   });
 
+  // Just a getter
   test("getDataspace returns the configured dataspace", () => {
     const dataSource = new TsDataSource({ dataspace: "treeofsex" });
     expect(dataSource.getDataspace()).toBe("treeofsex");
   });
 
+  // Just a getter
   test("getBaseUrl returns correct base URL", () => {
     const baseURL = mockDataSource.getBaseUrl();
     expect(baseURL).toBe("/test-data-path");
