@@ -61,6 +61,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   >();
   const [storedParams, setStoredParams] = useState<Record<string, any> | undefined>();
   const [chosenName, setChosenName] = useState<string>("");
+  const [chosenReturnType, setChosenReturnType] = useState<string>("");
   const [chosenDescription, setChosenDescription] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
   const [chosenParams, setChosenParams] = useState<Record<string, unknown>>({});
@@ -159,6 +160,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
 
     setStoredParams(customFieldId === undefined ? {} : undefined);
     setChosenName("");
+    setChosenReturnType("");
     setChosenDescription("");
     setChosenFunction(undefined);
     setChosenParams({});
@@ -170,6 +172,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     const functionChoices = availableFunctions ?? [];
     const validations = [
       Schema.Types.StringType().isRequired().check(chosenName),
+      Schema.Types.StringType().isRequired().check(chosenReturnType),
       Schema.Types.StringType().isRequired().isOneOf(functionChoices.map(fn => fn.name)).check(chosenFunction),
       Schema.Types.StringType().check(chosenDescription),
     ];
@@ -235,6 +238,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
         "display_name": chosenName,
         "description": chosenDescription || null,
         "runtime_definition": {
+          "type": chosenReturnType,
           "function": chosenFunction,
           "function_kwargs": normalisedFunctionKwargs,
         }
@@ -269,6 +273,14 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
           type="text"
           value={chosenName}
           onChange={setChosenName}
+        />
+        <FormTextField
+          id="custom-field-return-type"
+          name="returnType"
+          label="Return Type"
+          type="text"
+          value={chosenReturnType}
+          onChange={setChosenReturnType}
         />
         <FormTextField
           id="custom-field-description"
