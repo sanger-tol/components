@@ -233,7 +233,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
         "object_type": objectType,
         "display_name": chosenName,
         "description": chosenDescription || null,
-        "runtime_defintion": {
+        "runtime_definition": {
           "function": chosenFunction,
           "function_kwargs": normalizedFunctionKwargs,
         }
