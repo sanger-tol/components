@@ -64,7 +64,8 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   const [chosenDescription, setChosenDescription] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
   const [chosenParams, setChosenParams] = useState<Record<string, unknown>>({});
-  const paramsValidationRef = useRef<(() => boolean) | undefined>(undefined);
+
+  const paramsValidationRef = useRef<(() => boolean) | null>(null);
 
   // Calculate which controls need to be shown (if any) to configure the custom field parameters
   const [paramsFormConfig, paramsFormModel, paramsInitialData] = useMemo(() => {
@@ -188,7 +189,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     }
 
     // Normalise chosenParams from UI format to API format
-    const normalizedFunctionKwargs = Object.fromEntries(
+    const normalisedFunctionKwargs = Object.fromEntries(
       paramsFormConfig.fields.map((field) => {
         const value = chosenParams[field.name];
         return [
@@ -235,7 +236,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
         "description": chosenDescription || null,
         "runtime_definition": {
           "function": chosenFunction,
-          "function_kwargs": normalizedFunctionKwargs,
+          "function_kwargs": normalisedFunctionKwargs,
         }
       }
     }]});
