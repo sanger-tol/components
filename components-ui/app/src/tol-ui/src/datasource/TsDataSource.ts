@@ -652,6 +652,7 @@ export class TsDataSource implements
     }
   }
 
+  /** Returns the attribute metadata for a given object type and field. */
   public async getAttributeDescriptor({
     objectType,
     field,

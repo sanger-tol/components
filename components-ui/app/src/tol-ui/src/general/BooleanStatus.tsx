@@ -26,6 +26,7 @@ export function BooleanStatus(props: PBooleanStatus) {
       <Icon
         icon={value ? "check" : "xmark"}
         colour={value ? "var(--tol-success)" : "var(--tol-danger)"}
+        tooltip={value ? "True" : "False"}
       />
     );
   }
