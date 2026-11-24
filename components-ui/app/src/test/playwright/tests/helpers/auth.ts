@@ -6,6 +6,7 @@ import { Page } from '@playwright/test';
 import sql from '../../db';
 globalThis.crypto ??= require("node:crypto").webcrypto
 import { randomInt } from '..';
+import { getKeycloakToken } from '.';
 
 
 async function getRoleId(roleName: string) {
@@ -30,8 +31,6 @@ async function createRoleBindingQuery(userId: number, roleNames: string[]) {
 }
 
 async function insertAuthToDB(userId: number, token: string, orcidId: string, roles?: string[]) {
-  console.log(`Inserting user with ID ${userId} and token ${token} into the database.`);
-
   const roleBindingInserts = await createRoleBindingQuery(userId, roles ?? ["tol"]);
 
   await sql.unsafe(`
@@ -53,7 +52,7 @@ async function insertAuthToDB(userId: number, token: string, orcidId: string, ro
  */
 export async function setAuth(page: Page, roles?: string[]) {
   const userID = randomInt();
-  const token = crypto.randomUUID();
+  const token = await getKeycloakToken(page);
   const orcidID = `https://orcid.org/${crypto.randomUUID()}`;
   const name = "Test User";
   const email = `${userID}@example.com`;

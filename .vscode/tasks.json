@@ -4,7 +4,7 @@
       {
         "label": "All Playwright tests (.env.dev)",
         "type": "shell",
-        "command": "export $(grep -E '^(POSTGRES_USER|POSTGRES_PASSWORD|POSTGRES_DB)=' ../../../../../.env.dev | sed 's/\"/\\\\\"/g') && POSTGRES_HOST=localhost POSTGRES_PORT=5442 npx playwright test",
+        "command": ". ../../../../../.env.dev && export POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB KEYCLOAK_CLIENT_ID=\"$PLAYWRIGHT_KEYCLOAK_CLIENT_ID\" KEYCLOAK_CLIENT_SECRET=\"$PLAYWRIGHT_KEYCLOAK_CLIENT_SECRET\" KEYCLOAK_USERNAME=\"$PLAYWRIGHT_KEYCLOAK_USERNAME\" KEYCLOAK_PASSWORD=\"$PLAYWRIGHT_KEYCLOAK_PASSWORD\" && POSTGRES_HOST=localhost POSTGRES_PORT=5442 npx playwright test",
         "options": {
           "cwd": "${workspaceFolder}/components-ui/app/src/test/playwright"
         },
@@ -13,7 +13,7 @@
       {
         "label": "Current Playwright test file (.env.dev)",
         "type": "shell",
-        "command": "export $(grep -E '^(POSTGRES_USER|POSTGRES_PASSWORD|POSTGRES_DB)=' ../../../../../.env.dev | sed 's/\"/\\\\\"/g') && POSTGRES_HOST=localhost POSTGRES_PORT=5442 npx playwright test \"${file}\"",
+        "command": ". ../../../../../.env.dev && export POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB KEYCLOAK_CLIENT_ID=\"$PLAYWRIGHT_KEYCLOAK_CLIENT_ID\" KEYCLOAK_CLIENT_SECRET=\"$PLAYWRIGHT_KEYCLOAK_CLIENT_SECRET\" KEYCLOAK_USERNAME=\"$PLAYWRIGHT_KEYCLOAK_USERNAME\" KEYCLOAK_PASSWORD=\"$PLAYWRIGHT_KEYCLOAK_PASSWORD\" && POSTGRES_HOST=localhost POSTGRES_PORT=5442 npx playwright test \"${file}\"",
         "options": {
           "cwd": "${workspaceFolder}/components-ui/app/src/test/playwright"
         },
