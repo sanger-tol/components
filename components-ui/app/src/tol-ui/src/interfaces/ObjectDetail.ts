@@ -4,8 +4,10 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-/** How a field's key is displayed: inline label, h4 heading above the value, or not at all. */
-export type TObjectDetailKeyType = "standard" | "heading" | "none";
+import { CARD_KEY_TYPE } from "../constants/field.constants";
+
+/** Key display style used by an object-detail card or an individual field. */
+export type TCardKeyType = typeof CARD_KEY_TYPE[number];
 
 /** Interface for the data object representing a field in the remote object detail */
 export interface IRemoteObjectDetailField {

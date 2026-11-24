@@ -43,6 +43,9 @@ export function TitleTooltip(props: PTitleTooltip) {
     <div className="tol-utility-bar-title-tooltip">
       {title && <h6>{title}</h6>}
       <p><b>Object Type:</b> {normaliseCaps(objectType!)}</p>
+      {dataSource.getDataspace() && (
+        <p><b>Dataspace:</b> {normaliseCaps(dataSource.getDataspace())}</p>
+      )}
       <b>Filters:</b>
       &nbsp;
       <ReadOnlyFilters

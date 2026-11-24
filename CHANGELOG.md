@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `6.6.0`
+
+24-11-26
+
+- Final adaptations for cards & other small changes
+
 ## tol-ui `6.5.0`
 
 17-11-26

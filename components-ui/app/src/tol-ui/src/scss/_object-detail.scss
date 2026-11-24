@@ -5,8 +5,6 @@
  */
 
 .tol-object-detail {
-  padding: var(--tol-spacing-sm);
-
   &--columns {
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
@@ -25,7 +23,6 @@
     }
   }
 
-  h6,
   .tol-object-detail-field {
     margin: 0;
   }
@@ -41,6 +38,7 @@
     strong {
       flex: 0 0 auto;
       margin-right: var(--tol-spacing-sm);
+      color: var(--tol-text-subtle);
     }
 
     .tol-data-points {
@@ -52,12 +50,13 @@
       align-items: stretch;
 
       &:not(:last-child) {
-        margin-bottom: var(--tol-spacing-md);
+        margin-bottom: var(--tol-spacing-sm);
       }
 
-      h6 {
+      > strong {
         margin-bottom: var(--tol-spacing-xs);
       }
+
     }
   }
 }

@@ -16,6 +16,7 @@ import {
   IconTooltip,
   PDropdownButton,
   DropdownButton,
+  getVisibleUtilityBarButtons,
 } from "..";
 
 export interface PUtilityBar {
@@ -60,6 +61,10 @@ export function UtilityBar(props: PUtilityBar) {
   } = props;
 
   const wrapperId = "tol-utility-bar-wrapper-" + id;
+  const visibleButtons = getVisibleUtilityBarButtons(buttons);
+  const visibleElements = elements?.filter(Boolean);
+  const isCompact = !((!noLeftSide && title) || visibleButtons?.length || visibleElements?.length);
+
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
 
@@ -79,13 +84,13 @@ export function UtilityBar(props: PUtilityBar) {
   }, []);
 
   // Separate dropdown buttons from regular buttons
-  const regularButtons = buttons?.filter(
+  const regularButtons = visibleButtons?.filter(
     (button): button is PButton => Boolean(button && !("dropdownButtons" in button) && !("toggle" in button)),
   );
-  const dropdownButtons = buttons?.filter(
+  const dropdownButtons = visibleButtons?.filter(
     (button): button is PDropdownButton => Boolean(button && "toggle" in button),
   );
-  const deprecatedDeprecatedDropdownButtons = buttons?.filter(
+  const deprecatedDeprecatedDropdownButtons = visibleButtons?.filter(
     (button): button is PDeprecatedDropdownButtons => Boolean(button && "dropdownButtons" in button),
   );
 
@@ -152,10 +157,10 @@ export function UtilityBar(props: PUtilityBar) {
 
   return (
     <div className={noLeftSide ? "tol-utility-bar-no-left-side" : ""}>
-      <div ref={wrapperRef} className={`tol-utility-bar ${className ?? ""}`} data-testid={id} id={wrapperId}>
+      <div ref={wrapperRef} className={`tol-utility-bar${isCompact ? " tol-utility-bar-no-layout" : ""} ${className ?? ""}`} data-testid={id} id={wrapperId}>
+        {!noLeftSide && description && <IconTooltip icon={<div className="tol-utility-bar-info" />} className="tol-utility-bar-tooltip" contents={description} />}
         {!noLeftSide && title && <EditableTitle {...title} />}
-        {!noLeftSide && description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
-        {elements && elements.map(
+        {visibleElements && visibleElements.map(
           (element, index) => <Fragment key={index}>{element}</Fragment>
         )}
         <div className="tol-utility-bar-buttons">

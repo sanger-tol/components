@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode } from "react";
 import {
-  Boolean,
+  BooleanRenderer,
   Datetime,
   Float,
   ImageCell,
@@ -33,7 +33,7 @@ export interface PCellDisplay extends PDataPoint {
 }
 
 const preDefinedElements = {
-  boolean: Boolean,
+  boolean: BooleanRenderer,
   card: Card,
   datetime: Datetime,
   float: Float,

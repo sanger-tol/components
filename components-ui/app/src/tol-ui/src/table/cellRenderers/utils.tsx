@@ -152,7 +152,7 @@ export function getCellRendererPropValue(
   field: string,
   value: any,
   prop: string,
-  propValue: string | IFilter,
+  propValue: string | boolean | IFilter,
   elementProps: Record<string, any>,
   dataObject: TDataObjectOrNull,
   originDataObject: TDataObjectOrNull,

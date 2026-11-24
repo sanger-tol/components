@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode } from "react";
-import { IComponentBase, UtilityBar, mergeUtilityBarConfigs, joinClassNames } from "..";
+import { IComponentBase, UtilityBar, mergeUtilityBarConfigs, getVisibleUtilityBarButtons, joinClassNames } from "..";
 
 
 /** Props for the `ComponentBase` wrapper component. */
@@ -32,14 +32,24 @@ export function ComponentBase(props: PComponentBase) {
     children,
   } = props;
 
-  const ubc = mergeUtilityBarConfigs(utilityBarConfig ?? undefined);
-  const hasUtilityBar = Boolean(
-    utilityBarConfig && (
-      utilityBarConfig.title ||
-      utilityBarConfig.description ||
-      utilityBarConfig.buttons?.some(Boolean) ||
-      utilityBarConfig.elements?.some(Boolean)
-    )
+  const mergedUtilityBarConfig = mergeUtilityBarConfigs(utilityBarConfig ?? undefined);
+  const buttons = getVisibleUtilityBarButtons(mergedUtilityBarConfig.buttons);
+  const elements = (mergedUtilityBarConfig.elements ?? []).filter(Boolean);
+  const noLeftSide = utilityBarConfig?.noLeftSide ?? false;
+  const ubc = {
+    ...mergedUtilityBarConfig,
+    noLeftSide,
+    buttons,
+    elements,
+  };
+
+  // The edge description marker renders visibly but does not occupy a toolbar row.
+  const hasUtilityBarContent = Boolean(
+    (!noLeftSide && (ubc.title || ubc.description)) || buttons.length || elements.length,
+  );
+  // Only row-consuming toolbar content should reduce the available component height.
+  const hasUtilityBarLayout = Boolean(
+    (!noLeftSide && ubc.title) || buttons.length || elements.length,
   );
 
   return (
@@ -47,11 +57,11 @@ export function ComponentBase(props: PComponentBase) {
       id={id}
       style={{ height }}
     >
-      {hasUtilityBar && <UtilityBar id={id} {...ubc} />}
+      {hasUtilityBarContent && <UtilityBar id={id} {...ubc} />}
       <div
         className={joinClassNames(
           "tol-component-contents",
-          hasUtilityBar ? "with-offset" : undefined,
+          hasUtilityBarLayout ? "with-offset" : undefined,
           className,
           ...classNames,
         )}

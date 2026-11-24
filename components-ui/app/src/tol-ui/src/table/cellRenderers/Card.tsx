@@ -13,6 +13,8 @@ export interface PCard extends PCellDisplay {
    * By this stage, inserted attribute data (from the '${}' syntax) has already been added.
    */
   content: string;
+  /** Whether to render the card with a coloured background. */
+  background?: boolean;
   /**
    * Condition Parameter: Whether the success background colour should be used
    */
@@ -34,6 +36,7 @@ export interface PCard extends PCellDisplay {
 export function Card(props: PCard) {
   const {
     content,
+    background = false,
     successBackground = false,
     warningBackground = false,
     errorBackground = false
@@ -49,11 +52,13 @@ export function Card(props: PCard) {
     COLOURS.GREY
   );
 
+  const contents = <Markdown contents={content} />;
+
+  if (!background) return contents;
+
   return (
     <Tag type={tagType} className="tol-table-card-cell">
-      <Markdown
-        contents={content}
-      />
+      {contents}
     </Tag>
   )
 }

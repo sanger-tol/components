@@ -17,7 +17,16 @@ export function Markdown(props: PMarkdown) {
   return (
     <div className="tol-component-contents with-overflow">
       {/* @ts-ignore */}
-      <ReactMarkdown>
+      <ReactMarkdown
+        components={{
+          h1: "h3",
+          h2: "h4",
+          h3: "h5",
+          h4: "h6",
+          h5: "h6",
+          h6: "h6",
+        }}
+      >
         {contents}
       </ReactMarkdown>
     </div>

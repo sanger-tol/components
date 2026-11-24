@@ -84,3 +84,41 @@ hr {
   color: var(--tol-grey);
   border-color: var(--tol-grey);
 }
+
+.tol-shine {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background: linear-gradient(
+      110deg,
+      transparent 20%,
+      rgb(255 255 255 / 75%) 50%,
+      transparent 80%
+    );
+    transform: translateX(-100%);
+    animation: tol-shine-sweep 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+@keyframes tol-shine-sweep {
+  0%,
+  45% {
+    transform: translateX(-100%);
+  }
+
+  75%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tol-shine::after {
+    animation: none;
+  }
+}

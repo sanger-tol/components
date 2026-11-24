@@ -6,6 +6,26 @@ SPDX-License-Identifier: MIT
 
 import { PUtilityBar } from "..";
 
+type TUtilityBarButton = Exclude<NonNullable<PUtilityBar["buttons"]>[number], undefined>;
+
+
+/**
+ * Filters out missing or explicitly hidden utility-bar buttons.
+ *
+ * @param buttons - The configured utility-bar buttons.
+ * @returns Only buttons that should be rendered.
+ */
+export function getVisibleUtilityBarButtons(
+  buttons?: PUtilityBar["buttons"],
+): TUtilityBarButton[] {
+  return (buttons ?? []).filter((button): button is TUtilityBarButton => {
+    if (!button) return false;
+    if ("toggle" in button) return button.toggle.visible !== false;
+    if ("visible" in button) return button.visible !== false;
+    return true;
+  });
+}
+
 
 /**
  * Merges two Utility Bar configuration objects into a single configuration.

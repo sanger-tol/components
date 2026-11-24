@@ -4,14 +4,12 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, forwardRef, useState, useRef } from "react";
+import { forwardRef, useState, useRef } from "react";
 import DraggableList from "react-draggable-list";
 import {
   Icon,
-  SourceTag,
   truncateString,
   IRemoteTarget,
-  IAttributeDetails,
   TRANSITION_TIME,
   AttributeTitle,
   IFieldMeta
@@ -37,17 +35,8 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
   } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
-  const [objectAttributes, setObjectAttributes] = useState<IAttributeDetails>(
-    {}
-  );
 
   const ref = useRef(null);
-
-  useEffect(() => {
-    dataSource.getEntityMeta().then((meta) => {
-      setObjectAttributes(meta.flatAttributes[objectType]);
-    });
-  }, []);
 
   const moveAttributeUp = (index: number) => {
     if (index === 0) return;
@@ -84,7 +73,6 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
     { item: any; dragHandleProps: any }
   >(({ item, dragHandleProps }, ref) => {
     const attributeId = item;
-    const attributeDetails = objectAttributes[attributeId] || {};
     const index = attributes.indexOf(attributeId);
 
     const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
@@ -114,9 +102,6 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
           </p>
         </div>
         <div className="tol-config-drawer-btn-array">
-          {attributeDetails.source && (
-            <SourceTag source={attributeDetails.source} />
-          )}
           {additionalIcons?.map(Icon =>
             <Icon attributeId={attributeId} key={attributeId}/>
           )}

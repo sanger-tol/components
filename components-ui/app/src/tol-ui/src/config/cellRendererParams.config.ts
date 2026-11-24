@@ -21,6 +21,12 @@ export const cellRendererParams: IBoardCellRenderers = {
         rename: "Content",
         description: "Markdown-formatted content"
       },
+      background: {
+        type: "boolean",
+        rename: "Background",
+        description: "Show the card background colour.",
+        defaultValue: false,
+      },
       successBackground: {
         type: "condition",
         rename: "Success Background",
