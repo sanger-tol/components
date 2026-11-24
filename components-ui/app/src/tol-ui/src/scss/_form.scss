@@ -122,3 +122,9 @@
 .rs-form-error-message {
   border-radius: var(--tol-border-radius);
 }
+
+.tol-autocomplete-loader {
+  @extend .tol-mt-md;
+  text-align: center;
+  margin-top: 10px;
+}
