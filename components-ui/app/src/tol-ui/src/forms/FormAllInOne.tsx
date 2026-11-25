@@ -459,7 +459,7 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
     Boolean(field.multiple) && field.type !== "subform";
 
   // Renders a field against the live form data, or another source such as a drawer draft
-  const renderField = (
+  const renderFieldControl = (
     field: TFormField,
     parentPath: TFormValuePath = [],
     parentReadOnly = false,
@@ -961,6 +961,34 @@ export function FormAllInOne<TResult extends object = Record<string, unknown>>(
       default:
         return null;
     }
+  };
+
+  const renderField = (
+    field: TFormField,
+    parentPath: TFormValuePath = [],
+    parentReadOnly = false,
+    source: IFormValueSource = {
+      data: formData,
+      onChange: handleFieldInputChange,
+    },
+  ) => {
+    const control = renderFieldControl(field, parentPath, parentReadOnly, source);
+    if (
+      !control ||
+      !field.rowButton ||
+      usesMultipleFormInput(field) ||
+      (field.type === "checkbox" && field.hidden)
+    ) {
+      return control;
+    }
+
+    const value = getValueAtPath(source.data, [...parentPath, field.name]);
+    return (
+      <div className="tol-form-input-row">
+        <div className="tol-form-input-row-field">{control}</div>
+        <Button {...field.rowButton(field.name, value)} />
+      </div>
+    );
   };
 
   const uniqueSections = Array.from(

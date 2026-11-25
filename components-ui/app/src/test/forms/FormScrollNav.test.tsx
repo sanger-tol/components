@@ -32,6 +32,79 @@ const FIELDS: TFormField[] = [
   { name: "notes", label: "Notes", type: "text" },
 ];
 
+describe("FormAllInOne row actions", () => {
+  test.each(["unsectioned", "sectioned", "misc"])(
+    "uses the current value for a %s single field",
+    (mode) => {
+      const onClick = vi.fn();
+      const rowButton = vi.fn((name: string, value: string) => ({
+        text: "Inspect title",
+        onClick: () => onClick(name, value),
+      }));
+      const fields: TFormField[] = [{
+        name: "title",
+        label: "Title",
+        type: "text",
+        section: mode === "sectioned" ? "details" : undefined,
+        rowButton,
+      }];
+      if (mode === "misc") {
+        fields.push({ name: "other", type: "text", section: "details" });
+      }
+      const { container } = render(
+        <FormAllInOne formConfig={{ fields }} initialData={{ title: "First" }} />,
+      );
+
+      fireEvent.change(container.querySelector('input[name="title"]')!, {
+        target: { value: "Updated" },
+      });
+      fireEvent.click(screen.getByRole("button", { name: "Inspect title" }));
+
+      expect(rowButton).toHaveBeenLastCalledWith("title", "Updated");
+      expect(onClick).toHaveBeenCalledWith("title", "Updated");
+    },
+  );
+
+  test("renders actions for different control types and nested values", () => {
+    const rowButton = vi.fn((name: string) => ({ text: `Inspect ${name}` }));
+    const fields: TFormField[] = [
+      { name: "title", type: "text", rowButton },
+      { name: "enabled", type: "toggle", rowButton },
+      { name: "choice", type: "singleselect", data: ["A"], rowButton },
+      { name: "checks", type: "checkbox", label: "Checks", checkboxConfig: { fields: [] }, rowButton },
+      { name: "details", type: "subform", fields: [
+        { name: "note", type: "text", rowButton },
+      ] },
+    ];
+    render(<FormAllInOne formConfig={{ fields }} initialData={{
+      title: "Title", enabled: true, choice: "A", checks: [], details: { note: "Nested" },
+    }} />);
+
+    for (const name of ["title", "enabled", "choice", "checks", "note"]) {
+      expect(screen.getByRole("button", { name: `Inspect ${name}` })).toBeTruthy();
+    }
+    expect(rowButton).toHaveBeenCalledWith("enabled", true);
+    expect(rowButton).toHaveBeenCalledWith("checks", []);
+    expect(rowButton).toHaveBeenCalledWith("note", "Nested");
+  });
+
+  test("does not add actions for hidden fields and preserves multiple row identifiers", () => {
+    const rowButton = vi.fn((name: string) => ({ text: `Inspect ${name}` }));
+    const fields: TFormField[] = [
+      { name: "hidden", type: "text", hiddenWhen: () => true, rowButton },
+      { name: "hiddenChecks", type: "checkbox", label: "Hidden", hidden: true, checkboxConfig: { fields: [] }, rowButton },
+      { name: "authors", type: "text", multiple: true, rowButton },
+    ];
+    render(<FormAllInOne formConfig={{ fields }} initialData={{ authors: { author1: "Ada" } }} />);
+
+    expect(screen.queryByRole("button", { name: "Inspect hidden" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Inspect hiddenChecks" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Inspect author1" })).toBeTruthy();
+    expect(rowButton).toHaveBeenCalledWith("author1", "Ada");
+    expect(rowButton).not.toHaveBeenCalledWith("authors", expect.anything());
+  });
+});
+
 describe("scroll nav utils", () => {
   test("builds anchor and container ids", () => {
     expect(getFieldAnchorId("metadata", "general", "doi", 0)).toBe(

@@ -395,6 +395,35 @@
   flex: 1;
 }
 
+.tol-form-input-row {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  gap: var(--tol-spacing-sm);
+
+  .tol-form-input-row-field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  > :not(.tol-form-input-row-field) {
+    margin-top: 5px;
+  }
+
+  &:has(.rs-form-control-label):not(:has(.tol-form-field-inline-controls))
+    > :not(.tol-form-input-row-field) {
+    margin-top: calc(5px + 1lh + 0.2rem);
+  }
+
+  &:has(.tol-form-field-inline-controls) {
+    align-items: center;
+
+    > :not(.tol-form-input-row-field) {
+      margin-top: 0;
+    }
+  }
+}
+
 .tol-multiple-form-input-row {
   display: flex;
   align-items: center;

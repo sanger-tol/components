@@ -140,7 +140,7 @@ export interface IFormComponent {
    * If true, the user must provide at least one instance of this field before submitting the form.
    */
   minOne?: boolean;
-  /** Creates an optional action button for each row of a multiple field. */
+  /** Creates an optional action button for a single field or each row of a multiple field. The identifier is the field name for a single field, or the input ID for a multiple field. */
   rowButton?: (inputId: string, value: any) => PButton;
   /** Whether the required field should display the required text instead of the asterisk. */
   requiredAsText?: boolean;
