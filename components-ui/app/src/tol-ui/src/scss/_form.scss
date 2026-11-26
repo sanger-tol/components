@@ -395,6 +395,39 @@
   flex: 1;
 }
 
+.tol-form-input-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: var(--tol-spacing-sm);
+
+  .tol-form-input-row-field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  // Keep adjacent buttons/elements free of extra top spacing by default
+  > :not(.tol-form-input-row-field) {
+    margin-top: 0;
+  }
+
+  // Offset adjacent buttons/elements past the label to align them with the input
+  &:has(.rs-form-control-label):not(:has(.tol-form-field-inline-controls))
+    > :not(.tol-form-input-row-field) {
+    align-self: flex-start;
+    margin-top: calc(var(--tol-spacing-xs) + 1lh + var(--tol-spacing-xs));
+  }
+
+  // Center buttons/elements when the field already lays out its label and input inline
+  &:has(.tol-form-field-inline-controls) {
+    align-items: center;
+
+    > :not(.tol-form-input-row-field) {
+      margin-top: 0;
+    }
+  }
+}
+
 .tol-multiple-form-input-row {
   display: flex;
   align-items: center;
