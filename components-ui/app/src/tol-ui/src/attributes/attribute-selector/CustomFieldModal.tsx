@@ -229,21 +229,37 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       return;
     }
 
-    configDataSource.upsert({ objectType: "custom_field", payload: [{
-      type: "custom_field",
-      attributes: {
-        "user_id": userId,
-        "data_source_config_id": dataSourceConfigId,
-        "object_type": objectType,
-        "display_name": chosenName,
-        "description": chosenDescription || null,
-        "runtime_definition": {
-          "type": chosenReturnType,
-          "function": chosenFunction,
-          "function_kwargs": normalisedFunctionKwargs,
+    configDataSource
+      .upsert({ objectType: "custom_field", payload: [{
+        type: "custom_field",
+        attributes: {
+          "user_id": userId,
+          "data_source_config_id": dataSourceConfigId,
+          "object_type": objectType,
+          "display_name": chosenName,
+          "description": chosenDescription || null,
+          "runtime_definition": {
+            "type": chosenReturnType,
+            "function": chosenFunction,
+            "function_kwargs": normalisedFunctionKwargs,
+          }
         }
-      }
-    }]});
+      }]})
+      .then(() => {
+        PopUpMessage({
+          type: "success",
+          message: "Field saved successfully"
+        });
+      })
+      .catch((error: unknown) => {
+        console.log(error);
+        PopUpMessage({
+          type: "success",
+          message: "Failed to save field"
+        });
+      });
+
+    setOpen(false);
   };
 
   const SaveButton = (
