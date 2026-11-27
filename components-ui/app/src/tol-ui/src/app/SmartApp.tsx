@@ -91,10 +91,6 @@ export interface PSmartApp {
    */
   register?: boolean;
   /**
-   * Whether boards can be configured for other apps.
-   */
-  configurableBoards?: boolean;
-  /**
    * An optional custom callback URL for authentication.
    */
   customCallbackUrl?: string;
@@ -136,7 +132,6 @@ export function SmartApp(props: PSmartApp) {
     brand,
     login = true,
     register = false,
-    configurableBoards = false,
     routePrefix,
     footer,
     profileFormConfigs,
@@ -155,11 +150,11 @@ export function SmartApp(props: PSmartApp) {
   // Combines the system defaults and incoming config
   const defaultNavigation = mergeNavConfigs(
     props.navigation,
-    getSystemDefaultNavConfig(configurableBoards),
+    getSystemDefaultNavConfig(),
   );
   const defaultProfileNavigation = mergeNavConfigs(
     props.profileNavigation,
-    getProfileDefaultNavConfig(configurableBoards),
+    getProfileDefaultNavConfig(),
   );
 
   useEffect(() => {
@@ -278,7 +273,7 @@ export function SmartApp(props: PSmartApp) {
   );
 
   return (
-    <AppContextProvider navConfig={navigation}>
+    <AppContextProvider id={id} navConfig={navigation}>
       <div id="tol-smart-app-background">
       <QueryClientProvider client={queryClient}>
         <AuthProvider

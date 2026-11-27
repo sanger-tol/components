@@ -13,7 +13,10 @@ import {
   TNavConfig,
   isDropdown,
   isPageElementReference,
+  WEB_APP,
+  WEB_APPS,
 } from "../..";
+import type { IAndAttributes } from "../..";
 
 /**
  * Checks whether a board ID is referenced by a page at any level of a navigation config.
@@ -44,13 +47,19 @@ export async function getBoardDetails(
   boardDataSource: TsDataSource,
   userId: string,
   setErrorMessage: any,
+  webAppId: string,
 ) {
+  const webAppFilter: IAndAttributes = webAppId !== WEB_APPS.QUASAR
+    ? { [`${WEB_APP}.id`]: { eq: { value: webAppId } } }
+    : {};
+
   return boardDataSource
     .getListPage({
       objectType: BOARD_ENTITIES.ENTITIES.BOARD,
       filter: {
         and_: {
           user_id: { eq: { value: userId } },
+          ...webAppFilter,
         },
       },
     })

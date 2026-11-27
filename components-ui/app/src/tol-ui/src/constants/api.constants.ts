@@ -51,6 +51,11 @@ export const API_PATHS: Record<string, string> = {
 
 export const WEB_APP = "web_app";
 
+/** Known web app IDs. */
+export const WEB_APPS = {
+  QUASAR: "quasar",
+} as const;
+
 export const ACTIONS = {
   ACTION: "action",
   RUN_ACTION: "run-action",

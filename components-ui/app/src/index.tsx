@@ -10,7 +10,6 @@ import "./scss/styling.scss";
 import {
   API_PATHS,
   generateAutoDocNavigation,
-  PAGE_ACCESS,
   SmartApp,
   TsDataSource
 } from "./tol-ui/src";
@@ -45,7 +44,6 @@ const root = createRoot(document.getElementById('root')!);
 root.render(
   <SmartApp
     id="components"
-    configurableBoards
     brand="Components"
     pageElements={pageElements}
     configDataSource={CONFIG_DS}

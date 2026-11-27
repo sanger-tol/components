@@ -9,6 +9,8 @@ import type { ReactNode } from "react";
 import type { TNavConfig } from "..";
 
 export interface IAppContextValue {
+  /** Application ID used for the web_app configuration. */
+  id: string;
   /** The navigation configuration for the application. */
   navConfig: TNavConfig;
 }
@@ -21,10 +23,11 @@ export const AppContext = createContext<IAppContextValue | undefined>(undefined)
 
 export function AppContextProvider({
   children,
+  id,
   navConfig,
 }: IAppContextProviderProps) {
   return (
-    <AppContext.Provider value={{ navConfig }}>
+    <AppContext.Provider value={{ id, navConfig }}>
       {children}
     </AppContext.Provider>
   );

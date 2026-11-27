@@ -25,7 +25,7 @@ import {
 export function MyBoards(props: PBoard) {
   const { boardDataSource } = props;
 
-  const { navConfig } = useApp();
+  const { id, navConfig } = useApp();
 
   const [boardDetails, setBoardDetails] = useState<any[]>([]);
   const [liveOnly, setLiveOnly] = useState(false);
@@ -35,7 +35,7 @@ export function MyBoards(props: PBoard) {
 
   useEffect(() => {
     fetchBoardDetails();
-  }, []);
+  }, [boardDataSource, id]);
 
   useEffect(() => {
     if (errorMessage) {
@@ -63,9 +63,10 @@ export function MyBoards(props: PBoard) {
 
   const fetchBoardDetails = async () => {
     const user = getUserFromLocalStorage();
-    const userId = user.id;
+    const userId = user?.id;
     if (userId) {
-      await getBoardDetails(boardDataSource, userId, setErrorMessage)
+      setLoading(true);
+      await getBoardDetails(boardDataSource, userId, setErrorMessage, id)
         .then((data) => {
           setBoardDetails(data ?? []);
         })

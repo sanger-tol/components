@@ -4,17 +4,14 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { PAGE_ACCESS, TNavConfig, URL_PATHS } from "..";
+import { PAGE_ACCESS, TNavConfig, URL_PATHS, USER_ROLES } from "..";
 
 /**
  * Builds the system-default navigation configuration.
  *
- * @param configurableBoards - Whether to include the `"Boards"` navigation entry.
  * @returns The default {@link TNavConfig} for the system.
  */
-export const getSystemDefaultNavConfig = (
-  configurableBoards: boolean
-): TNavConfig => {
+export const getSystemDefaultNavConfig = (): TNavConfig => {
   const config: TNavConfig = {
     data: {
       "File Validation Results": {
@@ -31,19 +28,16 @@ export const getSystemDefaultNavConfig = (
           route: "/callback",
         },
       },
+      "Boards": {
+        access: PAGE_ACCESS.PUBLIC,
+        path: {
+          pageElementReference: "boardDetail",
+          route: `${URL_PATHS.BOARD}/:boardId`,
+        },
+      },
     },
     // Not included in order => not shown in the main navigation
     order: [],
-  }
-
-  if (configurableBoards) {
-    config.data["Boards"] = {
-      access: PAGE_ACCESS.PUBLIC,
-      path: {
-        pageElementReference: "boardDetail",
-        route: `${URL_PATHS.BOARD}/:boardId`,
-      },
-    }
   }
 
   return config;
@@ -53,12 +47,9 @@ export const getSystemDefaultNavConfig = (
 /**
  * Builds the default navigation configuration for a user's profile.
  *
- * @param configurableBoards - When `true`, includes the "My Boards" entry in the config.
  * @returns A {@link TNavConfig} for the profile section of the app.
  */
-export const getProfileDefaultNavConfig = (
-  configurableBoards: boolean
-): TNavConfig => {
+export const getProfileDefaultNavConfig = (): TNavConfig => {
   const config: TNavConfig = {
     data: {
       Profile: {
@@ -68,19 +59,16 @@ export const getProfileDefaultNavConfig = (
           route: URL_PATHS.PROFILE,
         },
       },
-    },
-    order: ["Profile"],
-  }
-
-  if (configurableBoards) {
-    config.data["My Boards"] = {
-      access: PAGE_ACCESS.ROLE_REQUIRED,
-      path: {
-        pageElementReference: "myBoards",
-        route: URL_PATHS.MY_BOARDS,
+      "My Boards": {
+        /** Only accessible by users with the WARDEN role by default; configurable by the app. */
+        access: USER_ROLES.WARDEN,
+        path: {
+          pageElementReference: "myBoards",
+          route: URL_PATHS.MY_BOARDS,
+        },
       },
-    }
-    config.order.push("My Boards");
+    },
+    order: ["Profile", "My Boards"],
   }
 
   return config;

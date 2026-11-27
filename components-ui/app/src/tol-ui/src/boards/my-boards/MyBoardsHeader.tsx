@@ -15,11 +15,14 @@ import {
   API_METHODS,
   PopUpMessage,
   BOARD_MESSAGE_TEXT,
+  useApp,
+  WEB_APPS,
 } from "../..";
 import { useState } from "react";
 
 export function MyBoardsHeader(props: PBoard) {
   const { boardDataSource } = props;
+  const { id } = useApp();
 
   const history = useHistory();
   const [loading, setLoading] = useState(false);
@@ -29,7 +32,7 @@ export function MyBoardsHeader(props: PBoard) {
       .custom({
         method: API_METHODS.POST,
         resource: BOARDS_API.OPERATIONS.CREATE_BOARD,
-        body: {}
+        body: { web_app: id }
       })
       .then((res) => {
         const { id } = res.data;
