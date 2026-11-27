@@ -188,6 +188,17 @@ SPDX-License-Identifier: MIT
   margin-left: var(--tol-spacing-sm);
 }
 
+.tol-custom-field-modal {
+  .rs-modal-header {
+    padding-right: 0 !important;
+  }
+}
+
+.tol-custom-field-modal__header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .tol-attribute-selector-advanced-search-tab {
   padding: 0px 12px 12px 12px;
 

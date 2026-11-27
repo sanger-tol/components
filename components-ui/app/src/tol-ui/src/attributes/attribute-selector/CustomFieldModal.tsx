@@ -265,6 +265,17 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     }
   };
 
+  const Header = (
+    <span className="tol-custom-field-modal__header">
+      <h4 id="custom-field-modal__title">
+        {customFieldId ? "Edit Custom Field" : "Create Custom Field"}
+      </h4>
+      <Button
+        {...BUTTONS.DELETE}
+      />
+    </span>
+  );
+
   const SaveButton = (
     <Button
       {...BUTTONS.SAVE}
@@ -275,12 +286,11 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
 
   return (
     <Modal
+      className="tol-custom-field-modal"
       open={open}
       setOpen={setOpen}
       onOpen={handleReset}
-      header={<h4 id="custom-field-modal__title">
-        {customFieldId ? "Edit Custom Field" : "Create Custom Field"}
-      </h4>}
+      header={Header}
       aria-labelledby="custom-field-modal__title"
       actionButton={SaveButton}
     >

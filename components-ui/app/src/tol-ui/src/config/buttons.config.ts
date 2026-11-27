@@ -48,6 +48,12 @@ export const BUTTONS: Record<string, PButton> = {
     disabledTooltip: "No changes to confirm",
     position: "right",
   },
+  DELETE: {
+    type: "error",
+    icon: "trash",
+    tooltip: "Delete",
+    position: "right",
+  },
   DISCARD: {
     type: "error",
     icon: "trash",
