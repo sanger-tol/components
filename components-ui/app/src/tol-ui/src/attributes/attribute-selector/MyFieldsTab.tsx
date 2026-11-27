@@ -142,7 +142,16 @@ export function MyFieldsTab(props: PMyFieldsTab) {
             renderItemRight={itemData => (
               <Button
                 {...BUTTONS.EDIT}
-                onClick={() => editCustomField(Number(itemData.value))}
+                onClick={() => {
+                  // The ListBox takes the system name in its data because that's the name
+                  // to display to the user, so we need to convert this to an ID first
+                  const customField = customFields.find(
+                    field => field.systemName === itemData.value
+                  );
+                  if (customField) {
+                    editCustomField(Number(customField.id));
+                  }
+                }}
               />
             )}
           />

@@ -127,12 +127,10 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     return [config, Schema.Model(modelConfig), initialData] as const;
   }, [chosenFunction, availableFunctions, storedParams, attributeDataSource, objectType]);
 
-  // When the modal opens, a new `customFieldId` will be provided.
-  // If there's already data for this custom field, populate the form.
+  // Populate existing values each time an edit modal opens, even for the same field.
   useEffect(() => {
-    // `customFieldId` can be `undefined` if we're creating a new field,
-    // so we don't need to fetch anything
-    if (!customFieldId) return;
+    // `customFieldId` is undefined when the modal is creating a field.
+    if (!open || customFieldId === undefined) return;
 
     configDataSource.getOne({
       objectType: "custom_field",
@@ -145,6 +143,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
 
       setChosenName(response.display_name);
       setChosenDescription(response.description ?? "");
+      setChosenReturnType(response.runtime_definition["type"] ?? "");
       setChosenFunction(response.runtime_definition["function"]);
       setStoredParams(response.runtime_definition["function_kwargs"] ?? {});
     }).catch((error: unknown) => {
@@ -153,7 +152,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       console.log(error);
       setStoredParams({});
     });
-  }, [customFieldId]);
+  }, [open, customFieldId, configDataSource]);
 
   // Reset the user's choices
   const handleReset = () => {
@@ -235,6 +234,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     try {
       await configDataSource.upsert({ objectType: "custom_field", payload: [{
         type: "custom_field",
+        ...(customFieldId !== undefined && { id: String(customFieldId) }),
         attributes: {
           "user_id": userId,
           "data_source_config_id": dataSourceConfigId,
