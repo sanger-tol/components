@@ -43,6 +43,8 @@ export interface PCustomFieldModal extends IRemoteTarget {
   customFieldId?: number | undefined;
   /** The ID of the currently logged in user */
   userId: number;
+  /** Tells the MyFields tab to refresh its contents, called after an upsert succeeds */
+  refreshCustomFieldList: () => void | Promise<void>;
 }
 
 export default function CustomFieldModal(props: PCustomFieldModal) {
@@ -54,6 +56,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     attributeDataSource,
     objectType,
     userId,
+    refreshCustomFieldList,
   } = props;
 
   const [availableFunctions, setAvailableFunctions] = useState<
@@ -229,8 +232,8 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       return;
     }
 
-    configDataSource
-      .upsert({ objectType: "custom_field", payload: [{
+    try {
+      await configDataSource.upsert({ objectType: "custom_field", payload: [{
         type: "custom_field",
         attributes: {
           "user_id": userId,
@@ -244,22 +247,22 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
             "function_kwargs": normalisedFunctionKwargs,
           }
         }
-      }]})
-      .then(() => {
-        PopUpMessage({
-          type: "success",
-          message: "Field saved successfully"
-        });
-      })
-      .catch((error: unknown) => {
-        console.log(error);
-        PopUpMessage({
-          type: "success",
-          message: "Failed to save field"
-        });
-      });
+      }]});
 
-    setOpen(false);
+      // Keep the modal open until both persistence and the resulting refresh succeed.
+      await refreshCustomFieldList?.();
+      PopUpMessage({
+        type: "success",
+        message: "Field saved successfully"
+      });
+      setOpen(false);
+    } catch (error: unknown) {
+      console.log(error);
+      PopUpMessage({
+        type: "error",
+        message: "Failed to save field"
+      });
+    }
   };
 
   const SaveButton = (

@@ -19,9 +19,13 @@ import type { IRemoteTarget } from "../..";
 
 /** Props for the MyFieldsTab component */
 export interface PMyFieldsTab extends IRemoteTarget {
+  /** The ID of the user whose custom fields are shown in the list */
   userId: string;
+  /** All currently selected attribute names in the AttributeSelector */
   value: string[];
+  /** Reports whether an overlay inside the selector is open. */
   onNestedOverlayChange: (open: boolean) => void;
+  /** Receives the updated selection, including custom and standard fields. */
   onChange: (value: string[]) => void;
 }
 
@@ -42,9 +46,9 @@ export function MyFieldsTab(props: PMyFieldsTab) {
   const [editFieldModalOpen, setEditFieldModalOpen] = useState(false);
   const [editingCustomFieldId, setEditingCustomFieldId] = useState<number | undefined>();
 
-  useEffect(() => {
-    // Fetch the user's existing custom fields
-    CORE_CONFIG_DS.getList({ 
+  /** Fetches the current user's custom fields and updates the tab contents. */
+  const fetchCustomFields = async () => {
+    const response = await CORE_CONFIG_DS.getList({
       objectType: "custom_field",
       filter: {
         and_: {
@@ -53,17 +57,16 @@ export function MyFieldsTab(props: PMyFieldsTab) {
         }
       },
       requestedFields: ["id", "display_name"]
-    }).then(res => {
-      if (!res) {
-        setCustomFields([]);
-      } else {
-        setCustomFields(res.map(obj => ({
-          id: obj!.id,
-          displayName: obj!.display_name,
-          systemName: `custom_${obj!.id}`
-        })));
-      }
     });
+    setCustomFields(response?.map(obj => ({
+      id: obj!.id,
+      displayName: obj!.display_name,
+      systemName: `custom_${obj!.id}`
+    })) ?? []);
+  };
+
+  useEffect(() => {
+    void fetchCustomFields();
   }, []);
 
   /**
@@ -153,6 +156,7 @@ export function MyFieldsTab(props: PMyFieldsTab) {
         dataSource={CORE_CONFIG_DS}
         attributeDataSource={dataSource}
         userId={Number(userId)}
+        refreshCustomFieldList={fetchCustomFields}
       />
     </div>
   );
