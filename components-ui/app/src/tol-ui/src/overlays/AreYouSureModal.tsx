@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button, BUTTONS, Modal } from "..";
+import type { PButton } from "..";
 
 
 export interface PAreYouSureModalProps {
@@ -12,6 +13,10 @@ export interface PAreYouSureModalProps {
   setOpen: (open: boolean) => void;
   onSave?: () => void;
   onDiscard?: () => void;
+  title?: string;
+  message?: string;
+  onConfirm?: () => void;
+  confirmButton?: PButton;
 }
 
 export function AreYouSureModal(props: PAreYouSureModalProps) {
@@ -20,6 +25,10 @@ export function AreYouSureModal(props: PAreYouSureModalProps) {
     setOpen,
     onSave = () => {},
     onDiscard = () => {},
+    title = "Unsaved Changes",
+    message = "You have an unsaved configuration. Are you sure you want to close without saving?",
+    onConfirm,
+    confirmButton = BUTTONS.CONFIRM,
   } = props;
 
   return (
@@ -30,24 +39,34 @@ export function AreYouSureModal(props: PAreYouSureModalProps) {
       size="xs"
       closeButton={false}
     >
-      <h5>Unsaved Changes</h5>
-      <p>
-        You have an unsaved configuration. Are you sure you want to close without saving?
-      </p>
-      <Button
-        {...BUTTONS.SAVE}
-        onClick={() => {
-          setOpen(false);
-          onSave();
-        }}
-      />
-      <Button
-        {...BUTTONS.DISCARD}
-        onClick={() => {
-          setOpen(false);
-          onDiscard();
-        }}
-      />
+      <h5>{title}</h5>
+      <p>{message}</p>
+      {onConfirm ? (
+        <Button
+          {...confirmButton}
+          onClick={() => {
+            setOpen(false);
+            onConfirm();
+          }}
+        />
+      ) : (
+        <>
+          <Button
+            {...BUTTONS.SAVE}
+            onClick={() => {
+              setOpen(false);
+              onSave();
+            }}
+          />
+          <Button
+            {...BUTTONS.DISCARD}
+            onClick={() => {
+              setOpen(false);
+              onDiscard();
+            }}
+          />
+        </>
+      )}
       <Button
         {...BUTTONS.CANCEL}
         onClick={() => {

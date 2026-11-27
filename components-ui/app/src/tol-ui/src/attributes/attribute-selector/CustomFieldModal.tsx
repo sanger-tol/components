@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Schema } from "rsuite";
 
 import {
+  AreYouSureModal,
   Button,
   BUTTONS,
   convertCustomFieldPythonTypeToFormField,
@@ -68,6 +69,7 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   const [chosenDescription, setChosenDescription] = useState<string>("");
   const [chosenFunction, setChosenFunction] = useState<string | undefined>();
   const [chosenParams, setChosenParams] = useState<Record<string, unknown>>({});
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 
   const paramsValidationRef = useRef<(() => boolean) | null>(null);
 
@@ -265,6 +267,32 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
     }
   };
 
+  const handleDelete = async () => {
+    if (customFieldId === undefined) {
+      console.error("Attempted to delete a custom field without an ID");
+      return;
+    }
+
+    try {
+      await configDataSource.deleteByID({
+        objectType: "custom_field",
+        id: String(customFieldId),
+      });
+      await refreshCustomFieldList();
+      PopUpMessage({
+        type: "success",
+        message: "Field deleted successfully",
+      });
+      setOpen(false);
+    } catch (error: unknown) {
+      console.error(error);
+      PopUpMessage({
+        type: "error",
+        message: "Unable to delete this custom field",
+      });
+    }
+  };
+
   const Header = (
     <span className="tol-custom-field-modal__header">
       <h4 id="custom-field-modal__title">
@@ -272,6 +300,9 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
       </h4>
       <Button
         {...BUTTONS.DELETE}
+        onClick={() => setDeleteConfirmationOpen(true)}
+        disabled={customFieldId === undefined}
+        disabledTooltip="You can't delete a field that doesn't exist"
       />
     </span>
   );
@@ -285,16 +316,17 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
   );
 
   return (
-    <Modal
-      className="tol-custom-field-modal"
-      open={open}
-      setOpen={setOpen}
-      onOpen={handleReset}
-      header={Header}
-      aria-labelledby="custom-field-modal__title"
-      actionButton={SaveButton}
-    >
-      <RSForm fluid>
+    <>
+      <Modal
+        className="tol-custom-field-modal"
+        open={open}
+        setOpen={setOpen}
+        onOpen={handleReset}
+        header={Header}
+        aria-labelledby="custom-field-modal__title"
+        actionButton={SaveButton}
+      >
+        <RSForm fluid>
         <FormTextField
           id="custom-field-name"
           name="name"
@@ -335,18 +367,27 @@ export default function CustomFieldModal(props: PCustomFieldModal) {
           )}
         </FormComponentWrapper>
       </RSForm>
-      {chosenFunction && availableFunctions ? (
-        <>
-          <hr/>
-          <FormAllInOne
-            formConfig={paramsFormConfig}
-            model={paramsFormModel}
-            initialData={paramsInitialData}
-            onFormDataChange={setChosenParams}
-            validationRef={paramsValidationRef}
-          />
-        </>
-      ) : <></>}
-    </Modal>
+        {chosenFunction && availableFunctions ? (
+          <>
+            <hr/>
+            <FormAllInOne
+              formConfig={paramsFormConfig}
+              model={paramsFormModel}
+              initialData={paramsInitialData}
+              onFormDataChange={setChosenParams}
+              validationRef={paramsValidationRef}
+            />
+          </>
+        ) : <></>}
+      </Modal>
+      <AreYouSureModal
+        open={deleteConfirmationOpen}
+        setOpen={setDeleteConfirmationOpen}
+        title="Delete Custom Field"
+        message="Are you sure you want to delete this custom field? This cannot be undone."
+        onConfirm={handleDelete}
+        confirmButton={BUTTONS.DELETE}
+      />
+    </>
   );
 }
